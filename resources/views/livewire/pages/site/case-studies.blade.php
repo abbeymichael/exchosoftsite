@@ -6,7 +6,7 @@ use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-new #[Layout('layouts.site')] #[Title('Case Studies — ExchoSoft')] class extends Component
+new #[Layout('layouts.site')] #[Title('Case Studies — Exchosoft Consult')] class extends Component
 {
     use WithPagination;
 
@@ -18,13 +18,34 @@ new #[Layout('layouts.site')] #[Title('Case Studies — ExchoSoft')] class exten
 }; ?>
 
 <div>
-    <section class="bg-slate-900 text-white py-16">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-            <p class="text-xs font-semibold uppercase tracking-widest text-cyan-400 mb-3">Proof of Impact</p>
-            <h1 class="text-4xl font-bold mb-4">Case Studies</h1>
-            <p class="text-slate-400 max-w-xl mx-auto">Real stories of how ExchoSoft's solutions have transformed businesses and delivered measurable results.</p>
-        </div>
-    </section>
+<style>
+  .page-banner{min-height:380px;background:var(--navy);position:relative;overflow:hidden;display:flex;align-items:center;}
+  .page-banner-dots{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(0,184,219,0.14) 1px,transparent 1px);background-size:32px 32px;pointer-events:none;}
+  .page-banner-glow{position:absolute;inset:0;background:radial-gradient(circle at 75% 50%,rgba(0,184,219,0.1) 0%,transparent 60%);pointer-events:none;}
+  .page-banner-content{position:relative;z-index:2;padding:4rem 6rem;max-width:700px;}
+  .page-banner-crumb{display:flex;align-items:center;gap:0.5rem;margin-bottom:2rem;}
+  .page-banner-crumb a{font-size:0.78rem;color:rgba(255,255,255,0.4);text-decoration:none;}
+  .page-banner-crumb a:hover{color:var(--cyan);}
+  .page-banner-crumb .sep{color:rgba(255,255,255,0.2);}
+  .page-banner-crumb .ccurrent{font-size:0.78rem;color:var(--cyan);font-weight:500;}
+  .page-banner-tag{display:inline-flex;background:rgba(0,184,219,0.1);border:1px solid rgba(0,184,219,0.2);color:var(--sky);padding:0.28rem 0.85rem;border-radius:100px;font-size:0.72rem;font-weight:600;letter-spacing:0.06em;margin-bottom:1.25rem;text-transform:uppercase;}
+  .page-banner h1{font-family:var(--font-display);font-size:clamp(2rem,3.8vw,3.2rem);font-weight:800;color:var(--white);line-height:1.1;letter-spacing:-0.03em;margin-bottom:1rem;}
+  .page-banner h1 em{color:var(--cyan);font-style:normal;}
+  .page-banner-sub{font-size:1rem;color:rgba(255,255,255,0.55);max-width:540px;line-height:1.75;font-weight:300;}
+  .listing-body{padding:4rem 6rem;}
+  @media(max-width:1024px){.page-banner-content{padding:3rem 2rem;}.listing-body{padding:2.5rem 2rem;}}
+</style>
+<div class="page-banner">
+  <div class="page-banner-dots"></div>
+  <div class="page-banner-glow"></div>
+  <div class="page-banner-content">
+    <div class="page-banner-crumb"><a href="{{ route('home') }}" wire:navigate>Home</a><span class="sep">/</span><span class="ccurrent">Case Studies</span></div>
+    <div class="page-banner-tag">Proof of Impact</div>
+    <h1>Real Results from <em>Real Businesses</em></h1>
+    <p class="page-banner-sub">In-depth stories of how Exchosoft systems have transformed operations, increased revenue, and solved genuine problems across our markets.</p>
+  </div>
+</div>
+    <section class="listing-body">
 
     <section class="py-14">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

@@ -31,7 +31,11 @@ new #[Layout('layouts.admin')] #[Title('Shop Products — ExchoSoft')] class ext
     public string $platform = '';
     public string $demo_url = '';
     public string $documentation_url = '';
+    public string $download_url = '';
     public string $linked_product_code = '';
+    public string $features_text = '';    // comma or newline separated
+    public string $tech_stack_text = '';  // comma or newline separated
+    public string $full_description = '';
     public bool $is_published = false;
     public bool $is_featured = false;
     public bool $requires_license = true;
@@ -66,7 +70,11 @@ new #[Layout('layouts.admin')] #[Title('Shop Products — ExchoSoft')] class ext
         $this->platform = $product->platform ?? '';
         $this->demo_url = $product->demo_url ?? '';
         $this->documentation_url = $product->documentation_url ?? '';
+        $this->download_url = $product->download_url ?? '';
         $this->linked_product_code = $product->linked_product_code ?? '';
+        $this->features_text = $product->features ? implode("\n", $product->features) : '';
+        $this->tech_stack_text = $product->tech_stack ? implode(', ', $product->tech_stack) : '';
+        $this->full_description = $product->full_description ?? '';
         $this->is_published = $product->is_published;
         $this->is_featured = $product->is_featured;
         $this->requires_license = $product->requires_license;
@@ -98,7 +106,15 @@ new #[Layout('layouts.admin')] #[Title('Shop Products — ExchoSoft')] class ext
             'platform'             => $this->platform,
             'demo_url'             => $this->demo_url,
             'documentation_url'    => $this->documentation_url,
+            'download_url'         => $this->download_url,
             'linked_product_code'  => $this->linked_product_code,
+            'full_description'     => $this->full_description,
+            'features'             => $this->features_text
+                ? array_filter(array_map('trim', preg_split('/[\r\n]+/', $this->features_text)))
+                : null,
+            'tech_stack'           => $this->tech_stack_text
+                ? array_filter(array_map('trim', explode(',', $this->tech_stack_text)))
+                : null,
             'is_published'         => $this->is_published,
             'is_featured'          => $this->is_featured,
             'requires_license'     => $this->requires_license,
@@ -135,7 +151,8 @@ new #[Layout('layouts.admin')] #[Title('Shop Products — ExchoSoft')] class ext
         $this->product_type = 'digital';
         $this->price = '0';
         $this->sale_price = $this->version = $this->platform = '';
-        $this->demo_url = $this->documentation_url = $this->linked_product_code = '';
+        $this->demo_url = $this->documentation_url = $this->download_url = $this->linked_product_code = '';
+        $this->features_text = $this->tech_stack_text = $this->full_description = '';
         $this->is_published = $this->is_featured = false;
         $this->requires_license = true;
         $this->editId = null;
@@ -343,8 +360,36 @@ new #[Layout('layouts.admin')] #[Title('Shop Products — ExchoSoft')] class ext
                         <input wire:model="documentation_url" type="url" placeholder="https://" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
                     </div>
                     <div class="col-span-2">
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Linked License Product Code</label>
-                        <input wire:model="linked_product_code" type="text" placeholder="e.g. COREOPS" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm font-mono focus:outline-none focus:border-cyan-400">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">
+                            Linked Product Code
+                            <span class="text-slate-400 font-normal ml-1">(groups on site: washops, churchops, etc.)</span>
+                        </label>
+                        <input wire:model="linked_product_code" type="text" placeholder="e.g. washops, churchops" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm font-mono focus:outline-none focus:border-cyan-400">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">
+                            Key Features
+                            <span class="text-slate-400 font-normal ml-1">(one per line)</span>
+                        </label>
+                        <textarea wire:model="features_text" rows="4" placeholder="Revenue tracking and forecasting&#10;Order volume analytics&#10;Staff performance metrics" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 resize-y font-mono text-xs"></textarea>
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">
+                            Tech Stack
+                            <span class="text-slate-400 font-normal ml-1">(comma separated)</span>
+                        </label>
+                        <input wire:model="tech_stack_text" type="text" placeholder="C#, .NET, SQLite, WPF, AWS" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Download URL</label>
+                        <input wire:model="download_url" type="url" placeholder="https://" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">
+                            Full Description
+                            <span class="text-slate-400 font-normal ml-1">(HTML supported)</span>
+                        </label>
+                        <textarea wire:model="full_description" rows="6" placeholder="&lt;p&gt;Detailed product description...&lt;/p&gt;" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 resize-y font-mono text-xs"></textarea>
                     </div>
                     <div class="col-span-2 flex flex-wrap gap-4 pt-1">
                         <label class="flex items-center gap-2 cursor-pointer">

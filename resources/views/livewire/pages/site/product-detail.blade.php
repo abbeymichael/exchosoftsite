@@ -1,10 +1,8 @@
 <?php
 
 use App\Models\ShopProduct;
-use App\Models\DemoBooking;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
-use Livewire\Attributes\Url;
 use Livewire\Component;
 
 new #[Layout('layouts.site')] class extends Component
@@ -14,20 +12,14 @@ new #[Layout('layouts.site')] class extends Component
     public bool $showPurchaseModal = false;
     public bool $purchaseSuccess = false;
 
-    // Guest checkout fields
-    public string $buyerName = '';
+    public string $buyerName  = '';
     public string $buyerEmail = '';
     public string $buyerPhone = '';
-    public string $buyerNote = '';
+    public string $buyerNote  = '';
 
     public function mount(string $slug): void
     {
         $this->product = ShopProduct::published()->where('slug', $slug)->firstOrFail();
-    }
-
-    public function getTitle(): string
-    {
-        return $this->product->name . ' — ExchoSoft';
     }
 
     public function openPurchase(): void
@@ -70,166 +62,466 @@ new #[Layout('layouts.site')] class extends Component
         ]);
 
         $this->showPurchaseModal = false;
-        $this->purchaseSuccess = true;
+        $this->purchaseSuccess   = true;
     }
 
     public function render(): \Illuminate\View\View
     {
-        return view('livewire.pages.site.product-detail')
-            ->title($this->product->name . ' — ExchoSoft');
+        $relatedProducts = ShopProduct::published()
+            ->where('id', '!=', $this->product->id)
+            ->when($this->product->linked_product_code, fn($q) => $q->where('linked_product_code', $this->product->linked_product_code))
+            ->orWhere('category', $this->product->category)
+            ->where('id', '!=', $this->product->id)
+            ->limit(3)
+            ->get();
+
+        return view('livewire.pages.site.product-detail', compact('relatedProducts'))
+            ->title($this->product->name . ' — Exchosoft Consult');
     }
 }; ?>
 
 <div>
-    {{-- Breadcrumb --}}
-    <div class="bg-slate-50 border-b border-slate-100">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3">
-            <nav class="flex items-center gap-2 text-xs text-slate-500">
-                <a href="{{ route('home') }}" wire:navigate class="hover:text-slate-900">Home</a>
-                <span>/</span>
-                <a href="{{ route('site.products') }}" wire:navigate class="hover:text-slate-900">Products</a>
-                <span>/</span>
-                <span class="text-slate-900 font-medium">{{ $product->name }}</span>
-            </nav>
+<style>
+  /* Product Detail */
+  .detail-banner {
+    background: var(--navy); position: relative; overflow: hidden;
+    padding: 3.5rem 6rem 3rem;
+  }
+  .detail-banner-dots {
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(0,184,219,0.12) 1px, transparent 1px);
+    background-size: 32px 32px; pointer-events: none;
+  }
+  .detail-banner-glow {
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 80% 50%, rgba(0,184,219,0.1) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .detail-breadcrumb {
+    position: relative; z-index: 2;
+    display: flex; align-items: center; gap: 0.5rem;
+    font-size: 0.78rem;
+  }
+  .detail-breadcrumb a { color: rgba(255,255,255,0.45); text-decoration: none; transition: color 0.2s; }
+  .detail-breadcrumb a:hover { color: var(--cyan); }
+  .detail-breadcrumb .sep { color: rgba(255,255,255,0.2); }
+  .detail-breadcrumb .current { color: var(--cyan); font-weight: 500; }
+
+  /* Product Body */
+  .product-detail-body { padding: 4rem 6rem; }
+  .product-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+  .product-image-area {
+    border-radius: 16px; overflow: hidden;
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+    aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+    position: sticky; top: 80px; border: 1px solid rgba(0,184,219,0.12);
+  }
+  .product-image-area img { width: 100%; height: 100%; object-fit: cover; }
+  .product-image-placeholder {
+    font-family: var(--font-display); font-size: 6rem; font-weight: 800;
+    color: rgba(0,184,219,0.2);
+  }
+
+  /* Gallery */
+  .product-gallery { display: flex; gap: 0.5rem; margin-top: 0.75rem; flex-wrap: wrap; }
+  .gallery-thumb {
+    width: 64px; height: 64px; border-radius: 8px; overflow: hidden;
+    border: 2px solid var(--border); cursor: pointer; transition: border-color 0.2s;
+  }
+  .gallery-thumb:hover { border-color: var(--cyan); }
+  .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* Info side */
+  .product-info {}
+  .product-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .product-tag {
+    font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em;
+    padding: 0.25rem 0.7rem; border-radius: 100px;
+    background: var(--sky-light); color: var(--cyan-deep);
+    display: inline-block;
+  }
+  .product-tag.green { background: #e8f5ee; color: #1a6b4a; }
+  .product-tag.grey { background: var(--ice); color: var(--text-muted); }
+  .product-name {
+    font-family: var(--font-display); font-size: clamp(1.6rem, 3vw, 2.4rem);
+    font-weight: 800; color: var(--navy); letter-spacing: -0.03em; line-height: 1.15;
+    margin-bottom: 0.75rem;
+  }
+  .product-tagline-text { font-size: 1.05rem; color: var(--text-secondary); margin-bottom: 1.5rem; font-weight: 300; }
+  .product-desc { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.8; margin-bottom: 2rem; }
+  .product-price-block { display: flex; align-items: flex-end; gap: 1rem; margin-bottom: 1.75rem; }
+  .product-price-main {
+    font-family: var(--font-display); font-size: 2.2rem; font-weight: 800;
+    color: var(--navy); letter-spacing: -0.03em;
+  }
+  .product-price-main.sale { color: #16a34a; }
+  .product-price-original { font-size: 1.1rem; color: var(--text-muted); text-decoration: line-through; margin-bottom: 0.35rem; }
+  .product-sale-badge {
+    background: #fef2f2; color: #dc2626; font-size: 0.75rem; font-weight: 700;
+    padding: 0.2rem 0.6rem; border-radius: 100px;
+  }
+
+  .product-actions { display: flex; gap: 0.85rem; flex-wrap: wrap; margin-bottom: 2rem; }
+  .btn-buy {
+    background: var(--cyan); color: var(--white);
+    padding: 0.9rem 2.2rem; border-radius: 8px;
+    font-family: var(--font-display); font-size: 0.95rem; font-weight: 700;
+    border: none; cursor: pointer; transition: background 0.2s, transform 0.15s;
+    display: inline-flex; align-items: center; gap: 0.5rem;
+  }
+  .btn-buy:hover { background: var(--cyan-dark); transform: translateY(-1px); }
+  .btn-demo-link {
+    background: transparent; color: var(--text-secondary);
+    padding: 0.9rem 1.75rem; border-radius: 8px; border: 1px solid var(--border);
+    font-family: var(--font-display); font-size: 0.875rem; font-weight: 600;
+    text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-demo-link:hover { border-color: var(--cyan); color: var(--navy); }
+
+  /* Features list */
+  .features-list-block {
+    background: var(--ice); border-radius: 12px; padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .features-list-block h4 {
+    font-family: var(--font-display); font-size: 0.8rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+  .features-list-block ul { list-style: none; padding: 0; margin: 0; }
+  .features-list-block ul li {
+    font-size: 0.875rem; color: var(--text-secondary);
+    display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.3rem 0;
+  }
+  .features-list-block ul li svg { flex-shrink: 0; margin-top: 1px; color: var(--cyan); }
+
+  /* Tech stack */
+  .tech-stack-block { margin-bottom: 1.5rem; }
+  .tech-stack-block h4 {
+    font-family: var(--font-display); font-size: 0.8rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+  .tech-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .tech-tag {
+    background: var(--navy); color: rgba(255,255,255,0.65);
+    padding: 0.3rem 0.75rem; border-radius: 6px; font-size: 0.78rem; font-weight: 500;
+    border: 1px solid rgba(0,184,219,0.15);
+  }
+
+  /* Links */
+  .product-links { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .product-link {
+    font-size: 0.83rem; font-weight: 600; color: var(--cyan); text-decoration: none;
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    transition: color 0.2s;
+  }
+  .product-link:hover { color: var(--cyan-dark); }
+
+  /* Full description */
+  .product-full-desc { margin-top: 4rem; padding-top: 3rem; border-top: 1px solid var(--border); }
+  .product-full-desc h2 {
+    font-family: var(--font-display); font-size: 1.5rem; font-weight: 800;
+    color: var(--navy); letter-spacing: -0.02em; margin-bottom: 1.5rem;
+  }
+  .product-full-desc .prose { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.85; }
+  .product-full-desc .prose h3 { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: var(--navy); margin: 1.5rem 0 0.5rem; }
+  .product-full-desc .prose p { margin-bottom: 1rem; }
+  .product-full-desc .prose ul { padding-left: 1.25rem; margin-bottom: 1rem; }
+  .product-full-desc .prose ul li { margin-bottom: 0.35rem; }
+
+  /* Related products */
+  .related-products { padding: 4rem 6rem; background: var(--ice); }
+  .related-products h3 {
+    font-family: var(--font-display); font-size: 1.3rem; font-weight: 800;
+    color: var(--navy); letter-spacing: -0.02em; margin-bottom: 2rem;
+  }
+  .related-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.25rem; }
+  .related-card {
+    background: var(--white); border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; text-decoration: none; display: block;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .related-card:hover { border-color: var(--cyan); box-shadow: 0 8px 24px rgba(0,184,219,0.1); }
+  .related-img {
+    height: 120px; background: linear-gradient(135deg, var(--navy), var(--navy-mid));
+    display: flex; align-items: center; justify-content: center;
+  }
+  .related-img img { width: 100%; height: 100%; object-fit: cover; }
+  .related-body { padding: 1rem 1.25rem; }
+  .related-name { font-family: var(--font-display); font-size: 0.9rem; font-weight: 700; color: var(--navy); }
+  .related-price { font-size: 0.85rem; font-weight: 700; color: var(--cyan); margin-top: 0.35rem; font-family: var(--font-display); }
+
+  /* Purchase Modal */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 1000;
+    display: flex; align-items: center; justify-content: center; padding: 1rem;
+  }
+  .modal-backdrop { position: fixed; inset: 0; background: rgba(13,33,55,0.7); }
+  .modal-box {
+    position: relative; background: var(--white); border-radius: 16px;
+    padding: 2rem; width: 100%; max-width: 460px;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.2);
+    z-index: 1;
+  }
+  .modal-title { font-family: var(--font-display); font-size: 1.1rem; font-weight: 800; color: var(--navy); margin-bottom: 0.25rem; }
+  .modal-subtitle { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+  .form-group { margin-bottom: 1rem; }
+  .form-label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.35rem; font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.05em; }
+  .form-input {
+    width: 100%; padding: 0.7rem 0.9rem; border: 1px solid var(--border); border-radius: 8px;
+    font-size: 0.875rem; font-family: var(--font-body); color: var(--text-primary);
+    transition: border-color 0.2s;
+  }
+  .form-input:focus { outline: none; border-color: var(--cyan); }
+  .form-note { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.75rem; }
+  .modal-actions { display: flex; gap: 0.75rem; margin-top: 1.25rem; }
+  .btn-modal-submit {
+    flex: 1; background: var(--cyan); color: var(--white);
+    padding: 0.8rem; border-radius: 8px; border: none; cursor: pointer;
+    font-family: var(--font-display); font-size: 0.9rem; font-weight: 700;
+    transition: background 0.2s;
+  }
+  .btn-modal-submit:hover { background: var(--cyan-dark); }
+  .btn-modal-cancel {
+    flex: 1; background: var(--ice); color: var(--text-secondary);
+    padding: 0.8rem; border-radius: 8px; border: none; cursor: pointer;
+    font-family: var(--font-display); font-size: 0.9rem; font-weight: 600;
+    transition: background 0.2s;
+  }
+  .btn-modal-cancel:hover { background: var(--border); }
+
+  /* Success */
+  .purchase-success {
+    background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 16px;
+    padding: 2.5rem; text-align: center; margin: 2rem 6rem;
+  }
+  .success-icon {
+    width: 56px; height: 56px; border-radius: 50%; background: #dcfce7;
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;
+  }
+  .success-icon svg { width: 28px; height: 28px; color: #16a34a; }
+  .success-title { font-family: var(--font-display); font-size: 1.25rem; font-weight: 800; color: #14532d; margin-bottom: 0.5rem; }
+  .success-msg { font-size: 0.9rem; color: #166534; margin-bottom: 1.25rem; }
+
+  @media (max-width: 1024px) {
+    .detail-banner { padding: 2.5rem 2rem; }
+    .product-detail-body { padding: 2.5rem 2rem; }
+    .product-detail-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    .product-image-area { position: static; aspect-ratio: 16/9; }
+    .related-products { padding: 3rem 2rem; }
+    .related-grid { grid-template-columns: repeat(2,1fr); }
+    .purchase-success { margin: 2rem; }
+  }
+  @media (max-width: 640px) {
+    .related-grid { grid-template-columns: 1fr; }
+    .product-price-main { font-size: 1.8rem; }
+  }
+</style>
+
+<!-- BANNER -->
+<div class="detail-banner">
+  <div class="detail-banner-dots"></div>
+  <div class="detail-banner-glow"></div>
+  <div class="detail-breadcrumb">
+    <a href="{{ route('home') }}" wire:navigate>Home</a>
+    <span class="sep">/</span>
+    <a href="{{ route('site.products') }}" wire:navigate>Products</a>
+    <span class="sep">/</span>
+    <span class="current">{{ $product->name }}</span>
+  </div>
+</div>
+
+@if($purchaseSuccess)
+<div class="purchase-success">
+  <div class="success-icon">
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+  </div>
+  <div class="success-title">Order Placed Successfully!</div>
+  <p class="success-msg">Your order for <strong>{{ $product->name }}</strong> has been placed. We'll contact you with payment details and your license key shortly.</p>
+  <a href="{{ route('home') }}" wire:navigate class="btn-buy" style="display:inline-flex;margin:0 auto;">Back to Home</a>
+</div>
+@endif
+
+<!-- PRODUCT DETAIL -->
+<section class="product-detail-body">
+  <div class="product-detail-grid">
+
+    {{-- Image --}}
+    <div>
+      <div class="product-image-area">
+        @if($product->cover_image)
+          <img src="{{ asset('storage/'.$product->cover_image) }}" alt="{{ $product->name }}">
+        @else
+          <div class="product-image-placeholder">{{ strtoupper(substr($product->name,0,2)) }}</div>
+        @endif
+      </div>
+      {{-- Gallery --}}
+      @if($product->gallery && count($product->gallery) > 0)
+      <div class="product-gallery">
+        @foreach($product->gallery as $img)
+        <div class="gallery-thumb">
+          <img src="{{ asset('storage/'.$img) }}" alt="Gallery image">
         </div>
+        @endforeach
+      </div>
+      @endif
     </div>
 
-    @if($purchaseSuccess)
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-8">
-        <div class="rounded-2xl bg-green-50 border border-green-200 p-6 text-center">
-            <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-green-100 mb-4">
-                <svg class="h-7 w-7 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-            </div>
-            <h2 class="text-xl font-bold text-green-800 mb-2">Order Placed!</h2>
-            <p class="text-green-700 mb-4">Your order has been placed successfully. We'll contact you with payment details shortly.</p>
-            <a href="{{ route('home') }}" wire:navigate class="inline-flex rounded-xl bg-green-600 px-5 py-2 text-sm font-semibold text-white hover:bg-green-700 transition-colors">Back to Home</a>
+    {{-- Info --}}
+    <div class="product-info">
+      {{-- Tags --}}
+      <div class="product-tags">
+        @if($product->category)<span class="product-tag">{{ $product->category }}</span>@endif
+        @if($product->platform)<span class="product-tag grey">{{ $product->platform }}</span>@endif
+        @if($product->version)<span class="product-tag grey">v{{ $product->version }}</span>@endif
+        @if($product->linked_product_code === 'churchops')<span class="product-tag green">ChurchOps</span>@endif
+        @if($product->linked_product_code === 'washops')<span class="product-tag">WashOps</span>@endif
+      </div>
+
+      <h1 class="product-name">{{ $product->name }}</h1>
+      @if($product->tagline)<p class="product-tagline-text">{{ $product->tagline }}</p>@endif
+      @if($product->description)<p class="product-desc">{{ $product->description }}</p>@endif
+
+      {{-- Pricing --}}
+      <div class="product-price-block">
+        @if($product->is_on_sale)
+          <div>
+            <div class="product-price-original">GHS {{ number_format($product->price, 2) }}</div>
+            <div class="product-price-main sale">GHS {{ number_format($product->sale_price, 2) }}</div>
+          </div>
+          <span class="product-sale-badge">SALE</span>
+        @else
+          <div class="product-price-main">GHS {{ number_format($product->price, 2) }}</div>
+        @endif
+      </div>
+
+      {{-- Actions --}}
+      <div class="product-actions">
+        <button wire:click="openPurchase" class="btn-buy">
+          <svg style="width:16px;height:16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+          Buy Now
+        </button>
+        @if($product->demo_url)
+        <a href="{{ $product->demo_url }}" target="_blank" class="btn-demo-link">
+          <svg style="width:15px;height:15px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+          Live Demo
+        </a>
+        @endif
+        <a href="{{ route('site.book-demo') }}" wire:navigate class="btn-demo-link">
+          <svg style="width:15px;height:15px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          Book Demo
+        </a>
+      </div>
+
+      {{-- Features --}}
+      @if($product->features && count($product->features) > 0)
+      <div class="features-list-block">
+        <h4>Key Features</h4>
+        <ul>
+          @foreach($product->features as $feature)
+          <li>
+            <svg style="width:15px;height:15px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            {{ $feature }}
+          </li>
+          @endforeach
+        </ul>
+      </div>
+      @endif
+
+      {{-- Tech Stack --}}
+      @if($product->tech_stack && count($product->tech_stack) > 0)
+      <div class="tech-stack-block">
+        <h4>Tech Stack</h4>
+        <div class="tech-tags">
+          @foreach($product->tech_stack as $tech)
+          <span class="tech-tag">{{ $tech }}</span>
+          @endforeach
         </div>
+      </div>
+      @endif
+
+      {{-- Extra Links --}}
+      <div class="product-links">
+        @if($product->documentation_url)
+        <a href="{{ $product->documentation_url }}" target="_blank" class="product-link">
+          <svg style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+          Documentation
+        </a>
+        @endif
+        @if($product->download_url)
+        <a href="{{ $product->download_url }}" target="_blank" class="product-link">
+          <svg style="width:14px;height:14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          Download
+        </a>
+        @endif
+      </div>
     </div>
-    @endif
+  </div>
 
-    {{-- Product Detail --}}
-    <section class="py-14">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="grid gap-10 lg:grid-cols-2">
-                {{-- Image --}}
-                <div class="rounded-2xl bg-gradient-to-br from-slate-100 to-slate-50 aspect-square flex items-center justify-center overflow-hidden">
-                    @if($product->cover_image)
-                        <img src="{{ asset('storage/'.$product->cover_image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover rounded-2xl">
-                    @else
-                        <div class="flex flex-col items-center gap-3 text-slate-300">
-                            <svg class="h-20 w-20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-                            <p class="text-sm">Product Image Placeholder</p>
-                        </div>
-                    @endif
-                </div>
+  {{-- Full Description --}}
+  @if($product->full_description)
+  <div class="product-full-desc">
+    <h2>Product Details</h2>
+    <div class="prose">{!! $product->full_description !!}</div>
+  </div>
+  @endif
+</section>
 
-                {{-- Details --}}
-                <div class="flex flex-col">
-                    <div class="flex items-center gap-2 mb-2">
-                        <span class="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-700 capitalize">{{ $product->category }}</span>
-                        @if($product->platform)<span class="inline-flex items-center rounded-full bg-cyan-50 px-2.5 py-0.5 text-xs font-medium text-cyan-700">{{ $product->platform }}</span>@endif
-                        @if($product->version)<span class="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-500">v{{ $product->version }}</span>@endif
-                    </div>
+{{-- Related Products --}}
+@if($relatedProducts->isNotEmpty())
+<section class="related-products">
+  <h3>Related Products</h3>
+  <div class="related-grid">
+    @foreach($relatedProducts as $related)
+    <a href="{{ route('site.products.show', $related->slug) }}" wire:navigate class="related-card">
+      <div class="related-img">
+        @if($related->cover_image)<img src="{{ asset('storage/'.$related->cover_image) }}" alt="{{ $related->name }}">
+        @else<span style="font-family:var(--font-display);font-size:2rem;font-weight:800;color:rgba(0,184,219,0.3);">{{ strtoupper(substr($related->name,0,2)) }}</span>@endif
+      </div>
+      <div class="related-body">
+        <div class="related-name">{{ $related->name }}</div>
+        <div class="related-price">GHS {{ number_format($related->effective_price, 2) }}</div>
+      </div>
+    </a>
+    @endforeach
+  </div>
+</section>
+@endif
 
-                    <h1 class="text-3xl font-bold text-slate-900 mb-2">{{ $product->name }}</h1>
-                    @if($product->tagline)<p class="text-lg text-slate-500 mb-4">{{ $product->tagline }}</p>@endif
-                    @if($product->description)<p class="text-slate-600 mb-6 leading-relaxed">{{ $product->description }}</p>@endif
-
-                    {{-- Pricing --}}
-                    <div class="flex items-end gap-3 mb-6">
-                        @if($product->is_on_sale)
-                            <p class="text-2xl font-bold text-green-600">GHS {{ number_format($product->sale_price, 2) }}</p>
-                            <p class="text-lg text-slate-400 line-through mb-0.5">GHS {{ number_format($product->price, 2) }}</p>
-                            <span class="rounded-full bg-red-100 px-2 py-0.5 text-xs font-bold text-red-700">SALE</span>
-                        @else
-                            <p class="text-2xl font-bold text-slate-900">GHS {{ number_format($product->price, 2) }}</p>
-                        @endif
-                    </div>
-
-                    {{-- Actions --}}
-                    <div class="flex flex-wrap gap-3 mb-6">
-                        <button wire:click="openPurchase" class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 rounded-xl bg-cyan-600 px-6 py-3 text-sm font-semibold text-white hover:bg-cyan-700 transition-colors shadow-md shadow-cyan-500/25">
-                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-                            Buy Now
-                        </button>
-                        @if($product->demo_url)
-                        <a href="{{ $product->demo_url }}" target="_blank"
-                           class="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">
-                            Live Demo
-                        </a>
-                        @endif
-                        <a href="{{ route('site.book-demo') }}" wire:navigate
-                           class="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">
-                            Book a Demo
-                        </a>
-                    </div>
-
-                    {{-- Features --}}
-                    @if($product->features)
-                    <div class="rounded-xl bg-slate-50 p-4">
-                        <p class="text-xs font-semibold uppercase text-slate-500 mb-3">Key Features</p>
-                        <ul class="space-y-1.5">
-                            @foreach($product->features as $feature)
-                            <li class="flex items-start gap-2 text-sm text-slate-700">
-                                <svg class="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-                                {{ $feature }}
-                            </li>
-                            @endforeach
-                        </ul>
-                    </div>
-                    @endif
-
-                    @if($product->documentation_url)
-                    <a href="{{ $product->documentation_url }}" target="_blank" class="inline-flex items-center gap-1.5 mt-4 text-sm text-cyan-600 hover:underline">
-                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-                        View Documentation
-                    </a>
-                    @endif
-                </div>
-            </div>
-
-            {{-- Full Description --}}
-            @if($product->full_description)
-            <div class="mt-14 prose prose-slate max-w-none">
-                {!! $product->full_description !!}
-            </div>
-            @endif
-        </div>
-    </section>
-
-    {{-- Purchase Modal --}}
-    @if($showPurchaseModal)
-    <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div class="fixed inset-0 bg-slate-900/60" wire:click="$set('showPurchaseModal', false)"></div>
-        <div class="relative w-full max-w-md rounded-2xl bg-white shadow-2xl p-6">
-            <h3 class="text-base font-semibold text-slate-900 mb-1">Complete Purchase</h3>
-            <p class="text-sm text-slate-500 mb-4">{{ $product->name }} — GHS {{ number_format($product->effective_price, 2) }}</p>
-            <div class="space-y-3">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Full Name *</label>
-                    <input wire:model="buyerName" type="text" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
-                    @error('buyerName') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Email Address *</label>
-                    <input wire:model="buyerEmail" type="email" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
-                    @error('buyerEmail') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Phone</label>
-                    <input wire:model="buyerPhone" type="tel" placeholder="Optional" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Notes</label>
-                    <textarea wire:model="buyerNote" rows="2" placeholder="Any specific requirements..." class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 resize-none"></textarea>
-                </div>
-                <p class="text-xs text-slate-400">We'll send you payment instructions and your license key once the order is confirmed.</p>
-            </div>
-            <div class="flex gap-3 mt-4">
-                <button wire:click="purchase" class="flex-1 rounded-xl bg-cyan-600 py-2.5 text-sm font-semibold text-white hover:bg-cyan-700 transition-colors">Place Order</button>
-                <button wire:click="$set('showPurchaseModal', false)" class="flex-1 rounded-xl bg-slate-100 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-200 transition-colors">Cancel</button>
-            </div>
-        </div>
+{{-- Purchase Modal --}}
+@if($showPurchaseModal)
+<div class="modal-overlay">
+  <div class="modal-backdrop" wire:click="$set('showPurchaseModal', false)"></div>
+  <div class="modal-box">
+    <div class="modal-title">Complete Your Order</div>
+    <div class="modal-subtitle">{{ $product->name }} &mdash; GHS {{ number_format($product->effective_price, 2) }}</div>
+    <div class="form-group">
+      <label class="form-label">Full Name *</label>
+      <input wire:model="buyerName" type="text" class="form-input" placeholder="Your full name">
+      @error('buyerName') <p style="font-size:0.78rem;color:#dc2626;margin-top:0.35rem;">{{ $message }}</p> @enderror
     </div>
-    @endif
+    <div class="form-group">
+      <label class="form-label">Email Address *</label>
+      <input wire:model="buyerEmail" type="email" class="form-input" placeholder="your@email.com">
+      @error('buyerEmail') <p style="font-size:0.78rem;color:#dc2626;margin-top:0.35rem;">{{ $message }}</p> @enderror
+    </div>
+    <div class="form-group">
+      <label class="form-label">Phone</label>
+      <input wire:model="buyerPhone" type="tel" class="form-input" placeholder="Optional">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Notes</label>
+      <textarea wire:model="buyerNote" rows="2" class="form-input" placeholder="Any specific requirements..." style="resize:none;"></textarea>
+    </div>
+    <p class="form-note">We'll send you payment instructions and your license key once the order is confirmed.</p>
+    <div class="modal-actions">
+      <button wire:click="purchase" class="btn-modal-submit">Place Order</button>
+      <button wire:click="$set('showPurchaseModal', false)" class="btn-modal-cancel">Cancel</button>
+    </div>
+  </div>
+</div>
+@endif
+
 </div>

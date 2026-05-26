@@ -17,6 +17,9 @@ Route::prefix('')->name('')->group(function () {
     // ── Site pages ──────────────────────────────────────────────────────────
     Route::prefix('')->name('site.')->group(function () {
 
+        // About
+        Route::livewire('/about', 'pages::site.about')->name('about');
+
         // Products
         Route::livewire('/products', 'pages::site.products')->name('products');
         Route::livewire('/products/{slug}', 'pages::site.product-detail')->name('products.show');
