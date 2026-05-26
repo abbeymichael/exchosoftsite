@@ -16,6 +16,10 @@ class License extends Model
     protected $fillable = [
         'uuid',
         'product_id',
+        'shop_product_id',
+        'shop_order_id',
+        'buyer_email',
+        'buyer_name',
         'customer_id',
         'batch_id',
         'license_key',
@@ -65,6 +69,16 @@ class License extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function shopProduct(): BelongsTo
+    {
+        return $this->belongsTo(ShopProduct::class);
+    }
+
+    public function shopOrder(): BelongsTo
+    {
+        return $this->belongsTo(Order::class, 'shop_order_id');
     }
 
     public function customer(): BelongsTo

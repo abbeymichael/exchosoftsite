@@ -35,16 +35,12 @@ new #[Layout('layouts.site')] #[Title('Case Studies — Exchosoft Consult')] cla
   .listing-body{padding:4rem 6rem;}
   @media(max-width:1024px){.page-banner-content{padding:3rem 2rem;}.listing-body{padding:2.5rem 2rem;}}
 </style>
-<div class="page-banner">
-  <div class="page-banner-dots"></div>
-  <div class="page-banner-glow"></div>
-  <div class="page-banner-content">
-    <div class="page-banner-crumb"><a href="{{ route('home') }}" wire:navigate>Home</a><span class="sep">/</span><span class="ccurrent">Case Studies</span></div>
-    <div class="page-banner-tag">Proof of Impact</div>
-    <h1>Real Results from <em>Real Businesses</em></h1>
-    <p class="page-banner-sub">In-depth stories of how Exchosoft systems have transformed operations, increased revenue, and solved genuine problems across our markets.</p>
-  </div>
-</div>
+<x-page-banner
+    tag="Proof of Impact"
+    title="Real Results from **Real Businesses**"
+    subtitle="In-depth stories of how Exchosoft systems have transformed operations, increased revenue, and solved genuine problems across our markets."
+    :breadcrumbs="[['label'=>'Home','route'=>'home'],['label'=>'Case Studies']]"
+/>
     <section class="listing-body">
 
     <section class="py-14">

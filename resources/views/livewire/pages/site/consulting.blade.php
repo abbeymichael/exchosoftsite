@@ -132,21 +132,12 @@ new #[Layout('layouts.site')] #[Title('Consulting & Services — Exchosoft Consu
 </style>
 
 <!-- BANNER -->
-<div class="page-banner">
-  <div class="page-banner-dots"></div>
-  <div class="page-banner-glow"></div>
-  <div class="page-banner-content">
-    <div class="page-banner-crumb">
-      <a href="{{ route('home') }}" wire:navigate>Home</a>
-      <span class="sep">/</span>
-      <span class="cdot"></span>
-      <span class="ccurrent">Consulting</span>
-    </div>
-    <div class="page-banner-tag">Services</div>
-    <h1>Technology Consulting Built on <em>Real Experience</em></h1>
-    <p class="page-banner-sub">Strategic guidance and custom development for businesses that need technology that actually works — not theory, not templates, not compromises.</p>
-  </div>
-</div>
+<x-page-banner
+    tag="Services"
+    title="Technology Consulting Built on **Real Experience**"
+    subtitle="Strategic guidance and custom development for businesses that need technology that actually works — not theory, not templates, not compromises."
+    :breadcrumbs="[['label'=>'Home','route'=>'home'],['label'=>'Consulting & Services']]"
+/>
 
 <!-- INTRO / SERVICES -->
 <section class="consult-body">

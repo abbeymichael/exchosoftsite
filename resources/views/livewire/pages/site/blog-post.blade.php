@@ -22,15 +22,17 @@ new #[Layout('layouts.site')] class extends Component
 }; ?>
 
 <div>
-    <div class="bg-slate-50 border-b border-slate-100">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3">
-            <nav class="flex items-center gap-2 text-xs text-slate-500">
-                <a href="{{ route('home') }}" wire:navigate>Home</a><span>/</span>
-                <a href="{{ route('site.blog') }}" wire:navigate>Blog</a><span>/</span>
-                <span class="text-slate-900 font-medium line-clamp-1">{{ $post->title }}</span>
-            </nav>
-        </div>
-    </div>
+    <x-page-banner
+        height="sm"
+        :title="$post->title"
+        :subtitle="$post->excerpt ?? null"
+        :tag="$post->category ? ucfirst($post->category) : 'Blog'"
+        :breadcrumbs="[
+            ['label'=>'Home','route'=>'home'],
+            ['label'=>'Blog','route'=>'site.blog'],
+            ['label'=>$post->title],
+        ]"
+    />
     <article class="py-14">
         <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
             {{-- Meta --}}

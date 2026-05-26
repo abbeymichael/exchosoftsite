@@ -4,6 +4,8 @@ use App\Models\BlogPost;
 use App\Models\CaseStudy;
 use App\Models\PortfolioItem;
 use App\Models\ShopProduct;
+use App\Models\SiteSetting;
+use Illuminate\Support\HtmlString;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -17,7 +19,67 @@ new #[Layout('layouts.site')] #[Title('Exchosoft Consult — Software Developmen
         $featuredCases    = CaseStudy::published()->featured()->limit(3)->get();
         $featuredWork     = PortfolioItem::published()->featured()->orderBy('sort_order')->limit(4)->get();
 
-        return view('livewire.pages.site.home', compact('featuredProducts', 'latestPosts', 'featuredCases', 'featuredWork'));
+        // Load all homepage settings from DB — getGroup() already decodes JSON fields to arrays
+        $s = SiteSetting::getGroup('homepage');
+
+        // Helper: ensure a value is an array (for JSON fields that are already decoded)
+        $arr = fn($key, $default = []) => isset($s[$key]) && is_array($s[$key]) ? $s[$key] : $default;
+
+        $cms = [
+            // Hero
+            'hero_tag'           => $s['home_hero_tag'] ?? 'Ghana-Based · Africa · Caribbean · Diaspora',
+            'hero_title_raw'     => $s['home_hero_title'] ?? 'Technology Consultancy Built on **Real-World** Experience',
+            'hero_subtitle'      => $s['home_hero_subtitle'] ?? "We're a software development and consultancy firm serving Black businesses across Africa, the Caribbean, and the diaspora.",
+            'hero_btn_primary'   => $s['home_hero_btn_primary_label'] ?? 'Talk to Us',
+            'hero_btn_secondary' => $s['home_hero_btn_secondary_label'] ?? 'Our Products',
+            // Stats (already decoded array from getGroup)
+            'stats' => $arr('home_stats', [
+                ['num' => '10+',     'label' => 'Industries served'],
+                ['num' => '3',       'label' => 'Continents reached'],
+                ['num' => '100%',    'label' => 'Custom-built solutions'],
+                ['num' => 'Offline', 'label' => 'First architecture'],
+            ]),
+            // About
+            'about_tag'     => $s['home_about_tag'] ?? 'Who We Are',
+            'about_title'   => $s['home_about_title'] ?? 'Built for the Conditions You Actually Operate In',
+            'about_content' => $s['home_about_content'] ?? '',  // raw markdown string
+            'about_cards'   => $arr('home_about_cards', [
+                ['title' => 'Intermittent connectivity', 'body' => 'We build systems that keep working when the internet drops.'],
+                ['title' => 'Power challenges',          'body' => 'Offline-first architecture means no data is lost during outages.'],
+                ['title' => 'Mobile-first users',        'body' => 'Designed from the ground up for how your customers actually access technology.'],
+                ['title' => 'Local payment systems',     'body' => 'Integrated with the payment infrastructure your market already uses.'],
+            ]),
+            // Products
+            'products_tag'   => $s['home_products_tag'] ?? 'Our Software',
+            'products_title' => $s['home_products_title'] ?? 'Products Built for African Businesses',
+            // Approach
+            'approach_tag'   => $s['home_approach_tag'] ?? 'Our Approach',
+            'approach_title' => $s['home_approach_title'] ?? "What We've Learned Building Software Across Industries",
+            'approach_cards' => $arr('home_approach_cards', []),
+            // Industries
+            'industries_tag'   => $s['home_industries_tag'] ?? 'Experience',
+            'industries_title' => $s['home_industries_title'] ?? "Industries We've Served",
+            'industries_cards' => $arr('home_industries_cards', []),
+            // Why Us
+            'why_tag'   => $s['home_why_tag'] ?? 'Why Exchosoft',
+            'why_title' => $s['home_why_title'] ?? 'The Exchosoft Difference',
+            'why_items' => $arr('home_why_items', []),
+            // Trust
+            'trust_tag'     => $s['home_trust_tag'] ?? 'Trusted By',
+            'trust_title'   => $s['home_trust_title'] ?? 'Organisations That Trust Exchosoft',
+            'trust_subtitle'=> $s['home_trust_subtitle'] ?? '',
+            'trust_clients' => $arr('home_trust_clients', ['Healthcare Facilities','Church Networks','Laundry Businesses','Financial Institutions']),
+            // CTA
+            'cta_title'      => $s['home_cta_title'] ?? 'Ready to Build Something That Actually Works?',
+            'cta_subtitle'   => $s['home_cta_subtitle'] ?? "Tell us what you need. We'll tell you honestly if we can build it.",
+            'cta_btn'        => $s['home_cta_btn'] ?? 'Start a Conversation',
+            'cta_email_note' => $s['home_cta_email_note'] ?? '',
+            // Demo CTA
+            'demo_cta_title'    => $s['home_demo_cta_title'] ?? 'See Our Software in Action',
+            'demo_cta_subtitle' => $s['home_demo_cta_subtitle'] ?? "Book a live demonstration and see how our platforms handle your specific industry's challenges.",
+        ];
+
+        return view('livewire.pages.site.home', compact('featuredProducts', 'latestPosts', 'featuredCases', 'featuredWork', 'cms'));
     }
 }; ?>
 
@@ -305,6 +367,27 @@ new #[Layout('layouts.site')] #[Title('Exchosoft Consult — Software Developmen
   .hero-buttons { animation-delay: 0.4s; }
   .hero-logo-wrap { animation: fadeUp 0.9s 0.3s ease both; }
 
+  /* CMS Markdown Prose */
+  .cms-prose { margin-top: 1rem; }
+  .cms-prose p  { font-size: 1rem; color: var(--text-secondary); line-height: 1.8; margin-bottom: 0.9rem; }
+  .cms-prose h1,.cms-prose h2,.cms-prose h3 {
+    font-family: var(--font-display); font-weight: 700; color: var(--navy);
+    margin: 1.25rem 0 0.5rem; letter-spacing: -0.02em;
+  }
+  .cms-prose h2 { font-size: 1.2rem; }
+  .cms-prose h3 { font-size: 1rem; }
+  .cms-prose strong { color: var(--navy); font-weight: 700; }
+  .cms-prose em { color: var(--cyan); font-style: normal; font-weight: 600; }
+  .cms-prose ul { list-style: none; padding: 0; margin: 0.5rem 0 1rem; }
+  .cms-prose ul li { font-size: 0.9rem; color: var(--text-secondary); padding: 0.2rem 0;
+    display: flex; align-items: flex-start; gap: 0.5rem; line-height: 1.6; }
+  .cms-prose ul li::before { content: ''; width: 5px; height: 5px; border-radius: 50%;
+    background: var(--cyan); flex-shrink: 0; margin-top: 0.45rem; }
+  .cms-prose ol { padding-left: 1.5rem; margin: 0.5rem 0 1rem; }
+  .cms-prose ol li { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.3rem; line-height: 1.6; }
+  .cms-prose blockquote { border-left: 3px solid var(--cyan); padding-left: 1rem;
+    margin: 1rem 0; color: var(--text-muted); font-style: italic; }
+
   @media (max-width: 1024px) {
     .home-section { padding: 4rem 2rem; }
     .home-hero { grid-template-columns: 1fr; }
@@ -318,17 +401,27 @@ new #[Layout('layouts.site')] #[Title('Exchosoft Consult — Software Developmen
   }
 </style>
 
+@php
+  use App\Models\SiteSetting;
+  // Parse **word** → <em>word</em> for hero highlight
+  $heroTitle = preg_replace('/\*\*(.+?)\*\*/', '<em>$1</em>', e($cms['hero_title_raw']));
+  // Render about content as proper markdown HTML
+  $aboutMarkdownHtml = $cms['about_content']
+      ? SiteSetting::renderMarkdown($cms['about_content'])
+      : null;
+@endphp
+
 <!-- HERO -->
 <section class="home-hero">
   <div class="hero-bg-pattern"></div>
   <div class="hero-grid-lines"></div>
   <div class="hero-content">
-    <div class="hero-tag"><span></span> Ghana-Based · Africa · Caribbean · Diaspora</div>
-    <h1 class="hero-h1">Technology Consultancy Built on <em>Real-World</em> Experience</h1>
-    <p class="hero-sub">We're a software development and consultancy firm serving Black businesses across Africa, the Caribbean, and the diaspora—building custom solutions that work in your reality, not just in theory.</p>
+    <div class="hero-tag"><span></span> {{ $cms['hero_tag'] }}</div>
+    <h1 class="hero-h1">{!! $heroTitle !!}</h1>
+    <p class="hero-sub">{{ $cms['hero_subtitle'] }}</p>
     <div class="hero-buttons">
-      <a class="btn-primary-cyan" href="{{ route('site.book-demo') }}" wire:navigate>Talk to Us</a>
-      <a class="btn-secondary-outline" href="{{ route('site.products') }}" wire:navigate>Our Products</a>
+      <a class="btn-primary-cyan" href="{{ route('site.book-demo') }}" wire:navigate>{{ $cms['hero_btn_primary'] }}</a>
+      <a class="btn-secondary-outline" href="{{ route('site.products') }}" wire:navigate>{{ $cms['hero_btn_secondary'] }}</a>
     </div>
   </div>
   <div class="hero-visual">
@@ -344,45 +437,38 @@ new #[Layout('layouts.site')] #[Title('Exchosoft Consult — Software Developmen
 </section>
 
 <!-- STATS BAR -->
-<div class="stats-bar">
+<div class="stats-bar" style="grid-template-columns: repeat({{ count($cms['stats']) }}, 1fr);">
+  @foreach($cms['stats'] as $stat)
   <div class="stat">
-    <div class="stat-num">10+</div>
-    <div class="stat-label">Industries served</div>
+    <div class="stat-num">{{ $stat['num'] ?? '' }}</div>
+    <div class="stat-label">{{ $stat['label'] ?? '' }}</div>
   </div>
-  <div class="stat">
-    <div class="stat-num">3</div>
-    <div class="stat-label">Continents reached</div>
-  </div>
-  <div class="stat">
-    <div class="stat-num">100%</div>
-    <div class="stat-label">Custom-built solutions</div>
-  </div>
-  <div class="stat">
-    <div class="stat-num">Offline</div>
-    <div class="stat-label">First architecture</div>
-  </div>
+  @endforeach
 </div>
 
 <!-- WHO WE ARE -->
 <section class="home-section intro-section" id="about">
   <div class="intro-text">
-    <p class="section-tag-label">Who We Are</p>
-    <h2 class="section-h2">Built for the Conditions You Actually Operate In</h2>
-    <p>Exchosoft Consult is a Ghana-based technology consultancy and software development company. We've built systems for churches, hospitals, pharmacies, laboratories, laundries, heritage organizations, and more—each one custom-designed for that specific business.</p>
-    <p>We understand the conditions our clients operate in because we're here too.</p>
+    <p class="section-tag-label">{{ $cms['about_tag'] }}</p>
+    <h2 class="section-h2">{{ $cms['about_title'] }}</h2>
+    @if($aboutMarkdownHtml)
+      <div class="cms-prose intro-md">{!! $aboutMarkdownHtml !!}</div>
+    @else
+      <p>Exchosoft Consult is a Ghana-based technology consultancy and software development company. We've built systems for churches, hospitals, pharmacies, laboratories, laundries, heritage organizations, and more—each one custom-designed for that specific business.</p>
+      <p>We understand the conditions our clients operate in because we're here too.</p>
+    @endif
   </div>
   <div class="intro-cards">
-    <div class="reality-card"><strong>Intermittent connectivity</strong>We build systems that keep working when the internet drops.</div>
-    <div class="reality-card"><strong>Power challenges</strong>Offline-first architecture means no data is lost during outages.</div>
-    <div class="reality-card"><strong>Mobile-first users</strong>Designed from the ground up for how your customers actually access technology.</div>
-    <div class="reality-card"><strong>Local payment systems</strong>Integrated with the payment infrastructure your market already uses.</div>
+    @foreach($cms['about_cards'] as $card)
+    <div class="reality-card"><strong>{{ $card['title'] ?? '' }}</strong>{{ $card['body'] ?? '' }}</div>
+    @endforeach
   </div>
 </section>
 
 <!-- FEATURED PRODUCTS -->
 <section class="home-section products-preview" id="products">
-  <p class="section-tag-label">Our Software</p>
-  <h2 class="section-h2">Products Built for African Businesses</h2>
+  <p class="section-tag-label">{{ $cms['products_tag'] }}</p>
+  <h2 class="section-h2">{{ $cms['products_title'] }}</h2>
 
   @if($featuredProducts->isNotEmpty())
   <div class="products-grid">
@@ -416,7 +502,7 @@ new #[Layout('layouts.site')] #[Title('Exchosoft Consult — Software Developmen
     @endforeach
   </div>
   @else
-  {{-- Placeholder cards showing our actual products --}}
+  {{-- Placeholder cards —show our actual products --}}
   <div class="products-grid">
     @foreach([
       ['WashOps', 'wash', 'Complete Laundry Management System', 'Enterprise-grade desktop POS with analytics, kanban orders board, and cloud sync.'],
@@ -448,143 +534,114 @@ new #[Layout('layouts.site')] #[Title('Exchosoft Consult — Software Developmen
 
 <!-- OUR APPROACH -->
 <section class="home-section approach-section" id="approach">
-  <p class="section-tag-label">Our Approach</p>
-  <h2 class="section-h2 section-h2-light">What We've Learned Building Software Across Industries</h2>
+  <p class="section-tag-label">{{ $cms['approach_tag'] }}</p>
+  <h2 class="section-h2 section-h2-light">{{ $cms['approach_title'] }}</h2>
+  @php
+    $approachIcons = [
+      'grid'    => '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>',
+      'offline' => '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg>',
+      'data'    => '<svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/></svg>',
+      'lan'     => '<svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>',
+      'shield'  => '<svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+      'partner' => '<svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>',
+    ];
+    $defaultIcons = array_values($approachIcons);
+  @endphp
   <div class="approach-grid">
-    <div class="approach-card">
-      <div class="approach-icon">
-        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    @if(count($cms['approach_cards']) > 0)
+      @foreach($cms['approach_cards'] as $idx => $card)
+      <div class="approach-card">
+        <div class="approach-icon">
+          {!! $approachIcons[$card['icon'] ?? ''] ?? $defaultIcons[$idx % count($defaultIcons)] !!}
+        </div>
+        <h3>{{ $card['title'] ?? '' }}</h3>
+        <p>{{ $card['body'] ?? '' }}</p>
       </div>
-      <h3>Every Business Needs Its Own Solution</h3>
-      <p>Off-the-shelf software forces unacceptable compromises. Each business has unique workflows, and they deserve technology built specifically for how they operate.</p>
-    </div>
-    <div class="approach-card">
-      <div class="approach-icon">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg>
+      @endforeach
+    @else
+      {{-- fallback static --}}
+      @foreach([
+        ['grid','Every Business Needs Its Own Solution','Off-the-shelf software forces unacceptable compromises.'],
+        ['offline','Offline-First When It Matters','Automatic cloud sync when online. Full functionality when offline.'],
+        ['data','Unified Systems, Clear Insights','Cohesive systems with management visibility and actionable analytics.'],
+        ['lan','LAN Collaboration','Real-time collaboration even when external connectivity fails.'],
+        ['shield','Security & Reliability','Security baked in — not bolted on — for every client.'],
+        ['partner','Long-Term Partnership','Systems that grow with your business. We stay involved.'],
+      ] as [$icon, $title, $body])
+      <div class="approach-card">
+        <div class="approach-icon">{!! $approachIcons[$icon] !!}</div>
+        <h3>{{ $title }}</h3><p>{{ $body }}</p>
       </div>
-      <h3>Offline-First When It Matters</h3>
-      <p>We pioneered offline-first architecture for clients who can't afford downtime — hospitals, pharmacies, churches — with automatic cloud sync when online.</p>
-    </div>
-    <div class="approach-card">
-      <div class="approach-icon">
-        <svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/></svg>
-      </div>
-      <h3>Unified Systems, Clear Insights</h3>
-      <p>We unify business workflows into cohesive systems that give management complete visibility and analytics that clearly identify where improvements are needed.</p>
-    </div>
-    <div class="approach-card">
-      <div class="approach-icon">
-        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-      </div>
-      <h3>LAN Collaboration</h3>
-      <p>For businesses with multiple locations or devices, we implement local network capabilities — real-time collaboration even when external connectivity fails.</p>
-    </div>
-    <div class="approach-card">
-      <div class="approach-icon">
-        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      </div>
-      <h3>Security & Reliability</h3>
-      <p>From financial institutions to healthcare providers, we build with security baked in — not bolted on — because your clients' data deserves that standard.</p>
-    </div>
-    <div class="approach-card">
-      <div class="approach-icon">
-        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-      </div>
-      <h3>Long-Term Partnership</h3>
-      <p>We're not just building software — we're building systems that grow with your business and adapt as your needs change. We stay involved.</p>
-    </div>
+      @endforeach
+    @endif
   </div>
 </section>
 
 <!-- INDUSTRIES -->
 <section class="home-section industries-section" id="industries">
-  <p class="section-tag-label">Experience</p>
-  <h2 class="section-h2">Industries We've Served</h2>
+  <p class="section-tag-label">{{ $cms['industries_tag'] }}</p>
+  <h2 class="section-h2">{{ $cms['industries_title'] }}</h2>
   <div class="industries-grid">
-    <div class="industry-card">
-      <div class="industry-dot"></div>
-      <h3>Healthcare & Medical</h3>
-      <p>Hospital management systems, pharmacy solutions, and laboratory platforms — offline-first, designed to work when connectivity doesn't.</p>
-    </div>
-    <div class="industry-card">
-      <div class="industry-dot"></div>
-      <h3>Faith-Based Organizations</h3>
-      <p>Comprehensive management systems for churches covering membership, events, donations, and complete financial transparency.</p>
-    </div>
-    <div class="industry-card">
-      <div class="industry-dot"></div>
-      <h3>Service Industries</h3>
-      <p>From laundry management to operational platforms — tracking orders, managing workflows, and handling billing seamlessly.</p>
-    </div>
-    <div class="industry-card">
-      <div class="industry-dot"></div>
-      <h3>Heritage & Cultural</h3>
-      <p>Partnering with Black History Walks and African Odysseys, building platforms for cultural preservation and diaspora engagement.</p>
-    </div>
-    <div class="industry-card">
-      <div class="industry-dot"></div>
-      <h3>Financial Services</h3>
-      <p>Working with institutions like Ghana Union Assurance, building secure, reliable financial systems that meet institutional standards.</p>
-    </div>
-    <div class="industry-card">
-      <div class="industry-dot"></div>
-      <h3>Cross-Continental Initiatives</h3>
-      <p>Supporting the African Caribbean Summit and ACIS — technology that bridges communities across continents.</p>
-    </div>
+    @if(count($cms['industries_cards']) > 0)
+      @foreach($cms['industries_cards'] as $card)
+      <div class="industry-card">
+        <div class="industry-dot"></div>
+        <h3>{{ $card['title'] ?? '' }}</h3>
+        <p>{{ $card['body'] ?? '' }}</p>
+      </div>
+      @endforeach
+    @else
+      @foreach([
+        ['Healthcare & Medical','Hospital management systems, pharmacy solutions, and laboratory platforms — offline-first.'],
+        ['Faith-Based Organizations','Comprehensive management systems for churches covering membership, events, and finances.'],
+        ['Laundry & Service Industries','End-to-end business management with order tracking and customer management.'],
+        ['Heritage & Cultural','Digital preservation and management tools for cultural organizations and archives.'],
+        ['Financial Services','Secure financial management systems with loan tracking, savings, and reporting.'],
+        ['Retail & Distribution','Inventory, POS, and supply chain systems built for African markets.'],
+      ] as [$title, $body])
+      <div class="industry-card"><div class="industry-dot"></div><h3>{{ $title }}</h3><p>{{ $body }}</p></div>
+      @endforeach
+    @endif
   </div>
 </section>
 
 <!-- WHY US -->
 <section class="home-section why-section">
-  <p class="section-tag-label">Why Exchosoft</p>
-  <h2 class="section-h2 section-h2-light">Why Work With Us</h2>
+  <p class="section-tag-label">{{ $cms['why_tag'] }}</p>
+  <h2 class="section-h2 section-h2-light">{{ $cms['why_title'] }}</h2>
   <div class="why-grid">
-    <div class="why-item">
-      <div class="why-bar"></div>
-      <div>
-        <h3>We Build What You Actually Need</h3>
-        <p>Not what we think you should need. Not what worked for someone else. We listen, understand your operations, and build specifically for you.</p>
+    @if(count($cms['why_items']) > 0)
+      @foreach($cms['why_items'] as $item)
+      <div class="why-item">
+        <div class="why-bar"></div>
+        <div>
+          <h3>{{ $item['title'] ?? '' }}</h3>
+          <p>{{ $item['body'] ?? '' }}</p>
+        </div>
       </div>
-    </div>
-    <div class="why-item">
-      <div class="why-bar"></div>
-      <div>
-        <h3>We Understand Your Context</h3>
-        <p>From Lagos to London, Accra to Atlanta, Kingston to Kumasi — we understand the infrastructure challenges and operational conditions of doing business across our markets.</p>
-      </div>
-    </div>
-    <div class="why-item">
-      <div class="why-bar"></div>
-      <div>
-        <h3>We've Done This Before</h3>
-        <p>Our experience across healthcare, faith organizations, service industries, heritage preservation, and financial services means proven expertise with full customization.</p>
-      </div>
-    </div>
-    <div class="why-item">
-      <div class="why-bar"></div>
-      <div>
-        <h3>We Think Long-Term</h3>
-        <p>We're not just building software — we're building systems that will grow with your business and adapt as your needs change over time.</p>
-      </div>
-    </div>
+      @endforeach
+    @else
+      @foreach([
+        ['Built Here, For Here','We operate in the same environment as our clients.'],
+        ['No Generic Solutions','Every engagement starts from scratch.'],
+        ['Offline-First by Default','No data loss through power outages and internet disruptions.'],
+        ['Long-Term Relationships','We stay involved, providing support and evolution as you grow.'],
+      ] as [$title, $body])
+      <div class="why-item"><div class="why-bar"></div><div><h3>{{ $title }}</h3><p>{{ $body }}</p></div></div>
+      @endforeach
+    @endif
   </div>
 </section>
 
 <!-- TRUST -->
 <section class="home-section trust-section">
-  <p class="section-tag-label">Organizations We've Worked With</p>
-  <h2 class="section-h2">Trusted Across Industries</h2>
-  <p class="trust-sub">Proud to have partnered with organizations across Africa, the Caribbean, and the diaspora.</p>
+  <p class="section-tag-label">{{ $cms['trust_tag'] }}</p>
+  <h2 class="section-h2">{{ $cms['trust_title'] }}</h2>
+  @if($cms['trust_subtitle'])<p class="trust-sub">{{ $cms['trust_subtitle'] }}</p>@endif
   <div class="clients-wrap">
-    <div class="client-pill">Black History Walks</div>
-    <div class="client-pill">African Odysseys</div>
-    <div class="client-pill">African Caribbean Summit</div>
-    <div class="client-pill">Ghana Union Assurance</div>
-    <div class="client-pill">ACIS</div>
-    <div class="client-pill">Churches across West Africa</div>
-    <div class="client-pill">Hospitals & Pharmacies</div>
-    <div class="client-pill">Laboratories</div>
-    <div class="client-pill">SMEs</div>
+    @foreach($cms['trust_clients'] as $client)
+    <div class="client-pill">{{ $client }}</div>
+    @endforeach
   </div>
 </section>
 
@@ -620,8 +677,8 @@ new #[Layout('layouts.site')] #[Title('Exchosoft Consult — Software Developmen
 
 <!-- DEMO CTA -->
 <section class="demo-cta">
-  <h2>See Our Products in Action</h2>
-  <p>Book a personalized demo and see how Exchosoft products can transform your business operations.</p>
+  <h2>{{ $cms['demo_cta_title'] }}</h2>
+  <p>{{ $cms['demo_cta_subtitle'] }}</p>
   <a href="{{ route('site.book-demo') }}" wire:navigate class="btn-primary-cyan">
     Book a Free Demo
   </a>
@@ -629,10 +686,12 @@ new #[Layout('layouts.site')] #[Title('Exchosoft Consult — Software Developmen
 
 <!-- MAIN CTA -->
 <section class="home-cta" id="cta">
-  <h2>Let's Talk About Your Business</h2>
-  <p>Every business is different. Every challenge is unique. Let's discuss what you're trying to achieve and explore how we can build technology that actually fits your operations.</p>
-  <a class="btn-white-cta" href="{{ route('site.consulting') }}" wire:navigate>Schedule a Consultation</a>
-  <span class="cta-email-note">Or email us directly at <a href="mailto:contact@exchosoft.com">contact@exchosoft.com</a></span>
+  <h2>{{ $cms['cta_title'] }}</h2>
+  <p>{{ $cms['cta_subtitle'] }}</p>
+  <a class="btn-white-cta" href="{{ route('site.book-demo') }}" wire:navigate>{{ $cms['cta_btn'] }}</a>
+  @if($cms['cta_email_note'])
+  <span class="cta-email-note">{{ $cms['cta_email_note'] }}</span>
+  @endif
 </section>
 
 </div>
