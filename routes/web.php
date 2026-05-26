@@ -100,6 +100,10 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     // Overview
     Route::livewire('/dashboard', 'pages::admin.dashboard')->name('dashboard');
 
+    // ── Page Editors ───────────────────────────────────────────────────────
+    Route::livewire('/homepage-editor', 'pages::admin.homepage-editor')->name('homepage-editor');
+    Route::livewire('/product-page-editor', 'pages::admin.product-page-editor')->name('product-page-editor');
+
     // ── Website Management ─────────────────────────────────────────────────
     Route::livewire('/shop-products', 'pages::admin.shop-products')->name('shop-products');
     Route::livewire('/orders', 'pages::admin.orders')->name('orders');

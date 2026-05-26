@@ -288,6 +288,9 @@ new #[Layout('layouts.admin')] #[Title('Shop Products — ExchoSoft')] class ext
 
     {{-- Slide-over Form --}}
     @if($showForm)
+    {{-- EasyMDE for markdown editing --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
     <div class="fixed inset-0 z-50 flex">
         <div class="fixed inset-0 bg-slate-900/50" wire:click="$set('showForm', false)"></div>
         <div class="relative ml-auto w-full max-w-xl bg-white shadow-2xl flex flex-col h-full overflow-y-auto">
@@ -387,9 +390,12 @@ new #[Layout('layouts.admin')] #[Title('Shop Products — ExchoSoft')] class ext
                     <div class="col-span-2">
                         <label class="block text-xs font-semibold text-slate-600 mb-1">
                             Full Description
-                            <span class="text-slate-400 font-normal ml-1">(HTML supported)</span>
+                            <span class="text-slate-400 font-normal ml-1">(Markdown supported)</span>
                         </label>
-                        <textarea wire:model="full_description" rows="6" placeholder="&lt;p&gt;Detailed product description...&lt;/p&gt;" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 resize-y font-mono text-xs"></textarea>
+                        <textarea id="product-full-desc-editor" wire:model="full_description" rows="8"
+                            placeholder="## Product Overview&#10;&#10;Write a detailed description with **bold**, _italic_, ## headings, - lists..."
+                            class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 resize-y font-mono text-xs"></textarea>
+                        <p class="text-xs text-slate-400 mt-1">Markdown will be rendered on the product detail page.</p>
                     </div>
                     <div class="col-span-2 flex flex-wrap gap-4 pt-1">
                         <label class="flex items-center gap-2 cursor-pointer">
@@ -398,14 +404,38 @@ new #[Layout('layouts.admin')] #[Title('Shop Products — ExchoSoft')] class ext
                         </label>
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input wire:model="is_featured" type="checkbox" class="rounded border-slate-300 text-cyan-600">
-                            <span class="text-sm text-slate-700">Featured</span>
+                            <span class="text-sm text-slate-700">Featured on Homepage</span>
                         </label>
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input wire:model="requires_license" type="checkbox" class="rounded border-slate-300 text-cyan-600">
-                            <span class="text-sm text-slate-700">Requires License</span>
+                            <span class="text-sm text-slate-700">Requires License Key</span>
                         </label>
                     </div>
                 </div>
+                <script>
+                    document.addEventListener('livewire:initialized', function() {
+                        initMDE();
+                    });
+                    document.addEventListener('livewire:navigated', function() {
+                        initMDE();
+                    });
+                    function initMDE() {
+                        const el = document.getElementById('product-full-desc-editor');
+                        if (el && !el._mde) {
+                            el._mde = new EasyMDE({
+                                element: el,
+                                spellChecker: false,
+                                autosave: false,
+                                minHeight: '160px',
+                                toolbar: ['bold','italic','heading','|','quote','unordered-list','ordered-list','|','link','image','|','preview','guide'],
+                            });
+                            el._mde.codemirror.on('change', function() {
+                                @this.set('full_description', el._mde.value());
+                            });
+                        }
+                    }
+                    setTimeout(initMDE, 200);
+                </script>
                 <div class="flex gap-3 pt-2 border-t border-slate-100 sticky bottom-0 bg-white pb-2">
                     <button type="submit" class="flex-1 rounded-xl bg-cyan-600 py-2.5 text-sm font-semibold text-white hover:bg-cyan-700 transition-colors">
                         {{ $editMode ? 'Update Product' : 'Create Product' }}

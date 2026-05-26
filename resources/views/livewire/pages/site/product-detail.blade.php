@@ -460,11 +460,36 @@ new #[Layout('layouts.site')] class extends Component
     </div>
   </div>
 
-  {{-- Full Description --}}
+  {{-- Full Description (Markdown rendered) --}}
   @if($product->full_description)
+  @php
+    // Simple markdown-to-HTML conversion for safe rendering
+    $md = $product->full_description;
+    // Use Str helper for basic markdown rendering or just nl2br
+    // We'll use a simple conversion here since no markdown package is required
+    $mdHtml = $md;
+    // Headings
+    $mdHtml = preg_replace('/^### (.+)$/m', '<h3>$1</h3>', $mdHtml);
+    $mdHtml = preg_replace('/^## (.+)$/m', '<h2>$1</h2>', $mdHtml);
+    $mdHtml = preg_replace('/^# (.+)$/m', '<h1>$1</h1>', $mdHtml);
+    // Bold / italic
+    $mdHtml = preg_replace('/\*\*(.+?)\*\*/', '<strong>$1</strong>', $mdHtml);
+    $mdHtml = preg_replace('/_(.+?)_/', '<em>$1</em>', $mdHtml);
+    // Unordered lists
+    $mdHtml = preg_replace('/^[-*] (.+)$/m', '<li>$1</li>', $mdHtml);
+    $mdHtml = preg_replace('/(<li>.*<\/li>)/s', '<ul>$1</ul>', $mdHtml);
+    // Paragraphs: wrap double-newline blocks
+    $paras = array_filter(preg_split('/\n{2,}/', $mdHtml));
+    $mdHtml = implode("\n", array_map(function($p) {
+        $p = trim($p);
+        if (preg_match('/^<(h[1-6]|ul|ol|li)/', $p)) return $p;
+        return "<p>{$p}</p>";
+    }, $paras));
+    $mdHtml = nl2br($mdHtml);
+  @endphp
   <div class="product-full-desc">
     <h2>Product Details</h2>
-    <div class="prose">{!! $product->full_description !!}</div>
+    <div class="prose">{!! $mdHtml !!}</div>
   </div>
   @endif
 </section>

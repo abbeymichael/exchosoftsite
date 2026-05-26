@@ -1,6 +1,9 @@
 <?php
 
+use App\Models\License;
 use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\Product;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -37,12 +40,110 @@ new #[Layout('layouts.admin')] #[Title('Orders — ExchoSoft')] class extends Co
 
     public function markPaid(int $id): void
     {
-        Order::findOrFail($id)->update([
+        $order = Order::with('items.shopProduct')->findOrFail($id);
+        $order->update([
             'payment_status' => 'paid',
             'status'         => 'processing',
             'paid_at'        => now(),
         ]);
-        session()->flash('success', 'Order marked as paid.');
+
+        // Auto-generate licenses for license products
+        $this->autoGenerateLicenses($order);
+
+        session()->flash('success', 'Order marked as paid. Licenses generated for eligible products.');
+    }
+
+    public function generateLicenses(int $orderId): void
+    {
+        $order = Order::with(['items.shopProduct', 'customerUser'])->findOrFail($orderId);
+
+        if ($order->payment_status !== 'paid') {
+            session()->flash('error', 'Can only generate licenses for paid orders.');
+            return;
+        }
+
+        $generated = $this->autoGenerateLicenses($order);
+
+        if ($generated === 0) {
+            session()->flash('info', 'No eligible license products found in this order, or licenses already generated.');
+        } else {
+            session()->flash('success', "Generated {$generated} license(s) for order {$order->order_number}.");
+        }
+    }
+
+    protected function autoGenerateLicenses(Order $order): int
+    {
+        $generated = 0;
+
+        $buyerName  = $order->customer_name;
+        $buyerEmail = $order->customer_email;
+
+        foreach ($order->items as $item) {
+            $shopProduct = $item->shopProduct;
+            if (! $shopProduct || ! $shopProduct->requires_license) {
+                continue;
+            }
+
+            // Check if license already generated for this order item
+            $existingCount = License::where('shop_order_id', $order->id)
+                ->where('shop_product_id', $shopProduct->id)
+                ->count();
+
+            if ($existingCount >= $item->quantity) {
+                continue; // Already generated
+            }
+
+            // Find linked product in the licensing system (by linked_product_code)
+            $linkedProduct = null;
+            if ($shopProduct->linked_product_code) {
+                $linkedProduct = Product::where('product_code', $shopProduct->linked_product_code)
+                    ->orWhere('slug', $shopProduct->linked_product_code)
+                    ->first();
+            }
+
+            $toGenerate = $item->quantity - $existingCount;
+
+            for ($i = 0; $i < $toGenerate; $i++) {
+                $prefix = strtoupper(substr(
+                    preg_replace('/[^A-Z0-9]/', '', $shopProduct->linked_product_code ?? $shopProduct->name),
+                    0, 6
+                ));
+                if (empty($prefix)) $prefix = 'EXCL';
+
+                License::create([
+                    'shop_product_id' => $shopProduct->id,
+                    'shop_order_id'   => $order->id,
+                    'product_id'      => $linkedProduct?->id,
+                    'buyer_email'     => $buyerEmail,
+                    'buyer_name'      => $buyerName,
+                    'customer_id'     => null, // guest orders won't have customer_id
+                    'license_key'     => License::generateUniqueKey($prefix),
+                    'key_prefix'      => $prefix,
+                    'edition'         => 'standard',
+                    'type'            => 'lifetime',
+                    'max_activations' => $linkedProduct?->max_devices ?? 1,
+                    'status'          => 'active',
+                    'expires_at'      => null, // lifetime
+                    'is_renewable'    => false,
+                    'notes'           => "Auto-generated for Order #{$order->order_number} — {$shopProduct->name}",
+                ]);
+                $generated++;
+            }
+
+            // Update sales count
+            $shopProduct->increment('sales_count');
+        }
+
+        // Mark order as completed if we generated all licenses
+        if ($generated > 0) {
+            $order->update([
+                'status'             => 'completed',
+                'fulfillment_status' => 'fulfilled',
+                'fulfilled_at'       => now(),
+            ]);
+        }
+
+        return $generated;
     }
 
     public function render(): \Illuminate\View\View
@@ -58,7 +159,13 @@ new #[Layout('layouts.admin')] #[Title('Orders — ExchoSoft')] class extends Co
             ->latest()
             ->paginate(15);
 
-        $viewOrder = $this->viewId ? Order::with(['customerUser', 'items.shopProduct'])->find($this->viewId) : null;
+        $viewOrder = $this->viewId
+            ? Order::with(['customerUser', 'items.shopProduct'])->find($this->viewId)
+            : null;
+
+        $viewLicenses = $this->viewId
+            ? License::where('shop_order_id', $this->viewId)->with('shopProduct')->get()
+            : collect();
 
         $stats = [
             'total'    => Order::count(),
@@ -67,7 +174,7 @@ new #[Layout('layouts.admin')] #[Title('Orders — ExchoSoft')] class extends Co
             'revenue'  => Order::where('payment_status', 'paid')->sum('total'),
         ];
 
-        return view('livewire.pages.admin.orders', compact('orders', 'viewOrder', 'stats'));
+        return view('livewire.pages.admin.orders', compact('orders', 'viewOrder', 'viewLicenses', 'stats'));
     }
 }; ?>
 
@@ -267,6 +374,69 @@ new #[Layout('layouts.admin')] #[Title('Orders — ExchoSoft')] class extends Co
                 @if($viewOrder->customer_note)
                 <div><p class="text-xs font-semibold uppercase text-slate-500 mb-1">Customer Note</p><p class="text-sm text-slate-700 bg-slate-50 rounded-xl p-3">{{ $viewOrder->customer_note }}</p></div>
                 @endif
+
+                {{-- ── LICENSE SECTION ──────────────────────────────── --}}
+                @php
+                    $hasLicenseProducts = $viewOrder->items->where('shopProduct.requires_license', true)->count() > 0
+                        || $viewOrder->items->contains(fn($i) => $i->shopProduct?->requires_license);
+                @endphp
+                <div class="rounded-xl border border-cyan-100 bg-cyan-50 p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <p class="text-xs font-semibold uppercase text-cyan-700">🔑 Licenses</p>
+                        @if($viewOrder->payment_status === 'paid')
+                        <button wire:click="generateLicenses({{ $viewOrder->id }})"
+                                class="inline-flex items-center gap-1.5 rounded-lg bg-cyan-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-cyan-700 transition-colors">
+                            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+                            Generate / Regenerate
+                        </button>
+                        @else
+                        <span class="text-xs text-slate-400">Mark as paid first</span>
+                        @endif
+                    </div>
+                    @if($viewLicenses->isEmpty())
+                        <p class="text-sm text-cyan-600">No licenses generated yet.
+                            @if($viewOrder->payment_status === 'paid') Click "Generate" above. @else Mark order as paid to generate licenses. @endif
+                        </p>
+                    @else
+                        <div class="space-y-2">
+                        @foreach($viewLicenses as $lic)
+                        <div class="bg-white rounded-lg p-3 border border-cyan-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-xs text-slate-500 mb-0.5">{{ $lic->shopProduct?->name ?? 'Product' }}</p>
+                                    <p class="font-mono text-sm font-bold text-cyan-700 tracking-wider">{{ $lic->license_key }}</p>
+                                </div>
+                                <div class="text-right">
+                                    <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold
+                                        {{ $lic->status === 'active' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700' }}">
+                                        {{ ucfirst($lic->status) }}
+                                    </span>
+                                    @if($lic->expires_at)
+                                    <p class="text-xs text-slate-400 mt-0.5">Exp: {{ $lic->expires_at->format('d M Y') }}</p>
+                                    @else
+                                    <p class="text-xs text-slate-400 mt-0.5">Lifetime</p>
+                                    @endif
+                                </div>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-1">{{ $lic->buyer_email }}</p>
+                        </div>
+                        @endforeach
+                        </div>
+                    @endif
+                </div>
+
+                {{-- Actions --}}
+                <div class="flex gap-2 pt-2 sticky bottom-0 bg-white pb-4">
+                    @if($viewOrder->payment_status !== 'paid')
+                    <button wire:click="markPaid({{ $viewOrder->id }})"
+                            class="flex-1 rounded-xl bg-green-600 py-2.5 text-sm font-semibold text-white hover:bg-green-700 transition-colors">
+                        ✓ Mark as Paid &amp; Generate Licenses
+                    </button>
+                    @endif
+                    <button wire:click="closeView" class="flex-1 rounded-xl bg-slate-100 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-200 transition-colors">
+                        Close
+                    </button>
+                </div>
             </div>
         </div>
     </div>

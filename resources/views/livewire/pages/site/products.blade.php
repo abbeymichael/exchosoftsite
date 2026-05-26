@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\ProductPageSection;
 use App\Models\ShopProduct;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -12,7 +13,6 @@ new #[Layout('layouts.site')] #[Title('Products — Exchosoft Consult')] class e
 
     public string $search        = '';
     public string $filterCategory = '';
-    public string $activeTab     = 'all';
 
     public function updatingSearch(): void    { $this->resetPage(); }
     public function updatingFilterCategory(): void { $this->resetPage(); }
@@ -26,7 +26,7 @@ new #[Layout('layouts.site')] #[Title('Products — Exchosoft Consult')] class e
             ->orderBy('sort_order')->latest()
             ->paginate(12);
 
-        // For the "featured" dynamic sections — group by linked_product_code or use all
+        // Group published products by linked_product_code for the hero sections
         $featuredGroups = ShopProduct::published()
             ->whereNotNull('linked_product_code')
             ->orderBy('sort_order')
@@ -35,7 +35,17 @@ new #[Layout('layouts.site')] #[Title('Products — Exchosoft Consult')] class e
 
         $allPublished = ShopProduct::published()->orderBy('sort_order')->get();
 
-        return view('livewire.pages.site.products', compact('products', 'featuredGroups', 'allPublished'));
+        // Load dynamic page sections for known product codes
+        $washSections   = ProductPageSection::getForProduct('washops');
+        $churchSections = ProductPageSection::getForProduct('churchops');
+
+        // Get unique linked product codes that have sections
+        $linkedCodes = $featuredGroups->keys()->toArray();
+
+        return view('livewire.pages.site.products', compact(
+            'products', 'featuredGroups', 'allPublished',
+            'washSections', 'churchSections', 'linkedCodes'
+        ));
     }
 }; ?>
 
@@ -407,14 +417,66 @@ new #[Layout('layouts.site')] #[Title('Products — Exchosoft Consult')] class e
 </div>
 
 <!-- FILTER TABS -->
+@php
+  // Helper: render markdown headings/paragraphs simply
+  function renderProductHero(string $md): string {
+    $lines = explode("\n", $md);
+    $html = '';
+    foreach ($lines as $line) {
+      $line = trim($line);
+      if (str_starts_with($line, '## ')) {
+        $text = substr($line, 3);
+        // Convert **text** → <span class="accent">text</span>
+        $text = preg_replace('/\*\*(.+?)\*\*/', '<span class="dyn-accent">$1</span>', e($text));
+        $html .= "<h2>{$text}</h2>";
+      } elseif ($line) {
+        $html .= '<p>' . e($line) . '</p>';
+      }
+    }
+    return $html;
+  }
+
+  $washHero     = $washSections->get('hero');
+  $washFeatures = $washSections->get('features');
+  $washRoi      = $washSections->get('roi');
+  $churchHero     = $churchSections->get('hero');
+  $churchFeatures = $churchSections->get('features');
+  $churchRoi      = $churchSections->get('roi');
+
+  // Fallback data for WashOps
+  $defaultWashFeatures = [
+    ['icon'=>'📊','title'=>'Analytics Dashboard','items'=>['Revenue tracking and forecasting','Order volume analytics','Daily bottleneck identification','Staff performance metrics','Customer behavior insights','Custom date range reporting']],
+    ['icon'=>'🖥️','title'=>'Advanced Point of Sale','items'=>['Quick order booking interface','Multiple payment methods support','Partial and full payment processing','Customer creation and retrieval','Thermal printer integration','Receipt customization']],
+    ['icon'=>'📋','title'=>'Kanban Orders Board','items'=>['Drag-and-drop status updates','Color-coded priority system','Real-time order tracking','Team collaboration features','Automated status notifications','Custom workflow stages']],
+    ['icon'=>'☁️','title'=>'Enterprise Database Management','items'=>['Automatic cloud backup','Manual backup and restore','Push to cloud / Pull from cloud','Conflict resolution strategies','Disaster recovery protocols','Data encryption and security']],
+  ];
+  // Fallback data for ChurchOps
+  $defaultChurchFeatures = [
+    ['icon'=>'📡','title'=>'100% Offline Operation','items'=>['Full functionality during power cuts','Automatic cloud sync when online','Zero data loss guarantee','Local network (LAN) collaboration']],
+    ['icon'=>'💰','title'=>'Complete Financial Management','items'=>['MTN, Vodafone, AirtelTigo Mobile Money','Tithe and offering tracking','Member contribution statements','Full financial reporting and audit trail']],
+    ['icon'=>'👥','title'=>'Member Management','items'=>['Complete member profiles','Attendance tracking and trends','Visitor follow-up workflows','Ministry assignments and family links']],
+    ['icon'=>'📣','title'=>'Automated Communication','items'=>['Bulk SMS via local gateways','Automated birthday greetings','Service reminders and event notifications','Email campaigns to members']],
+    ['icon'=>'🏛️','title'=>'Multi-Branch Ready','items'=>['Manage all locations from HQ','Consolidated cross-branch reporting','Branch autonomy with HQ visibility','Easy member transfers between branches']],
+    ['icon'=>'📈','title'=>'Powerful Analytics','items'=>['Financial dashboards and trends','Attendance pattern analysis','Member engagement scoring','Custom report builder']],
+  ];
+@endphp
+
+<style>
+  .dyn-accent { color: var(--cyan); }
+  .church .dyn-accent { color: #4caf82; }
+</style>
+
+{{-- ── FILTER TABS ─────────────────────────────────────────────────────────── --}}
 <div class="products-filter-bar" x-data="{ tab: 'washops' }">
   <button class="filter-tab" :class="tab === 'washops' ? 'active' : ''" @click="tab='washops'; document.getElementById('washops').scrollIntoView({behavior:'smooth'})">
-    WashOps <span class="filter-count">4</span>
+    {{ $washHero?->data['badge'] ?? 'WashOps' }}
+    <span class="filter-count">{{ $allPublished->where('linked_product_code', 'washops')->count() }}</span>
   </button>
   <button class="filter-tab" :class="tab === 'churchops' ? 'active' : ''" @click="tab='churchops'; document.getElementById('churchops').scrollIntoView({behavior:'smooth'})">
-    ChurchOps <span class="filter-count">6</span>
+    {{ $churchHero?->data['badge'] ?? 'ChurchOps' }}
+    <span class="filter-count">{{ $allPublished->where('linked_product_code', 'churchops')->count() }}</span>
   </button>
-  @if($allPublished->whereNotIn('linked_product_code', ['washops','churchops'])->where('linked_product_code', '!=', null)->count() > 0 || $allPublished->whereNull('linked_product_code')->count() > 0)
+  @if($allPublished->whereNull('linked_product_code')->count() > 0 || $search)
   <button class="filter-tab" :class="tab === 'shop' ? 'active' : ''" @click="tab='shop'; document.getElementById('shop-section').scrollIntoView({behavior:'smooth'})">
     All Products <span class="filter-count">{{ $allPublished->count() }}</span>
   </button>
@@ -424,21 +486,33 @@ new #[Layout('layouts.site')] #[Title('Products — Exchosoft Consult')] class e
 
 <div class="products-wrap">
 
-  <!-- ══════════════ WASHOPS ══════════════ -->
+  {{-- ══════════════ WASHOPS ══════════════ --}}
   <div class="product-section" id="washops">
-    <div class="product-hero-dark wash">
-      <div class="product-hero-glow-wash"></div>
-      <div class="product-hero-grid-wash"></div>
+    @php
+      $washTheme  = $washHero?->data['theme'] ?? 'wash';
+      $washBadge  = $washHero?->data['badge'] ?? 'WashOps';
+      $washBadgeClass = $washHero?->data['badge_class'] ?? 'badge-wash';
+      $washBtnPrimary   = $washHero?->data['btn_primary_label']   ?? 'Start Free Trial';
+      $washBtnSecondary = $washHero?->data['btn_secondary_label'] ?? 'Read White Paper';
+    @endphp
+    <div class="product-hero-dark {{ $washTheme }}">
+      <div class="{{ $washTheme === 'church' ? 'product-hero-glow-church product-hero-grid-church' : 'product-hero-glow-wash product-hero-grid-wash' }}"></div>
+      <div class="product-hero-glow-{{ $washTheme === 'church' ? 'church' : 'wash' }}"></div>
+      <div class="product-hero-grid-{{ $washTheme === 'church' ? 'church' : 'wash' }}"></div>
       <div style="position:relative;z-index:2;">
-        <div class="product-badge badge-wash">WashOps</div>
-        <h2>Complete Laundry Management for <span class="accent-wash">Modern Businesses</span></h2>
-        <p>Enterprise-grade desktop application with powerful POS, real-time analytics, automated workflows, and cloud synchronization. Everything you need to run and scale your laundry business.</p>
-        <div class="btn-row">
-          <a class="btn-cyan" href="{{ route('site.book-demo') }}" wire:navigate>Start Free Trial</a>
-          <a class="btn-outline-wash" href="{{ route('site.white-papers') }}" wire:navigate>Read White Paper</a>
+        <div class="product-badge {{ $washBadgeClass }}">{{ $washBadge }}</div>
+        @if($washHero?->content)
+          {!! renderProductHero($washHero->content) !!}
+        @else
+          <h2>Complete Laundry Management for <span class="dyn-accent">Modern Businesses</span></h2>
+          <p>Enterprise-grade desktop application with powerful POS, real-time analytics, automated workflows, and cloud synchronization.</p>
+        @endif
+        <div class="btn-row" style="margin-top:1.5rem;">
+          <a class="btn-cyan" href="{{ route('site.book-demo') }}" wire:navigate>{{ $washBtnPrimary }}</a>
+          <a class="btn-outline-wash" href="{{ route('site.white-papers') }}" wire:navigate>{{ $washBtnSecondary }}</a>
         </div>
       </div>
-      <!-- WashOps UI Mock -->
+      {{-- WashOps UI Mock (always decorative) --}}
       <div class="product-ui-card" style="position:relative;z-index:2;">
         <div class="ui-titlebar">
           <span class="ui-dot r"></span><span class="ui-dot y"></span><span class="ui-dot g"></span>
@@ -451,19 +525,9 @@ new #[Layout('layouts.site')] #[Title('Products — Exchosoft Consult')] class e
             <div class="ui-stat"><div class="ui-stat-num" style="color:#28ca41;">97%</div><div class="ui-stat-label">On-time rate</div></div>
           </div>
           <div class="ui-kanban">
-            <div class="kanban-col">
-              <div class="kanban-col-title" style="color:#7acfe8;">Intake</div>
-              <div class="kanban-card">Bulk wash · 8kg<span class="k-tag" style="background:rgba(0,184,219,0.15);color:#7acfe8;">New</span></div>
-              <div class="kanban-card">Dry clean · 3 items</div>
-            </div>
-            <div class="kanban-col">
-              <div class="kanban-col-title" style="color:#ffbd2e;">Processing</div>
-              <div class="kanban-card">Express · 5kg<span class="k-tag" style="background:rgba(255,189,46,0.15);color:#ffbd2e;">Urgent</span></div>
-            </div>
-            <div class="kanban-col">
-              <div class="kanban-col-title" style="color:#28ca41;">Ready</div>
-              <div class="kanban-card">Order #1047<span class="k-tag" style="background:rgba(40,202,65,0.15);color:#28ca41;">Done</span></div>
-            </div>
+            <div class="kanban-col"><div class="kanban-col-title" style="color:#7acfe8;">Intake</div><div class="kanban-card">Bulk wash · 8kg<span class="k-tag" style="background:rgba(0,184,219,0.15);color:#7acfe8;">New</span></div></div>
+            <div class="kanban-col"><div class="kanban-col-title" style="color:#ffbd2e;">Processing</div><div class="kanban-card">Express · 5kg<span class="k-tag" style="background:rgba(255,189,46,0.15);color:#ffbd2e;">Urgent</span></div></div>
+            <div class="kanban-col"><div class="kanban-col-title" style="color:#28ca41;">Ready</div><div class="kanban-card">Order #1047<span class="k-tag" style="background:rgba(40,202,65,0.15);color:#28ca41;">Done</span></div></div>
           </div>
           <div class="ui-bar-row">
             <div class="ui-bar-item"><span class="ui-bar-label">Mon</span><div class="ui-bar-track"><div class="ui-bar-fill" style="width:82%;background:#00b8db;"></div></div><span class="ui-bar-val">₵3.2k</span></div>
@@ -473,41 +537,52 @@ new #[Layout('layouts.site')] #[Title('Products — Exchosoft Consult')] class e
         </div>
       </div>
     </div>
-    <!-- WashOps Features -->
-    <div class="features-section bg-ice">
-      <div class="features-header">
-        <h3>Powerful Features Built for Laundry Businesses</h3>
-        <p>Everything you need to manage orders, delight customers, and grow your business — all in one place.</p>
-      </div>
+
+    {{-- WashOps Features --}}
+    @php
+      $wfTitle    = $washFeatures?->content ?? 'Powerful Features Built for Laundry Businesses';
+      $wfSubtitle = $washFeatures?->data['subtitle'] ?? 'Everything you need to manage orders, delight customers, and grow your business.';
+      $wfItems    = $washFeatures?->data['features'] ?? $defaultWashFeatures;
+      $wfBg       = $washFeatures?->data['bg_class'] ?? 'bg-ice';
+    @endphp
+    <div class="features-section {{ $wfBg }}">
+      <div class="features-header"><h3>{{ $wfTitle }}</h3><p>{{ $wfSubtitle }}</p></div>
       <div class="features-grid">
-        @php
-          $washFeatures = [
-            ['📊','Analytics Dashboard',['Revenue tracking and forecasting','Order volume analytics','Daily bottleneck identification','Staff performance metrics','Customer behavior insights','Custom date range reporting']],
-            ['🖥️','Advanced Point of Sale',['Quick order booking interface','Multiple payment methods support','Partial and full payment processing','Customer creation and retrieval','Thermal printer integration','Receipt customization']],
-            ['📋','Kanban Orders Board',['Drag-and-drop status updates','Color-coded priority system','Real-time order tracking','Team collaboration features','Automated status notifications','Custom workflow stages']],
-            ['☁️','Enterprise Database Management',['Automatic cloud backup','Manual backup and restore','Push to cloud / Pull from cloud','Conflict resolution strategies','Disaster recovery protocols','Data encryption and security']],
-          ];
-        @endphp
-        @foreach($washFeatures as [$icon, $title, $items])
+        @foreach($wfItems as $feat)
         <div class="feature-card">
-          <div class="feature-icon-wrap">{{ $icon }}</div>
-          <h4>{{ $title }}</h4>
-          <ul>@foreach($items as $item)<li>{{ $item }}</li>@endforeach</ul>
+          <div class="feature-icon-wrap">{{ $feat['icon'] ?? '📋' }}</div>
+          <h4>{{ $feat['title'] ?? '' }}</h4>
+          <ul>@foreach($feat['items'] ?? [] as $item)<li>{{ $item }}</li>@endforeach</ul>
         </div>
         @endforeach
       </div>
     </div>
-    <!-- Dynamic WashOps products from DB -->
+
+    {{-- WashOps ROI --}}
+    @if($washRoi)
+    @php $wr = $washRoi->data ?? []; @endphp
+    <div class="roi-callout">
+      <div class="roi-num" style="color:#4caf82;">{{ $wr['number'] ?? '40%' }}</div>
+      <div class="roi-text">
+        <h4>{{ $wr['title'] ?? 'Average Revenue Increase' }}</h4>
+        <p>{{ $wr['subtitle'] ?? '' }}</p>
+      </div>
+      <a class="btn-green" href="{{ route('site.white-papers') }}" wire:navigate style="flex-shrink:0;">Get the White Paper</a>
+    </div>
+    @endif
+
+    {{-- Dynamic WashOps products from DB --}}
     @if($allPublished->where('linked_product_code', 'washops')->count() > 0)
     <div class="all-products-section" style="background:var(--white);">
       <p style="font-size:0.75rem;font-weight:600;letter-spacing:0.1em;color:var(--cyan);text-transform:uppercase;margin-bottom:0.5rem;">Available Now</p>
-      <h3 style="font-family:var(--font-display);font-size:1.4rem;font-weight:800;color:var(--navy);margin-bottom:2rem;">WashOps Editions</h3>
+      <h3 style="font-family:var(--font-display);font-size:1.4rem;font-weight:800;color:var(--navy);margin-bottom:2rem;">{{ $washBadge }} Editions</h3>
       <div class="all-products-grid">
         @foreach($allPublished->where('linked_product_code', 'washops') as $product)
         <a href="{{ route('site.products.show', $product->slug) }}" wire:navigate class="prod-card">
           <div class="prod-card-img">
             @if($product->cover_image)<img src="{{ asset('storage/'.$product->cover_image) }}" alt="{{ $product->name }}">
             @else<div class="prod-card-placeholder">{{ strtoupper(substr($product->name,0,2)) }}</div>@endif
+            @if($product->requires_license)<span style="position:absolute;bottom:0.5rem;left:0.5rem;background:rgba(0,184,219,0.9);color:white;padding:0.15rem 0.5rem;border-radius:4px;font-size:0.6rem;font-weight:700;">LICENSE INCLUDED</span>@endif
           </div>
           <div class="prod-card-body">
             <div class="prod-card-cat">{{ $product->category }}</div>
@@ -516,14 +591,10 @@ new #[Layout('layouts.site')] #[Title('Products — Exchosoft Consult')] class e
           </div>
           <div class="prod-card-footer">
             <div>
-              @if($product->is_on_sale)
-                <div style="font-size:0.72rem;color:var(--text-muted);text-decoration:line-through;">GHS {{ number_format($product->price,2) }}</div>
-                <div class="prod-price sale">GHS {{ number_format($product->sale_price,2) }}</div>
-              @else
-                <div class="prod-price">GHS {{ number_format($product->price,2) }}</div>
-              @endif
+              @if($product->is_on_sale)<div style="font-size:0.72rem;color:var(--text-muted);text-decoration:line-through;">GHS {{ number_format($product->price,2) }}</div><div class="prod-price sale">GHS {{ number_format($product->sale_price,2) }}</div>
+              @else<div class="prod-price">GHS {{ number_format($product->price,2) }}</div>@endif
             </div>
-            <span style="font-size:0.78rem;font-weight:600;color:var(--cyan);font-family:var(--font-display);">View →</span>
+            <span style="font-size:0.78rem;font-weight:600;color:var(--cyan);font-family:var(--font-display);">View & Buy →</span>
           </div>
         </a>
         @endforeach
@@ -532,29 +603,38 @@ new #[Layout('layouts.site')] #[Title('Products — Exchosoft Consult')] class e
     @endif
   </div>
 
-  <!-- DIVIDER -->
   <div class="product-divider"></div>
 
-  <!-- ══════════════ CHURCHOPS ══════════════ -->
+  {{-- ══════════════ CHURCHOPS ══════════════ --}}
   <div class="product-section" id="churchops">
+    @php
+      $churchBadge       = $churchHero?->data['badge'] ?? 'ChurchOps';
+      $churchBadgeClass  = $churchHero?->data['badge_class'] ?? 'badge-church';
+      $churchBtnPrimary  = $churchHero?->data['btn_primary_label']   ?? 'Book Free Demo';
+      $churchBtnSecondary= $churchHero?->data['btn_secondary_label'] ?? 'Download White Paper';
+    @endphp
     <div class="product-hero-dark church">
       <div class="product-hero-glow-church"></div>
       <div class="product-hero-grid-church"></div>
       <div style="position:relative;z-index:2;">
-        <div class="product-badge badge-church">ChurchOps</div>
-        <h2>Church Management That Works — <span class="accent-church">Even When the Internet Doesn't</span></h2>
-        <p>The first offline-first church management system built specifically for Ghanaian churches. Manage members, finances, and ministries with 100% uptime.</p>
-        <div class="btn-row">
-          <a class="btn-green" href="{{ route('site.book-demo') }}" wire:navigate>Book Free Demo</a>
-          <a class="btn-outline-green" href="{{ route('site.white-papers') }}" wire:navigate>Download White Paper</a>
+        <div class="product-badge {{ $churchBadgeClass }}">{{ $churchBadge }}</div>
+        @if($churchHero?->content)
+          {!! renderProductHero($churchHero->content) !!}
+        @else
+          <h2>Church Management That Works — <span class="dyn-accent" style="color:#4caf82;">Even When the Internet Doesn't</span></h2>
+          <p>The first offline-first church management system built specifically for Ghanaian churches. Manage members, finances, and ministries with 100% uptime.</p>
+        @endif
+        <div class="btn-row" style="margin-top:1.5rem;">
+          <a class="btn-green" href="{{ route('site.book-demo') }}" wire:navigate>{{ $churchBtnPrimary }}</a>
+          <a class="btn-outline-green" href="{{ route('site.white-papers') }}" wire:navigate>{{ $churchBtnSecondary }}</a>
         </div>
       </div>
-      <!-- ChurchOps UI Mock -->
+      {{-- ChurchOps UI Mock (decorative) --}}
       <div class="product-ui-card church-card" style="position:relative;z-index:2;">
         <div class="ui-titlebar church">
           <span class="ui-dot r"></span><span class="ui-dot y"></span><span class="ui-dot g"></span>
           <div class="ui-offline-badge"><span class="pulse-dot"></span> Offline — synced 2m ago</div>
-          <span class="ui-titlebar-label">ChurchOps</span>
+          <span class="ui-titlebar-label">{{ $churchBadge }}</span>
         </div>
         <div class="ui-body">
           <div class="church-stat-grid">
@@ -572,52 +652,50 @@ new #[Layout('layouts.site')] #[Title('Products — Exchosoft Consult')] class e
         </div>
       </div>
     </div>
-    <!-- ChurchOps Features -->
-    <div class="features-section bg-church">
-      <div class="features-header">
-        <h3>Why Churches Choose ChurchOps</h3>
-        <p>Designed for Ghana's reality: unreliable internet, frequent power cuts, and the need for local payments.</p>
-      </div>
+
+    {{-- ChurchOps Features --}}
+    @php
+      $cfTitle    = $churchFeatures?->content ?? 'Why Churches Choose ChurchOps';
+      $cfSubtitle = $churchFeatures?->data['subtitle'] ?? "Designed for Ghana's reality: unreliable internet, frequent power cuts, and the need for local payments.";
+      $cfItems    = $churchFeatures?->data['features'] ?? $defaultChurchFeatures;
+      $cfBg       = $churchFeatures?->data['bg_class'] ?? 'bg-church';
+    @endphp
+    <div class="features-section {{ $cfBg }}">
+      <div class="features-header"><h3>{{ $cfTitle }}</h3><p>{{ $cfSubtitle }}</p></div>
       <div class="features-grid">
-        @php
-          $churchFeatures = [
-            ['📡','100% Offline Operation',['Full functionality during power cuts','Automatic cloud sync when online','Zero data loss guarantee','Local network (LAN) collaboration']],
-            ['💰','Complete Financial Management',['MTN, Vodafone, AirtelTigo Mobile Money','Tithe and offering tracking','Member contribution statements','Full financial reporting and audit trail']],
-            ['👥','Member Management',['Complete member profiles','Attendance tracking and trends','Visitor follow-up workflows','Ministry assignments and family links']],
-            ['📣','Automated Communication',['Bulk SMS via local gateways','Automated birthday greetings','Service reminders and event notifications','Email campaigns to members']],
-            ['🏛️','Multi-Branch Ready',['Manage all locations from HQ','Consolidated cross-branch reporting','Branch autonomy with HQ visibility','Easy member transfers between branches']],
-            ['📈','Powerful Analytics',['Financial dashboards and trends','Attendance pattern analysis','Member engagement scoring','Custom report builder']],
-          ];
-        @endphp
-        @foreach($churchFeatures as [$icon, $title, $items])
+        @foreach($cfItems as $feat)
         <div class="feature-card church-feat">
-          <div class="feature-icon-wrap green">{{ $icon }}</div>
-          <h4>{{ $title }}</h4>
-          <ul>@foreach($items as $item)<li>{{ $item }}</li>@endforeach</ul>
+          <div class="feature-icon-wrap green">{{ $feat['icon'] ?? '📋' }}</div>
+          <h4>{{ $feat['title'] ?? '' }}</h4>
+          <ul>@foreach($feat['items'] ?? [] as $item)<li>{{ $item }}</li>@endforeach</ul>
         </div>
         @endforeach
       </div>
     </div>
-    <!-- ROI callout -->
+
+    {{-- ChurchOps ROI --}}
+    @php $cr = $churchRoi?->data ?? []; @endphp
     <div class="roi-callout">
-      <div class="roi-num">640–1,940%</div>
+      <div class="roi-num">{{ $cr['number'] ?? '640–1,940%' }}</div>
       <div class="roi-text">
-        <h4>Documented return on investment</h4>
-        <p>Churches using ChurchOps report payback in less than 5 days. Download the white paper to see the full ROI analysis across different church sizes.</p>
+        <h4>{{ $cr['title'] ?? 'Documented return on investment' }}</h4>
+        <p>{{ $cr['subtitle'] ?? 'Churches using ChurchOps report payback in less than 5 days. Download the white paper to see the full ROI analysis.' }}</p>
       </div>
       <a class="btn-green" href="{{ route('site.white-papers') }}" wire:navigate style="flex-shrink:0;">Get the White Paper</a>
     </div>
-    <!-- Dynamic ChurchOps products from DB -->
+
+    {{-- Dynamic ChurchOps products from DB --}}
     @if($allPublished->where('linked_product_code', 'churchops')->count() > 0)
     <div class="all-products-section" style="background:var(--white);">
       <p style="font-size:0.75rem;font-weight:600;letter-spacing:0.1em;color:#1a6b4a;text-transform:uppercase;margin-bottom:0.5rem;">Available Now</p>
-      <h3 style="font-family:var(--font-display);font-size:1.4rem;font-weight:800;color:var(--navy);margin-bottom:2rem;">ChurchOps Editions</h3>
+      <h3 style="font-family:var(--font-display);font-size:1.4rem;font-weight:800;color:var(--navy);margin-bottom:2rem;">{{ $churchBadge }} Editions</h3>
       <div class="all-products-grid">
         @foreach($allPublished->where('linked_product_code', 'churchops') as $product)
         <a href="{{ route('site.products.show', $product->slug) }}" wire:navigate class="prod-card">
           <div class="prod-card-img" style="background:linear-gradient(135deg,#0f2d1f,#1a3d2a);">
             @if($product->cover_image)<img src="{{ asset('storage/'.$product->cover_image) }}" alt="{{ $product->name }}">
             @else<div class="prod-card-placeholder" style="color:rgba(76,175,130,0.4);">{{ strtoupper(substr($product->name,0,2)) }}</div>@endif
+            @if($product->requires_license)<span style="position:absolute;bottom:0.5rem;left:0.5rem;background:rgba(76,175,130,0.9);color:white;padding:0.15rem 0.5rem;border-radius:4px;font-size:0.6rem;font-weight:700;">LICENSE INCLUDED</span>@endif
           </div>
           <div class="prod-card-body">
             <div class="prod-card-cat">{{ $product->category }}</div>
@@ -626,14 +704,10 @@ new #[Layout('layouts.site')] #[Title('Products — Exchosoft Consult')] class e
           </div>
           <div class="prod-card-footer">
             <div>
-              @if($product->is_on_sale)
-                <div style="font-size:0.72rem;color:var(--text-muted);text-decoration:line-through;">GHS {{ number_format($product->price,2) }}</div>
-                <div class="prod-price sale">GHS {{ number_format($product->sale_price,2) }}</div>
-              @else
-                <div class="prod-price">GHS {{ number_format($product->price,2) }}</div>
-              @endif
+              @if($product->is_on_sale)<div style="font-size:0.72rem;color:var(--text-muted);text-decoration:line-through;">GHS {{ number_format($product->price,2) }}</div><div class="prod-price sale">GHS {{ number_format($product->sale_price,2) }}</div>
+              @else<div class="prod-price">GHS {{ number_format($product->price,2) }}</div>@endif
             </div>
-            <span style="font-size:0.78rem;font-weight:600;color:#1a6b4a;font-family:var(--font-display);">View →</span>
+            <span style="font-size:0.78rem;font-weight:600;color:#1a6b4a;font-family:var(--font-display);">View & Buy →</span>
           </div>
         </a>
         @endforeach
@@ -642,15 +716,13 @@ new #[Layout('layouts.site')] #[Title('Products — Exchosoft Consult')] class e
     @endif
   </div>
 
-  <!-- ALL PRODUCTS (if any not tied to product codes, or with search) -->
-  @if($allPublished->whereNull('linked_product_code')->count() > 0)
+  {{-- ALL PRODUCTS (non-linked or search mode) --}}
+  @if($allPublished->whereNull('linked_product_code')->count() > 0 || $search || $filterCategory)
   <div class="product-divider" style="background:linear-gradient(90deg,var(--cyan),var(--cyan));"></div>
   <div class="all-products-section" id="shop-section">
     <p style="font-size:0.75rem;font-weight:600;letter-spacing:0.1em;color:var(--cyan);text-transform:uppercase;margin-bottom:0.5rem;">Digital Store</p>
     <h3 style="font-family:var(--font-display);font-size:1.6rem;font-weight:800;color:var(--navy);margin-bottom:0.5rem;">All Products</h3>
-    <p style="font-size:0.9rem;color:var(--text-secondary);margin-bottom:2rem;">Software, tools, templates, and more — instantly available.</p>
-
-    <!-- Search/filter -->
+    <p style="font-size:0.9rem;color:var(--text-secondary);margin-bottom:2rem;">Software, tools, templates, and more — buy instantly and receive your license key.</p>
     <div class="search-bar">
       <div class="search-input-wrap">
         <svg style="width:16px;height:16px;color:var(--text-muted);" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -664,7 +736,6 @@ new #[Layout('layouts.site')] #[Title('Products — Exchosoft Consult')] class e
         <option value="service">Service</option>
       </select>
     </div>
-
     @if($products->isEmpty())
     <div style="text-align:center;padding:4rem 2rem;color:var(--text-muted);">
       <p style="font-size:1rem;font-weight:600;">No products found</p>
@@ -678,6 +749,7 @@ new #[Layout('layouts.site')] #[Title('Products — Exchosoft Consult')] class e
           @if($product->cover_image)<img src="{{ asset('storage/'.$product->cover_image) }}" alt="{{ $product->name }}">
           @else<div class="prod-card-placeholder">{{ strtoupper(substr($product->name,0,2)) }}</div>@endif
           @if($product->is_on_sale)<span style="position:absolute;top:0.75rem;right:0.75rem;background:#ef4444;color:white;padding:0.2rem 0.6rem;border-radius:100px;font-size:0.65rem;font-weight:700;">SALE</span>@endif
+          @if($product->requires_license)<span style="position:absolute;bottom:0.5rem;left:0.5rem;background:rgba(0,184,219,0.9);color:white;padding:0.15rem 0.5rem;border-radius:4px;font-size:0.6rem;font-weight:700;">LICENSE</span>@endif
         </div>
         <div class="prod-card-body">
           <div class="prod-card-cat">{{ $product->category }}</div>
@@ -686,12 +758,8 @@ new #[Layout('layouts.site')] #[Title('Products — Exchosoft Consult')] class e
         </div>
         <div class="prod-card-footer">
           <div>
-            @if($product->is_on_sale)
-              <div style="font-size:0.72rem;color:var(--text-muted);text-decoration:line-through;">GHS {{ number_format($product->price,2) }}</div>
-              <div class="prod-price sale">GHS {{ number_format($product->sale_price,2) }}</div>
-            @else
-              <div class="prod-price">GHS {{ number_format($product->price,2) }}</div>
-            @endif
+            @if($product->is_on_sale)<div style="font-size:0.72rem;color:var(--text-muted);text-decoration:line-through;">GHS {{ number_format($product->price,2) }}</div><div class="prod-price sale">GHS {{ number_format($product->sale_price,2) }}</div>
+            @else<div class="prod-price">GHS {{ number_format($product->price,2) }}</div>@endif
           </div>
           <span style="font-size:0.78rem;font-weight:600;color:var(--cyan);font-family:var(--font-display);">View →</span>
         </div>
