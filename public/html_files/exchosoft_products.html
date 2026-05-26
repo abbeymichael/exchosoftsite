@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Products — Exchosoft Consult</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --cyan: #00b8db;
+  --cyan-dark: #0091ad;
+  --cyan-deep: #006d82;
+  --sky: #7acfe8;
+  --sky-light: #e5f7fb;
+  --navy: #0d2137;
+  --navy-mid: #162d47;
+  --ice: #f4f8fb;
+  --white: #ffffff;
+  --text-primary: #0d2137;
+  --text-secondary: #3a5a72;
+  --text-muted: #7a9ab0;
+  --border: rgba(0,184,219,0.15);
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+
+  --wash-primary: #00b8db;
+  --wash-dark: #0d2137;
+  --wash-accent: #7acfe8;
+
+  --church-primary: #1a6b4a;
+  --church-dark: #0f2d1f;
+  --church-accent: #4caf82;
+  --church-light: #e8f5ee;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  background: var(--white);
+  overflow-x: hidden;
+  line-height: 1.7;
+}
+
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 1.1rem 4rem;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(13,33,55,0.97);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0,184,219,0.1);
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 0.75rem;
+  font-family: var(--font-display); font-size: 1rem; font-weight: 700;
+  color: var(--white); text-decoration: none;
+}
+.nav-logo img { height: 30px; width: auto; }
+.nav-breadcrumb {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-size: 0.78rem;
+}
+.nav-breadcrumb a { color: rgba(255,255,255,0.4); text-decoration: none; transition: color 0.2s; }
+.nav-breadcrumb a:hover { color: var(--cyan); }
+.nav-breadcrumb .sep { color: rgba(255,255,255,0.2); }
+.nav-breadcrumb .current { color: var(--cyan); font-weight: 500; }
+.nav-cta {
+  background: var(--cyan); color: var(--white);
+  padding: 0.5rem 1.2rem; border-radius: 6px;
+  font-family: var(--font-display); font-size: 0.8rem; font-weight: 600;
+  text-decoration: none; transition: background 0.2s;
+}
+.nav-cta:hover { background: var(--cyan-dark); }
+
+/* BANNER */
+.banner {
+  min-height: 440px;
+  background: var(--navy);
+  position: relative; overflow: hidden;
+  display: flex; align-items: center;
+  padding-top: 5rem;
+}
+#banner-canvas {
+  position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none;
+}
+.banner-dots {
+  position: absolute; inset: 0;
+  background-image: radial-gradient(circle, rgba(0,184,219,0.14) 1px, transparent 1px);
+  background-size: 32px 32px; pointer-events: none;
+}
+.banner-content {
+  position: relative; z-index: 2;
+  padding: 4rem 6rem; max-width: 780px;
+}
+.banner-breadcrumb {
+  display: flex; align-items: center; gap: 0.5rem; margin-bottom: 2rem;
+}
+.banner-breadcrumb a { font-size: 0.78rem; color: rgba(255,255,255,0.4); text-decoration: none; transition: color 0.2s; }
+.banner-breadcrumb a:hover { color: var(--cyan); }
+.crumb-sep { color: rgba(255,255,255,0.2); font-size: 0.75rem; }
+.crumb-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--cyan); display: inline-block; margin-right: 0.2rem; vertical-align: middle; }
+.crumb-current { font-size: 0.78rem; color: var(--cyan); font-weight: 500; }
+.banner-tag {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: rgba(0,184,219,0.1); border: 1px solid rgba(0,184,219,0.2);
+  color: var(--sky); padding: 0.28rem 0.85rem; border-radius: 100px;
+  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em;
+  margin-bottom: 1.25rem; text-transform: uppercase;
+}
+.banner h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.8vw, 3.2rem);
+  font-weight: 800; color: var(--white);
+  line-height: 1.1; letter-spacing: -0.03em;
+  margin-bottom: 1rem;
+}
+.banner h1 em { color: var(--cyan); font-style: normal; }
+.banner-sub {
+  font-size: 1rem; color: rgba(255,255,255,0.55);
+  max-width: 540px; line-height: 1.75; font-weight: 300;
+}
+
+/* PRODUCT FILTER TABS */
+.filter-bar {
+  background: var(--ice);
+  border-bottom: 1px solid var(--border);
+  padding: 0 6rem;
+  display: flex; align-items: center; gap: 0;
+  position: sticky; top: 62px; z-index: 50;
+}
+.filter-tab {
+  padding: 1.1rem 1.75rem;
+  font-family: var(--font-display); font-size: 0.85rem; font-weight: 600;
+  color: var(--text-muted); border-bottom: 2px solid transparent;
+  cursor: pointer; transition: color 0.2s, border-color 0.2s;
+  text-decoration: none; white-space: nowrap;
+}
+.filter-tab:hover { color: var(--text-primary); }
+.filter-tab.active { color: var(--cyan); border-bottom-color: var(--cyan); }
+.filter-tab.church-active { color: var(--church-primary); border-bottom-color: var(--church-primary); }
+.filter-count {
+  display: inline-block; font-size: 0.7rem; font-weight: 700;
+  background: var(--sky-light); color: var(--cyan-deep);
+  padding: 1px 6px; border-radius: 100px; margin-left: 6px;
+}
+
+/* PRODUCT SECTIONS */
+.products-wrap { padding-bottom: 4rem; }
+
+/* ── WASHOPS ── */
+.product-section { position: relative; }
+
+.wash-hero {
+  background: var(--wash-dark);
+  padding: 5rem 6rem;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+  position: relative; overflow: hidden;
+}
+.wash-hero-bg {
+  position: absolute; inset: 0;
+  background-image: radial-gradient(circle at 80% 50%, rgba(0,184,219,0.1) 0%, transparent 60%),
+    radial-gradient(circle at 20% 80%, rgba(122,207,232,0.05) 0%, transparent 50%);
+  pointer-events: none;
+}
+.wash-hero-grid {
+  position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(0,184,219,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,184,219,0.03) 1px, transparent 1px);
+  background-size: 48px 48px; pointer-events: none;
+}
+.product-badge {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.3rem 0.9rem; border-radius: 100px;
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em;
+  margin-bottom: 1rem; text-transform: uppercase; width: fit-content;
+}
+.wash-badge { background: rgba(0,184,219,0.15); border: 1px solid rgba(0,184,219,0.25); color: var(--cyan); }
+.church-badge { background: rgba(76,175,130,0.15); border: 1px solid rgba(76,175,130,0.25); color: var(--church-accent); }
+
+.wash-hero h2 {
+  font-family: var(--font-display); font-size: clamp(1.8rem, 3vw, 2.8rem);
+  font-weight: 800; color: var(--white); line-height: 1.1;
+  letter-spacing: -0.03em; margin-bottom: 1rem;
+}
+.wash-hero h2 span { color: var(--cyan); }
+.wash-hero p { font-size: 0.95rem; color: rgba(255,255,255,0.55); line-height: 1.8; font-weight: 300; margin-bottom: 2rem; }
+
+.btn-row { display: flex; gap: 0.85rem; flex-wrap: wrap; }
+.btn-cyan {
+  background: var(--cyan); color: var(--white);
+  padding: 0.75rem 1.6rem; border-radius: 8px;
+  font-family: var(--font-display); font-size: 0.875rem; font-weight: 700;
+  text-decoration: none; transition: background 0.2s, transform 0.15s;
+}
+.btn-cyan:hover { background: var(--cyan-dark); transform: translateY(-1px); }
+.btn-outline-cyan {
+  background: transparent; color: var(--cyan);
+  padding: 0.75rem 1.6rem; border-radius: 8px; border: 1px solid rgba(0,184,219,0.35);
+  font-family: var(--font-display); font-size: 0.875rem; font-weight: 700;
+  text-decoration: none; transition: border-color 0.2s, background 0.2s;
+}
+.btn-outline-cyan:hover { border-color: var(--cyan); background: rgba(0,184,219,0.08); }
+.btn-green {
+  background: var(--church-primary); color: var(--white);
+  padding: 0.75rem 1.6rem; border-radius: 8px;
+  font-family: var(--font-display); font-size: 0.875rem; font-weight: 700;
+  text-decoration: none; transition: background 0.2s, transform 0.15s;
+}
+.btn-green:hover { background: #155a3e; transform: translateY(-1px); }
+.btn-outline-green {
+  background: transparent; color: var(--church-accent);
+  padding: 0.75rem 1.6rem; border-radius: 8px; border: 1px solid rgba(76,175,130,0.35);
+  font-family: var(--font-display); font-size: 0.875rem; font-weight: 700;
+  text-decoration: none; transition: border-color 0.2s, background 0.2s;
+}
+.btn-outline-green:hover { border-color: var(--church-accent); background: rgba(76,175,130,0.08); }
+
+/* Mock UI card */
+.product-ui-card {
+  border-radius: 14px; overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.04);
+  position: relative; z-index: 1;
+}
+.ui-titlebar {
+  padding: 0.7rem 1rem; display: flex; align-items: center; gap: 0.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.ui-dot { width: 10px; height: 10px; border-radius: 50%; }
+.ui-dot.r { background: #ff5f57; }
+.ui-dot.y { background: #ffbd2e; }
+.ui-dot.g { background: #28ca41; }
+.ui-titlebar-label { font-size: 0.7rem; color: rgba(255,255,255,0.3); margin-left: auto; font-family: var(--font-display); }
+.ui-body { padding: 1.25rem; }
+.ui-stat-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.6rem; margin-bottom: 0.75rem; }
+.ui-stat {
+  background: rgba(255,255,255,0.05); border-radius: 8px; padding: 0.75rem;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.ui-stat-num { font-family: var(--font-display); font-size: 1.2rem; font-weight: 800; }
+.ui-stat-label { font-size: 0.65rem; color: rgba(255,255,255,0.35); margin-top: 2px; }
+.ui-bar-row { display: flex; flex-direction: column; gap: 0.4rem; }
+.ui-bar-item { display: flex; align-items: center; gap: 0.6rem; }
+.ui-bar-label { font-size: 0.65rem; color: rgba(255,255,255,0.4); width: 60px; flex-shrink: 0; }
+.ui-bar-track { flex: 1; height: 5px; background: rgba(255,255,255,0.07); border-radius: 3px; overflow: hidden; }
+.ui-bar-fill { height: 100%; border-radius: 3px; }
+.ui-bar-val { font-size: 0.65rem; color: rgba(255,255,255,0.4); width: 28px; text-align: right; }
+
+/* Kanban preview */
+.ui-kanban { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.5rem; margin-bottom: 0.75rem; }
+.kanban-col { background: rgba(255,255,255,0.04); border-radius: 6px; padding: 0.5rem; }
+.kanban-col-title { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 0.5rem; opacity: 0.5; }
+.kanban-card { background: rgba(255,255,255,0.07); border-radius: 4px; padding: 0.4rem 0.5rem; margin-bottom: 0.35rem; font-size: 0.6rem; color: rgba(255,255,255,0.6); }
+.kanban-card .k-tag { display: inline-block; font-size: 0.55rem; padding: 1px 5px; border-radius: 3px; margin-top: 3px; }
+
+/* Features grid */
+.features-section {
+  background: var(--ice); padding: 4rem 6rem;
+}
+.features-section.church-bg { background: var(--church-light); }
+.features-header { margin-bottom: 3rem; }
+.features-header h3 {
+  font-family: var(--font-display); font-size: clamp(1.3rem, 2vw, 1.8rem);
+  font-weight: 800; letter-spacing: -0.02em; color: var(--navy);
+  margin-bottom: 0.5rem;
+}
+.features-header p { color: var(--text-secondary); font-size: 0.9rem; }
+.features-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
+.feature-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 12px; padding: 1.75rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.feature-card:hover { border-color: var(--cyan); box-shadow: 0 6px 24px rgba(0,184,219,0.08); }
+.feature-card.church-card:hover { border-color: var(--church-accent); box-shadow: 0 6px 24px rgba(26,107,74,0.08); }
+.feature-icon {
+  width: 40px; height: 40px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 1rem; font-size: 18px;
+}
+.feature-icon.cyan-icon { background: var(--sky-light); }
+.feature-icon.green-icon { background: var(--church-light); }
+.feature-card h4 {
+  font-family: var(--font-display); font-size: 0.95rem; font-weight: 700;
+  color: var(--navy); margin-bottom: 0.6rem;
+}
+.feature-card ul { list-style: none; }
+.feature-card ul li {
+  font-size: 0.82rem; color: var(--text-secondary); padding: 0.2rem 0;
+  display: flex; align-items: flex-start; gap: 0.5rem;
+}
+.feature-card ul li::before { content: ''; width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; margin-top: 0.45rem; }
+.feature-card.cyan-card ul li::before { background: var(--cyan); }
+.feature-card.church-card ul li::before { background: var(--church-accent); }
+
+/* ── CHURCHOPS ── */
+.church-hero {
+  background: var(--church-dark);
+  padding: 5rem 6rem;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+  position: relative; overflow: hidden;
+}
+.church-hero-bg {
+  position: absolute; inset: 0;
+  background-image: radial-gradient(circle at 80% 40%, rgba(76,175,130,0.12) 0%, transparent 60%),
+    radial-gradient(circle at 10% 90%, rgba(76,175,130,0.05) 0%, transparent 50%);
+  pointer-events: none;
+}
+.church-hero-grid {
+  position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(76,175,130,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(76,175,130,0.04) 1px, transparent 1px);
+  background-size: 48px 48px; pointer-events: none;
+}
+.church-hero h2 {
+  font-family: var(--font-display); font-size: clamp(1.8rem, 3vw, 2.8rem);
+  font-weight: 800; color: var(--white); line-height: 1.1;
+  letter-spacing: -0.03em; margin-bottom: 1rem;
+}
+.church-hero h2 span { color: var(--church-accent); }
+.church-hero p { font-size: 0.95rem; color: rgba(255,255,255,0.55); line-height: 1.8; font-weight: 300; margin-bottom: 2rem; }
+
+/* Church UI mock */
+.church-ui-card {
+  border-radius: 14px; overflow: hidden;
+  border: 1px solid rgba(76,175,130,0.15);
+  background: rgba(255,255,255,0.04);
+  position: relative; z-index: 1;
+}
+.ui-offline-badge {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  background: rgba(76,175,130,0.2); border: 1px solid rgba(76,175,130,0.3);
+  color: var(--church-accent); padding: 0.2rem 0.6rem; border-radius: 4px;
+  font-size: 0.58rem; font-weight: 700; letter-spacing: 0.05em;
+}
+.pulse-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--church-accent); animation: blink 1.2s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.church-stat-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 0.5rem; margin-bottom: 0.75rem; }
+.church-stat {
+  background: rgba(76,175,130,0.08); border-radius: 8px; padding: 0.75rem;
+  border: 1px solid rgba(76,175,130,0.12);
+}
+.church-stat-num { font-family: var(--font-display); font-size: 1.1rem; font-weight: 800; color: var(--church-accent); }
+.church-stat-label { font-size: 0.6rem; color: rgba(255,255,255,0.35); margin-top: 2px; }
+
+.church-activity { display: flex; flex-direction: column; gap: 0.4rem; }
+.church-activity-item {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.4rem 0.6rem; border-radius: 6px;
+  background: rgba(255,255,255,0.04); font-size: 0.62rem; color: rgba(255,255,255,0.5);
+}
+.activity-icon { width: 18px; height: 18px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; }
+
+/* ROI callout */
+.roi-callout {
+  background: var(--navy); padding: 3rem 6rem;
+  display: flex; align-items: center; gap: 4rem;
+  border-top: 1px solid rgba(76,175,130,0.1);
+}
+.roi-num {
+  font-family: var(--font-display); font-size: 3.5rem; font-weight: 800;
+  color: var(--church-accent); letter-spacing: -0.04em; line-height: 1; flex-shrink: 0;
+}
+.roi-text h4 { font-family: var(--font-display); font-weight: 700; color: var(--white); margin-bottom: 0.4rem; font-size: 1rem; }
+.roi-text p { font-size: 0.875rem; color: rgba(255,255,255,0.5); font-weight: 300; }
+
+/* DIVIDER */
+.product-divider {
+  height: 4px;
+  background: linear-gradient(90deg, var(--wash-primary) 0%, var(--wash-primary) 50%, var(--church-primary) 50%, var(--church-primary) 100%);
+}
+
+/* CTA STRIP */
+.cta-strip {
+  background: var(--navy); padding: 4rem 6rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 2rem; flex-wrap: wrap;
+  border-top: 1px solid rgba(0,184,219,0.1);
+}
+.cta-strip h2 { font-family: var(--font-display); font-weight: 800; color: var(--white); font-size: 1.5rem; letter-spacing: -0.02em; margin-bottom: 0.4rem; }
+.cta-strip p { color: rgba(255,255,255,0.55); font-size: 0.9rem; max-width: 420px; font-weight: 300; }
+.btn-cyan-lg {
+  background: var(--cyan); color: var(--white);
+  padding: 0.9rem 2.2rem; border-radius: 8px; flex-shrink: 0;
+  font-family: var(--font-display); font-size: 0.95rem; font-weight: 700;
+  text-decoration: none; transition: background 0.2s, transform 0.15s; white-space: nowrap;
+}
+.btn-cyan-lg:hover { background: var(--cyan-dark); transform: translateY(-1px); }
+
+/* FOOTER */
+footer {
+  background: #080f18; padding: 2.25rem 6rem;
+  display: flex; align-items: center; justify-content: space-between;
+  border-top: 1px solid rgba(255,255,255,0.04);
+}
+.footer-logo { font-family: var(--font-display); font-weight: 700; color: var(--white); font-size: 0.9rem; }
+.footer-sub { font-size: 0.75rem; color: rgba(255,255,255,0.3); margin-top: 0.2rem; }
+.footer-right { font-size: 0.75rem; color: rgba(255,255,255,0.3); text-align: right; }
+
+/* ANIMATIONS */
+@keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+.banner-breadcrumb { animation: fadeUp 0.5s 0.1s ease both; }
+.banner-tag { animation: fadeUp 0.5s 0.2s ease both; }
+.banner h1 { animation: fadeUp 0.6s 0.3s ease both; }
+.banner-sub { animation: fadeUp 0.6s 0.4s ease both; }
+
+@media (max-width: 960px) {
+  nav { padding: 1rem 1.5rem; }
+  .filter-bar { padding: 0 1.5rem; overflow-x: auto; }
+  .banner-content { padding: 3rem 1.5rem; }
+  .wash-hero, .church-hero { grid-template-columns: 1fr; padding: 3.5rem 1.5rem; gap: 2.5rem; }
+  .features-section { padding: 3rem 1.5rem; }
+  .features-grid { grid-template-columns: 1fr; }
+  .roi-callout { padding: 2.5rem 1.5rem; flex-direction: column; gap: 1rem; }
+  .cta-strip { padding: 3rem 1.5rem; flex-direction: column; align-items: flex-start; }
+  footer { flex-direction: column; gap: 1rem; padding: 2rem 1.5rem; }
+  .footer-right { text-align: left; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="exchosoft_homepage.html">
+    <img src="exchosoft.png" alt="Exchosoft"/>
+    Exchosoft Consult
+  </a>
+  <div class="nav-breadcrumb">
+    <a href="exchosoft_homepage.html">Home</a>
+    <span class="sep">/</span>
+    <span class="crumb-dot"></span>
+    <span class="current">Products</span>
+  </div>
+  <a class="nav-cta" href="#cta">Talk to Us</a>
+</nav>
+
+<!-- BANNER -->
+<div class="banner">
+  <canvas id="banner-canvas"></canvas>
+  <div class="banner-dots"></div>
+  <div class="banner-content">
+    <div class="banner-breadcrumb">
+      <a href="exchosoft_homepage.html">Home</a>
+      <span class="crumb-sep">/</span>
+      <span class="crumb-dot"></span>
+      <span class="crumb-current">Our Products</span>
+    </div>
+    <div class="banner-tag">Software built for Africa</div>
+    <h1>Real Software for <em>Real Conditions</em></h1>
+    <p class="banner-sub">Two industry-specific platforms built offline-first, designed for the realities of doing business in Ghana and across our markets. Not adapted from elsewhere — built here, for here.</p>
+  </div>
+</div>
+
+<!-- FILTER TABS -->
+<div class="filter-bar">
+  <a class="filter-tab active" href="#washops">WashOps <span class="filter-count">4</span></a>
+  <a class="filter-tab" href="#churchops">ChurchOps <span class="filter-count">6</span></a>
+  <a class="filter-tab" href="#cta">Custom Build</a>
+</div>
+
+<div class="products-wrap">
+
+  <!-- ══════════════ WASHOPS ══════════════ -->
+  <div class="product-section" id="washops">
+
+    <!-- Hero -->
+    <div class="wash-hero">
+      <div class="wash-hero-bg"></div>
+      <div class="wash-hero-grid"></div>
+      <div style="position:relative;z-index:2;">
+        <div class="product-badge wash-badge">WashOps</div>
+        <h2>Complete Laundry Management for <span>Modern Businesses</span></h2>
+        <p>Enterprise-grade desktop application with powerful POS, real-time analytics, automated workflows, and cloud synchronization. Everything you need to run and scale your laundry business.</p>
+        <div class="btn-row">
+          <a class="btn-cyan" href="https://washops.x10.network/contact/" target="_blank">Start Free Trial</a>
+          <a class="btn-outline-cyan" href="https://washops.x10.network/washops-white-paper/" target="_blank">Read White Paper</a>
+        </div>
+      </div>
+
+      <!-- Mock UI -->
+      <div class="product-ui-card" style="position:relative;z-index:2;">
+        <div class="ui-titlebar">
+          <span class="ui-dot r"></span><span class="ui-dot y"></span><span class="ui-dot g"></span>
+          <span class="ui-titlebar-label">WashOps — Analytics Dashboard</span>
+        </div>
+        <div class="ui-body">
+          <div class="ui-stat-row">
+            <div class="ui-stat">
+              <div class="ui-stat-num" style="color:#00b8db;">₵ 4,280</div>
+              <div class="ui-stat-label">Today's revenue</div>
+            </div>
+            <div class="ui-stat">
+              <div class="ui-stat-num" style="color:#7acfe8;">83</div>
+              <div class="ui-stat-label">Orders active</div>
+            </div>
+            <div class="ui-stat">
+              <div class="ui-stat-num" style="color:#28ca41;">97%</div>
+              <div class="ui-stat-label">On-time rate</div>
+            </div>
+          </div>
+          <div class="ui-kanban">
+            <div class="kanban-col">
+              <div class="kanban-col-title" style="color:#7acfe8;">Intake</div>
+              <div class="kanban-card">Bulk wash · 8kg<span class="k-tag" style="background:rgba(0,184,219,0.15);color:#7acfe8;">New</span></div>
+              <div class="kanban-card">Dry clean · 3 items</div>
+            </div>
+            <div class="kanban-col">
+              <div class="kanban-col-title" style="color:#ffbd2e;">Processing</div>
+              <div class="kanban-card">Express wash · 5kg<span class="k-tag" style="background:rgba(255,189,46,0.15);color:#ffbd2e;">Urgent</span></div>
+              <div class="kanban-card">Ironing · 12 items</div>
+            </div>
+            <div class="kanban-col">
+              <div class="kanban-col-title" style="color:#28ca41;">Ready</div>
+              <div class="kanban-card">Order #1047<span class="k-tag" style="background:rgba(40,202,65,0.15);color:#28ca41;">Done</span></div>
+            </div>
+          </div>
+          <div class="ui-bar-row">
+            <div class="ui-bar-item">
+              <span class="ui-bar-label">Mon</span>
+              <div class="ui-bar-track"><div class="ui-bar-fill" style="width:82%;background:#00b8db;"></div></div>
+              <span class="ui-bar-val">₵3.2k</span>
+            </div>
+            <div class="ui-bar-item">
+              <span class="ui-bar-label">Tue</span>
+              <div class="ui-bar-track"><div class="ui-bar-fill" style="width:65%;background:#00b8db;"></div></div>
+              <span class="ui-bar-val">₵2.5k</span>
+            </div>
+            <div class="ui-bar-item">
+              <span class="ui-bar-label">Wed</span>
+              <div class="ui-bar-track"><div class="ui-bar-fill" style="width:100%;background:#00b8db;"></div></div>
+              <span class="ui-bar-val">₵4.3k</span>
+            </div>
+            <div class="ui-bar-item">
+              <span class="ui-bar-label">Thu</span>
+              <div class="ui-bar-track"><div class="ui-bar-fill" style="width:74%;background:#7acfe8;opacity:0.7;"></div></div>
+              <span class="ui-bar-val">₵2.9k</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <div class="features-section">
+      <div class="features-header">
+        <h3>Powerful Features Built for Laundry Businesses</h3>
+        <p>Everything you need to manage orders, delight customers, and grow your business — all in one place.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card cyan-card">
+          <div class="feature-icon cyan-icon">📊</div>
+          <h4>Analytics Dashboard</h4>
+          <ul>
+            <li>Revenue tracking and forecasting</li>
+            <li>Order volume analytics</li>
+            <li>Daily bottleneck identification</li>
+            <li>Staff performance metrics</li>
+            <li>Customer behavior insights</li>
+            <li>Custom date range reporting</li>
+          </ul>
+        </div>
+        <div class="feature-card cyan-card">
+          <div class="feature-icon cyan-icon">🖥️</div>
+          <h4>Advanced Point of Sale</h4>
+          <ul>
+            <li>Quick order booking interface</li>
+            <li>Multiple payment methods support</li>
+            <li>Partial and full payment processing</li>
+            <li>Customer creation and retrieval</li>
+            <li>Thermal printer integration</li>
+            <li>Receipt customization</li>
+          </ul>
+        </div>
+        <div class="feature-card cyan-card">
+          <div class="feature-icon cyan-icon">📋</div>
+          <h4>Kanban Orders Board</h4>
+          <ul>
+            <li>Drag-and-drop status updates</li>
+            <li>Color-coded priority system</li>
+            <li>Real-time order tracking</li>
+            <li>Team collaboration features</li>
+            <li>Automated status notifications</li>
+            <li>Custom workflow stages</li>
+          </ul>
+        </div>
+        <div class="feature-card cyan-card">
+          <div class="feature-icon cyan-icon">☁️</div>
+          <h4>Enterprise Database Management</h4>
+          <ul>
+            <li>Automatic cloud backup</li>
+            <li>Manual backup and restore</li>
+            <li>Push to cloud / Pull from cloud</li>
+            <li>Conflict resolution strategies</li>
+            <li>Disaster recovery protocols</li>
+            <li>Data encryption and security</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIVIDER -->
+  <div class="product-divider"></div>
+
+  <!-- ══════════════ CHURCHOPS ══════════════ -->
+  <div class="product-section" id="churchops">
+
+    <!-- Hero -->
+    <div class="church-hero">
+      <div class="church-hero-bg"></div>
+      <div class="church-hero-grid"></div>
+      <div style="position:relative;z-index:2;">
+        <div class="product-badge church-badge">ChurchOps</div>
+        <h2>Church Management That Works — <span>Even When the Internet Doesn't</span></h2>
+        <p>The first offline-first church management system built specifically for Ghanaian churches. Manage members, finances, and ministries with 100% uptime.</p>
+        <div class="btn-row">
+          <a class="btn-green" href="https://churchops.x10.network#form" target="_blank">Book Free Demo</a>
+          <a class="btn-outline-green" href="https://churchops.x10.network#form" target="_blank">Download White Paper</a>
+        </div>
+      </div>
+
+      <!-- Church UI Mock -->
+      <div class="church-ui-card" style="position:relative;z-index:2;">
+        <div class="ui-titlebar" style="background:rgba(76,175,130,0.08);border-color:rgba(76,175,130,0.12);">
+          <span class="ui-dot r"></span><span class="ui-dot y"></span><span class="ui-dot g"></span>
+          <div class="ui-offline-badge"><span class="pulse-dot"></span> Offline — synced 2m ago</div>
+          <span class="ui-titlebar-label" style="margin-left:auto;">ChurchOps</span>
+        </div>
+        <div class="ui-body">
+          <div class="church-stat-grid">
+            <div class="church-stat">
+              <div class="church-stat-num">1,240</div>
+              <div class="church-stat-label">Active members</div>
+            </div>
+            <div class="church-stat">
+              <div class="church-stat-num" style="color:#7acfe8;">₵ 18,400</div>
+              <div class="church-stat-label">This month tithes</div>
+            </div>
+            <div class="church-stat">
+              <div class="church-stat-num" style="color:#ffbd2e;">94%</div>
+              <div class="church-stat-label">Attendance rate</div>
+            </div>
+            <div class="church-stat">
+              <div class="church-stat-num" style="color:#7acfe8;">3</div>
+              <div class="church-stat-label">Branches synced</div>
+            </div>
+          </div>
+          <div class="church-activity">
+            <div class="church-activity-item">
+              <div class="activity-icon" style="background:rgba(76,175,130,0.2);">🎂</div>
+              <span>Birthday SMS sent to 4 members — MTN Gateway</span>
+            </div>
+            <div class="church-activity-item">
+              <div class="activity-icon" style="background:rgba(0,184,219,0.15);">💳</div>
+              <span>MoMo offering recorded — Vodafone · ₵240</span>
+            </div>
+            <div class="church-activity-item">
+              <div class="activity-icon" style="background:rgba(255,189,46,0.15);">👤</div>
+              <span>New visitor registered — Accra Central Branch</span>
+            </div>
+            <div class="church-activity-item">
+              <div class="activity-icon" style="background:rgba(76,175,130,0.15);">☁️</div>
+              <span>Cloud sync complete — 3 branches · 0 conflicts</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <div class="features-section church-bg">
+      <div class="features-header">
+        <h3>Why Churches Choose ChurchOps</h3>
+        <p>Designed for Ghana's reality: unreliable internet, frequent power cuts, and the need for local payments.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card church-card">
+          <div class="feature-icon green-icon">📡</div>
+          <h4>100% Offline Operation</h4>
+          <ul>
+            <li>Full functionality during power cuts</li>
+            <li>Automatic cloud sync when online</li>
+            <li>Zero data loss guarantee</li>
+            <li>Local network (LAN) collaboration</li>
+          </ul>
+        </div>
+        <div class="feature-card church-card">
+          <div class="feature-icon green-icon">💰</div>
+          <h4>Complete Financial Management</h4>
+          <ul>
+            <li>MTN, Vodafone, AirtelTigo Mobile Money</li>
+            <li>Tithe and offering tracking</li>
+            <li>Member contribution statements</li>
+            <li>Full financial reporting and audit trail</li>
+          </ul>
+        </div>
+        <div class="feature-card church-card">
+          <div class="feature-icon green-icon">👥</div>
+          <h4>Member Management</h4>
+          <ul>
+            <li>Complete member profiles</li>
+            <li>Attendance tracking and trends</li>
+            <li>Visitor follow-up workflows</li>
+            <li>Ministry assignments and family links</li>
+          </ul>
+        </div>
+        <div class="feature-card church-card">
+          <div class="feature-icon green-icon">📣</div>
+          <h4>Automated Communication</h4>
+          <ul>
+            <li>Bulk SMS via local gateways</li>
+            <li>Automated birthday greetings</li>
+            <li>Service reminders and event notifications</li>
+            <li>Email campaigns to members</li>
+          </ul>
+        </div>
+        <div class="feature-card church-card">
+          <div class="feature-icon green-icon">🏛️</div>
+          <h4>Multi-Branch Ready</h4>
+          <ul>
+            <li>Manage all locations from HQ</li>
+            <li>Consolidated cross-branch reporting</li>
+            <li>Branch autonomy with HQ visibility</li>
+            <li>Easy member transfers between branches</li>
+          </ul>
+        </div>
+        <div class="feature-card church-card">
+          <div class="feature-icon green-icon">📈</div>
+          <h4>Powerful Analytics</h4>
+          <ul>
+            <li>Financial dashboards and trends</li>
+            <li>Attendance pattern analysis</li>
+            <li>Member engagement scoring</li>
+            <li>Custom report builder</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROI callout -->
+    <div class="roi-callout">
+      <div class="roi-num">640–1,940%</div>
+      <div class="roi-text">
+        <h4>Documented return on investment</h4>
+        <p>Churches using ChurchOps report payback in less than 5 days. Download the white paper to see the full ROI analysis across different church sizes.</p>
+      </div>
+      <a class="btn-green" href="https://churchops.x10.network#form" target="_blank" style="flex-shrink:0;">Get the White Paper</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-strip" id="cta">
+  <div>
+    <h2>Need something built for your industry?</h2>
+    <p>WashOps and ChurchOps are two of our products. If your sector isn't covered, we build custom — from the ground up, for your exact operations.</p>
+  </div>
+  <a class="btn-cyan-lg" href="mailto:contact@exchosoft.com">Start a Conversation</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-logo">Exchosoft Consult</div>
+    <div class="footer-sub">Software Development & Technology Consultancy · Accra, Ghana</div>
+  </div>
+  <div class="footer-right">
+    Serving Africa, the Caribbean & the Diaspora<br/>
+    <a href="mailto:contact@exchosoft.com" style="color:rgba(255,255,255,0.3);text-decoration:none;">contact@exchosoft.com</a>
+  </div>
+</footer>
+
+<script>
+const canvas = document.getElementById('banner-canvas');
+const ctx = canvas.getContext('2d');
+function resize() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; }
+resize();
+window.addEventListener('resize', resize);
+const circles = [
+  {x:0.75,y:0.5,r:80,delay:0,speed:2000,color:'0,184,219'},
+  {x:0.75,y:0.5,r:80,delay:650,speed:2000,color:'0,184,219'},
+  {x:0.75,y:0.5,r:80,delay:1300,speed:2000,color:'0,184,219'},
+  {x:0.88,y:0.25,r:40,delay:400,speed:1600,color:'122,207,232'},
+  {x:0.88,y:0.25,r:40,delay:1200,speed:1600,color:'122,207,232'},
+  {x:0.62,y:0.8,r:30,delay:800,speed:1900,color:'0,145,173'},
+  {x:0.62,y:0.8,r:30,delay:1700,speed:1900,color:'0,145,173'},
+];
+const cores = [
+  {x:0.75,y:0.5,r:7,color:'0,184,219',pulse:1100},
+  {x:0.88,y:0.25,r:4,color:'122,207,232',pulse:900},
+  {x:0.62,y:0.8,r:4,color:'0,145,173',pulse:1300},
+];
+function easeOut(t){return 1-Math.pow(1-t,2);}
+function draw(ts){
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  circles.forEach(c=>{
+    const cx=W*c.x,cy=H*c.y;
+    const elapsed=(ts-c.delay+c.speed*10)%c.speed;
+    const t=elapsed/c.speed;
+    const radius=c.r*easeOut(t)*3.5;
+    const alpha=(1-t)*0.5;
+    ctx.beginPath();ctx.arc(cx,cy,radius,0,Math.PI*2);
+    ctx.strokeStyle=`rgba(${c.color},${alpha})`;ctx.lineWidth=1.2;ctx.stroke();
+  });
+  cores.forEach(c=>{
+    const cx=W*c.x,cy=H*c.y;
+    const pulse=0.88+0.12*Math.sin(ts/c.pulse*Math.PI*2);
+    ctx.beginPath();ctx.arc(cx,cy,c.r*pulse,0,Math.PI*2);
+    ctx.fillStyle=`rgba(${c.color},0.9)`;ctx.fill();
+    ctx.beginPath();ctx.arc(cx,cy,c.r*pulse*2,0,Math.PI*2);
+    ctx.fillStyle=`rgba(${c.color},0.12)`;ctx.fill();
+  });
+  requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+
+document.querySelectorAll('.filter-tab').forEach(tab=>{
+  tab.addEventListener('click', function(){
+    document.querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active','church-active'));
+    if(this.href && this.href.includes('churchops')) this.classList.add('church-active');
+    else this.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

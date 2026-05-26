@@ -36,13 +36,13 @@
     <div class="flex h-16 items-center gap-3 px-6 border-b border-slate-700/50">
         @php
             $logoPath = public_path('assets/images/logo.png');
-            $iconPath = public_path('assets/images/icon.png');
+            $iconPath = public_path('assets/images/logo.svg');
             $hasLogo  = file_exists($logoPath) && filesize($logoPath) > 0;
             $hasIcon  = file_exists($iconPath) && filesize($iconPath) > 0;
         @endphp
 
         @if($hasIcon)
-            <img src="{{ asset('assets/images/icon.png') }}" alt="ExchoLicense Icon" class="h-9 w-9 rounded-xl object-cover shadow-lg">
+            <img src="{{ asset('assets/images/logo.svg') }}" alt="ExchoLicense Icon" class="h-9 w-9 rounded-xl object-cover shadow-lg">
         @else
             <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-cyan-600 shadow-lg">
                 <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

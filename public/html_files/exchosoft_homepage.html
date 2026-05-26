@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Exchosoft Consult — Software Development & Technology Consultancy</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --cyan: #00b8db;
+    --cyan-dark: #0091ad;
+    --cyan-deep: #006d82;
+    --sky: #7acfe8;
+    --sky-light: #e5f7fb;
+    --navy: #0d2137;
+    --navy-mid: #162d47;
+    --ice: #f4f8fb;
+    --white: #ffffff;
+    --text-primary: #0d2137;
+    --text-secondary: #3a5a72;
+    --text-muted: #7a9ab0;
+    --border: rgba(0,184,219,0.15);
+    --font-display: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    color: var(--text-primary);
+    background: var(--white);
+    overflow-x: hidden;
+    line-height: 1.7;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 1.25rem 4rem;
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    display: flex; align-items: center; gap: 0.75rem;
+    font-family: var(--font-display); font-size: 1.1rem; font-weight: 700;
+    color: var(--navy); text-decoration: none; letter-spacing: -0.02em;
+  }
+  .nav-logo img { height: 36px; width: auto; }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.875rem; font-weight: 500; color: var(--text-secondary);
+    text-decoration: none; letter-spacing: 0.01em;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--cyan); }
+  .nav-cta {
+    background: var(--cyan); color: var(--white);
+    padding: 0.6rem 1.4rem; border-radius: 6px;
+    font-family: var(--font-display); font-size: 0.875rem; font-weight: 600;
+    text-decoration: none; transition: background 0.2s;
+  }
+  .nav-cta:hover { background: var(--cyan-dark); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    background: var(--navy);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+    padding-top: 5rem;
+  }
+  .hero-bg-pattern {
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(circle at 70% 50%, rgba(0,184,219,0.12) 0%, transparent 60%),
+      radial-gradient(circle at 20% 80%, rgba(122,207,232,0.08) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .hero-grid-lines {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,184,219,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,184,219,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+  .hero-content {
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 6rem 4rem 6rem 6rem;
+    position: relative; z-index: 2;
+  }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: rgba(0,184,219,0.12); border: 1px solid rgba(0,184,219,0.25);
+    color: var(--cyan); padding: 0.35rem 0.9rem; border-radius: 100px;
+    font-size: 0.8rem; font-weight: 500; letter-spacing: 0.04em;
+    margin-bottom: 2rem; width: fit-content;
+  }
+  .hero-tag span { width: 6px; height: 6px; background: var(--cyan); border-radius: 50%; display: block; }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.4rem, 4.5vw, 3.8rem);
+    font-weight: 800; color: var(--white);
+    line-height: 1.1; letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 em { color: var(--cyan); font-style: normal; }
+  .hero-sub {
+    font-size: 1.05rem; color: rgba(255,255,255,0.65);
+    max-width: 480px; margin-bottom: 2.5rem; line-height: 1.7; font-weight: 300;
+  }
+  .hero-buttons { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--cyan); color: var(--white);
+    padding: 0.85rem 2rem; border-radius: 8px;
+    font-family: var(--font-display); font-size: 0.95rem; font-weight: 600;
+    text-decoration: none; transition: background 0.2s, transform 0.15s;
+  }
+  .btn-primary:hover { background: var(--cyan-dark); transform: translateY(-1px); }
+  .btn-secondary {
+    background: transparent; color: var(--white);
+    padding: 0.85rem 2rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);
+    font-family: var(--font-display); font-size: 0.95rem; font-weight: 600;
+    text-decoration: none; transition: border-color 0.2s, background 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--cyan); background: rgba(0,184,219,0.08); }
+  .hero-visual {
+    display: flex; align-items: center; justify-content: center;
+    padding: 4rem; position: relative; z-index: 2;
+  }
+  .hero-logo-wrap {
+    width: 320px; height: 320px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(0,184,219,0.2);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .hero-logo-wrap::before {
+    content: '';
+    position: absolute; inset: -20px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,184,219,0.08);
+  }
+  .hero-logo-wrap::after {
+    content: '';
+    position: absolute; inset: -40px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,184,219,0.05);
+  }
+  .hero-logo-wrap img { width: 200px; height: auto; }
+
+  /* STATS BAR */
+  .stats-bar {
+    background: var(--ice);
+    border-bottom: 1px solid var(--border);
+    padding: 2.5rem 6rem;
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    font-family: var(--font-display); font-size: 2rem; font-weight: 800;
+    color: var(--cyan); letter-spacing: -0.03em;
+  }
+  .stat-label { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem; }
+
+  /* SECTION BASE */
+  section { padding: 6rem 6rem; }
+  .section-tag {
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em;
+    color: var(--cyan); text-transform: uppercase; margin-bottom: 1rem;
+  }
+  h2 {
+    font-family: var(--font-display); font-size: clamp(1.8rem, 3vw, 2.6rem);
+    font-weight: 800; letter-spacing: -0.03em; color: var(--navy); line-height: 1.15;
+  }
+  h3 {
+    font-family: var(--font-display); font-size: 1.15rem;
+    font-weight: 700; color: var(--navy); letter-spacing: -0.01em;
+  }
+
+  /* WHO WE ARE */
+  .intro {
+    background: var(--white);
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center;
+  }
+  .intro-text p {
+    font-size: 1rem; color: var(--text-secondary); margin-top: 1.5rem; line-height: 1.8;
+  }
+  .intro-cards { display: flex; flex-direction: column; gap: 1rem; }
+  .reality-card {
+    background: var(--ice); border-left: 3px solid var(--cyan);
+    padding: 1.1rem 1.4rem; border-radius: 0 8px 8px 0;
+    font-size: 0.9rem; color: var(--text-secondary); font-weight: 400;
+  }
+  .reality-card strong { color: var(--navy); font-weight: 600; display: block; margin-bottom: 0.2rem; font-family: var(--font-display); }
+
+  /* APPROACH */
+  .approach { background: var(--navy); }
+  .approach .section-tag { color: var(--sky); }
+  .approach h2 { color: var(--white); }
+  .approach-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3.5rem;
+  }
+  .approach-card {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(0,184,219,0.15);
+    border-radius: 12px; padding: 2rem;
+    transition: border-color 0.25s, background 0.25s;
+  }
+  .approach-card:hover { border-color: rgba(0,184,219,0.4); background: rgba(0,184,219,0.06); }
+  .approach-icon {
+    width: 44px; height: 44px; border-radius: 10px;
+    background: rgba(0,184,219,0.15); display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1.25rem;
+  }
+  .approach-icon svg { width: 22px; height: 22px; stroke: var(--cyan); fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+  .approach-card h3 { color: var(--white); margin-bottom: 0.75rem; }
+  .approach-card p { font-size: 0.9rem; color: rgba(255,255,255,0.55); line-height: 1.75; font-weight: 300; }
+
+  /* INDUSTRIES */
+  .industries { background: var(--ice); }
+  .industries-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-top: 3.5rem;
+  }
+  .industry-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.75rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .industry-card:hover {
+    border-color: var(--cyan);
+    box-shadow: 0 8px 32px rgba(0,184,219,0.1);
+  }
+  .industry-dot {
+    width: 8px; height: 8px; background: var(--cyan); border-radius: 50%;
+    margin-bottom: 1rem;
+  }
+  .industry-card h3 { margin-bottom: 0.6rem; font-size: 1rem; }
+  .industry-card p { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.7; }
+
+  /* SERVICES */
+  .services { background: var(--white); }
+  .services-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; margin-top: 3.5rem;
+  }
+  .service-item {
+    padding: 2rem; border: 1px solid var(--border); border-radius: 12px;
+    display: flex; gap: 1.25rem; align-items: flex-start;
+    transition: border-color 0.2s;
+  }
+  .service-item:hover { border-color: var(--cyan); }
+  .service-num {
+    font-family: var(--font-display); font-size: 1.5rem; font-weight: 800;
+    color: var(--sky-light); line-height: 1;
+    min-width: 2rem;
+  }
+  .service-item h3 { margin-bottom: 0.5rem; }
+  .service-item p { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.7; }
+
+  /* WHY US */
+  .why { background: var(--navy); }
+  .why .section-tag { color: var(--sky); }
+  .why h2 { color: var(--white); }
+  .why-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; margin-top: 3.5rem;
+  }
+  .why-item { display: flex; gap: 1.25rem; }
+  .why-bar { width: 3px; background: var(--cyan); border-radius: 3px; flex-shrink: 0; }
+  .why-item h3 { color: var(--white); margin-bottom: 0.5rem; }
+  .why-item p { font-size: 0.9rem; color: rgba(255,255,255,0.55); line-height: 1.75; font-weight: 300; }
+
+  /* TRUST */
+  .trust { background: var(--ice); text-align: center; }
+  .trust h2 { margin-bottom: 0.75rem; }
+  .trust-sub { color: var(--text-secondary); margin-bottom: 3rem; }
+  .clients-wrap {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem;
+  }
+  .client-pill {
+    background: var(--white); border: 1px solid var(--border);
+    padding: 0.7rem 1.4rem; border-radius: 100px;
+    font-size: 0.875rem; font-weight: 500; color: var(--text-secondary);
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .client-pill:hover { border-color: var(--cyan); color: var(--cyan-deep); }
+
+  /* CTA */
+  .cta-section {
+    background: var(--cyan);
+    text-align: center; padding: 6rem;
+  }
+  .cta-section h2 {
+    color: var(--white); font-size: clamp(2rem, 3.5vw, 3rem); margin-bottom: 1rem;
+  }
+  .cta-section p { color: rgba(255,255,255,0.8); max-width: 520px; margin: 0 auto 2.5rem; font-size: 1rem; }
+  .btn-white {
+    background: var(--white); color: var(--cyan-deep);
+    padding: 1rem 2.5rem; border-radius: 8px;
+    font-family: var(--font-display); font-size: 1rem; font-weight: 700;
+    text-decoration: none; display: inline-block;
+    transition: transform 0.15s, box-shadow 0.2s;
+  }
+  .btn-white:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+  .cta-email {
+    display: block; margin-top: 1.5rem;
+    font-size: 0.9rem; color: rgba(255,255,255,0.7);
+  }
+  .cta-email a { color: var(--white); }
+
+  /* FOOTER */
+  footer {
+    background: var(--navy); padding: 3rem 6rem;
+    display: flex; align-items: center; justify-content: space-between;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .footer-logo {
+    font-family: var(--font-display); font-weight: 700; color: var(--white);
+    font-size: 1rem; letter-spacing: -0.01em;
+  }
+  .footer-tagline { font-size: 0.8rem; color: rgba(255,255,255,0.4); margin-top: 0.25rem; }
+  .footer-right { font-size: 0.8rem; color: rgba(255,255,255,0.4); text-align: right; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .hero-content > * { animation: fadeUp 0.7s ease both; }
+  .hero-tag { animation-delay: 0.1s; }
+  .hero h1 { animation-delay: 0.2s; }
+  .hero-sub { animation-delay: 0.3s; }
+  .hero-buttons { animation-delay: 0.4s; }
+  .hero-logo-wrap { animation: fadeUp 0.9s 0.3s ease both; }
+
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .hero { grid-template-columns: 1fr; }
+    .hero-visual { display: none; }
+    section { padding: 4rem 1.5rem; }
+    .intro, .approach-grid, .industries-grid, .services-grid, .why-grid { grid-template-columns: 1fr; }
+    .stats-bar { grid-template-columns: repeat(2, 1fr); padding: 2rem 1.5rem; }
+    footer { flex-direction: column; gap: 1rem; text-align: center; padding: 2rem 1.5rem; }
+    .footer-right { text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">
+    <img src="exchosoft.png" alt="Exchosoft logo"/>
+    Exchosoft Consult
+  </a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#approach">Approach</a></li>
+    <li><a href="#industries">Industries</a></li>
+    <li><a href="#services">Services</a></li>
+  </ul>
+  <a class="nav-cta" href="#cta">Talk to Us</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-pattern"></div>
+  <div class="hero-grid-lines"></div>
+  <div class="hero-content">
+    <div class="hero-tag"><span></span> Ghana-Based · Africa · Caribbean · Diaspora</div>
+    <h1>Technology Consultancy Built on <em>Real-World</em> Experience</h1>
+    <p class="hero-sub">We're a software development and consultancy firm serving Black businesses across Africa, the Caribbean, and the diaspora—building custom solutions that work in your reality, not just in theory.</p>
+    <div class="hero-buttons">
+      <a class="btn-primary" href="#cta">Talk to Us</a>
+      <a class="btn-secondary" href="#services">Our Expertise</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-logo-wrap">
+      <img src="exchosoft.png" alt="Exchosoft"/>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat">
+    <div class="stat-num">10+</div>
+    <div class="stat-label">Industries served</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">3</div>
+    <div class="stat-label">Continents reached</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">100%</div>
+    <div class="stat-label">Custom-built solutions</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">Offline</div>
+    <div class="stat-label">First architecture</div>
+  </div>
+</div>
+
+<!-- WHO WE ARE -->
+<section class="intro" id="about">
+  <div class="intro-text">
+    <p class="section-tag">Who We Are</p>
+    <h2>Built for the Conditions You Actually Operate In</h2>
+    <p>Exchosoft Consult is a Ghana-based technology consultancy and software development company. We've built systems for churches, hospitals, pharmacies, laboratories, laundries, heritage organizations, and more—each one custom-designed for that specific business.</p>
+    <p>We understand the conditions our clients operate in because we're here too.</p>
+  </div>
+  <div class="intro-cards">
+    <div class="reality-card"><strong>Intermittent connectivity</strong>We build systems that keep working when the internet drops.</div>
+    <div class="reality-card"><strong>Power challenges</strong>Offline-first architecture means no data is lost during outages.</div>
+    <div class="reality-card"><strong>Mobile-first users</strong>Designed from the ground up for how your customers actually access technology.</div>
+    <div class="reality-card"><strong>Local payment systems</strong>Integrated with the payment infrastructure your market already uses.</div>
+  </div>
+</section>
+
+<!-- APPROACH -->
+<section class="approach" id="approach">
+  <p class="section-tag">Our Approach</p>
+  <h2>What We've Learned Building Software Across Industries</h2>
+  <div class="approach-grid">
+    <div class="approach-card">
+      <div class="approach-icon">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      </div>
+      <h3>Every Business Needs Its Own Solution</h3>
+      <p>Off-the-shelf software forces unacceptable compromises. Each business has unique workflows, and they deserve technology built specifically for how they operate.</p>
+    </div>
+    <div class="approach-card">
+      <div class="approach-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M8 12h8M12 8v8"/></svg>
+      </div>
+      <h3>Offline-First When It Matters</h3>
+      <p>We pioneered offline-first architecture for clients who can't afford downtime — hospitals, pharmacies, churches — with automatic cloud sync when online.</p>
+    </div>
+    <div class="approach-card">
+      <div class="approach-icon">
+        <svg viewBox="0 0 24 24"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z"/><path d="M10 6.5h4M6.5 10v4M17.5 10v4M10 17.5h4"/></svg>
+      </div>
+      <h3>Unified Systems, Clear Insights</h3>
+      <p>We unify business workflows into cohesive systems that give management complete visibility and analytics that clearly identify where improvements are needed.</p>
+    </div>
+    <div class="approach-card">
+      <div class="approach-icon">
+        <svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/></svg>
+      </div>
+      <h3>LAN Collaboration</h3>
+      <p>For businesses with multiple locations or devices, we implement local network capabilities — real-time collaboration even when external connectivity fails.</p>
+    </div>
+    <div class="approach-card">
+      <div class="approach-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <h3>Security & Reliability</h3>
+      <p>From financial institutions to healthcare providers, we build with security baked in — not bolted on — because your clients' data deserves that standard.</p>
+    </div>
+    <div class="approach-card">
+      <div class="approach-icon">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <h3>Long-Term Partnership</h3>
+      <p>We're not just building software — we're building systems that grow with your business and adapt as your needs change. We stay involved.</p>
+    </div>
+  </div>
+</section>
+
+<!-- INDUSTRIES -->
+<section class="industries" id="industries">
+  <p class="section-tag">Experience</p>
+  <h2>Industries We've Served</h2>
+  <div class="industries-grid">
+    <div class="industry-card">
+      <div class="industry-dot"></div>
+      <h3>Healthcare & Medical</h3>
+      <p>Hospital management systems, pharmacy solutions, and laboratory platforms — offline-first, designed to work when connectivity doesn't.</p>
+    </div>
+    <div class="industry-card">
+      <div class="industry-dot"></div>
+      <h3>Faith-Based Organizations</h3>
+      <p>Comprehensive management systems for churches covering membership, events, donations, and complete financial transparency.</p>
+    </div>
+    <div class="industry-card">
+      <div class="industry-dot"></div>
+      <h3>Service Industries</h3>
+      <p>From laundry management to operational platforms — tracking orders, managing workflows, and handling billing seamlessly.</p>
+    </div>
+    <div class="industry-card">
+      <div class="industry-dot"></div>
+      <h3>Heritage & Cultural</h3>
+      <p>Partnering with Black History Walks and African Odysseys, building platforms for cultural preservation and diaspora engagement.</p>
+    </div>
+    <div class="industry-card">
+      <div class="industry-dot"></div>
+      <h3>Financial Services</h3>
+      <p>Working with institutions like Ghana Union Assurance, building secure, reliable financial systems that meet institutional standards.</p>
+    </div>
+    <div class="industry-card">
+      <div class="industry-dot"></div>
+      <h3>Cross-Continental Initiatives</h3>
+      <p>Supporting the African Caribbean Summit and ACIS — technology that bridges communities across continents.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+  <p class="section-tag">What We Offer</p>
+  <h2>Our Services</h2>
+  <div class="services-grid">
+    <div class="service-item">
+      <div class="service-num">01</div>
+      <div>
+        <h3>Custom Software Development</h3>
+        <p>Built from the ground up for your specific operations, workflows, and challenges. No templates. No forcing your business into pre-made molds.</p>
+      </div>
+    </div>
+    <div class="service-item">
+      <div class="service-num">02</div>
+      <div>
+        <h3>Technology Consulting</h3>
+        <p>Strategic guidance on technology investments, system architecture, and digital transformation based on real-world experience across diverse markets.</p>
+      </div>
+    </div>
+    <div class="service-item">
+      <div class="service-num">03</div>
+      <div>
+        <h3>System Architecture & Design</h3>
+        <p>Offline-first capabilities, cloud integration, LAN collaboration, or unified platforms — we design architectures that match your operational realities.</p>
+      </div>
+    </div>
+    <div class="service-item">
+      <div class="service-num">04</div>
+      <div>
+        <h3>Business Process Analysis</h3>
+        <p>We analyze your workflows to identify bottlenecks, inefficiencies, and opportunities for improvement through better technology integration.</p>
+      </div>
+    </div>
+    <div class="service-item">
+      <div class="service-num">05</div>
+      <div>
+        <h3>Digital Transformation</h3>
+        <p>Complete operational modernization that respects how your business actually works, rather than forcing you into someone else's model.</p>
+      </div>
+    </div>
+    <div class="service-item">
+      <div class="service-num">06</div>
+      <div>
+        <h3>Ongoing Support & Evolution</h3>
+        <p>Technology needs change as businesses grow. We provide continued consultation and development as your needs evolve over time.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section class="why">
+  <p class="section-tag">Why Exchosoft</p>
+  <h2>Why Work With Us</h2>
+  <div class="why-grid">
+    <div class="why-item">
+      <div class="why-bar"></div>
+      <div>
+        <h3>We Build What You Actually Need</h3>
+        <p>Not what we think you should need. Not what worked for someone else. We listen, understand your operations, and build specifically for you.</p>
+      </div>
+    </div>
+    <div class="why-item">
+      <div class="why-bar"></div>
+      <div>
+        <h3>We Understand Your Context</h3>
+        <p>From Lagos to London, Accra to Atlanta, Kingston to Kumasi — we understand the infrastructure challenges and operational conditions of doing business across our markets.</p>
+      </div>
+    </div>
+    <div class="why-item">
+      <div class="why-bar"></div>
+      <div>
+        <h3>We've Done This Before</h3>
+        <p>Our experience across healthcare, faith organizations, service industries, heritage preservation, and financial services means proven expertise with full customization.</p>
+      </div>
+    </div>
+    <div class="why-item">
+      <div class="why-bar"></div>
+      <div>
+        <h3>We Think Long-Term</h3>
+        <p>We're not just building software — we're building systems that will grow with your business and adapt as your needs change over time.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST -->
+<section class="trust">
+  <p class="section-tag">Organizations We've Worked With</p>
+  <h2>Trusted Across Industries</h2>
+  <p class="trust-sub">Proud to have partnered with organizations across Africa, the Caribbean, and the diaspora.</p>
+  <div class="clients-wrap">
+    <div class="client-pill">Black History Walks</div>
+    <div class="client-pill">African Odysseys</div>
+    <div class="client-pill">African Caribbean Summit</div>
+    <div class="client-pill">Ghana Union Assurance</div>
+    <div class="client-pill">ACIS</div>
+    <div class="client-pill">Churches across West Africa</div>
+    <div class="client-pill">Hospitals & Pharmacies</div>
+    <div class="client-pill">Laboratories</div>
+    <div class="client-pill">SMEs</div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="cta">
+  <h2>Let's Talk About Your Business</h2>
+  <p>Every business is different. Every challenge is unique. Let's discuss what you're trying to achieve and explore how we can build technology that actually fits your operations.</p>
+  <a class="btn-white" href="mailto:contact@exchosoft.com">Schedule a Consultation</a>
+  <span class="cta-email">Or email us directly at <a href="mailto:contact@exchosoft.com">contact@exchosoft.com</a></span>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-logo">Exchosoft Consult</div>
+    <div class="footer-tagline">Software Development & Technology Consultancy</div>
+  </div>
+  <div class="footer-right">
+    Accra, Ghana<br/>
+    Serving Africa, the Caribbean & the Diaspora
+  </div>
+</footer>
+
+</body>
+</html>

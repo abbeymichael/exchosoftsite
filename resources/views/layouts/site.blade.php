@@ -24,11 +24,11 @@
             {{-- Logo --}}
             <a href="{{ route('home') }}" wire:navigate class="flex items-center gap-2.5">
                 @php
-                    $iconPath = public_path('assets/images/icon.png');
+                    $iconPath = public_path('assets/images/logo.svg');
                     $hasIcon  = file_exists($iconPath) && filesize($iconPath) > 0;
                 @endphp
                 @if($hasIcon)
-                    <img src="{{ asset('assets/images/icon.png') }}" alt="ExchoSoft" class="h-8 w-8 rounded-lg object-cover">
+                    <img src="{{ asset('assets/images/logo.svg') }}" alt="ExchoSoft" class="h-8 w-8 rounded-lg object-cover">
                 @else
                     <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-600 text-white font-bold text-sm">E</div>
                 @endif
@@ -115,7 +115,7 @@
             <div class="col-span-1 lg:col-span-1">
                 <div class="flex items-center gap-2.5 mb-4">
                     @if($hasIcon ?? false)
-                        <img src="{{ asset('assets/images/icon.png') }}" alt="ExchoSoft" class="h-8 w-8 rounded-lg object-cover">
+                        <img src="{{ asset('assets/images/logo.svg') }}" alt="ExchoSoft" class="h-8 w-8 rounded-lg object-cover">
                     @else
                         <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-600 text-white font-bold text-sm">E</div>
                     @endif
