@@ -8,7 +8,7 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
-new #[Layout('layouts.site')] #[Title('ExchoSoft — Innovative Software Solutions for Africa')] class extends Component
+new #[Layout('layouts.site')] #[Title('Exchosoft Consult — Software Development & Technology Consultancy')] class extends Component
 {
     public function render(): \Illuminate\View\View
     {
@@ -22,221 +22,617 @@ new #[Layout('layouts.site')] #[Title('ExchoSoft — Innovative Software Solutio
 }; ?>
 
 <div>
+<style>
+  /* ── HOME PAGE STYLES ── */
+  .home-hero {
+    min-height: 100vh;
+    background: var(--navy);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg-pattern {
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(circle at 70% 50%, rgba(0,184,219,0.12) 0%, transparent 60%),
+      radial-gradient(circle at 20% 80%, rgba(122,207,232,0.08) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .hero-grid-lines {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,184,219,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,184,219,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+  .hero-content {
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 8rem 4rem 6rem 6rem;
+    position: relative; z-index: 2;
+  }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: rgba(0,184,219,0.12); border: 1px solid rgba(0,184,219,0.25);
+    color: var(--cyan); padding: 0.35rem 0.9rem; border-radius: 100px;
+    font-size: 0.8rem; font-weight: 500; letter-spacing: 0.04em;
+    margin-bottom: 2rem; width: fit-content;
+  }
+  .hero-tag span { width: 6px; height: 6px; background: var(--cyan); border-radius: 50%; display: block; }
+  .hero-h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.4rem, 4.5vw, 3.8rem);
+    font-weight: 800; color: var(--white);
+    line-height: 1.1; letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+  }
+  .hero-h1 em { color: var(--cyan); font-style: normal; }
+  .hero-sub {
+    font-size: 1.05rem; color: rgba(255,255,255,0.65);
+    max-width: 480px; margin-bottom: 2.5rem; line-height: 1.7; font-weight: 300;
+  }
+  .hero-buttons { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-primary-cyan {
+    background: var(--cyan); color: var(--white);
+    padding: 0.85rem 2rem; border-radius: 8px;
+    font-family: var(--font-display); font-size: 0.95rem; font-weight: 600;
+    text-decoration: none; transition: background 0.2s, transform 0.15s; display: inline-block;
+  }
+  .btn-primary-cyan:hover { background: var(--cyan-dark); transform: translateY(-1px); }
+  .btn-secondary-outline {
+    background: transparent; color: var(--white);
+    padding: 0.85rem 2rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);
+    font-family: var(--font-display); font-size: 0.95rem; font-weight: 600;
+    text-decoration: none; transition: border-color 0.2s, background 0.2s; display: inline-block;
+  }
+  .btn-secondary-outline:hover { border-color: var(--cyan); background: rgba(0,184,219,0.08); }
+  .hero-visual {
+    display: flex; align-items: center; justify-content: center;
+    padding: 4rem; position: relative; z-index: 2;
+  }
+  .hero-logo-wrap {
+    width: 320px; height: 320px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(0,184,219,0.2);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    font-family: var(--font-display); font-size: 5rem; font-weight: 800;
+    color: var(--cyan);
+  }
+  .hero-logo-wrap::before {
+    content: ''; position: absolute; inset: -20px;
+    border-radius: 50%; border: 1px solid rgba(0,184,219,0.08);
+  }
+  .hero-logo-wrap::after {
+    content: ''; position: absolute; inset: -40px;
+    border-radius: 50%; border: 1px solid rgba(0,184,219,0.05);
+  }
+  .hero-logo-wrap img { width: 200px; height: auto; }
 
-    {{-- ══════════════════════════════════════════════════════════════════════
-         HERO — PLACEHOLDER (Replace with your own design)
-    ══════════════════════════════════════════════════════════════════════ --}}
-    <section class="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-cyan-900 text-white">
-        {{-- Decorative circles --}}
-        <div class="absolute -top-24 -right-24 h-96 w-96 rounded-full bg-cyan-500/10 blur-3xl"></div>
-        <div class="absolute -bottom-24 -left-24 h-96 w-96 rounded-full bg-violet-500/10 blur-3xl"></div>
+  /* STATS BAR */
+  .stats-bar {
+    background: var(--ice);
+    border-bottom: 1px solid var(--border);
+    padding: 2.5rem 6rem;
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    font-family: var(--font-display); font-size: 2rem; font-weight: 800;
+    color: var(--cyan); letter-spacing: -0.03em;
+  }
+  .stat-label { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem; }
 
-        <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
-            <div class="max-w-3xl">
-                {{-- Badge --}}
-                <span class="inline-flex items-center gap-1.5 rounded-full border border-cyan-400/30 bg-cyan-400/10 px-3 py-1 text-xs font-semibold text-cyan-300 mb-6">
-                    <span class="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
-                    Ghana's Leading Software Company
-                </span>
-                {{-- Headline PLACEHOLDER --}}
-                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-tight mb-6">
-                    🚧 Hero Section
-                    <span class="text-cyan-400">Placeholder</span>
-                </h1>
-                <p class="text-lg sm:text-xl text-slate-300 leading-relaxed mb-8 max-w-2xl">
-                    Replace this with your own compelling headline and description about ExchoSoft's mission, products, and value proposition. This section is intentionally left as a placeholder.
-                </p>
-                <div class="flex flex-wrap items-center gap-4">
-                    <a href="{{ route('site.products') }}" wire:navigate
-                       class="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-6 py-3 text-sm font-semibold text-white hover:bg-cyan-400 transition-colors shadow-lg shadow-cyan-500/25">
-                        Explore Products
-                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-                    </a>
-                    <a href="{{ route('site.book-demo') }}" wire:navigate
-                       class="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/5 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10 transition-colors">
-                        Book a Demo
-                    </a>
-                </div>
-            </div>
+  /* SECTION BASE */
+  .home-section { padding: 6rem; }
+  .section-tag-label {
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em;
+    color: var(--cyan); text-transform: uppercase; margin-bottom: 1rem;
+  }
+  .section-h2 {
+    font-family: var(--font-display); font-size: clamp(1.8rem, 3vw, 2.6rem);
+    font-weight: 800; letter-spacing: -0.03em; color: var(--navy); line-height: 1.15;
+  }
+  .section-h2-light { color: var(--white); }
+  .section-h3 {
+    font-family: var(--font-display); font-size: 1.15rem;
+    font-weight: 700; color: var(--navy); letter-spacing: -0.01em;
+  }
+
+  /* WHO WE ARE */
+  .intro-section {
+    background: var(--white);
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center;
+  }
+  .intro-text p { font-size: 1rem; color: var(--text-secondary); margin-top: 1.5rem; line-height: 1.8; }
+  .intro-cards { display: flex; flex-direction: column; gap: 1rem; }
+  .reality-card {
+    background: var(--ice); border-left: 3px solid var(--cyan);
+    padding: 1.1rem 1.4rem; border-radius: 0 8px 8px 0;
+    font-size: 0.9rem; color: var(--text-secondary); font-weight: 400;
+  }
+  .reality-card strong { color: var(--navy); font-weight: 600; display: block; margin-bottom: 0.2rem; font-family: var(--font-display); }
+
+  /* PRODUCTS SECTION (dynamic) */
+  .products-preview { background: var(--ice); }
+  .products-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; margin-top: 3rem; }
+  .product-card {
+    background: var(--white); border: 1px solid var(--border); border-radius: 14px;
+    overflow: hidden; text-decoration: none;
+    transition: border-color 0.2s, box-shadow 0.2s; display: block;
+  }
+  .product-card:hover { border-color: var(--cyan); box-shadow: 0 8px 32px rgba(0,184,219,0.12); }
+  .product-card-img {
+    height: 160px; background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+    display: flex; align-items: center; justify-content: center; position: relative;
+    overflow: hidden;
+  }
+  .product-card-img img { width: 100%; height: 100%; object-fit: cover; }
+  .product-card-img-placeholder {
+    font-family: var(--font-display); font-size: 2rem; font-weight: 800;
+    color: rgba(0,184,219,0.4);
+  }
+  .product-card-badge {
+    position: absolute; top: 0.75rem; left: 0.75rem;
+    background: rgba(0,184,219,0.15); border: 1px solid rgba(0,184,219,0.3);
+    color: var(--cyan); padding: 0.2rem 0.6rem; border-radius: 100px;
+    font-size: 0.65rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .product-card-sale {
+    position: absolute; top: 0.75rem; right: 0.75rem;
+    background: #ef4444; color: white; padding: 0.2rem 0.6rem;
+    border-radius: 100px; font-size: 0.65rem; font-weight: 700;
+  }
+  .product-card-body { padding: 1.25rem 1.5rem; }
+  .product-card-body p.name {
+    font-family: var(--font-display); font-size: 1rem; font-weight: 700;
+    color: var(--navy); margin-bottom: 0.4rem;
+  }
+  .product-card-body p.tagline { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.6; }
+  .product-card-footer {
+    padding: 0.85rem 1.5rem; border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .product-price { font-family: var(--font-display); font-size: 1rem; font-weight: 800; color: var(--navy); }
+  .product-price-sale { color: #16a34a; }
+  .product-price-old { font-size: 0.78rem; color: var(--text-muted); text-decoration: line-through; }
+  .product-view-link {
+    font-size: 0.78rem; font-weight: 600; color: var(--cyan);
+    font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.05em;
+  }
+
+  /* APPROACH */
+  .approach-section { background: var(--navy); }
+  .approach-section .section-tag-label { color: var(--sky); }
+  .approach-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3.5rem; }
+  .approach-card {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(0,184,219,0.15);
+    border-radius: 12px; padding: 2rem;
+    transition: border-color 0.25s, background 0.25s;
+  }
+  .approach-card:hover { border-color: rgba(0,184,219,0.4); background: rgba(0,184,219,0.06); }
+  .approach-icon {
+    width: 44px; height: 44px; border-radius: 10px;
+    background: rgba(0,184,219,0.15); display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1.25rem;
+  }
+  .approach-icon svg { width: 22px; height: 22px; stroke: var(--cyan); fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+  .approach-card h3 { color: var(--white); margin-bottom: 0.75rem; font-family: var(--font-display); font-size: 1rem; font-weight: 700; }
+  .approach-card p { font-size: 0.9rem; color: rgba(255,255,255,0.55); line-height: 1.75; font-weight: 300; }
+
+  /* INDUSTRIES */
+  .industries-section { background: var(--ice); }
+  .industries-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-top: 3.5rem; }
+  .industry-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.75rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .industry-card:hover { border-color: var(--cyan); box-shadow: 0 8px 32px rgba(0,184,219,0.1); }
+  .industry-dot { width: 8px; height: 8px; background: var(--cyan); border-radius: 50%; margin-bottom: 1rem; }
+  .industry-card h3 { margin-bottom: 0.6rem; font-size: 1rem; font-family: var(--font-display); font-weight: 700; color: var(--navy); }
+  .industry-card p { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.7; }
+
+  /* WHY US */
+  .why-section { background: var(--navy); }
+  .why-section .section-tag-label { color: var(--sky); }
+  .why-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; margin-top: 3.5rem; }
+  .why-item { display: flex; gap: 1.25rem; }
+  .why-bar { width: 3px; background: var(--cyan); border-radius: 3px; flex-shrink: 0; }
+  .why-item h3 { color: var(--white); margin-bottom: 0.5rem; font-family: var(--font-display); font-size: 1rem; font-weight: 700; }
+  .why-item p { font-size: 0.9rem; color: rgba(255,255,255,0.55); line-height: 1.75; font-weight: 300; }
+
+  /* TRUST */
+  .trust-section { background: var(--ice); text-align: center; }
+  .trust-sub { color: var(--text-secondary); margin-bottom: 3rem; margin-top: 0.75rem; }
+  .clients-wrap { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; }
+  .client-pill {
+    background: var(--white); border: 1px solid var(--border);
+    padding: 0.7rem 1.4rem; border-radius: 100px;
+    font-size: 0.875rem; font-weight: 500; color: var(--text-secondary);
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .client-pill:hover { border-color: var(--cyan); color: var(--cyan-deep); }
+
+  /* BLOG POSTS PREVIEW */
+  .blog-preview { background: var(--white); }
+  .blog-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; margin-top: 3rem; }
+  .blog-card {
+    background: var(--white); border: 1px solid var(--border); border-radius: 14px;
+    overflow: hidden; text-decoration: none; display: block;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .blog-card:hover { border-color: var(--cyan); box-shadow: 0 8px 24px rgba(0,184,219,0.1); }
+  .blog-card-img {
+    height: 140px; background: var(--ice);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .blog-card-img img { width: 100%; height: 100%; object-fit: cover; }
+  .blog-card-body { padding: 1.25rem 1.5rem; }
+  .blog-card-cat { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cyan); }
+  .blog-card-title { font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; color: var(--navy); margin: 0.4rem 0 0.5rem; line-height: 1.4; }
+  .blog-card-excerpt { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.65; }
+  .blog-card-meta { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.75rem; }
+
+  /* HOME CTA */
+  .home-cta { background: var(--cyan); text-align: center; padding: 6rem; }
+  .home-cta h2 { font-family: var(--font-display); color: var(--white); font-size: clamp(2rem, 3.5vw, 3rem); margin-bottom: 1rem; font-weight: 800; letter-spacing: -0.03em; }
+  .home-cta p { color: rgba(255,255,255,0.8); max-width: 520px; margin: 0 auto 2.5rem; font-size: 1rem; }
+  .btn-white-cta {
+    background: var(--white); color: var(--cyan-deep);
+    padding: 1rem 2.5rem; border-radius: 8px;
+    font-family: var(--font-display); font-size: 1rem; font-weight: 700;
+    text-decoration: none; display: inline-block;
+    transition: transform 0.15s, box-shadow 0.2s;
+  }
+  .btn-white-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+  .cta-email-note { display: block; margin-top: 1.5rem; font-size: 0.9rem; color: rgba(255,255,255,0.7); }
+  .cta-email-note a { color: var(--white); }
+
+  /* DEMO CTA */
+  .demo-cta { background: var(--navy); text-align: center; padding: 5rem 6rem; }
+  .demo-cta h2 { font-family: var(--font-display); font-size: clamp(1.7rem,2.8vw,2.4rem); font-weight: 800; color: var(--white); letter-spacing: -0.03em; margin-bottom: 1rem; }
+  .demo-cta p { font-size: 0.95rem; color: rgba(255,255,255,0.55); max-width: 480px; margin: 0 auto 2rem; font-weight: 300; }
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+  .hero-content > * { animation: fadeUp 0.7s ease both; }
+  .hero-tag { animation-delay: 0.1s; }
+  .hero-h1 { animation-delay: 0.2s; }
+  .hero-sub { animation-delay: 0.3s; }
+  .hero-buttons { animation-delay: 0.4s; }
+  .hero-logo-wrap { animation: fadeUp 0.9s 0.3s ease both; }
+
+  @media (max-width: 1024px) {
+    .home-section { padding: 4rem 2rem; }
+    .home-hero { grid-template-columns: 1fr; }
+    .hero-visual { display: none; }
+    .hero-content { padding: 6rem 2rem 4rem; }
+    .stats-bar { padding: 2rem; }
+    .intro-section { grid-template-columns: 1fr; gap: 3rem; }
+    .approach-grid, .industries-grid, .why-grid, .products-grid, .blog-grid { grid-template-columns: 1fr; }
+    .stats-bar { grid-template-columns: repeat(2,1fr); }
+    .home-cta, .demo-cta { padding: 4rem 2rem; }
+  }
+</style>
+
+<!-- HERO -->
+<section class="home-hero">
+  <div class="hero-bg-pattern"></div>
+  <div class="hero-grid-lines"></div>
+  <div class="hero-content">
+    <div class="hero-tag"><span></span> Ghana-Based · Africa · Caribbean · Diaspora</div>
+    <h1 class="hero-h1">Technology Consultancy Built on <em>Real-World</em> Experience</h1>
+    <p class="hero-sub">We're a software development and consultancy firm serving Black businesses across Africa, the Caribbean, and the diaspora—building custom solutions that work in your reality, not just in theory.</p>
+    <div class="hero-buttons">
+      <a class="btn-primary-cyan" href="{{ route('site.book-demo') }}" wire:navigate>Talk to Us</a>
+      <a class="btn-secondary-outline" href="{{ route('site.products') }}" wire:navigate>Our Products</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-logo-wrap">
+        @php $logoPath = public_path('assets/images/logo.svg'); $hasLogo = file_exists($logoPath) && filesize($logoPath) > 0; @endphp
+        @if($hasLogo)
+            <img src="{{ asset('assets/images/logo.svg') }}" alt="Exchosoft Consult">
+        @else
+            EC
+        @endif
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat">
+    <div class="stat-num">10+</div>
+    <div class="stat-label">Industries served</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">3</div>
+    <div class="stat-label">Continents reached</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">100%</div>
+    <div class="stat-label">Custom-built solutions</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">Offline</div>
+    <div class="stat-label">First architecture</div>
+  </div>
+</div>
+
+<!-- WHO WE ARE -->
+<section class="home-section intro-section" id="about">
+  <div class="intro-text">
+    <p class="section-tag-label">Who We Are</p>
+    <h2 class="section-h2">Built for the Conditions You Actually Operate In</h2>
+    <p>Exchosoft Consult is a Ghana-based technology consultancy and software development company. We've built systems for churches, hospitals, pharmacies, laboratories, laundries, heritage organizations, and more—each one custom-designed for that specific business.</p>
+    <p>We understand the conditions our clients operate in because we're here too.</p>
+  </div>
+  <div class="intro-cards">
+    <div class="reality-card"><strong>Intermittent connectivity</strong>We build systems that keep working when the internet drops.</div>
+    <div class="reality-card"><strong>Power challenges</strong>Offline-first architecture means no data is lost during outages.</div>
+    <div class="reality-card"><strong>Mobile-first users</strong>Designed from the ground up for how your customers actually access technology.</div>
+    <div class="reality-card"><strong>Local payment systems</strong>Integrated with the payment infrastructure your market already uses.</div>
+  </div>
+</section>
+
+<!-- FEATURED PRODUCTS -->
+<section class="home-section products-preview" id="products">
+  <p class="section-tag-label">Our Software</p>
+  <h2 class="section-h2">Products Built for African Businesses</h2>
+
+  @if($featuredProducts->isNotEmpty())
+  <div class="products-grid">
+    @foreach($featuredProducts as $product)
+    <a href="{{ route('site.products.show', $product->slug) }}" wire:navigate class="product-card">
+      <div class="product-card-img">
+        @if($product->cover_image)
+          <img src="{{ asset('storage/'.$product->cover_image) }}" alt="{{ $product->name }}">
+        @else
+          <div class="product-card-img-placeholder">{{ strtoupper(substr($product->name, 0, 2)) }}</div>
+        @endif
+        <span class="product-card-badge">{{ $product->category }}</span>
+        @if($product->is_on_sale)<span class="product-card-sale">SALE</span>@endif
+      </div>
+      <div class="product-card-body">
+        <p class="name">{{ $product->name }}</p>
+        @if($product->tagline)<p class="tagline">{{ $product->tagline }}</p>@endif
+      </div>
+      <div class="product-card-footer">
+        <div>
+          @if($product->is_on_sale)
+            <div class="product-price-old">GHS {{ number_format($product->price, 2) }}</div>
+            <div class="product-price product-price-sale">GHS {{ number_format($product->sale_price, 2) }}</div>
+          @else
+            <div class="product-price">GHS {{ number_format($product->price, 2) }}</div>
+          @endif
         </div>
-    </section>
+        <span class="product-view-link">View →</span>
+      </div>
+    </a>
+    @endforeach
+  </div>
+  @else
+  {{-- Placeholder cards showing our actual products --}}
+  <div class="products-grid">
+    @foreach([
+      ['WashOps', 'wash', 'Complete Laundry Management System', 'Enterprise-grade desktop POS with analytics, kanban orders board, and cloud sync.'],
+      ['ChurchOps', 'church', 'Church Management Platform', 'Offline-first system for churches — members, finances, SMS, multi-branch.'],
+      ['Custom Build', 'custom', 'Built For Your Industry', 'Tell us your problem. We build the solution from the ground up.'],
+    ] as [$name, $type, $tagline, $desc])
+    <a href="{{ route('site.products') }}" wire:navigate class="product-card">
+      <div class="product-card-img" style="background: {{ $type === 'church' ? '#0f2d1f' : 'var(--navy)' }};">
+        <div class="product-card-img-placeholder" style="color: {{ $type === 'church' ? 'rgba(76,175,130,0.5)' : 'rgba(0,184,219,0.4)' }};">{{ strtoupper(substr($name,0,2)) }}</div>
+        <span class="product-card-badge" style="{{ $type === 'church' ? 'background:rgba(76,175,130,0.15);border-color:rgba(76,175,130,0.3);color:#4caf82;' : '' }}">{{ $name }}</span>
+      </div>
+      <div class="product-card-body">
+        <p class="name">{{ $tagline }}</p>
+        <p class="tagline">{{ $desc }}</p>
+      </div>
+      <div class="product-card-footer">
+        <div><div class="product-price" style="color:var(--cyan);">Learn More</div></div>
+        <span class="product-view-link">View →</span>
+      </div>
+    </a>
+    @endforeach
+  </div>
+  @endif
 
-    {{-- ══════════════════════════════════════════════════════════════════════
-         STATS — PLACEHOLDER
-    ══════════════════════════════════════════════════════════════════════ --}}
-    <section class="bg-slate-50 border-b border-slate-100">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
-            <div class="grid grid-cols-2 gap-6 sm:grid-cols-4">
-                @foreach([['5+', 'Software Products'], ['100+', 'Happy Customers'], ['3+', 'Years Experience'], ['10+', 'Industries Served']] as [$num, $label])
-                <div class="text-center">
-                    <p class="text-3xl font-bold text-slate-900">{{ $num }}</p>
-                    <p class="text-sm text-slate-500 mt-1">{{ $label }}</p>
-                </div>
-                @endforeach
-            </div>
-        </div>
-    </section>
+  <div style="text-align:center;margin-top:2.5rem;">
+    <a href="{{ route('site.products') }}" wire:navigate class="btn-secondary-outline" style="color:var(--navy);border-color:var(--border);">View All Products</a>
+  </div>
+</section>
 
-    {{-- ══════════════════════════════════════════════════════════════════════
-         FEATURED PRODUCTS
-    ══════════════════════════════════════════════════════════════════════ --}}
-    <section class="py-20">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <p class="text-xs font-semibold uppercase tracking-widest text-cyan-600 mb-2">Our Software</p>
-                <h2 class="text-3xl font-bold text-slate-900">Featured Products</h2>
-                <p class="mt-3 text-slate-500 max-w-xl mx-auto">Enterprise software built for African businesses — robust, reliable, and ready to scale.</p>
-            </div>
+<!-- OUR APPROACH -->
+<section class="home-section approach-section" id="approach">
+  <p class="section-tag-label">Our Approach</p>
+  <h2 class="section-h2 section-h2-light">What We've Learned Building Software Across Industries</h2>
+  <div class="approach-grid">
+    <div class="approach-card">
+      <div class="approach-icon">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      </div>
+      <h3>Every Business Needs Its Own Solution</h3>
+      <p>Off-the-shelf software forces unacceptable compromises. Each business has unique workflows, and they deserve technology built specifically for how they operate.</p>
+    </div>
+    <div class="approach-card">
+      <div class="approach-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg>
+      </div>
+      <h3>Offline-First When It Matters</h3>
+      <p>We pioneered offline-first architecture for clients who can't afford downtime — hospitals, pharmacies, churches — with automatic cloud sync when online.</p>
+    </div>
+    <div class="approach-card">
+      <div class="approach-icon">
+        <svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/></svg>
+      </div>
+      <h3>Unified Systems, Clear Insights</h3>
+      <p>We unify business workflows into cohesive systems that give management complete visibility and analytics that clearly identify where improvements are needed.</p>
+    </div>
+    <div class="approach-card">
+      <div class="approach-icon">
+        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      </div>
+      <h3>LAN Collaboration</h3>
+      <p>For businesses with multiple locations or devices, we implement local network capabilities — real-time collaboration even when external connectivity fails.</p>
+    </div>
+    <div class="approach-card">
+      <div class="approach-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <h3>Security & Reliability</h3>
+      <p>From financial institutions to healthcare providers, we build with security baked in — not bolted on — because your clients' data deserves that standard.</p>
+    </div>
+    <div class="approach-card">
+      <div class="approach-icon">
+        <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <h3>Long-Term Partnership</h3>
+      <p>We're not just building software — we're building systems that grow with your business and adapt as your needs change. We stay involved.</p>
+    </div>
+  </div>
+</section>
 
-            @if($featuredProducts->isEmpty())
-            {{-- Placeholder cards --}}
-            <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                @foreach(range(1,3) as $i)
-                <div class="rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 p-8 text-center">
-                    <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-slate-200 text-slate-400">
-                        <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-                    </div>
-                    <p class="font-semibold text-slate-400">Product {{ $i }} — Placeholder</p>
-                    <p class="text-xs text-slate-400 mt-1">Add products from the admin panel</p>
-                </div>
-                @endforeach
-            </div>
-            @else
-            <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                @foreach($featuredProducts as $product)
-                <a href="{{ route('site.products.show', $product->slug) }}" wire:navigate
-                   class="group rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
-                    <div class="bg-gradient-to-br from-slate-100 to-slate-50 h-40 flex items-center justify-center">
-                        @if($product->cover_image)
-                            <img src="{{ asset('storage/'.$product->cover_image) }}" alt="{{ $product->name }}" class="h-full w-full object-cover">
-                        @else
-                            <div class="flex h-14 w-14 items-center justify-center rounded-xl bg-cyan-100 text-cyan-600">
-                                <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-                            </div>
-                        @endif
-                    </div>
-                    <div class="p-5">
-                        <p class="font-bold text-slate-900 group-hover:text-cyan-700 transition-colors">{{ $product->name }}</p>
-                        @if($product->tagline)<p class="text-sm text-slate-500 mt-1">{{ $product->tagline }}</p>@endif
-                        <div class="flex items-center justify-between mt-4">
-                            <div>
-                                @if($product->is_on_sale)
-                                    <p class="text-xs text-slate-400 line-through">GHS {{ number_format($product->price, 2) }}</p>
-                                    <p class="font-bold text-green-600">GHS {{ number_format($product->sale_price, 2) }}</p>
-                                @else
-                                    <p class="font-bold text-slate-900">GHS {{ number_format($product->price, 2) }}</p>
-                                @endif
-                            </div>
-                            <span class="inline-flex items-center rounded-full bg-cyan-50 px-2.5 py-0.5 text-xs font-medium text-cyan-700 capitalize">{{ $product->category }}</span>
-                        </div>
-                    </div>
-                </a>
-                @endforeach
-            </div>
-            @endif
+<!-- INDUSTRIES -->
+<section class="home-section industries-section" id="industries">
+  <p class="section-tag-label">Experience</p>
+  <h2 class="section-h2">Industries We've Served</h2>
+  <div class="industries-grid">
+    <div class="industry-card">
+      <div class="industry-dot"></div>
+      <h3>Healthcare & Medical</h3>
+      <p>Hospital management systems, pharmacy solutions, and laboratory platforms — offline-first, designed to work when connectivity doesn't.</p>
+    </div>
+    <div class="industry-card">
+      <div class="industry-dot"></div>
+      <h3>Faith-Based Organizations</h3>
+      <p>Comprehensive management systems for churches covering membership, events, donations, and complete financial transparency.</p>
+    </div>
+    <div class="industry-card">
+      <div class="industry-dot"></div>
+      <h3>Service Industries</h3>
+      <p>From laundry management to operational platforms — tracking orders, managing workflows, and handling billing seamlessly.</p>
+    </div>
+    <div class="industry-card">
+      <div class="industry-dot"></div>
+      <h3>Heritage & Cultural</h3>
+      <p>Partnering with Black History Walks and African Odysseys, building platforms for cultural preservation and diaspora engagement.</p>
+    </div>
+    <div class="industry-card">
+      <div class="industry-dot"></div>
+      <h3>Financial Services</h3>
+      <p>Working with institutions like Ghana Union Assurance, building secure, reliable financial systems that meet institutional standards.</p>
+    </div>
+    <div class="industry-card">
+      <div class="industry-dot"></div>
+      <h3>Cross-Continental Initiatives</h3>
+      <p>Supporting the African Caribbean Summit and ACIS — technology that bridges communities across continents.</p>
+    </div>
+  </div>
+</section>
 
-            <div class="text-center mt-10">
-                <a href="{{ route('site.products') }}" wire:navigate class="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors">
-                    View All Products
-                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-                </a>
-            </div>
-        </div>
-    </section>
+<!-- WHY US -->
+<section class="home-section why-section">
+  <p class="section-tag-label">Why Exchosoft</p>
+  <h2 class="section-h2 section-h2-light">Why Work With Us</h2>
+  <div class="why-grid">
+    <div class="why-item">
+      <div class="why-bar"></div>
+      <div>
+        <h3>We Build What You Actually Need</h3>
+        <p>Not what we think you should need. Not what worked for someone else. We listen, understand your operations, and build specifically for you.</p>
+      </div>
+    </div>
+    <div class="why-item">
+      <div class="why-bar"></div>
+      <div>
+        <h3>We Understand Your Context</h3>
+        <p>From Lagos to London, Accra to Atlanta, Kingston to Kumasi — we understand the infrastructure challenges and operational conditions of doing business across our markets.</p>
+      </div>
+    </div>
+    <div class="why-item">
+      <div class="why-bar"></div>
+      <div>
+        <h3>We've Done This Before</h3>
+        <p>Our experience across healthcare, faith organizations, service industries, heritage preservation, and financial services means proven expertise with full customization.</p>
+      </div>
+    </div>
+    <div class="why-item">
+      <div class="why-bar"></div>
+      <div>
+        <h3>We Think Long-Term</h3>
+        <p>We're not just building software — we're building systems that will grow with your business and adapt as your needs change over time.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-    {{-- ══════════════════════════════════════════════════════════════════════
-         CONSULTING CTA — PLACEHOLDER
-    ══════════════════════════════════════════════════════════════════════ --}}
-    <section class="bg-gradient-to-r from-cyan-600 to-violet-600 py-16">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-            <h2 class="text-3xl font-bold text-white mb-4">🚧 Consulting/Gigs CTA — Placeholder</h2>
-            <p class="text-cyan-100 max-w-xl mx-auto mb-8">Replace with your consulting services pitch. Highlight your expertise and what problems you solve for clients.</p>
-            <div class="flex flex-wrap items-center justify-center gap-4">
-                <a href="{{ route('site.consulting') }}" wire:navigate class="inline-flex rounded-xl bg-white px-6 py-3 text-sm font-semibold text-cyan-700 hover:bg-cyan-50 transition-colors shadow-lg">
-                    View Services
-                </a>
-                <a href="{{ route('site.book-demo') }}" wire:navigate class="inline-flex rounded-xl border border-white/30 bg-white/10 px-6 py-3 text-sm font-semibold text-white hover:bg-white/20 transition-colors">
-                    Book a Free Consultation
-                </a>
-            </div>
-        </div>
-    </section>
+<!-- TRUST -->
+<section class="home-section trust-section">
+  <p class="section-tag-label">Organizations We've Worked With</p>
+  <h2 class="section-h2">Trusted Across Industries</h2>
+  <p class="trust-sub">Proud to have partnered with organizations across Africa, the Caribbean, and the diaspora.</p>
+  <div class="clients-wrap">
+    <div class="client-pill">Black History Walks</div>
+    <div class="client-pill">African Odysseys</div>
+    <div class="client-pill">African Caribbean Summit</div>
+    <div class="client-pill">Ghana Union Assurance</div>
+    <div class="client-pill">ACIS</div>
+    <div class="client-pill">Churches across West Africa</div>
+    <div class="client-pill">Hospitals & Pharmacies</div>
+    <div class="client-pill">Laboratories</div>
+    <div class="client-pill">SMEs</div>
+  </div>
+</section>
 
-    {{-- ══════════════════════════════════════════════════════════════════════
-         FEATURED WORK
-    ══════════════════════════════════════════════════════════════════════ --}}
-    @if($featuredWork->isNotEmpty())
-    <section class="py-20 bg-slate-50">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <p class="text-xs font-semibold uppercase tracking-widest text-cyan-600 mb-2">Our Work</p>
-                <h2 class="text-3xl font-bold text-slate-900">Portfolio Highlights</h2>
-            </div>
-            <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                @foreach($featuredWork as $item)
-                <a href="{{ route('site.portfolio.show', $item->slug) }}" wire:navigate
-                   class="group rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-md transition-all p-5">
-                    <span class="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600 capitalize mb-3">{{ $item->category }}</span>
-                    <p class="font-bold text-slate-900 group-hover:text-cyan-700 transition-colors">{{ $item->title }}</p>
-                    @if($item->client_name)<p class="text-xs text-slate-400 mt-1">{{ $item->client_name }}</p>@endif
-                </a>
-                @endforeach
-            </div>
-            <div class="text-center mt-8">
-                <a href="{{ route('site.portfolio') }}" wire:navigate class="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors">View Full Portfolio</a>
-            </div>
-        </div>
-    </section>
-    @endif
+<!-- BLOG POSTS (if any) -->
+@if($latestPosts->isNotEmpty())
+<section class="home-section blog-preview">
+  <p class="section-tag-label">Stay Informed</p>
+  <h2 class="section-h2">From the Blog</h2>
+  <div class="blog-grid">
+    @foreach($latestPosts as $post)
+    <a href="{{ route('site.blog.show', $post->slug) }}" wire:navigate class="blog-card">
+      <div class="blog-card-img">
+        @if($post->cover_image)
+          <img src="{{ asset('storage/'.$post->cover_image) }}" alt="{{ $post->title }}">
+        @else
+          <svg style="width:40px;height:40px;color:var(--text-muted);" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+        @endif
+      </div>
+      <div class="blog-card-body">
+        <div class="blog-card-cat">{{ $post->category }}</div>
+        <div class="blog-card-title">{{ $post->title }}</div>
+        @if($post->excerpt)<div class="blog-card-excerpt">{{ Str::limit($post->excerpt, 100) }}</div>@endif
+        <div class="blog-card-meta">{{ $post->published_at?->format('d M Y') }} · {{ $post->read_time_minutes }} min read</div>
+      </div>
+    </a>
+    @endforeach
+  </div>
+  <div style="text-align:center;margin-top:2.5rem;">
+    <a href="{{ route('site.blog') }}" wire:navigate class="btn-secondary-outline" style="color:var(--navy);border-color:var(--border);">Read More Posts</a>
+  </div>
+</section>
+@endif
 
-    {{-- ══════════════════════════════════════════════════════════════════════
-         LATEST BLOG POSTS
-    ══════════════════════════════════════════════════════════════════════ --}}
-    @if($latestPosts->isNotEmpty())
-    <section class="py-20">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-                <p class="text-xs font-semibold uppercase tracking-widest text-cyan-600 mb-2">Stay Informed</p>
-                <h2 class="text-3xl font-bold text-slate-900">From the Blog</h2>
-            </div>
-            <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                @foreach($latestPosts as $post)
-                <a href="{{ route('site.blog.show', $post->slug) }}" wire:navigate class="group rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-md transition-all overflow-hidden">
-                    <div class="bg-slate-100 h-36 flex items-center justify-center">
-                        @if($post->cover_image)
-                            <img src="{{ asset('storage/'.$post->cover_image) }}" alt="{{ $post->title }}" class="h-full w-full object-cover">
-                        @else
-                            <svg class="h-10 w-10 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                        @endif
-                    </div>
-                    <div class="p-5">
-                        <span class="text-xs font-semibold uppercase text-cyan-600 capitalize">{{ $post->category }}</span>
-                        <p class="font-bold text-slate-900 mt-1 group-hover:text-cyan-700 transition-colors line-clamp-2">{{ $post->title }}</p>
-                        @if($post->excerpt)<p class="text-sm text-slate-500 mt-2 line-clamp-2">{{ $post->excerpt }}</p>@endif
-                        <p class="text-xs text-slate-400 mt-3">{{ $post->published_at?->format('d M Y') }} · {{ $post->read_time_minutes }} min read</p>
-                    </div>
-                </a>
-                @endforeach
-            </div>
-            <div class="text-center mt-8">
-                <a href="{{ route('site.blog') }}" wire:navigate class="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors">Read More Posts</a>
-            </div>
-        </div>
-    </section>
-    @endif
+<!-- DEMO CTA -->
+<section class="demo-cta">
+  <h2>See Our Products in Action</h2>
+  <p>Book a personalized demo and see how Exchosoft products can transform your business operations.</p>
+  <a href="{{ route('site.book-demo') }}" wire:navigate class="btn-primary-cyan">
+    Book a Free Demo
+  </a>
+</section>
 
-    {{-- ══════════════════════════════════════════════════════════════════════
-         BOOK DEMO CTA
-    ══════════════════════════════════════════════════════════════════════ --}}
-    <section class="bg-slate-900 py-16">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-            <h2 class="text-3xl font-bold text-white mb-4">See Our Products in Action</h2>
-            <p class="text-slate-400 max-w-xl mx-auto mb-8">Book a personalized demo with our team and see how ExchoSoft products can transform your business operations.</p>
-            <a href="{{ route('site.book-demo') }}" wire:navigate class="inline-flex items-center gap-2 rounded-xl bg-cyan-500 px-6 py-3 text-sm font-semibold text-white hover:bg-cyan-400 transition-colors shadow-lg shadow-cyan-500/25">
-                Book a Free Demo
-                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-            </a>
-        </div>
-    </section>
+<!-- MAIN CTA -->
+<section class="home-cta" id="cta">
+  <h2>Let's Talk About Your Business</h2>
+  <p>Every business is different. Every challenge is unique. Let's discuss what you're trying to achieve and explore how we can build technology that actually fits your operations.</p>
+  <a class="btn-white-cta" href="{{ route('site.consulting') }}" wire:navigate>Schedule a Consultation</a>
+  <span class="cta-email-note">Or email us directly at <a href="mailto:contact@exchosoft.com">contact@exchosoft.com</a></span>
+</section>
 
 </div>
