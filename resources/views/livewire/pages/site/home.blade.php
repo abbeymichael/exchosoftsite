@@ -22,7 +22,7 @@ new #[Layout('layouts.site')] #[Title('Exchosoft Consult — Software Developmen
         $s = SiteSetting::getGroup('homepage');
 
         // Helper to parse JSON safely
-        $j = fn($key, $default = []) => isset($s[$key]) ? (json_decode($s[$key], true) ?? $default) : $default;
+        $j = fn($key, $default = []) => isset($s[$key]) ? (is_string($s[$key]) ? (json_decode($s[$key], true) ?? $default) : $s[$key]) : $default;
 
         $cms = [
             // Hero

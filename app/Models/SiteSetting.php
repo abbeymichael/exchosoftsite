@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Cache;
 
 class SiteSetting extends Model
 {
@@ -22,8 +21,9 @@ class SiteSetting extends Model
         if (! $setting) {
             return $default;
         }
+
         return match ($setting->type) {
-            'json'    => json_decode($setting->value, true),
+            'json'    => static::decodeJsonValue($setting->value),
             'boolean' => (bool) $setting->value,
             default   => $setting->value,
         };
@@ -43,13 +43,31 @@ class SiteSetting extends Model
     }
 
     /**
+     * Safely decode JSON values, supporting already-decoded arrays.
+     */
+    private static function decodeJsonValue(mixed $value): mixed
+    {
+        if (is_array($value)) {
+            return $value;
+        }
+
+        if (! is_string($value) || $value === '') {
+            return $value;
+        }
+
+        $decoded = json_decode($value, true);
+
+        return json_last_error() === JSON_ERROR_NONE ? $decoded : $value;
+    }
+
+    /**
      * Get all settings for a group as key => value array.
      */
     public static function getGroup(string $group): array
     {
         return static::where('group', $group)->get()
             ->mapWithKeys(fn($s) => [$s->key => match ($s->type) {
-                'json'    => json_decode($s->value, true),
+                'json'    => static::decodeJsonValue($s->value),
                 'boolean' => (bool) $s->value,
                 default   => $s->value,
             }])->toArray();
