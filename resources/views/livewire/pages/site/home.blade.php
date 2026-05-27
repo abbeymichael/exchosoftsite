@@ -5,7 +5,6 @@ use App\Models\CaseStudy;
 use App\Models\PortfolioItem;
 use App\Models\ShopProduct;
 use App\Models\SiteSetting;
-use Illuminate\Support\HtmlString;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -19,11 +18,11 @@ new #[Layout('layouts.site')] #[Title('Exchosoft Consult — Software Developmen
         $featuredCases    = CaseStudy::published()->featured()->limit(3)->get();
         $featuredWork     = PortfolioItem::published()->featured()->orderBy('sort_order')->limit(4)->get();
 
-        // Load all homepage settings from DB — getGroup() already decodes JSON fields to arrays
+        // Load all homepage settings from DB
         $s = SiteSetting::getGroup('homepage');
 
-        // Helper: ensure a value is an array (for JSON fields that are already decoded)
-        $arr = fn($key, $default = []) => isset($s[$key]) && is_array($s[$key]) ? $s[$key] : $default;
+        // Helper to parse JSON safely
+        $j = fn($key, $default = []) => isset($s[$key]) ? (json_decode($s[$key], true) ?? $default) : $default;
 
         $cms = [
             // Hero
@@ -32,18 +31,18 @@ new #[Layout('layouts.site')] #[Title('Exchosoft Consult — Software Developmen
             'hero_subtitle'      => $s['home_hero_subtitle'] ?? "We're a software development and consultancy firm serving Black businesses across Africa, the Caribbean, and the diaspora.",
             'hero_btn_primary'   => $s['home_hero_btn_primary_label'] ?? 'Talk to Us',
             'hero_btn_secondary' => $s['home_hero_btn_secondary_label'] ?? 'Our Products',
-            // Stats (already decoded array from getGroup)
-            'stats' => $arr('home_stats', [
-                ['num' => '10+',     'label' => 'Industries served'],
-                ['num' => '3',       'label' => 'Continents reached'],
-                ['num' => '100%',    'label' => 'Custom-built solutions'],
-                ['num' => 'Offline', 'label' => 'First architecture'],
+            // Stats
+            'stats' => $j('home_stats', [
+                ['num' => '10+', 'label' => 'Industries served'],
+                ['num' => '3',   'label' => 'Continents reached'],
+                ['num' => '100%','label' => 'Custom-built solutions'],
+                ['num' => 'Offline','label' => 'First architecture'],
             ]),
             // About
             'about_tag'     => $s['home_about_tag'] ?? 'Who We Are',
             'about_title'   => $s['home_about_title'] ?? 'Built for the Conditions You Actually Operate In',
-            'about_content' => $s['home_about_content'] ?? '',  // raw markdown string
-            'about_cards'   => $arr('home_about_cards', [
+            'about_content' => $s['home_about_content'] ?? '',
+            'about_cards'   => $j('home_about_cards', [
                 ['title' => 'Intermittent connectivity', 'body' => 'We build systems that keep working when the internet drops.'],
                 ['title' => 'Power challenges',          'body' => 'Offline-first architecture means no data is lost during outages.'],
                 ['title' => 'Mobile-first users',        'body' => 'Designed from the ground up for how your customers actually access technology.'],
@@ -55,20 +54,20 @@ new #[Layout('layouts.site')] #[Title('Exchosoft Consult — Software Developmen
             // Approach
             'approach_tag'   => $s['home_approach_tag'] ?? 'Our Approach',
             'approach_title' => $s['home_approach_title'] ?? "What We've Learned Building Software Across Industries",
-            'approach_cards' => $arr('home_approach_cards', []),
+            'approach_cards' => $j('home_approach_cards', []),
             // Industries
             'industries_tag'   => $s['home_industries_tag'] ?? 'Experience',
             'industries_title' => $s['home_industries_title'] ?? "Industries We've Served",
-            'industries_cards' => $arr('home_industries_cards', []),
+            'industries_cards' => $j('home_industries_cards', []),
             // Why Us
             'why_tag'   => $s['home_why_tag'] ?? 'Why Exchosoft',
             'why_title' => $s['home_why_title'] ?? 'The Exchosoft Difference',
-            'why_items' => $arr('home_why_items', []),
+            'why_items' => $j('home_why_items', []),
             // Trust
             'trust_tag'     => $s['home_trust_tag'] ?? 'Trusted By',
             'trust_title'   => $s['home_trust_title'] ?? 'Organisations That Trust Exchosoft',
             'trust_subtitle'=> $s['home_trust_subtitle'] ?? '',
-            'trust_clients' => $arr('home_trust_clients', ['Healthcare Facilities','Church Networks','Laundry Businesses','Financial Institutions']),
+            'trust_clients' => $j('home_trust_clients', ['Healthcare Facilities','Church Networks','Laundry Businesses','Financial Institutions']),
             // CTA
             'cta_title'      => $s['home_cta_title'] ?? 'Ready to Build Something That Actually Works?',
             'cta_subtitle'   => $s['home_cta_subtitle'] ?? "Tell us what you need. We'll tell you honestly if we can build it.",
@@ -402,13 +401,10 @@ new #[Layout('layouts.site')] #[Title('Exchosoft Consult — Software Developmen
 </style>
 
 @php
-  use App\Models\SiteSetting;
-  // Parse **word** → <em>word</em> for hero highlight
+  // Helper: parse **word** → <em>word</em> for hero highlight
   $heroTitle = preg_replace('/\*\*(.+?)\*\*/', '<em>$1</em>', e($cms['hero_title_raw']));
-  // Render about content as proper markdown HTML
-  $aboutMarkdownHtml = $cms['about_content']
-      ? SiteSetting::renderMarkdown($cms['about_content'])
-      : null;
+  // Helper: render markdown about content safely
+  $aboutContent = $cms['about_content'];
 @endphp
 
 <!-- HERO -->
@@ -451,8 +447,14 @@ new #[Layout('layouts.site')] #[Title('Exchosoft Consult — Software Developmen
   <div class="intro-text">
     <p class="section-tag-label">{{ $cms['about_tag'] }}</p>
     <h2 class="section-h2">{{ $cms['about_title'] }}</h2>
-    @if($aboutMarkdownHtml)
-      <div class="cms-prose intro-md">{!! $aboutMarkdownHtml !!}</div>
+    @if($aboutContent)
+      @php
+        // Simple markdown paragraph rendering
+        $paras = array_filter(explode("\n\n", $aboutContent));
+      @endphp
+      @foreach($paras as $para)
+        <p>{{ strip_tags($para) }}</p>
+      @endforeach
     @else
       <p>Exchosoft Consult is a Ghana-based technology consultancy and software development company. We've built systems for churches, hospitals, pharmacies, laboratories, laundries, heritage organizations, and more—each one custom-designed for that specific business.</p>
       <p>We understand the conditions our clients operate in because we're here too.</p>
