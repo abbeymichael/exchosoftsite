@@ -221,26 +221,14 @@ new #[Layout('layouts.site')] #[Title('About — Exchosoft Consult')] class exte
 </style>
 
 <!-- BANNER -->
-<div class="about-banner">
-  <div class="about-banner-dots"></div>
-  <div class="about-banner-accent"></div>
-  <div class="about-banner-glow"></div>
-  <div class="about-banner-content">
-    <div class="about-breadcrumb">
-      <a href="{{ route('home') }}" wire:navigate>Home</a>
-      <span class="sep">/</span>
-      <span class="current">About Us</span>
-    </div>
-    <div class="about-banner-tag">Our story</div>
-    <h1>Built From <em>Here.</em><br/>Built For Here.</h1>
-    <p class="about-banner-sub">We are a Ghana-based technology consultancy that builds software for the real conditions of doing business across Africa, the Caribbean, and the diaspora — not the ideal conditions someone else imagined.</p>
-  </div>
-  <div class="about-banner-pings">
-    <div class="ping-label"><span class="ping-dot cyan"></span> Accra, Ghana — HQ</div>
-    <div class="ping-label"><span class="ping-dot sky"></span> Caribbean partners</div>
-    <div class="ping-label"><span class="ping-dot muted"></span> Diaspora clients</div>
-  </div>
-</div>
+<x-page-banner
+    tag="Our Story"
+    title="Built From **Here.** Built For Here."
+    subtitle="We are a Ghana-based technology consultancy that builds software for the real conditions of doing business across Africa, the Caribbean, and the diaspora — not the ideal conditions someone else imagined."
+    height="lg"
+    :breadcrumbs="[['label'=>'Home','route'=>'home'],['label'=>'About Us']]"
+    :stats="[['value'=>'5+','label'=>'Years building'],['value'=>'10+','label'=>'Industries'],['value'=>'3','label'=>'Continents']]"
+/>
 
 <!-- STORY -->
 <section class="about-section story-section">

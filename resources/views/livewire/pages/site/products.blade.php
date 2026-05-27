@@ -51,56 +51,6 @@ new #[Layout('layouts.site')] #[Title('Products — Exchosoft Consult')] class e
 
 <div>
 <style>
-  .products-banner {
-    min-height: 440px;
-    background: var(--navy);
-    position: relative; overflow: hidden;
-    display: flex; align-items: center;
-  }
-  .banner-canvas-bg {
-    position: absolute; inset: 0;
-    background-image: radial-gradient(circle, rgba(0,184,219,0.14) 1px, transparent 1px);
-    background-size: 32px 32px; pointer-events: none;
-  }
-  .banner-glow {
-    position: absolute; inset: 0;
-    background-image:
-      radial-gradient(circle at 75% 50%, rgba(0,184,219,0.1) 0%, transparent 60%),
-      radial-gradient(circle at 20% 80%, rgba(122,207,232,0.06) 0%, transparent 50%);
-    pointer-events: none;
-  }
-  .products-banner-content {
-    position: relative; z-index: 2;
-    padding: 4rem 6rem; max-width: 780px;
-  }
-  .banner-breadcrumb-row {
-    display: flex; align-items: center; gap: 0.5rem; margin-bottom: 2rem;
-  }
-  .banner-breadcrumb-row a { font-size: 0.78rem; color: rgba(255,255,255,0.4); text-decoration: none; transition: color 0.2s; }
-  .banner-breadcrumb-row a:hover { color: var(--cyan); }
-  .crumb-sep { color: rgba(255,255,255,0.2); font-size: 0.75rem; }
-  .crumb-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--cyan); display: inline-block; margin-right: 0.2rem; vertical-align: middle; }
-  .crumb-current { font-size: 0.78rem; color: var(--cyan); font-weight: 500; }
-  .banner-tag {
-    display: inline-flex; align-items: center; gap: 0.5rem;
-    background: rgba(0,184,219,0.1); border: 1px solid rgba(0,184,219,0.2);
-    color: var(--sky); padding: 0.28rem 0.85rem; border-radius: 100px;
-    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em;
-    margin-bottom: 1.25rem; text-transform: uppercase;
-  }
-  .products-banner h1 {
-    font-family: var(--font-display);
-    font-size: clamp(2rem, 3.8vw, 3.2rem);
-    font-weight: 800; color: var(--white);
-    line-height: 1.1; letter-spacing: -0.03em;
-    margin-bottom: 1rem;
-  }
-  .products-banner h1 em { color: var(--cyan); font-style: normal; }
-  .products-banner-sub {
-    font-size: 1rem; color: rgba(255,255,255,0.55);
-    max-width: 540px; line-height: 1.75; font-weight: 300;
-  }
-
   /* FILTER BAR */
   .products-filter-bar {
     background: var(--ice);
@@ -378,12 +328,7 @@ new #[Layout('layouts.site')] #[Title('Products — Exchosoft Consult')] class e
   .products-cta-strip h2 { font-family: var(--font-display); font-weight: 800; color: var(--white); font-size: 1.5rem; letter-spacing: -0.02em; margin-bottom: 0.4rem; }
   .products-cta-strip p { color: rgba(255,255,255,0.55); font-size: 0.9rem; max-width: 420px; font-weight: 300; }
 
-  @keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
-  .products-banner h1 { animation: fadeUp 0.6s 0.2s ease both; }
-  .products-banner-sub { animation: fadeUp 0.6s 0.35s ease both; }
-
   @media (max-width: 1024px) {
-    .products-banner-content { padding: 3rem 2rem; }
     .products-filter-bar { padding: 0 2rem; }
     .product-hero-dark { grid-template-columns: 1fr; padding: 3.5rem 2rem; gap: 2.5rem; }
     .features-section { padding: 3rem 2rem; }
@@ -400,21 +345,12 @@ new #[Layout('layouts.site')] #[Title('Products — Exchosoft Consult')] class e
 </style>
 
 <!-- BANNER -->
-<div class="products-banner">
-  <div class="banner-canvas-bg"></div>
-  <div class="banner-glow"></div>
-  <div class="products-banner-content">
-    <div class="banner-breadcrumb-row">
-      <a href="{{ route('home') }}" wire:navigate>Home</a>
-      <span class="crumb-sep">/</span>
-      <span class="crumb-dot"></span>
-      <span class="crumb-current">Our Products</span>
-    </div>
-    <div class="banner-tag">Software built for Africa</div>
-    <h1>Real Software for <em>Real Conditions</em></h1>
-    <p class="products-banner-sub">Industry-specific platforms built offline-first, designed for the realities of doing business in Ghana and across our markets. Not adapted from elsewhere — built here, for here.</p>
-  </div>
-</div>
+<x-page-banner
+    tag="Software built for Africa"
+    title="Real Software for **Real Conditions**"
+    subtitle="Industry-specific platforms built offline-first, designed for the realities of doing business in Ghana and across our markets. Not adapted from elsewhere — built here, for here."
+    :breadcrumbs="[['label'=>'Home','route'=>'home'],['label'=>'Our Products']]"
+/>
 
 <!-- FILTER TABS -->
 @php

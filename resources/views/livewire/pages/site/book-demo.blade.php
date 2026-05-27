@@ -110,20 +110,12 @@ new #[Layout('layouts.site')] #[Title('Book a Demo — Exchosoft Consult')] clas
 </style>
 
 <!-- BANNER -->
-<div class="page-banner">
-  <div class="page-banner-dots"></div>
-  <div class="page-banner-glow"></div>
-  <div class="page-banner-content">
-    <div class="page-banner-crumb">
-      <a href="{{ route('home') }}" wire:navigate>Home</a>
-      <span class="sep">/</span>
-      <span class="ccurrent">Book a Demo</span>
-    </div>
-    <div class="page-banner-tag">Get Started</div>
-    <h1>See Our Products <em>in Action</em></h1>
-    <p class="page-banner-sub">Book a personalized demo and let our team walk you through how Exchosoft products can transform your business operations — in your reality, not ours.</p>
-  </div>
-</div>
+<x-page-banner
+    tag="Get Started"
+    title="See Our Products **in Action**"
+    subtitle="Book a personalized demo and let our team walk you through how Exchosoft products can transform your business operations — in your reality, not ours."
+    :breadcrumbs="[['label'=>'Home','route'=>'home'],['label'=>'Book a Demo']]"
+/>
 
     <section class="demo-body">
         <div class="demo-form-wrap">
