@@ -68,9 +68,9 @@
             color: var(--white); text-decoration: none; letter-spacing: -0.01em;
             flex-shrink: 0;
         }
-        .site-nav-logo img { height: 30px; width: auto; }
+        .site-nav-logo img { height: 60px; width: auto; }
         .site-nav-logo .logo-fallback {
-            height: 30px; width: 30px; border-radius: 7px;
+            height: 30px; width: 75px; border-radius: 7px;
             background: var(--cyan); display: flex; align-items: center;
             justify-content: center; font-size: 0.85rem; font-weight: 800; color: var(--white);
         }
@@ -412,11 +412,10 @@
             $hasLogo  = file_exists($logoPath) && filesize($logoPath) > 0;
         @endphp
         @if($hasLogo)
-            <img src="{{ asset('assets/images/logo.svg') }}" alt="Exchosoft Consult">
+            <img src="{{ asset('assets/images/logo cyan.png') }}" alt="Exchosoft Consult">
         @else
             <div class="logo-fallback">E</div>
         @endif
-        Exchosoft Consult
     </a>
 
     {{-- Desktop Nav Links --}}
