@@ -383,7 +383,14 @@
         @media (max-width: 640px) {
             .site-nav { padding: 0.85rem 1.25rem; }
             .site-footer { padding: 2.5rem 1.25rem 2rem; }
-            .site-footer-grid { grid-template-columns: 1fr; gap: 1.75rem; }
+            /* 2-column footer on mobile: brand takes full width, rest 2-col */
+            .site-footer-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 1.75rem 1.25rem;
+            }
+            .footer-brand {
+                grid-column: 1 / -1; /* brand spans full width */
+            }
             .footer-bottom { flex-direction: column; align-items: flex-start; }
             .page-banner-content { padding: 2.5rem 1.25rem; }
             .page-banner h1 { font-size: clamp(1.7rem,8vw,2.5rem); }
