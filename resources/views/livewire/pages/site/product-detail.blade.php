@@ -82,31 +82,6 @@ new #[Layout('layouts.site')] class extends Component
 
 <div>
 <style>
-  /* Product Detail */
-  .detail-banner {
-    background: var(--navy); position: relative; overflow: hidden;
-    padding: 3.5rem 6rem 3rem;
-  }
-  .detail-banner-dots {
-    position: absolute; inset: 0;
-    background-image: radial-gradient(circle, rgba(0,184,219,0.12) 1px, transparent 1px);
-    background-size: 32px 32px; pointer-events: none;
-  }
-  .detail-banner-glow {
-    position: absolute; inset: 0;
-    background: radial-gradient(circle at 80% 50%, rgba(0,184,219,0.1) 0%, transparent 60%);
-    pointer-events: none;
-  }
-  .detail-breadcrumb {
-    position: relative; z-index: 2;
-    display: flex; align-items: center; gap: 0.5rem;
-    font-size: 0.78rem;
-  }
-  .detail-breadcrumb a { color: rgba(255,255,255,0.45); text-decoration: none; transition: color 0.2s; }
-  .detail-breadcrumb a:hover { color: var(--cyan); }
-  .detail-breadcrumb .sep { color: rgba(255,255,255,0.2); }
-  .detail-breadcrumb .current { color: var(--cyan); font-weight: 500; }
-
   /* Product Body */
   .product-detail-body { padding: 4rem 6rem; }
   .product-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
@@ -225,11 +200,32 @@ new #[Layout('layouts.site')] class extends Component
     font-family: var(--font-display); font-size: 1.5rem; font-weight: 800;
     color: var(--navy); letter-spacing: -0.02em; margin-bottom: 1.5rem;
   }
-  .product-full-desc .prose { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.85; }
-  .product-full-desc .prose h3 { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: var(--navy); margin: 1.5rem 0 0.5rem; }
-  .product-full-desc .prose p { margin-bottom: 1rem; }
-  .product-full-desc .prose ul { padding-left: 1.25rem; margin-bottom: 1rem; }
-  .product-full-desc .prose ul li { margin-bottom: 0.35rem; }
+  /* cms-prose base styles for markdown content */
+  .cms-prose p  { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.85; margin-bottom: 1rem; }
+  .cms-prose h1,.cms-prose h2,.cms-prose h3,.cms-prose h4 {
+    font-family: var(--font-display); font-weight: 700; color: var(--navy);
+    letter-spacing: -0.02em; margin: 1.5rem 0 0.5rem;
+  }
+  .cms-prose h2 { font-size: 1.25rem; }
+  .cms-prose h3 { font-size: 1.05rem; }
+  .cms-prose h4 { font-size: 0.95rem; }
+  .cms-prose strong { color: var(--navy); font-weight: 700; }
+  .cms-prose em { color: var(--cyan); font-style: normal; font-weight: 600; }
+  .cms-prose ul { list-style: none; padding: 0; margin: 0.5rem 0 1rem; }
+  .cms-prose ul li { font-size: 0.9rem; color: var(--text-secondary); padding: 0.2rem 0;
+    display: flex; align-items: flex-start; gap: 0.6rem; line-height: 1.6; }
+  .cms-prose ul li::before { content: ''; width: 5px; height: 5px; border-radius: 50%;
+    background: var(--cyan); flex-shrink: 0; margin-top: 0.45rem; }
+  .cms-prose ol { padding-left: 1.5rem; margin: 0.5rem 0 1rem; }
+  .cms-prose ol li { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.4rem; line-height: 1.65; }
+  .cms-prose blockquote { border-left: 3px solid var(--cyan); padding: 0.5rem 1rem;
+    margin: 1rem 0; background: var(--ice); border-radius: 0 8px 8px 0; }
+  .cms-prose blockquote p { margin: 0; color: var(--text-muted); font-style: italic; font-size: 0.9rem; }
+  .cms-prose code { background: var(--ice); padding: 0.1rem 0.4rem; border-radius: 4px;
+    font-size: 0.85em; color: var(--cyan-deep); font-family: monospace; }
+  .cms-prose pre { background: var(--navy); padding: 1rem 1.25rem; border-radius: 10px;
+    overflow-x: auto; margin: 1rem 0; }
+  .cms-prose pre code { background: none; color: var(--sky); padding: 0; }
 
   /* Related products */
   .related-products { padding: 4rem 6rem; background: var(--ice); }
@@ -321,17 +317,18 @@ new #[Layout('layouts.site')] class extends Component
 </style>
 
 <!-- BANNER -->
-<div class="detail-banner">
-  <div class="detail-banner-dots"></div>
-  <div class="detail-banner-glow"></div>
-  <div class="detail-breadcrumb">
-    <a href="{{ route('home') }}" wire:navigate>Home</a>
-    <span class="sep">/</span>
-    <a href="{{ route('site.products') }}" wire:navigate>Products</a>
-    <span class="sep">/</span>
-    <span class="current">{{ $product->name }}</span>
-  </div>
-</div>
+<x-page-banner
+    height="sm"
+    :title="$product->name"
+    :subtitle="$product->tagline ?? null"
+    :breadcrumbs="[
+        ['label'=>'Home','route'=>'home'],
+        ['label'=>'Products','route'=>'site.products'],
+        ['label'=>$product->name],
+    ]"
+    :tag="$product->linked_product_code ? strtoupper($product->linked_product_code) : ($product->category ? ucfirst($product->category) : null)"
+    :theme="$product->linked_product_code === 'churchops' ? 'green' : 'cyan'"
+/>
 
 @if($purchaseSuccess)
 <div class="purchase-success">

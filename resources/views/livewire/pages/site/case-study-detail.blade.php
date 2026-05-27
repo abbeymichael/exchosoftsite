@@ -20,15 +20,17 @@ new #[Layout('layouts.site')] class extends Component
 }; ?>
 
 <div>
-    <div class="bg-slate-50 border-b border-slate-100">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3">
-            <nav class="flex items-center gap-2 text-xs text-slate-500">
-                <a href="{{ route('home') }}" wire:navigate>Home</a><span>/</span>
-                <a href="{{ route('site.case-studies') }}" wire:navigate>Case Studies</a><span>/</span>
-                <span class="text-slate-900 font-medium">{{ $study->title }}</span>
-            </nav>
-        </div>
-    </div>
+    <x-page-banner
+        height="sm"
+        :title="$study->title"
+        :subtitle="$study->client_name ? ($study->client_name . ($study->client_industry ? ' · ' . $study->client_industry : '')) : null"
+        tag="Case Study"
+        :breadcrumbs="[
+            ['label'=>'Home','route'=>'home'],
+            ['label'=>'Case Studies','route'=>'site.case-studies'],
+            ['label'=>$study->title],
+        ]"
+    />
     <section class="py-14">
         <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
             <h1 class="text-3xl font-bold text-slate-900 mb-2">{{ $study->title }}</h1>

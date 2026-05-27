@@ -39,16 +39,12 @@ new #[Layout('layouts.site')] #[Title('Portfolio — Exchosoft Consult')] class 
   .listing-body{padding:4rem 6rem;}
   @media(max-width:1024px){.page-banner-content{padding:3rem 2rem;}.listing-body{padding:2.5rem 2rem;}}
 </style>
-<div class="page-banner">
-  <div class="page-banner-dots"></div>
-  <div class="page-banner-glow"></div>
-  <div class="page-banner-content">
-    <div class="page-banner-crumb"><a href="{{ route('home') }}" wire:navigate>Home</a><span class="sep">/</span><span class="ccurrent">Portfolio</span></div>
-    <div class="page-banner-tag">Our Work</div>
-    <h1>Projects That <em>Actually Worked</em></h1>
-    <p class="page-banner-sub">A showcase of systems we've built — from hospital management and church platforms to financial services tools and heritage preservation systems.</p>
-  </div>
-</div>
+<x-page-banner
+    tag="Our Work"
+    title="Projects That **Actually Worked**"
+    subtitle="A showcase of systems we've built — from hospital management and church platforms to financial services tools and heritage preservation systems."
+    :breadcrumbs="[['label'=>'Home','route'=>'home'],['label'=>'Portfolio']]"
+/>
 
     <section class="listing-body">
         <div>

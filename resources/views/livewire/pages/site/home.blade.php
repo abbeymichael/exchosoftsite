@@ -366,6 +366,27 @@ new #[Layout('layouts.site')] #[Title('Exchosoft Consult — Software Developmen
   .hero-buttons { animation-delay: 0.4s; }
   .hero-logo-wrap { animation: fadeUp 0.9s 0.3s ease both; }
 
+  /* CMS Markdown Prose */
+  .cms-prose { margin-top: 1rem; }
+  .cms-prose p  { font-size: 1rem; color: var(--text-secondary); line-height: 1.8; margin-bottom: 0.9rem; }
+  .cms-prose h1,.cms-prose h2,.cms-prose h3 {
+    font-family: var(--font-display); font-weight: 700; color: var(--navy);
+    margin: 1.25rem 0 0.5rem; letter-spacing: -0.02em;
+  }
+  .cms-prose h2 { font-size: 1.2rem; }
+  .cms-prose h3 { font-size: 1rem; }
+  .cms-prose strong { color: var(--navy); font-weight: 700; }
+  .cms-prose em { color: var(--cyan); font-style: normal; font-weight: 600; }
+  .cms-prose ul { list-style: none; padding: 0; margin: 0.5rem 0 1rem; }
+  .cms-prose ul li { font-size: 0.9rem; color: var(--text-secondary); padding: 0.2rem 0;
+    display: flex; align-items: flex-start; gap: 0.5rem; line-height: 1.6; }
+  .cms-prose ul li::before { content: ''; width: 5px; height: 5px; border-radius: 50%;
+    background: var(--cyan); flex-shrink: 0; margin-top: 0.45rem; }
+  .cms-prose ol { padding-left: 1.5rem; margin: 0.5rem 0 1rem; }
+  .cms-prose ol li { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.3rem; line-height: 1.6; }
+  .cms-prose blockquote { border-left: 3px solid var(--cyan); padding-left: 1rem;
+    margin: 1rem 0; color: var(--text-muted); font-style: italic; }
+
   @media (max-width: 1024px) {
     .home-section { padding: 4rem 2rem; }
     .home-hero { grid-template-columns: 1fr; }

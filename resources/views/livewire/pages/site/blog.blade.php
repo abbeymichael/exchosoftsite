@@ -63,16 +63,12 @@ new #[Layout('layouts.site')] #[Title('Tech Blog — Exchosoft Consult')] class 
   @media(max-width:1024px){.page-banner-content{padding:3rem 2rem;}.listing-body{padding:2.5rem 2rem;}.listing-grid{grid-template-columns:1fr 1fr;}}
   @media(max-width:640px){.listing-grid{grid-template-columns:1fr;}}
 </style>
-<div class="page-banner">
-  <div class="page-banner-dots"></div>
-  <div class="page-banner-glow"></div>
-  <div class="page-banner-content">
-    <div class="page-banner-crumb"><a href="{{ route('home') }}" wire:navigate>Home</a><span class="sep">/</span><span class="ccurrent">Blog</span></div>
-    <div class="page-banner-tag">Knowledge Hub</div>
-    <h1>Insights from the <em>Exchosoft Team</em></h1>
-    <p class="page-banner-sub">Tutorials, product updates, industry perspectives, and technology insights — straight from the people building software for Africa and beyond.</p>
-  </div>
-</div>
+<x-page-banner
+    tag="Knowledge Hub"
+    title="Insights from the **Exchosoft Team**"
+    subtitle="Tutorials, product updates, industry perspectives, and technology insights — straight from the people building software for Africa and beyond."
+    :breadcrumbs="[['label'=>'Home','route'=>'home'],['label'=>'Tech Blog']]"
+/>
 
     <section class="listing-body">
         <div>

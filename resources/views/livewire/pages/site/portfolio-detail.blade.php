@@ -20,17 +20,17 @@ new #[Layout('layouts.site')] class extends Component
 }; ?>
 
 <div>
-    <div class="bg-slate-50 border-b border-slate-100">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3">
-            <nav class="flex items-center gap-2 text-xs text-slate-500">
-                <a href="{{ route('home') }}" wire:navigate class="hover:text-slate-900">Home</a>
-                <span>/</span>
-                <a href="{{ route('site.portfolio') }}" wire:navigate class="hover:text-slate-900">Portfolio</a>
-                <span>/</span>
-                <span class="text-slate-900 font-medium">{{ $item->title }}</span>
-            </nav>
-        </div>
-    </div>
+    <x-page-banner
+        height="sm"
+        :title="$item->title"
+        :subtitle="$item->client_name ? 'Client: ' . $item->client_name . ($item->client_industry ? ' — ' . $item->client_industry : '') : null"
+        :tag="$item->category ? ucfirst($item->category) : 'Portfolio'"
+        :breadcrumbs="[
+            ['label'=>'Home','route'=>'home'],
+            ['label'=>'Portfolio','route'=>'site.portfolio'],
+            ['label'=>$item->title],
+        ]"
+    />
     <section class="py-14">
         <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
             <div class="flex flex-wrap items-center gap-2 mb-3">
