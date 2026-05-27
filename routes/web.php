@@ -20,6 +20,12 @@ Route::prefix('')->name('')->group(function () {
         // About
         Route::livewire('/about', 'pages::site.about')->name('about');
 
+        // Services
+        Route::livewire('/services', 'pages::site.services')->name('services');
+
+        // Contact
+        Route::livewire('/contact', 'pages::site.contact')->name('contact');
+
         // Products
         Route::livewire('/products', 'pages::site.products')->name('products');
         Route::livewire('/products/{slug}', 'pages::site.product-detail')->name('products.show');
