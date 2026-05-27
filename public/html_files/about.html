@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>About — Exchosoft Consult</title>
+<!-- BEGIN: Essential Scripts & Fonts -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&amp;family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&amp;display=swap" rel="stylesheet"/>
+<!-- END: Essential Scripts & Fonts -->
+<!-- BEGIN: Tailwind Configuration -->
+<script data-purpose="tailwind-config">
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cyan: { DEFAULT: '#00b8db', dark: '#0091ad', deep: '#006d82' },
+            sky: { DEFAULT: '#7acfe8', light: '#e5f7fb' },
+            navy: { DEFAULT: '#0d2137', mid: '#162d47' },
+            ice: '#f4f8fb',
+          },
+          fontFamily: {
+            display: ['Syne', 'sans-serif'],
+            body: ['DM Sans', 'sans-serif'],
+          },
+          letterSpacing: { tightest: '-0.04em', tighter: '-0.03em', tight: '-0.02em' },
+          animation: {
+            'fade-up': 'fadeUp 0.6s ease both',
+            'fade-up-d1': 'fadeUp 0.6s 0.15s ease both',
+            'fade-up-d2': 'fadeUp 0.6s 0.3s ease both',
+            'fade-up-d3': 'fadeUp 0.6s 0.45s ease both',
+          },
+          keyframes: {
+            fadeUp: {
+              from: { opacity: '0', transform: 'translateY(22px)' },
+              to: { opacity: '1', transform: 'translateY(0)' },
+            },
+          },
+        }
+      }
+    }
+  </script>
+<!-- END: Tailwind Configuration -->
+<!-- BEGIN: Custom Styles -->
+<style data-purpose="special-effects">
+    body { font-family: 'DM Sans', sans-serif; }
+    .font-display { font-family: 'Syne', sans-serif; }
+
+    /* Scanline overlay effect */
+    .scanlines::after {
+      content: '';
+      position: absolute; inset: 0; z-index: 1;
+      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.035) 3px, rgba(0,0,0,0.035) 4px);
+      pointer-events: none;
+    }
+
+    /* Dot grid background pattern */
+    .dot-grid {
+      background-image: radial-gradient(circle, rgba(0,184,219,0.2) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+
+    /* Gradient Text utility */
+    .text-gradient {
+      background: linear-gradient(135deg, #00b8db 0%, #7acfe8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Glitch effect for hero text */
+    .glitch { position: relative; }
+    .glitch::before, .glitch::after {
+      content: attr(data-text);
+      position: absolute; inset: 0;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-image: linear-gradient(135deg, #00b8db 0%, #7acfe8 100%);
+      pointer-events: none;
+    }
+    .glitch::before { animation: glitch-1 4s infinite steps(1); clip-path: polygon(0 20%, 100% 20%, 100% 40%, 0 40%); }
+    .glitch::after { animation: glitch-2 4s infinite steps(1); clip-path: polygon(0 60%, 100% 60%, 100% 75%, 0 75%); }
+
+    @keyframes glitch-1 {
+      0%, 89%, 92%, 100% { transform: none; opacity: 0; }
+      90% { transform: translate(-3px, 1px) skewX(-2deg); opacity: 0.7; }
+      91% { transform: translate(3px, -1px) skewX(1deg); opacity: 0.5; }
+    }
+    @keyframes glitch-2 {
+      0%, 87%, 91%, 100% { transform: none; opacity: 0; }
+      88% { transform: translate(4px, 2px) skewX(3deg); opacity: 0.5; }
+      90% { transform: translate(-2px, -2px); opacity: 0.3; }
+    }
+
+    /* Value Card reveal effect */
+    .value-card {
+      clip-path: inset(0 0 100% 0);
+      transition: clip-path 0.6s cubic-bezier(0.22,1,0.36,1), border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+    }
+    .value-card.visible { clip-path: inset(0 0 0% 0); }
+    .value-card:hover {
+      border-color: rgba(0,184,219,0.5) !important;
+      box-shadow: 0 0 40px rgba(0,184,219,0.1), inset 0 0 20px rgba(0,184,219,0.04);
+      transform: translateY(-2px);
+    }
+
+    /* Generic Reveal Animation */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.75s cubic-bezier(0.22,1,0.36,1), transform 0.75s cubic-bezier(0.22,1,0.36,1);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* Timeline vertical track */
+    .tl-track::before {
+      content: '';
+      position: absolute; left: 0; top: 0;
+      width: 1px; height: 0;
+      background: linear-gradient(to bottom, rgba(0,184,219,0.6) 0%, rgba(0,184,219,0.1) 100%);
+      transition: height 1.8s cubic-bezier(0.22,1,0.36,1);
+    }
+    .tl-track.drawn::before { height: 100%; }
+
+    /* Blockquote visual flourish */
+    .blockquote-mark::before {
+      content: '\201C';
+      font-family: 'Syne', sans-serif;
+      font-size: 6rem;
+      line-height: 0;
+      color: rgba(0,184,219,0.18);
+      position: absolute;
+      top: 2.5rem; left: -0.5rem;
+    }
+  </style>
+<!-- END: Custom Styles -->
+</head>
+<body class="bg-white text-navy overflow-x-hidden">
+<!-- BEGIN: Main Navigation -->
+<nav class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 md:px-16 py-4 bg-navy/95 backdrop-blur-md border-b border-cyan/10" data-purpose="primary-navigation">
+<a class="flex items-center gap-3 font-display font-bold text-white text-sm tracking-tight no-underline" href="#">
+<!-- Placeholder logo -->
+<div class="h-8 w-8 bg-cyan rounded-sm flex items-center justify-center text-navy font-black text-lg">E</div>
+      Exchosoft Consult
+    </a>
+<!-- Breadcrumb -->
+<div class="hidden md:flex items-center gap-2 text-xs text-white/40">
+<a class="hover:text-cyan transition-colors" href="#">Home</a>
+<span class="text-white/20">/</span>
+<span class="text-cyan font-medium">About</span>
+</div>
+<a class="font-display font-semibold text-xs text-white bg-cyan hover:bg-cyan-dark px-5 py-2.5 rounded-md transition-colors" href="#contact">
+      Talk to Us
+    </a>
+</nav>
+<!-- END: Main Navigation -->
+<!-- BEGIN: Hero Banner -->
+<header class="relative min-h-[580px] bg-navy overflow-hidden flex items-end pt-20 scanlines" data-purpose="hero-section">
+<!-- Animated particle canvas background -->
+<canvas class="absolute inset-0 w-full h-full pointer-events-none opacity-80" id="banner-canvas"></canvas>
+<!-- Background overlay patterns -->
+<div class="absolute inset-0 dot-grid pointer-events-none opacity-60"></div>
+<div class="absolute left-20 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-cyan/30 to-transparent hidden lg:block"></div>
+<div class="relative z-10 w-full px-8 md:px-16 lg:px-24 pb-16 pt-12">
+<!-- Navigational indicator -->
+<div class="flex items-center gap-2 mb-8 animate-fade-up">
+<a class="text-xs text-white/40 hover:text-cyan transition-colors" href="#">Home</a>
+<span class="text-white/20 text-xs">/</span>
+<span class="w-1.5 h-1.5 rounded-full bg-cyan inline-block"></span>
+<span class="text-xs text-cyan font-medium">About Us</span>
+</div>
+<div class="max-w-3xl">
+<!-- Badge -->
+<div class="inline-flex items-center gap-2 bg-cyan/10 border border-cyan/20 text-sky text-xs font-medium tracking-widest uppercase px-4 py-1.5 rounded-full mb-6 animate-fade-up-d1">
+<span class="w-1.5 h-1.5 rounded-full bg-sky/70 inline-block"></span>
+          Our Story
+        </div>
+<h1 class="font-display font-extrabold text-white leading-none tracking-tightest mb-5 text-5xl md:text-6xl lg:text-7xl animate-fade-up-d2">
+          Built From <span class="text-gradient glitch" data-text="Here.">Here.</span><br/>
+          Built For Here.
+        </h1>
+<p class="text-white/55 text-base md:text-lg font-light leading-relaxed max-w-xl animate-fade-up-d3">
+          We are a Ghana-based technology consultancy that builds software for the real conditions of doing business
+          across Africa, the Caribbean, and the diaspora — not the ideal conditions someone else imagined.
+        </p>
+</div>
+</div>
+<!-- Background visual fade-out -->
+<div class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
+</header>
+<!-- END: Hero Banner -->
+<!-- BEGIN: Brand Story Section -->
+<section class="bg-white px-8 md:px-16 lg:px-24 py-24" data-purpose="brand-story">
+<div class="max-w-7xl mx-auto grid lg:grid-cols-[1fr_1.5fr] gap-16 lg:gap-24 items-start">
+<!-- Left: Narrative Headline (Sticky on Desktop) -->
+<div class="lg:sticky lg:top-24 reveal">
+<p class="text-xs font-semibold font-display tracking-[0.1em] text-cyan uppercase mb-3">Who We Are</p>
+<h2 class="font-display font-extrabold text-navy text-3xl md:text-4xl leading-tight tracking-tighter mb-8">
+          A Different Kind<br/>of Tech Firm
+        </h2>
+<!-- Featured Quote -->
+<div class="relative blockquote-mark pl-6 pt-2 border-l-2 border-cyan">
+<p class="text-cyan-deep italic text-lg leading-relaxed font-light">
+            "We don't just acknowledge the realities of our clients — we build for them."
+          </p>
+</div>
+<div class="mt-10 flex gap-3 items-center">
+<div class="flex -space-x-1.5">
+<span class="w-3 h-3 rounded-full bg-cyan block"></span>
+<span class="w-3 h-3 rounded-full bg-sky block"></span>
+<span class="w-3 h-3 rounded-full bg-cyan/30 border border-cyan block"></span>
+</div>
+<span class="text-xs text-navy/40 font-display font-medium tracking-wide">Ghana · Caribbean · Diaspora</span>
+</div>
+</div>
+<!-- Right: Narrative Details -->
+<div class="space-y-6 reveal" style="transition-delay:0.15s">
+<p class="text-[#3a5a72] leading-[1.85] text-[1.025rem]">
+          Exchosoft Consult grew out of a frustration that many technology firms share but few admit: most software is built for conditions that don't exist in the markets that need it most. Reliable power. Constant internet. Expensive devices. Formal business structures.
+        </p>
+<p class="text-[#3a5a72] leading-[1.85] text-[1.025rem]">
+          We started building differently. Offline-first architecture wasn't a feature we added — it was a fundamental decision made because our first hospital client needed patient records accessible during outages. LAN collaboration wasn't a buzzword — it was a solution for a pharmacy chain whose locations couldn't always reach the internet but needed to operate as one business.
+        </p>
+<p class="text-[#3a5a72] leading-[1.85] text-[1.025rem]">
+          Over time, we built systems for churches managing hundreds of members and complex finances. For laboratories tracking samples under strict compliance. For heritage organizations preserving cultural history across continents.
+        </p>
+<!-- Context Callouts -->
+<div class="mt-8 grid sm:grid-cols-2 gap-4">
+<div class="bg-ice rounded-xl p-5 border border-cyan/10">
+<h4 class="font-display font-bold text-navy text-sm mb-1">Small &amp; Experienced</h4>
+<p class="text-xs text-[#7a9ab0] leading-relaxed">We don't outsource to juniors. You work with the people who built the systems in our portfolio.</p>
+</div>
+<div class="bg-ice rounded-xl p-5 border border-cyan/10">
+<h4 class="font-display font-bold text-navy text-sm mb-1">Rooted in Context</h4>
+<p class="text-xs text-[#7a9ab0] leading-relaxed">We understand the infrastructure and business cultures of our markets because we operate within them.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- END: Brand Story Section -->
+<!-- BEGIN: Core Values -->
+<section class="bg-navy px-8 md:px-16 lg:px-24 py-24" data-purpose="core-values">
+<div class="max-w-7xl mx-auto">
+<div class="mb-14 reveal">
+<p class="text-xs font-semibold font-display tracking-[0.1em] text-sky uppercase mb-3">What Drives Us</p>
+<h2 class="font-display font-extrabold text-white text-3xl md:text-4xl tracking-tighter leading-tight max-w-xl">
+          Six Principles We Don't<br/>Compromise On
+        </h2>
+</div>
+<div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+<!-- Principle 01 -->
+<div class="value-card bg-white/[0.03] border border-cyan/[0.12] rounded-2xl p-7 reveal">
+<div class="font-display font-extrabold text-5xl text-cyan/10 leading-none mb-5 tracking-tightest">01</div>
+<h3 class="font-display font-bold text-white text-[0.95rem] mb-3">Reality over theory</h3>
+<p class="text-white/45 text-sm leading-[1.8] font-light">We build for the world as it is — intermittent power, inconsistent connectivity, mobile-first users — not the world as it should be.</p>
+</div>
+<!-- Principle 02 -->
+<div class="value-card bg-white/[0.03] border border-cyan/[0.12] rounded-2xl p-7 reveal" style="transition-delay:0.07s">
+<div class="font-display font-extrabold text-5xl text-cyan/10 leading-none mb-5 tracking-tightest">02</div>
+<h3 class="font-display font-bold text-white text-[0.95rem] mb-3">Custom over compromise</h3>
+<p class="text-white/45 text-sm leading-[1.8] font-light">Off-the-shelf forces your business into someone else's model. Every system we build starts from understanding how you actually work.</p>
+</div>
+<!-- Principle 03 -->
+<div class="value-card bg-white/[0.03] border border-cyan/[0.12] rounded-2xl p-7 reveal" style="transition-delay:0.14s">
+<div class="font-display font-extrabold text-5xl text-cyan/10 leading-none mb-5 tracking-tightest">03</div>
+<h3 class="font-display font-bold text-white text-[0.95rem] mb-3">Long-term over transactional</h3>
+<p class="text-white/45 text-sm leading-[1.8] font-light">We are not project vendors. We build relationships because software that grows with a business requires a partner who understands it.</p>
+</div>
+<!-- Principle 04 -->
+<div class="value-card bg-white/[0.03] border border-cyan/[0.12] rounded-2xl p-7 reveal" style="transition-delay:0.21s">
+<div class="font-display font-extrabold text-5xl text-cyan/10 leading-none mb-5 tracking-tightest">04</div>
+<h3 class="font-display font-bold text-white text-[0.95rem] mb-3">Local knowledge, global standards</h3>
+<p class="text-white/45 text-sm leading-[1.8] font-light">Understanding Accra, Lagos, Kingston, and London as markets means building technology that works across all of them.</p>
+</div>
+<!-- Principle 05 -->
+<div class="value-card bg-white/[0.03] border border-cyan/[0.12] rounded-2xl p-7 reveal" style="transition-delay:0.28s">
+<div class="font-display font-extrabold text-5xl text-cyan/10 leading-none mb-5 tracking-tightest">05</div>
+<h3 class="font-display font-bold text-white text-[0.95rem] mb-3">Reliability as a foundation</h3>
+<p class="text-white/45 text-sm leading-[1.8] font-light">From hospital records to financial ledgers, we build systems where failure is not an option — architecturally, not just aspirationally.</p>
+</div>
+<!-- Principle 06 -->
+<div class="value-card bg-white/[0.03] border border-cyan/[0.12] rounded-2xl p-7 reveal" style="transition-delay:0.35s">
+<div class="font-display font-extrabold text-5xl text-cyan/10 leading-none mb-5 tracking-tightest">06</div>
+<h3 class="font-display font-bold text-white text-[0.95rem] mb-3">Clarity in every engagement</h3>
+<p class="text-white/45 text-sm leading-[1.8] font-light">We tell clients what they need, not what they want to hear. Honest technology consulting produces better outcomes.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- END: Core Values -->
+<!-- BEGIN: Global Presence Map -->
+<section class="bg-ice px-8 md:px-16 lg:px-24 py-24" data-purpose="global-presence">
+<div class="max-w-7xl mx-auto grid lg:grid-cols-[1.2fr_1fr] gap-16 items-center">
+<div class="reveal">
+<p class="text-xs font-semibold font-display tracking-[0.1em] text-cyan uppercase mb-3">Where We Work</p>
+<h2 class="font-display font-extrabold text-navy text-3xl md:text-4xl tracking-tighter leading-tight mb-5">
+          Accra-Based.<br/>Continent-Minded.
+        </h2>
+<p class="text-[#3a5a72] leading-[1.8] mb-10">
+          Our headquarters are in Accra, Ghana. But our work spans West Africa, the UK, the Caribbean, and diaspora communities across North America and Europe.
+        </p>
+<!-- Stats Grid -->
+<div class="grid grid-cols-2 gap-3">
+<div class="bg-white border border-cyan/10 rounded-xl p-5">
+<div class="text-gradient font-display font-extrabold text-3xl tracking-tighter mb-1">3</div>
+<div class="text-xs text-[#7a9ab0]">Continents with active clients</div>
+</div>
+<div class="bg-white border border-cyan/10 rounded-xl p-5">
+<div class="text-gradient font-display font-extrabold text-3xl tracking-tighter mb-1">10+</div>
+<div class="text-xs text-[#7a9ab0]">Industries served</div>
+</div>
+<div class="bg-white border border-cyan/10 rounded-xl p-5">
+<div class="text-gradient font-display font-extrabold text-3xl tracking-tighter mb-1">100%</div>
+<div class="text-xs text-[#7a9ab0]">Custom-built solutions</div>
+</div>
+<div class="bg-white border border-cyan/10 rounded-xl p-5">
+<div class="text-gradient font-display font-extrabold text-3xl tracking-tighter mb-1">0</div>
+<div class="text-xs text-[#7a9ab0]">Off-the-shelf compromises</div>
+</div>
+</div>
+</div>
+<!-- Animated Map Visual -->
+<div class="relative bg-navy rounded-2xl overflow-hidden min-h-[380px] flex flex-col justify-end p-8 reveal" style="transition-delay:0.15s">
+<div class="absolute inset-0 dot-grid opacity-40"></div>
+<canvas class="absolute inset-0 w-full h-full pointer-events-none" id="map-canvas"></canvas>
+<div class="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-cyan/10 rounded-full blur-3xl pointer-events-none"></div>
+<!-- Location Chips -->
+<div class="relative z-10 flex flex-wrap gap-2">
+<div class="flex items-center gap-2 text-[10px] text-white/70 bg-white/5 border border-cyan/15 px-3 py-1.5 rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-cyan"></span> Accra, Ghana
+          </div>
+<div class="flex items-center gap-2 text-[10px] text-white/70 bg-white/5 border border-cyan/15 px-3 py-1.5 rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-cyan"></span> Lagos, Nigeria
+          </div>
+<div class="flex items-center gap-2 text-[10px] text-white/70 bg-white/5 border border-cyan/15 px-3 py-1.5 rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-sky"></span> London, UK
+          </div>
+<div class="flex items-center gap-2 text-[10px] text-white/70 bg-white/5 border border-cyan/15 px-3 py-1.5 rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-sky"></span> Kingston, Jamaica
+          </div>
+</div>
+</div>
+</div>
+</section>
+<!-- END: Global Presence Map -->
+<!-- BEGIN: Journey Timeline -->
+<section class="bg-white px-8 md:px-16 lg:px-24 py-24" data-purpose="journey-timeline">
+<div class="max-w-4xl mx-auto">
+<div class="mb-14 reveal">
+<p class="text-xs font-semibold font-display tracking-[0.1em] text-cyan uppercase mb-3">Our Journey</p>
+<h2 class="font-display font-extrabold text-navy text-3xl md:text-4xl tracking-tighter leading-tight">
+          How We Got Here
+        </h2>
+</div>
+<div class="tl-track relative pl-8 md:pl-12">
+<!-- Milestone 1 -->
+<div class="relative pb-12 reveal">
+<div class="absolute -left-[0.3125rem] top-1.5 w-2.5 h-2.5 rounded-full bg-cyan ring-2 ring-white shadow-[0_0_0_2px_#00b8db]"></div>
+<p class="font-display font-bold text-xs tracking-[0.09em] text-cyan uppercase mb-1.5">The Beginning</p>
+<h3 class="font-display font-bold text-navy text-base mb-2">First healthcare system built offline-first</h3>
+<p class="text-[#3a5a72] text-sm leading-[1.8] max-w-lg">Our first major project was a hospital management system for a client who couldn't afford downtime during outages.</p>
+</div>
+<!-- Milestone 2 -->
+<div class="relative pb-12 reveal" style="transition-delay:0.1s">
+<div class="absolute -left-[0.3125rem] top-1.5 w-2.5 h-2.5 rounded-full bg-cyan ring-2 ring-white shadow-[0_0_0_2px_#00b8db]"></div>
+<p class="font-display font-bold text-xs tracking-[0.09em] text-cyan uppercase mb-1.5">Expansion</p>
+<h3 class="font-display font-bold text-navy text-base mb-2">Faith-based and service sectors</h3>
+<p class="text-[#3a5a72] text-sm leading-[1.8] max-w-lg">We extended our work into churches, pharmacies, and laundry businesses proofing architectural principles across contexts.</p>
+</div>
+<!-- Milestone 3 -->
+<div class="relative reveal" style="transition-delay:0.2s">
+<div class="absolute -left-[0.3125rem] top-1.5 w-2.5 h-2.5 rounded-full bg-cyan ring-2 ring-white shadow-[0_0_0_2px_#00b8db]"></div>
+<p class="font-display font-bold text-xs tracking-[0.09em] text-cyan uppercase mb-1.5">Today</p>
+<h3 class="font-display font-bold text-navy text-base mb-2">Full-spectrum tech consultancy</h3>
+<p class="text-[#3a5a72] text-sm leading-[1.8] max-w-lg">Exchosoft now offers custom software development, digital transformation, and ongoing partnership across every sector.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- END: Journey Timeline -->
+<!-- BEGIN: Call to Action -->
+<div class="bg-cyan px-8 md:px-16 lg:px-24 py-16 flex flex-col md:flex-row items-start md:items-center justify-between gap-8" data-purpose="cta-strip" id="contact">
+<div>
+<h2 class="font-display font-extrabold text-white text-2xl md:text-3xl tracking-tighter leading-tight mb-2">
+        Let's build something that actually works
+      </h2>
+<p class="text-white/75 text-sm md:text-base leading-relaxed max-w-md">
+        Every business is different. Every challenge is unique. Let's talk about yours.
+      </p>
+</div>
+<a class="flex-shrink-0 font-display font-bold text-sm text-cyan-deep bg-white px-7 py-3.5 rounded-lg shadow-sm hover:translate-y-[-2px] transition-transform" href="mailto:contact@exchosoft.com">
+      Schedule a Consultation
+    </a>
+</div>
+<!-- END: Call to Action -->
+<!-- BEGIN: Footer -->
+<footer class="bg-navy border-t border-white/5 px-8 md:px-16 lg:px-24 py-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4" data-purpose="main-footer">
+<div>
+<div class="font-display font-bold text-white text-sm tracking-tight">Exchosoft Consult</div>
+<div class="text-white/30 text-xs mt-0.5">Software Development &amp; Technology Consultancy</div>
+</div>
+<div class="text-white/30 text-xs text-left md:text-right leading-relaxed">
+      Accra, Ghana<br/>Serving Africa, the Caribbean &amp; the Diaspora
+    </div>
+</footer>
+<!-- END: Footer -->
+<!-- BEGIN: Interactive Scripts -->
+<script data-purpose="hero-visuals">
+    (function() {
+      const canvas = document.getElementById('banner-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let W, H;
+
+      function resize() {
+        W = canvas.width = canvas.offsetWidth;
+        H = canvas.height = canvas.offsetHeight;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      // Particles
+      const particles = Array.from({ length: 70 }, () => ({
+        x: Math.random(), y: Math.random(),
+        vx: (Math.random() - 0.5) * 0.0001, vy: (Math.random() - 0.5) * 0.0001,
+        r: Math.random() * 1.5 + 0.5,
+        a: Math.random() * 0.4 + 0.1
+      }));
+
+      // Radar Object
+      const radar = {
+        centerX: 0.75, // percentage
+        centerY: 0.45, // percentage
+        angle: 0,
+        speed: 0.02,
+        maxRadius: 280,
+        pings: [],
+        pulses: []
+      };
+
+      // Helper for pings
+      function spawnPing(angle) {
+        const dist = 50 + Math.random() * (radar.maxRadius - 70);
+        radar.pings.push({
+          x: radar.centerX * W + Math.cos(angle) * dist,
+          y: radar.centerY * H + Math.sin(angle) * dist,
+          life: 1.0
+        });
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, W, H);
+        const time = Date.now() / 1000;
+
+        // 1. Draw Particles
+        particles.forEach(p => {
+          p.x += p.vx; p.y += p.vy;
+          if (p.x < 0) p.x = 1; if (p.x > 1) p.x = 0;
+          if (p.y < 0) p.y = 1; if (p.y > 1) p.y = 0;
+          ctx.beginPath();
+          ctx.arc(p.x * W, p.y * H, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(0, 184, 219, ${p.a})`;
+          ctx.fill();
+        });
+
+        // 2. Draw Radar
+        const rx = radar.centerX * W;
+        const ry = radar.centerY * H;
+
+        // Concentric Circles
+        ctx.lineWidth = 1;
+        [0.3, 0.6, 1.0].forEach(factor => {
+          ctx.beginPath();
+          ctx.arc(rx, ry, radar.maxRadius * factor, 0, Math.PI * 2);
+          ctx.strokeStyle = 'rgba(0, 184, 219, 0.1)';
+          ctx.stroke();
+        });
+
+        // Crosshairs
+        ctx.beginPath();
+        ctx.moveTo(rx - 20, ry); ctx.lineTo(rx + 20, ry);
+        ctx.moveTo(rx, ry - 20); ctx.lineTo(rx, ry + 20);
+        ctx.strokeStyle = 'rgba(0, 184, 219, 0.2)';
+        ctx.stroke();
+
+        // Update Radar Sweep
+        radar.angle += radar.speed;
+        if (Math.random() < 0.02) spawnPing(radar.angle);
+        
+        // Sweep Line with trailing gradient
+        ctx.save();
+        ctx.translate(rx, ry);
+        ctx.rotate(radar.angle);
+        
+        const grd = ctx.createConicGradient(-Math.PI/2, 0, 0);
+        grd.addColorStop(0, 'rgba(0, 184, 219, 0.4)');
+        grd.addColorStop(0.15, 'rgba(0, 184, 219, 0)');
+        
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.arc(0, 0, radar.maxRadius, 0, -Math.PI/3, true);
+        ctx.closePath();
+        ctx.fillStyle = grd;
+        ctx.fill();
+
+        // Leading line
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(radar.maxRadius, 0);
+        ctx.strokeStyle = 'rgba(122, 207, 232, 0.5)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.restore();
+
+        // Pulse Rings
+        if (Math.floor(time * 0.5) !== Math.floor((time - 0.016) * 0.5)) {
+          radar.pulses.push({ r: 0, life: 1 });
+        }
+        radar.pulses.forEach((p, i) => {
+          p.r += 2.5;
+          p.life -= 0.005;
+          if (p.life <= 0) radar.pulses.splice(i, 1);
+          ctx.beginPath();
+          ctx.arc(rx, ry, p.r, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(0, 184, 219, ${p.life * 0.2})`;
+          ctx.stroke();
+        });
+
+        // Pings
+        radar.pings.forEach((p, i) => {
+          p.life -= 0.01;
+          if (p.life <= 0) radar.pings.splice(i, 1);
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 3 * p.life, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(122, 207, 232, ${p.life})`;
+          ctx.fill();
+          // ping glow
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 8 * p.life, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(0, 184, 219, ${p.life * 0.3})`;
+          ctx.fill();
+        });
+
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+  </script>
+<script data-purpose="map-visuals">
+    (function() {
+      const canvas = document.getElementById('map-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let W, H;
+
+      function resize() {
+        W = canvas.width = canvas.offsetWidth;
+        H = canvas.height = canvas.offsetHeight;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      const nodes = [
+        { x: 0.3, y: 0.4 }, { x: 0.5, y: 0.3 }, 
+        { x: 0.7, y: 0.5 }, { x: 0.4, y: 0.7 }
+      ];
+
+      function draw() {
+        ctx.clearRect(0, 0, W, H);
+        const time = Date.now() / 1500;
+
+        nodes.forEach((n, i) => {
+          const nx = n.x * W;
+          const ny = n.y * H;
+          
+          // Connect to others
+          nodes.forEach((n2, j) => {
+            if (i === j) return;
+            ctx.beginPath();
+            ctx.moveTo(nx, ny);
+            ctx.lineTo(n2.x * W, n2.y * H);
+            ctx.strokeStyle = 'rgba(0, 184, 219, 0.08)';
+            ctx.stroke();
+          });
+
+          // Pulse
+          const p = (time + i/nodes.length) % 1;
+          ctx.beginPath();
+          ctx.arc(nx, ny, p * 30, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(0, 184, 219, ${0.4 * (1-p)})`;
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.arc(nx, ny, 3, 0, Math.PI * 2);
+          ctx.fillStyle = '#00b8db';
+          ctx.fill();
+        });
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+  </script>
+<script data-purpose="scroll-animations">
+    // Intersection Observer for general reveals and timeline line drawing
+    const observerOptions = { threshold: 0.15, rootMargin: '0px 0px -50px 0px' };
+
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          // If it's the timeline track, trigger line drawing
+          if (entry.target.classList.contains('tl-track')) {
+            entry.target.classList.add('drawn');
+          }
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.reveal, .value-card, .tl-track').forEach(el => revealObserver.observe(el));
+  </script>
+<!-- END: Interactive Scripts -->
+</body></html>

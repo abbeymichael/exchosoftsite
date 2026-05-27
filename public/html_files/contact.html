@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Contact Us | Exchosoft Consult</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&amp;family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-container": "#3792aa",
+                    "primary-fixed-dim": "#b5c8e5",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed-variant": "#364860",
+                    "on-error": "#ffffff",
+                    "surface-container-low": "#f0f4f7",
+                    "primary-fixed": "#d2e4ff",
+                    "on-primary-container": "#7689a4",
+                    "secondary-container": "#4cd9fd",
+                    "on-error-container": "#93000a",
+                    "on-tertiary": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "surface-dim": "#d6dbdd",
+                    "surface": "#f6fafd",
+                    "outline-variant": "#c4c6cd",
+                    "tertiary": "#000a0e",
+                    "surface-container": "#eaeef1",
+                    "inverse-surface": "#2c3134",
+                    "tertiary-fixed": "#b0ecff",
+                    "on-background": "#171c1f",
+                    "primary-container": "#0d2137",
+                    "on-surface-variant": "#44474d",
+                    "on-surface": "#171c1f",
+                    "surface-variant": "#dfe3e6",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-fixed": "#001f27",
+                    "on-primary-fixed": "#081c32",
+                    "tertiary-container": "#00242d",
+                    "surface-container-high": "#e5e9ec",
+                    "secondary-fixed-dim": "#48d7fb",
+                    "on-secondary-fixed-variant": "#004e5e",
+                    "secondary": "#00677c",
+                    "on-secondary-container": "#005d6f",
+                    "background": "#f6fafd",
+                    "surface-bright": "#f6fafd",
+                    "tertiary-fixed-dim": "#7dd2eb",
+                    "outline": "#74777d",
+                    "on-tertiary-fixed-variant": "#004e5e",
+                    "surface-tint": "#4d6079",
+                    "error-container": "#ffdad6",
+                    "surface-container-highest": "#dfe3e6",
+                    "secondary-fixed": "#b1ecff",
+                    "inverse-primary": "#b5c8e5",
+                    "inverse-on-surface": "#edf1f4",
+                    "on-tertiary-fixed": "#001f27",
+                    "primary": "#000917"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "base": "8px",
+                    "margin-desktop": "64px",
+                    "margin-mobile": "16px",
+                    "container-max": "1440px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "label-md": ["DM Sans"],
+                    "display-lg": ["Syne"],
+                    "headline-md": ["Syne"],
+                    "headline-xl": ["Syne"],
+                    "body-md": ["DM Sans"],
+                    "headline-lg": ["Syne"],
+                    "code-snippet": ["DM Sans"],
+                    "display-lg-mobile": ["Syne"],
+                    "body-lg": ["DM Sans"]
+            },
+            "fontSize": {
+                    "label-md": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "display-lg": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "headline-md": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "headline-xl": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                    "code-snippet": ["13px", {"lineHeight": "1.5", "fontWeight": "500"}],
+                    "display-lg-mobile": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "800"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        .radar-sweep {
+            background: conic-gradient(from 0deg, transparent 0deg, transparent 300deg, rgba(0, 184, 219, 0.3) 360deg);
+            animation: sweep 4s linear infinite;
+        }
+
+        @keyframes sweep {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .ping {
+            animation: ping-pulse 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+        }
+
+        @keyframes ping-pulse {
+            75%, 100% {
+                transform: scale(2.5);
+                opacity: 0;
+            }
+        }
+
+        .data-particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #4cd9fd;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1.5px solid rgba(177, 236, 255, 0.3);
+        }
+
+        .grid-overlay {
+            background-image: radial-gradient(circle at 1px 1px, #c4c6cd 1px, transparent 0);
+            background-size: 32px 32px;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .nav-underline-active {
+            position: relative;
+        }
+        .nav-underline-active::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: currentColor;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        .nav-underline-active:hover::after {
+            transform: scaleX(1);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body-md text-on-surface flex flex-col min-h-screen selection:bg-secondary-container selection:text-on-secondary-container">
+<!-- TopAppBar -->
+<header class="bg-surface/80 dark:bg-primary-container/80 backdrop-blur-xl docked full-width top-0 sticky border-b border-outline-variant/20 shadow-sm dark:shadow-none flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 z-50">
+<div class="font-headline-md text-headline-md font-bold tracking-tight text-primary dark:text-primary-fixed-dim">
+            Exchosoft Consult
+        </div>
+<nav class="hidden md:flex gap-8">
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-on-surface-variant hover:text-secondary transition-colors duration-300" href="#">Solutions</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-on-surface-variant hover:text-secondary transition-colors duration-300" href="#">Consulting</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-on-surface-variant hover:text-secondary transition-colors duration-300" href="#">Markets</a>
+<a class="font-body-md text-body-md text-secondary dark:text-secondary-fixed font-bold border-b-2 border-secondary dark:border-secondary-fixed pb-1" href="#">Contact</a>
+</nav>
+<button class="bg-primary text-on-primary px-6 py-2.5 rounded-lg font-label-md text-label-md hover:bg-secondary transition-all duration-300 shadow-md">
+            Partner With Us
+        </button>
+</header>
+<main class="flex-grow">
+<!-- Hero Section -->
+<section class="relative bg-primary-container min-h-[614px] flex items-center overflow-hidden py-24">
+<!-- Radar Background -->
+<div class="absolute inset-0 z-0">
+<div class="absolute inset-0 opacity-30" id="particle-container"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] border border-on-primary-container/20 rounded-full"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-on-primary-container/20 rounded-full"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] border border-on-primary-container/20 rounded-full"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] radar-sweep rounded-full"></div>
+<!-- Radar Icons -->
+<div class="absolute top-[30%] left-[20%] text-secondary-fixed animate-pulse">
+<div class="ping absolute inset-0 bg-secondary-fixed/30 rounded-full"></div>
+<span class="material-symbols-outlined relative z-10 text-4xl" data-icon="mail">mail</span>
+</div>
+<div class="absolute bottom-[25%] right-[25%] text-secondary-fixed animate-pulse" style="animation-delay: 1s">
+<div class="ping absolute inset-0 bg-secondary-fixed/30 rounded-full"></div>
+<span class="material-symbols-outlined relative z-10 text-4xl" data-icon="phone">phone</span>
+</div>
+<div class="absolute top-[20%] right-[15%] text-secondary-fixed animate-pulse" style="animation-delay: 2s">
+<div class="ping absolute inset-0 bg-secondary-fixed/30 rounded-full"></div>
+<span class="material-symbols-outlined relative z-10 text-4xl" data-icon="chat_bubble">chat_bubble</span>
+</div>
+<div class="absolute bottom-[35%] left-[15%] text-secondary-fixed animate-pulse" style="animation-delay: 3s">
+<div class="ping absolute inset-0 bg-secondary-fixed/30 rounded-full"></div>
+<span class="material-symbols-outlined relative z-10 text-4xl" data-icon="public">public</span>
+</div>
+<div class="absolute top-[60%] right-[40%] text-secondary-fixed animate-pulse" style="animation-delay: 1.5s">
+<div class="ping absolute inset-0 bg-secondary-fixed/30 rounded-full"></div>
+<span class="material-symbols-outlined relative z-10 text-4xl" data-icon="satellite_alt">satellite_alt</span>
+</div>
+</div>
+<div class="relative z-10 max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop text-center md:text-left">
+<div class="max-w-3xl">
+<h1 class="font-headline-xl text-headline-xl md:font-display-lg md:text-display-lg text-white mb-6">
+                        Let's Start a Conversation
+                    </h1>
+<p class="font-body-lg text-body-lg text-on-primary-container leading-relaxed">
+                        Building technology that works in your reality. Reach out to discuss how our industrial expertise meets your cutting-edge innovation.
+                    </p>
+</div>
+</div>
+</section>
+<!-- Main Content Area -->
+<section class="py-24 grid-overlay">
+<div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-start">
+<!-- Left: Contact Info & Details -->
+<div class="lg:col-span-5 space-y-12 reveal">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-4">We're here to listen.</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Our global team of consultants is ready to integrate with your workflow. Whether it's industrial optimization or digital transformation, we bridge the gap.</p>
+</div>
+<div class="space-y-8">
+<!-- HQ Accra -->
+<div class="glass-panel p-8 rounded-xl shadow-sm border-l-4 border-l-secondary">
+<h3 class="font-headline-md text-headline-md text-primary mb-2 flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary" data-icon="location_on">location_on</span>
+                                    Accra HQ
+                                </h3>
+<p class="text-on-surface-variant">Suite 402, Enterprise House<br/>High Street, Accra, Ghana</p>
+<div class="mt-4 flex gap-4">
+<span class="font-label-md text-secondary">+233 24 555 0102</span>
+</div>
+</div>
+<!-- Chips for Other Locations -->
+<div>
+<h4 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest mb-4">Strategic Partners</h4>
+<div class="flex flex-wrap gap-4">
+<div class="bg-surface-container-high px-4 py-2 rounded-full border border-outline-variant flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="font-label-md">London, UK</span>
+</div>
+<div class="bg-surface-container-high px-4 py-2 rounded-full border border-outline-variant flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="font-label-md">Caribbean Hub</span>
+</div>
+<div class="bg-surface-container-high px-4 py-2 rounded-full border border-outline-variant flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="font-label-md">Dubai, UAE</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Data Visualization / Industrial Graph -->
+<div class="mt-12 h-48 bg-primary-container rounded-xl overflow-hidden relative group">
+<div class="absolute inset-0 opacity-20">
+<div class="absolute bottom-0 left-0 w-full h-full" style="background-image: linear-gradient(to top, #00b8db 0%, transparent 80%); clip-path: polygon(0 80%, 10% 70%, 25% 85%, 40% 60%, 55% 75%, 70% 40%, 85% 60%, 100% 20%, 100% 100%, 0 100%);"></div>
+</div>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="font-code-snippet text-secondary uppercase tracking-[0.3em] group-hover:tracking-[0.5em] transition-all duration-700">Operational Integrity</span>
+</div>
+<div class="absolute top-4 right-4 animate-pulse">
+<span class="material-symbols-outlined text-secondary/40 text-sm" data-icon="fiber_manual_record">fiber_manual_record</span>
+<span class="font-code-snippet text-secondary/60 text-[10px]">LIVE_STREAM</span>
+</div>
+</div>
+</div>
+<!-- Right: Contact Form -->
+<div class="lg:col-span-7 reveal" style="transition-delay: 0.2s">
+<div class="glass-panel p-8 md:p-12 rounded-xl shadow-lg relative">
+<!-- Subtle industrial line -->
+<div class="absolute top-0 left-12 w-[1px] h-full bg-outline-variant/10"></div>
+<form action="#" class="space-y-8 relative z-10" method="POST"><div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant" for="name">Full Name *</label>
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-lg p-4 focus:ring-2 focus:ring-secondary focus:border-transparent transition-all outline-none" id="name" name="name" placeholder="John Doe" required="" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant" for="email">Professional Email *</label>
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-lg p-4 focus:ring-2 focus:ring-secondary focus:border-transparent transition-all outline-none" id="email" name="email" placeholder="j.doe@company.com" required="" type="email"/>
+</div>
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant" for="phone">Phone Number</label>
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-lg p-4 focus:ring-2 focus:ring-secondary focus:border-transparent transition-all outline-none" id="phone" name="phone" placeholder="+1 (555) 000-0000" type="tel"/>
+</div>
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant" for="company">Company</label>
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-lg p-4 focus:ring-2 focus:ring-secondary focus:border-transparent transition-all outline-none" id="company" name="company" placeholder="Enterprise Corp" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant" for="inquiry_type">Inquiry Type</label>
+<select class="w-full bg-surface-container-low border border-outline-variant rounded-lg p-4 focus:ring-2 focus:ring-secondary focus:border-transparent transition-all outline-none appearance-none" id="inquiry_type" name="inquiry_type">
+<option value="">Select Inquiry Type</option>
+<option value="consulting">Technical Consulting</option>
+<option value="automation">Industrial Automation</option>
+<option value="transformation">Digital Transformation</option>
+<option value="partnership">Strategic Partnership</option>
+</select>
+</div>
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant" for="budget">Budget Range</label>
+<select class="w-full bg-surface-container-low border border-outline-variant rounded-lg p-4 focus:ring-2 focus:ring-secondary focus:border-transparent transition-all outline-none appearance-none" id="budget" name="budget">
+<option value="">Select Range</option>
+<option value="10k-50k">$10,000 - $50,000</option>
+<option value="50k-150k">$50,000 - $150,000</option>
+<option value="150k-500k">$150,000 - $500,000</option>
+<option value="500k+">$500,000+</option>
+</select>
+</div>
+<div class="md:col-span-2 space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant" for="subject">Subject *</label>
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-lg p-4 focus:ring-2 focus:ring-secondary focus:border-transparent transition-all outline-none" id="subject" name="subject" placeholder="Industrial Optimization Request" required="" type="text"/>
+</div>
+<div class="md:col-span-2 space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant" for="message">Describe Your Project *</label>
+<textarea class="w-full bg-surface-container-low border border-outline-variant rounded-lg p-4 focus:ring-2 focus:ring-secondary focus:border-transparent transition-all outline-none" id="message" name="message" placeholder="Share specific operational goals or technical challenges..." required="" rows="4"></textarea>
+</div>
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant" for="timeline">Expected Timeline</label>
+<select class="w-full bg-surface-container-low border border-outline-variant rounded-lg p-4 focus:ring-2 focus:ring-secondary focus:border-transparent transition-all outline-none appearance-none" id="timeline" name="timeline">
+<option value="">Select Timeline</option>
+<option value="immediate">Immediate (1-3 months)</option>
+<option value="quarterly">Short-term (3-6 months)</option>
+<option value="annual">Long-term (6-12+ months)</option>
+</select>
+</div>
+<div class="space-y-2">
+<label class="font-label-md text-label-md text-on-surface-variant" for="referral">How did you hear about us?</label>
+<select class="w-full bg-surface-container-low border border-outline-variant rounded-lg p-4 focus:ring-2 focus:ring-secondary focus:border-transparent transition-all outline-none appearance-none" id="referral" name="referral">
+<option value="">Please Select</option>
+<option value="search">Search Engine</option>
+<option value="referral">Industry Referral</option>
+<option value="linkedin">LinkedIn</option>
+<option value="event">Trade Event</option>
+<option value="other">Other</option>
+</select>
+</div>
+</div>
+<button class="w-full md:w-auto bg-primary text-on-primary font-headline-md text-headline-md px-12 py-5 rounded-lg hover:bg-secondary hover:shadow-[0_0_20px_rgba(0,184,219,0.3)] transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-4" type="submit">
+  Send Transmission
+  <span class="material-symbols-outlined" data-icon="send">send</span>
+</button>
+<p class="text-[12px] font-body-md text-on-surface-variant/60 italic text-center md:text-left">
+  * By submitting this form, you acknowledge our global privacy policy and data protection standards.
+</p></form>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Map Placeholder with Industrial Detail -->
+<section class="h-[400px] w-full bg-surface-container-highest relative overflow-hidden reveal">
+<img class="w-full h-full object-cover grayscale opacity-50 contrast-125" data-alt="A highly detailed topographic digital map showing the city layout of Accra, Ghana, rendered in a sophisticated technical blue and grey color palette. The map features glowing network nodes and connecting lines that represent digital infrastructure and connectivity. The style is minimalist and industrial, fitting for a modern high-end consultancy firm's visual identity." data-location="Accra, Ghana" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBeKF-M8x__5N2NhhMagKkbA3I5jZB8BJJ1KFRKHRx4Qiz3epZlCQUm_alLxX_hHpPIQ-zEPwi4AmxQUVeh5Yp98pfOT8kDgVVa2FyaBIZCt-rZvEkexF9vYRG7gNvNxo7Ch4uHU7elQYAHIiiPz4-SHbVZrwmz9Mvq1UGMkexphwcOeHdwFNMkx4SvMah1Gq0JPiWYbolADwuIT8VBh7JQgKsVv-4FGOm6JWzxd3aZcr-SBwuiolXkBaO7U2XC48cpshuO5C4rkwM"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface to-transparent"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary p-6 rounded-full shadow-2xl border-4 border-secondary/30">
+<span class="material-symbols-outlined text-secondary text-4xl" data-icon="hub">hub</span>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full flex flex-col md:flex-row justify-between items-center py-12 px-margin-mobile md:px-margin-desktop bg-primary dark:bg-tertiary-container mt-auto">
+<div class="flex flex-col gap-4 mb-8 md:mb-0">
+<div class="font-headline-md text-headline-md text-on-primary">Exchosoft Consult</div>
+<div class="font-label-md text-label-md text-on-primary/70 dark:text-on-tertiary-fixed-variant max-w-sm">
+                © 2024 Exchosoft Consult. Industrial Reliability meets Cutting-Edge Innovation.
+            </div>
+</div>
+<div class="flex flex-wrap justify-center gap-8">
+<a class="font-label-md text-label-md text-on-primary/70 hover:text-secondary-fixed transition-colors duration-200" href="#">Privacy Policy</a>
+<a class="font-label-md text-label-md text-on-primary/70 hover:text-secondary-fixed transition-colors duration-200" href="#">Terms of Service</a>
+<a class="font-label-md text-label-md text-on-primary/70 hover:text-secondary-fixed transition-colors duration-200" href="#">Regional Offices</a>
+<a class="font-label-md text-label-md text-on-primary/70 hover:text-secondary-fixed transition-colors duration-200" href="#">Support</a>
+</div>
+</footer>
+<script>
+        // Data Stream Animation
+        const container = document.getElementById('particle-container');
+        const particleCount = 50;
+
+        for (let i = 0; i < particleCount; i++) {
+            createParticle();
+        }
+
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'data-particle';
+            
+            const startX = Math.random() * 100;
+            const startY = Math.random() * 100;
+            const size = Math.random() * 3 + 1;
+            const duration = Math.random() * 20 + 10;
+            const opacity = Math.random() * 0.5 + 0.2;
+
+            particle.style.left = `${startX}%`;
+            particle.style.top = `${startY}%`;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.opacity = opacity;
+
+            container.appendChild(particle);
+
+            animateParticle(particle, duration);
+        }
+
+        function animateParticle(el, duration) {
+            const destX = (Math.random() - 0.5) * 200;
+            const destY = (Math.random() - 0.5) * 200;
+
+            el.animate([
+                { transform: 'translate(0, 0)', opacity: el.style.opacity },
+                { transform: `translate(${destX}px, ${destY}px)`, opacity: 0 }
+            ], {
+                duration: duration * 1000,
+                iterations: Infinity,
+                easing: 'linear'
+            });
+        }
+
+        // Intersection Observer for reveal animations
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
+</body></html>
