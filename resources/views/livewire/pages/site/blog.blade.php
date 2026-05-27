@@ -60,8 +60,36 @@ new #[Layout('layouts.site')] #[Title('Tech Blog — Exchosoft Consult')] class 
   .empty-state{text-align:center;padding:5rem 2rem;color:var(--text-muted);}
   .empty-state p:first-child{font-size:1rem;font-weight:600;}
   .empty-state p:last-child{font-size:0.875rem;margin-top:0.5rem;}
-  @media(max-width:1024px){.page-banner-content{padding:3rem 2rem;}.listing-body{padding:2.5rem 2rem;}.listing-grid{grid-template-columns:1fr 1fr;}}
-  @media(max-width:640px){.listing-grid{grid-template-columns:1fr;}}
+
+  /* Newsletter Section */
+  .blog-newsletter {
+    background: var(--navy); padding: 5rem 6rem; text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .blog-newsletter-dots {
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(0,184,219,0.1) 1px, transparent 1px);
+    background-size: 28px 28px; opacity: 0.4; pointer-events: none;
+  }
+  .blog-newsletter-tag {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: rgba(0,184,219,0.1); border: 1px solid rgba(0,184,219,0.2);
+    color: var(--sky); padding: 0.3rem 0.85rem; border-radius: 100px;
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+  .blog-newsletter h2 { font-family: var(--font-display); font-size: clamp(1.6rem,2.8vw,2.3rem); font-weight: 800; color: var(--white); letter-spacing: -0.03em; margin-bottom: 0.75rem; position: relative; z-index: 1; }
+  .blog-newsletter p { font-size: 0.95rem; color: rgba(255,255,255,0.5); max-width: 520px; margin: 0 auto 2.5rem; font-weight: 300; position: relative; z-index: 1; }
+
+  @media(max-width:1024px){
+    .page-banner-content{padding:3rem 2rem;}
+    .listing-body{padding:2.5rem 2rem;}
+    .listing-grid{grid-template-columns:1fr 1fr;}
+    .blog-newsletter{padding:3.5rem 2rem;}
+  }
+  @media(max-width:640px){
+    .listing-grid{grid-template-columns:1fr;}
+  }
 </style>
 <x-page-banner
     tag="Knowledge Hub"
@@ -108,5 +136,23 @@ new #[Layout('layouts.site')] #[Title('Tech Blog — Exchosoft Consult')] class 
             @if($posts->hasPages())<div style="margin-top:2rem;">{{ $posts->links() }}</div>@endif
             @endif
         </div>
+    </section>
+
+    {{-- Newsletter CTA --}}
+    <section class="blog-newsletter">
+      <div class="blog-newsletter-dots"></div>
+      <div style="position:relative;z-index:1;">
+        <div class="blog-newsletter-tag">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          The Transmission
+        </div>
+        <h2>Stay Ahead of the Data Stream</h2>
+        <p>Subscribe for monthly insights on technology, digital architecture, and what it means to build software for Africa and beyond.</p>
+        <div style="max-width:440px;margin:0 auto;display:flex;gap:0.75rem;flex-wrap:wrap;justify-content:center;">
+          <input type="email" placeholder="your@email.com" style="flex:1;min-width:200px;background:rgba(255,255,255,0.07);border:1px solid rgba(0,184,219,0.25);border-radius:8px;padding:0.75rem 1rem;color:var(--white);font-size:0.9rem;font-family:var(--font-body);outline:none;">
+          <button style="background:var(--cyan);color:var(--white);padding:0.75rem 1.5rem;border:none;border-radius:8px;font-family:var(--font-display);font-size:0.88rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:background 0.2s;" onmouseover="this.style.background='var(--cyan-dark)'" onmouseout="this.style.background='var(--cyan)'">Subscribe</button>
+        </div>
+        <p style="font-size:0.75rem;color:rgba(255,255,255,0.3);margin-top:0.75rem;">Zero spam. Pure technical value. Unsubscribe anytime.</p>
+      </div>
     </section>
 </div>

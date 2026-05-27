@@ -87,7 +87,7 @@ new #[Layout('layouts.site')] #[Title('Exchosoft Consult — Software Developmen
   /* ── HOME PAGE STYLES ── */
   .home-hero {
     min-height: 100vh;
-    background: var(--navy);
+    background: #08121d;
     display: grid;
     grid-template-columns: 1fr 1fr;
     position: relative;
@@ -153,24 +153,66 @@ new #[Layout('layouts.site')] #[Title('Exchosoft Consult — Software Developmen
     padding: 4rem; position: relative; z-index: 2;
   }
   .hero-logo-wrap {
-    width: 320px; height: 320px;
-    background: rgba(255,255,255,0.04);
+    width: 420px; height: 420px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  /* Core logo */
+  .orbit-core {
+    width: 140px; height: 140px;
+    background: rgba(8, 18, 29, 0.95);
     border: 1px solid rgba(0,184,219,0.2);
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    position: relative;
-    font-family: var(--font-display); font-size: 5rem; font-weight: 800;
-    color: var(--cyan);
+    position: relative; z-index: 20;
+    box-shadow: 0 0 50px rgba(0, 184, 219, 0.1);
   }
-  .hero-logo-wrap::before {
-    content: ''; position: absolute; inset: -20px;
-    border-radius: 50%; border: 1px solid rgba(0,184,219,0.08);
+  .orbit-core img { width: 88px; height: auto; position: relative; z-index: 2; }
+  .orbit-core-fallback {
+    font-family: var(--font-display); font-size: 2.5rem; font-weight: 800;
+    color: var(--cyan); position: relative; z-index: 2;
   }
-  .hero-logo-wrap::after {
-    content: ''; position: absolute; inset: -40px;
-    border-radius: 50%; border: 1px solid rgba(0,184,219,0.05);
+  /* Radar canvas container */
+  .radar-container {
+    position: absolute; inset: -40px;
+    pointer-events: none; z-index: 1;
+    display: flex; align-items: center; justify-content: center;
   }
-  .hero-logo-wrap img { width: 200px; height: auto; }
+  #radarSweep { width: 500px; height: 500px; }
+  /* Icon nodes on ring */
+  .orbit-icon {
+    position: absolute;
+    width: 48px; height: 48px;
+    background: rgba(13, 33, 55, 0.8);
+    border: 1px solid rgba(0, 184, 219, 0.15);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    top: 50%; left: 50%;
+    margin-left: -24px; margin-top: -24px;
+    transition: box-shadow 0.25s, border-color 0.25s, background 0.25s;
+    z-index: 30;
+    backdrop-filter: blur(4px);
+  }
+  .orbit-icon svg {
+    width: 22px; height: 22px;
+    fill: none; stroke: var(--cyan);
+    stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+    opacity: 0.6;
+    transition: opacity 0.2s, filter 0.2s;
+  }
+  .orbit-icon::after {
+    content: attr(data-label);
+    position: absolute; bottom: -28px;
+    left: 50%; transform: translateX(-50%);
+    background: rgba(0, 184, 219, 0.15);
+    border: 1px solid rgba(0, 184, 219, 0.2);
+    color: var(--cyan); font-size: 0.65rem;
+    font-family: var(--font-display); font-weight: 600;
+    padding: 2px 8px; border-radius: 4px;
+    white-space: nowrap; opacity: 0;
+    pointer-events: none; transition: opacity 0.3s;
+  }
+  .orbit-icon:hover::after { opacity: 1; }
 
   /* STATS BAR */
   .stats-bar {
@@ -391,12 +433,15 @@ new #[Layout('layouts.site')] #[Title('Exchosoft Consult — Software Developmen
     .home-section { padding: 4rem 2rem; }
     .home-hero { grid-template-columns: 1fr; }
     .hero-visual { display: none; }
-    .hero-content { padding: 6rem 2rem 4rem; }
-    .stats-bar { padding: 2rem; }
+    .hero-content { padding: 7rem 2rem 4rem; }
+    .stats-bar { padding: 2rem; grid-template-columns: repeat(2,1fr) !important; }
     .intro-section { grid-template-columns: 1fr; gap: 3rem; }
     .approach-grid, .industries-grid, .why-grid, .products-grid, .blog-grid { grid-template-columns: 1fr; }
-    .stats-bar { grid-template-columns: repeat(2,1fr); }
     .home-cta, .demo-cta { padding: 4rem 2rem; }
+  }
+  @media (max-width: 640px) {
+    .hero-content { padding: 6rem 1.25rem 3rem; }
+    .hero-h1 { font-size: clamp(2rem, 8vw, 2.8rem); }
   }
 </style>
 
@@ -421,16 +466,116 @@ new #[Layout('layouts.site')] #[Title('Exchosoft Consult — Software Developmen
     </div>
   </div>
   <div class="hero-visual">
-    <div class="hero-logo-wrap">
+    <div class="hero-logo-wrap" id="orbitWrap">
+      {{-- Radar canvas background --}}
+      <div class="radar-container">
+        <canvas id="radarSweep" width="500" height="500"></canvas>
+      </div>
+      {{-- Core logo --}}
+      <div class="orbit-core">
         @php $logoPath = public_path('assets/images/logo.svg'); $hasLogo = file_exists($logoPath) && filesize($logoPath) > 0; @endphp
         @if($hasLogo)
-            <img src="{{ asset('assets/images/logo.svg') }}" alt="Exchosoft Consult">
+          <img src="{{ asset('assets/images/logo.svg') }}" alt="Exchosoft">
         @else
-            EC
+          <div class="orbit-core-fallback">E</div>
         @endif
+      </div>
+      {{-- Software icons - Outer ring --}}
+      <div class="orbit-icon" data-angle="0" data-label="Web Dev">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 3c0 0-4 3.5-4 9s4 9 4 9 4-3.5 4-9-4-9-4-9z"></path><line x1="3" x2="21" y1="12" y2="12"></line></svg>
+      </div>
+      <div class="orbit-icon" data-angle="45" data-label="Mobile Apps">
+        <svg viewBox="0 0 24 24"><rect height="20" rx="2" width="10" x="7" y="2"></rect><line x1="12" x2="12" y1="18" y2="18"></line></svg>
+      </div>
+      <div class="orbit-icon" data-angle="90" data-label="Databases">
+        <svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"></path><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"></path></svg>
+      </div>
+      <div class="orbit-icon" data-angle="135" data-label="Cloud">
+        <svg viewBox="0 0 24 24"><path d="M18 10a6 6 0 0 0-12 0 4 4 0 0 0 0 8h12a4 4 0 0 0 0-8z"></path></svg>
+      </div>
+      <div class="orbit-icon" data-angle="180" data-label="Custom Software">
+        <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+      </div>
+      <div class="orbit-icon" data-angle="225" data-label="Security">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+      </div>
+      <div class="orbit-icon" data-angle="270" data-label="Analytics">
+        <svg viewBox="0 0 24 24"><line x1="18" x2="18" y1="20" y2="10"></line><line x1="12" x2="12" y1="20" y2="4"></line><line x1="6" x2="6" y1="20" y2="14"></line></svg>
+      </div>
+      <div class="orbit-icon" data-angle="315" data-label="API & Integration">
+        <svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3m8 0h3a2 2 0 0 0 2-2v-3"></path><circle cx="12" cy="12" r="3"></circle></svg>
+      </div>
     </div>
   </div>
 </section>
+<script>
+(function() {
+  const ORBIT_RADIUS = 205;
+  const CANVAS_SIZE  = 500;
+  const SWEEP_SPEED  = 0.8;
+  const TAIL_ANGLE   = Math.PI / 4;
+  const LIT_WINDOW   = 0.15;
+  const canvas = document.getElementById('radarSweep');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const CX = CANVAS_SIZE / 2, CY = CANVAS_SIZE / 2;
+  const icons = Array.from(document.querySelectorAll('.orbit-icon'));
+  icons.forEach(icon => {
+    const deg = parseFloat(icon.dataset.angle);
+    const rad = (deg - 90) * (Math.PI / 180);
+    const tx = ORBIT_RADIUS * Math.cos(rad);
+    const ty = ORBIT_RADIUS * Math.sin(rad);
+    icon.style.transform = `translate(${tx}px, ${ty}px)`;
+    icon._rad = rad; icon._glow = 0;
+  });
+  let sweepAngle = -Math.PI / 2, lastTime = null;
+  function normalize(a) { return ((a % (Math.PI*2)) + Math.PI*2) % (Math.PI*2); }
+  function draw(ts) {
+    if (!lastTime) lastTime = ts;
+    const dt = (ts - lastTime) / 1000; lastTime = ts;
+    sweepAngle += SWEEP_SPEED * dt;
+    const ns = normalize(sweepAngle);
+    ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+    ctx.strokeStyle = 'rgba(0,184,219,0.05)'; ctx.lineWidth = 1;
+    for (let r = 50; r <= 240; r += 40) { ctx.beginPath(); ctx.arc(CX,CY,r,0,Math.PI*2); ctx.stroke(); }
+    ctx.save();
+    for (let i = 0; i < 60; i++) {
+      const step = TAIL_ANGLE/60;
+      const start = sweepAngle - TAIL_ANGLE + (i*step), end = start+step;
+      const opacity = Math.pow(i/60,2)*0.22;
+      ctx.beginPath(); ctx.moveTo(CX,CY);
+      ctx.arc(CX,CY,250,start,end); ctx.closePath();
+      ctx.fillStyle = `rgba(0,184,219,${opacity})`; ctx.fill();
+    }
+    ctx.restore();
+    ctx.beginPath(); ctx.moveTo(CX,CY);
+    ctx.lineTo(CX+250*Math.cos(sweepAngle), CY+250*Math.sin(sweepAngle));
+    ctx.strokeStyle = 'rgba(0,230,255,0.6)'; ctx.lineWidth = 1.8; ctx.stroke();
+    const cg = ctx.createRadialGradient(CX,CY,0,CX,CY,15);
+    cg.addColorStop(0,'rgba(0,230,255,0.9)'); cg.addColorStop(0.5,'rgba(0,184,219,0.4)'); cg.addColorStop(1,'rgba(0,184,219,0)');
+    ctx.beginPath(); ctx.arc(CX,CY,15,0,Math.PI*2); ctx.fillStyle=cg; ctx.fill();
+    icons.forEach(icon => {
+      const ir = normalize(icon._rad);
+      const diff = Math.abs(ns-ir);
+      const isHit = diff < LIT_WINDOW || (Math.PI*2-diff) < LIT_WINDOW;
+      if (isHit) { icon._glow = 1.0; } else { icon._glow = Math.max(0, icon._glow - dt*2.5); }
+      const g = icon._glow;
+      if (g > 0.05) {
+        icon.style.background = `rgba(13,33,55,${0.8+0.1*g})`;
+        icon.style.borderColor = `rgba(0,184,219,${0.15+0.7*g})`;
+        icon.style.boxShadow = `0 0 ${12+20*g}px rgba(0,184,219,${0.1+0.4*g})`;
+        icon.querySelector('svg').style.opacity = 0.6+0.4*g;
+        icon.querySelector('svg').style.filter = `drop-shadow(0 0 ${4*g}px rgba(0,230,255,0.8))`;
+      } else {
+        icon.style.background='rgba(13,33,55,0.8)'; icon.style.borderColor='rgba(0,184,219,0.15)';
+        icon.style.boxShadow='none'; icon.querySelector('svg').style.opacity='0.6'; icon.querySelector('svg').style.filter='none';
+      }
+    });
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+})();
+</script>
 
 <!-- STATS BAR -->
 <div class="stats-bar" style="grid-template-columns: repeat({{ count($cms['stats']) }}, 1fr);">
