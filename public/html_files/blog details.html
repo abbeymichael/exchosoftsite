@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Offline-First Revolution | TechBlog</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&amp;family=Syne:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#48d7fb",
+                        "primary": "#000917",
+                        "on-surface-variant": "#44474d",
+                        "tertiary-fixed-dim": "#7dd2eb",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary": "#00677c",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#001f27",
+                        "on-tertiary-fixed-variant": "#004e5e",
+                        "surface-dim": "#d6dbdd",
+                        "secondary-container": "#4cd9fd",
+                        "on-error-container": "#93000a",
+                        "on-secondary-fixed": "#001f27",
+                        "secondary-fixed": "#b1ecff",
+                        "on-secondary": "#ffffff",
+                        "outline-variant": "#c4c6cd",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#4d6079",
+                        "on-secondary-fixed-variant": "#004e5e",
+                        "on-tertiary-container": "#3792aa",
+                        "inverse-on-surface": "#edf1f4",
+                        "error": "#ba1a1a",
+                        "tertiary": "#000a0e",
+                        "inverse-primary": "#b5c8e5",
+                        "on-surface": "#171c1f",
+                        "on-primary-fixed": "#081c32",
+                        "on-error": "#ffffff",
+                        "on-background": "#171c1f",
+                        "surface-variant": "#dfe3e6",
+                        "on-primary-fixed-variant": "#364860",
+                        "outline": "#74777d",
+                        "on-secondary-container": "#005d6f",
+                        "on-primary": "#ffffff",
+                        "surface-container-low": "#f0f4f7",
+                        "primary-fixed": "#d2e4ff",
+                        "surface-container": "#eaeef1",
+                        "primary-fixed-dim": "#b5c8e5",
+                        "on-primary-container": "#7689a4",
+                        "background": "#f6fafd",
+                        "tertiary-fixed": "#b0ecff",
+                        "inverse-surface": "#2c3134",
+                        "surface-container-high": "#e5e9ec",
+                        "tertiary-container": "#00242d",
+                        "surface-container-highest": "#dfe3e6",
+                        "surface-bright": "#f6fafd",
+                        "surface": "#f6fafd",
+                        "primary-container": "#0d2137"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "margin-desktop": "64px",
+                        "container-max": "1440px",
+                        "base": "8px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["DM Sans"],
+                        "headline-xl": ["Syne"],
+                        "display-lg": ["Syne"],
+                        "code-snippet": ["DM Sans"],
+                        "headline-lg": ["Syne"],
+                        "label-md": ["DM Sans"],
+                        "display-lg-mobile": ["Syne"],
+                        "body-lg": ["DM Sans"],
+                        "headline-md": ["Syne"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "headline-xl": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "display-lg": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "code-snippet": ["13px", {"lineHeight": "1.5", "fontWeight": "500"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                        "label-md": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "display-lg-mobile": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "800"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .grid-overlay {
+            background-image: radial-gradient(circle, #b1ecff33 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
+        .radar-sweep {
+            position: relative;
+            overflow: hidden;
+        }
+        .radar-sweep::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(72, 215, 251, 0.1), transparent);
+            animation: scan 4s infinite linear;
+        }
+        @keyframes scan {
+            0% { left: -100%; }
+            100% { left: 200%; }
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1.5px solid rgba(177, 236, 255, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md selection:bg-secondary-fixed selection:text-primary">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/30 shadow-sm transition-all duration-200 ease-in-out">
+<div class="flex justify-between items-center px-gutter py-4 max-w-container-max mx-auto">
+<div class="flex items-center gap-8">
+<span class="font-headline-md text-headline-md font-bold text-primary">TechBlog</span>
+<div class="hidden md:flex items-center gap-6">
+<a class="font-label-md text-label-md text-secondary relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-0.5 after:bg-secondary-container animate-pulse" href="#">Insights</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-secondary transition-colors duration-300" href="#">Solutions</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-secondary transition-colors duration-300" href="#">Network</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-secondary transition-colors duration-300" href="#">About</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden lg:flex items-center bg-surface-container rounded-full px-4 py-1.5 border border-outline-variant/20">
+<span class="material-symbols-outlined text-outline" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-label-md ml-2 w-48" placeholder="Search insights..." type="text"/>
+</div>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-lg font-label-md hover:bg-primary/90 transition-all">Contact Us</button>
+</div>
+</div>
+</nav>
+<!-- Hero Section -->
+<header class="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden bg-primary grid-overlay">
+<div class="absolute inset-0 opacity-20">
+<div class="radar-sweep h-full w-full"></div>
+</div>
+<div class="max-w-container-max mx-auto px-gutter relative z-10">
+<div class="max-w-4xl">
+<div class="flex items-center gap-2 mb-6">
+<span class="px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full font-label-md uppercase tracking-widest text-[10px]">Technical Protocol v4.2</span>
+<div class="h-px w-12 bg-secondary-fixed"></div>
+</div>
+<h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-white mb-8">
+                    The <span class="text-secondary-fixed-dim">Offline-First</span> Revolution
+                </h1>
+<p class="font-body-lg text-body-lg text-secondary-fixed/80 max-w-2xl leading-relaxed">
+                    How high-fidelity systems are architected to maintain operational integrity in zero-bandwidth environments, bridging the gap between field-ops and the global cloud.
+                </p>
+</div>
+</div>
+<!-- Decorative Data Stream -->
+<div class="absolute bottom-0 right-0 w-1/3 h-full pointer-events-none opacity-30 hidden lg:block">
+<div class="h-full w-full border-l border-b border-secondary-fixed/20 relative">
+<div class="absolute top-1/4 left-0 w-full h-px bg-gradient-to-r from-secondary-fixed to-transparent"></div>
+<div class="absolute top-2/4 left-0 w-full h-px bg-gradient-to-r from-secondary-fixed to-transparent"></div>
+<div class="absolute top-3/4 left-0 w-full h-px bg-gradient-to-r from-secondary-fixed to-transparent"></div>
+</div>
+</div>
+</header>
+<!-- Main Content Cluster -->
+<main class="max-w-container-max mx-auto px-gutter py-20">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+<!-- Article Body -->
+<article class="lg:col-span-8">
+<div class="mb-12">
+<img alt="Technical architecture visualization" class="w-full aspect-[21/9] object-cover rounded-xl shadow-2xl border border-outline-variant/20 mb-8" src="https://lh3.googleusercontent.com/aida/ADBb0ujpCR4ubH6T6brxRkd08_s2Ry8jzH-eC2EKwOAywTk881DJIDGk0B-cpDKGekI6e_0NHo6RiS8q6f8331hxaCidwDSkzvGLXAMMwIAir6m-s-5-S9iWa97lI62ul8SDfNSqSQkTFigcqV65PiiAVOH9F0SR-luRFLck6e2sYSAaXUU0m5gc6XxzBIaDFHmjCtiQe1aB5_Z5BcONBvm6O6-ONWeS-v4PmImfcwdj5ZGUqjDSv-78M9gVoGg"/>
+<div class="flex items-center justify-between border-y border-outline-variant/30 py-6 mb-10">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center border border-secondary-fixed/30 overflow-hidden">
+<span class="material-symbols-outlined text-secondary-fixed" data-icon="person">person</span>
+</div>
+<div>
+<h4 class="font-headline-md text-body-md font-bold text-primary">Kofi Mensah</h4>
+<p class="text-label-md text-outline">Principal Systems Architect</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<button class="w-10 h-10 rounded-full border border-outline-variant hover:bg-surface-container transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]" data-icon="share">share</span>
+</button>
+<button class="w-10 h-10 rounded-full border border-outline-variant hover:bg-surface-container transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]" data-icon="bookmark">bookmark</span>
+</button>
+</div>
+</div>
+</div>
+<div class="prose prose-slate max-w-none prose-headings:font-headline-lg prose-p:text-body-lg prose-p:leading-relaxed text-on-surface-variant">
+<h2 class="text-primary font-headline-lg mb-6">Architecting for Intermittent Connectivity</h2>
+<p class="mb-8">
+                        In the landscape of modern industrial technology, the assumption of 100% uptime is a vulnerability. From remote mining operations in the Ashanti region to sub-sea sensor networks, data integrity must survive the "Offline Gap." We define this as the window of time between local data generation and successful cloud synchronization.
+                    </p>
+<div class="glass-card p-8 rounded-xl my-10 border-l-4 border-l-secondary-fixed">
+<h3 class="text-secondary font-headline-md mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="terminal">terminal</span>
+                            The Synchronicity Engine
+                        </h3>
+<p class="text-body-md text-on-surface mb-4">
+                            Exchosoft's proprietary sync engine utilizes a multi-layered queue system that prioritizes operational critical packets while compressing telemetry for low-bandwidth bursts.
+                        </p>
+<ul class="space-y-2">
+<li class="flex items-start gap-2 text-label-md">
+<span class="material-symbols-outlined text-secondary text-[18px]" data-icon="check_circle">check_circle</span>
+                                Vector-Clock Conflict Resolution
+                            </li>
+<li class="flex items-start gap-2 text-label-md">
+<span class="material-symbols-outlined text-secondary text-[18px]" data-icon="check_circle">check_circle</span>
+                                Delta-Compression Pipelines
+                            </li>
+</ul>
+</div>
+<p class="mb-8">
+                        Traditional REST architectures fail in these high-latency environments. The paradigm shift toward event-driven local databases—often referred to as 'The Edge'—allows users to maintain a seamless UI experience while the background handles the heavy lifting of eventual consistency.
+                    </p>
+<figure class="my-12">
+<div class="relative group">
+<img class="w-full h-[400px] object-cover rounded-xl border border-outline-variant/30" data-alt="A macro shot of high-tech server racks in a dimly lit, blue-hued data center. Cables are neatly organized with glowing status LEDs. The atmosphere is professional, cold, and highlights precision engineering in a modern industrial setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBInTONxD8Tf83yK09Y4ZV4U4aqHofyY_l4xkWSOAcIF4s9bFxwuxyaWJrb6zqDUDB_sHUc2xqD6_4tPCn_Aaa3Ri288DudODKxkPXz2cCeLsuaQZk671yirJSyjuPGZ-QVknxRWwiFzVd9Yejj2TIU3gs8MbgEdgvaXf759TVLvQ-7JJCFte6pNnSpHxfJjMmWuMevzKCgPlK7sclbv17Y-f4swOPLSbFoISzkzIeCrYG_NCTH8GXe3PtRiXUv55hZiCd9pB0-IfQ"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
+<p class="text-white text-label-md">Node Synchronization Visualized | Site A14</p>
+</div>
+</div>
+<figcaption class="text-center text-label-md text-outline mt-4">Fig 1.2: Distributed Ledger Synchronization in Low-Power Nodes</figcaption>
+</figure>
+<h3 class="text-primary font-headline-md mb-4">Conflict Resolution Strategies</h3>
+<p class="mb-8">
+                        The biggest challenge isn't storing the data—it's merging it. When three different field engineers update the same system status while offline, whose data wins? At Exchosoft, we lean into CRDTs (Conflict-free Replicated Data Types). It’s not just about the last update; it’s about the causal history of the system.
+                    </p>
+</div>
+<!-- Author Bio Section -->
+<section class="mt-20 p-8 bg-surface-container-low rounded-2xl border border-outline-variant/20">
+<div class="flex flex-col md:flex-row gap-8 items-center">
+<div class="w-32 h-32 flex-shrink-0 relative">
+<div class="absolute inset-0 border-2 border-secondary-fixed rounded-full animate-spin-slow"></div>
+<img class="w-full h-full object-cover rounded-full p-2" data-alt="A portrait of a confident African male professional in a modern office. He is wearing a sharp, dark suit and glasses. The lighting is soft and professional, emphasizing expertise and reliability in a tech consultancy environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAY1BCYGiI9v9jfKXA6A2kZvdHnJoj_c3euIVaQAWz4JSJpPqXupxbANrjtL4AbbHBmgy_Dci2wB-ZXh03gVADdwi8CDtmlvJvFxPxKubu9NHmE30oryDfgjdCvdkhjYbLZSpu6zvwFKx-8MCb7OfyPDyLhdvM90M4-JzP4t5mKxSb355ZwI-pt5gWTpWtsKJkyaeXnFbVqFVKVf2wiA_eLicwoIdwziOZII2_kC5j3fY6GOMt5cX0HKUEhO15L7PAnO7Ei_SqOtrI"/>
+</div>
+<div>
+<h3 class="font-headline-md text-primary mb-2">Kofi Mensah</h3>
+<p class="text-body-md text-on-surface-variant mb-4">
+                                Kofi leads the Distributed Systems division at Exchosoft. With over 15 years in industrial IoT and cloud architecture, he specializes in building resilient infrastructure for emerging markets.
+                            </p>
+<div class="flex gap-4">
+<a class="text-secondary hover:text-primary transition-colors font-label-md" href="#">Follow on Network</a>
+<a class="text-secondary hover:text-primary transition-colors font-label-md" href="#">Research Papers</a>
+</div>
+</div>
+</div>
+</section>
+</article>
+<!-- Sidebar -->
+<aside class="lg:col-span-4 space-y-8">
+<!-- Technical Stack Card -->
+<div class="glass-card p-6 rounded-xl border border-outline-variant/30">
+<h3 class="font-label-md text-secondary-fixed-dim uppercase tracking-widest mb-6 border-b border-outline-variant/20 pb-2">Technical Stack</h3>
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<span class="text-label-md text-on-surface-variant">Core Protocol</span>
+<span class="px-2 py-0.5 bg-primary text-white rounded text-[11px] font-mono">gRPC-Web</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-label-md text-on-surface-variant">Edge Database</span>
+<span class="px-2 py-0.5 bg-primary text-white rounded text-[11px] font-mono">IndexedDB / SQLite</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-label-md text-on-surface-variant">State Management</span>
+<span class="px-2 py-0.5 bg-primary text-white rounded text-[11px] font-mono">EventSourcing</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-label-md text-on-surface-variant">Auth Layer</span>
+<span class="px-2 py-0.5 bg-primary text-white rounded text-[11px] font-mono">OAuth 2.1 / PKCE</span>
+</div>
+</div>
+</div>
+<!-- Related Insights (Bento Style) -->
+<div class="space-y-6">
+<h3 class="font-label-md text-primary uppercase tracking-widest px-2">Related Insights</h3>
+<a class="group block p-4 bg-white border border-outline-variant/20 rounded-xl hover:border-secondary-fixed transition-all hover:shadow-lg" href="#">
+<span class="text-[10px] text-secondary font-bold uppercase block mb-2">Network Security</span>
+<h4 class="font-headline-md text-body-md text-primary group-hover:text-secondary transition-colors mb-2">Zero Trust Architecture for Field Nodes</h4>
+<p class="text-label-md text-outline">Exploration of secure tunneling in public networks...</p>
+</a>
+<a class="group block p-4 bg-white border border-outline-variant/20 rounded-xl hover:border-secondary-fixed transition-all hover:shadow-lg" href="#">
+<span class="text-[10px] text-secondary font-bold uppercase block mb-2">Energy Efficiency</span>
+<h4 class="font-headline-md text-body-md text-primary group-hover:text-secondary transition-colors mb-2">Solar-Powered Compute at the Edge</h4>
+<p class="text-label-md text-outline">Optimizing hardware cycles for low-power environments...</p>
+</a>
+</div>
+<!-- Visual Anchor -->
+<div class="relative rounded-xl overflow-hidden group">
+<img class="w-full h-64 object-cover" data-alt="A futuristic, glowing visualization of global data connections across a digital map of Earth. The style is neon cyan and deep navy, resembling a high-end satellite monitoring interface. Dynamic light trails connect major tech hubs, emphasizing global connectivity and innovation." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOLZ5idM-bMCynbcm5wHmXAYy1n1Ih8pB_CYpKWU6MILEbt44U_tkP1QQ7YMhuq-NWIst6HBUx9qmfzx6n_bSi_2Ep8cjLJIOYYah47SBPhoBw-VDPfYutnqiQNyr8zWJu0eCPcQh1q_vniQ0icKqKuPOr9uO8Jr2mgEETChuJYPEqVkkv8xXbf7fIyyBlOErt51R-TOSzmZLdoWJNNnGAsgOt8IH_St1iQV6m4EbNKY0AiormNwH21BTkLYku5loLHqQYdOrG4Do"/>
+<div class="absolute inset-0 bg-primary/40 backdrop-blur-sm flex flex-col justify-center items-center p-6 text-center opacity-0 group-hover:opacity-100 transition-opacity">
+<h4 class="text-white font-headline-md mb-2">Global Deployments</h4>
+<p class="text-secondary-fixed text-label-md">View our interactive network map of offline-capable systems.</p>
+<button class="mt-4 px-4 py-2 border border-white text-white rounded text-label-md hover:bg-white hover:text-primary transition-colors">Explore Map</button>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<!-- Newsletter Transmission Section -->
+<section class="bg-primary py-24 relative overflow-hidden">
+<div class="absolute top-0 right-0 w-64 h-64 border border-secondary-fixed/10 rounded-full -mr-32 -mt-32"></div>
+<div class="max-w-container-max mx-auto px-gutter relative z-10">
+<div class="glass-card p-12 md:p-20 rounded-3xl text-center max-w-4xl mx-auto border-secondary-fixed/10 bg-white/5">
+<span class="material-symbols-outlined text-secondary-fixed-dim text-5xl mb-6" data-icon="broadcast_tower">cell_tower</span>
+<h2 class="font-display-lg text-display-lg-mobile md:text-headline-xl text-white mb-6">Stay Sync'd</h2>
+<p class="text-body-lg text-secondary-fixed/70 mb-10 max-w-2xl mx-auto">
+                    Receive technical briefs, system post-mortems, and innovation whitepapers directly to your terminal. No fluff, just architecture.
+                </p>
+<form class="flex flex-col md:flex-row gap-4 max-w-lg mx-auto">
+<input class="flex-grow bg-primary/50 border border-secondary-fixed/30 rounded-xl px-6 py-4 text-white placeholder:text-outline focus:ring-2 focus:ring-secondary-fixed outline-none transition-all" placeholder="systems-architect@company.com" type="email"/>
+<button class="bg-secondary-fixed text-primary font-bold px-8 py-4 rounded-xl hover:bg-secondary-fixed-dim transition-all active:scale-95 shadow-[0_0_20px_rgba(72,215,251,0.3)]">Subscribe</button>
+</form>
+<p class="text-[10px] text-outline mt-6 uppercase tracking-widest">Protocol: Encrypted Delivery via AES-256</p>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-primary border-t border-primary-container w-full mt-auto">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-margin-desktop py-20 max-w-container-max mx-auto">
+<div class="space-y-6">
+<span class="font-headline-sm text-headline-sm font-black text-white">TechBlog</span>
+<p class="text-surface-variant/70 text-body-md">
+                    Industrial Reliability meets Cutting-Edge Innovation. Providing the blueprint for the next generation of resilient technology.
+                </p>
+</div>
+<div>
+<h4 class="text-on-primary font-label-md font-bold mb-6 uppercase tracking-widest">Navigation</h4>
+<ul class="space-y-4">
+<li><a class="text-surface-variant/70 hover:text-secondary-fixed-dim transition-colors text-label-md" href="#">Global Offices</a></li>
+<li><a class="text-surface-variant/70 hover:text-secondary-fixed-dim transition-colors text-label-md" href="#">Technical Specs</a></li>
+<li><a class="text-surface-variant/70 hover:text-secondary-fixed-dim transition-colors text-label-md" href="#">Consultancy Framework</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-on-primary font-label-md font-bold mb-6 uppercase tracking-widest">Legal</h4>
+<ul class="space-y-4">
+<li><a class="text-surface-variant/70 hover:text-secondary-fixed-dim transition-colors text-label-md" href="#">Privacy Policy</a></li>
+<li><a class="text-surface-variant/70 hover:text-secondary-fixed-dim transition-colors text-label-md" href="#">Terms of Service</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-on-primary font-label-md font-bold mb-6 uppercase tracking-widest">Status</h4>
+<div class="flex items-center gap-2 mb-4">
+<div class="w-2 h-2 rounded-full bg-secondary-fixed-dim animate-pulse"></div>
+<span class="text-secondary-fixed text-label-md font-bold">Systems Operational</span>
+</div>
+<div class="flex gap-4">
+<a class="w-10 h-10 rounded-lg bg-surface-container/10 flex items-center justify-center hover:bg-secondary-fixed/20 transition-all" href="#">
+<span class="material-symbols-outlined text-white text-[20px]" data-icon="data_usage">data_usage</span>
+</a>
+<a class="w-10 h-10 rounded-lg bg-surface-container/10 flex items-center justify-center hover:bg-secondary-fixed/20 transition-all" href="#">
+<span class="material-symbols-outlined text-white text-[20px]" data-icon="hub">hub</span>
+</a>
+</div>
+</div>
+</div>
+<div class="border-t border-primary-container py-8 px-margin-desktop text-center">
+<p class="text-surface-variant/70 text-label-md">© 2024 Exchosoft Consult. Industrial Reliability meets Cutting-Edge Innovation.</p>
+</div>
+</footer>
+<!-- Micro-interaction Script -->
+<script>
+        // Radar Sweep interactivity
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+
+            const sweep = document.querySelector('.radar-sweep');
+            if(sweep) {
+                sweep.style.background = `radial-gradient(circle at ${x * 100}% ${y * 100}%, rgba(72, 215, 251, 0.05), transparent 30%)`;
+            }
+        });
+
+        // Simple scroll reveal for cards
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100', 'translate-y-0');
+                    entry.target.classList.remove('opacity-0', 'translate-y-8');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.glass-card').forEach(card => {
+            card.classList.add('transition-all', 'duration-700', 'opacity-0', 'translate-y-8');
+            observer.observe(card);
+        });
+    </script>
+</body></html>

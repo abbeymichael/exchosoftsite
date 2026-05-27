@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TechBlog | Exchosoft Consult</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&amp;family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#000917",
+                        "on-error-container": "#93000a",
+                        "error": "#ba1a1a",
+                        "surface-variant": "#dfe3e6",
+                        "tertiary-container": "#00242d",
+                        "on-error": "#ffffff",
+                        "inverse-primary": "#b5c8e5",
+                        "surface-container-highest": "#dfe3e6",
+                        "surface-container": "#eaeef1",
+                        "tertiary": "#000a0e",
+                        "primary-fixed": "#d2e4ff",
+                        "on-primary-fixed-variant": "#364860",
+                        "tertiary-fixed": "#b0ecff",
+                        "on-surface-variant": "#44474d",
+                        "on-primary-fixed": "#081c32",
+                        "primary-fixed-dim": "#b5c8e5",
+                        "surface-bright": "#f6fafd",
+                        "on-tertiary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed-dim": "#7dd2eb",
+                        "surface": "#f6fafd",
+                        "primary-container": "#0d2137",
+                        "secondary": "#00677c",
+                        "on-surface": "#171c1f",
+                        "on-primary-container": "#7689a4",
+                        "surface-container-low": "#f0f4f7",
+                        "outline-variant": "#c4c6cd",
+                        "on-background": "#171c1f",
+                        "surface-dim": "#d6dbdd",
+                        "inverse-on-surface": "#edf1f4",
+                        "secondary-fixed": "#b1ecff",
+                        "on-secondary-fixed": "#001f27",
+                        "on-tertiary-fixed": "#001f27",
+                        "surface-container-high": "#e5e9ec",
+                        "on-tertiary-fixed-variant": "#004e5e",
+                        "on-secondary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "background": "#f6fafd",
+                        "surface-tint": "#4d6079",
+                        "inverse-surface": "#2c3134",
+                        "secondary-fixed-dim": "#48d7fb",
+                        "on-tertiary-container": "#3792aa",
+                        "on-secondary-fixed-variant": "#004e5e",
+                        "on-secondary-container": "#005d6f",
+                        "secondary-container": "#4cd9fd",
+                        "surface-container-lowest": "#ffffff",
+                        "outline": "#74777d"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "margin-desktop": "64px",
+                        "base": "8px",
+                        "margin-mobile": "16px",
+                        "container-max": "1440px"
+                    },
+                    "fontFamily": {
+                        "headline-xl": ["Syne"],
+                        "display-lg-mobile": ["Syne"],
+                        "headline-lg": ["Syne"],
+                        "code-snippet": ["DM Sans"],
+                        "label-md": ["DM Sans"],
+                        "body-md": ["DM Sans"],
+                        "display-lg": ["Syne"],
+                        "headline-md": ["Syne"],
+                        "body-lg": ["DM Sans"]
+                    },
+                    "fontSize": {
+                        "headline-xl": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "display-lg-mobile": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "800"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                        "code-snippet": ["13px", {"lineHeight": "1.5", "fontWeight": "500"}],
+                        "label-md": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "display-lg": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "headline-md": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        .radar-sweep {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg at 50% 50%, rgba(76, 217, 253, 0.05) 0deg, transparent 90deg);
+            animation: rotate 12s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes rotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .dot-matrix {
+            background-image: radial-gradient(circle, rgba(76, 217, 253, 0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .data-stream {
+            position: absolute;
+            background: #4cd9fd;
+            border-radius: 50%;
+            width: 3px;
+            height: 3px;
+            opacity: 0.4;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md selection:bg-secondary-fixed selection:text-on-secondary-fixed min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-primary/95 backdrop-blur-md border-b border-white/5 transition-all duration-300" id="top-nav">
+<div class="flex justify-between items-center px-gutter py-4 max-w-container-max mx-auto">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary-container text-3xl" style="font-variation-settings: 'FILL' 1;">terminal</span>
+<span class="font-headline-md text-headline-md font-bold text-white">TechBlog</span>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="font-label-md text-label-md text-secondary-container relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-0.5 after:bg-secondary-container" href="#">Insights</a>
+<a class="font-label-md text-label-md text-white/70 hover:text-white transition-colors" href="#">Solutions</a>
+<a class="font-label-md text-label-md text-white/70 hover:text-white transition-colors" href="#">Network</a>
+<a class="font-label-md text-label-md text-white/70 hover:text-white transition-colors" href="#">About</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="bg-white/5 text-white p-2 rounded-full hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="bg-secondary-container text-on-secondary-container px-6 py-2.5 font-label-md text-label-md font-bold rounded hover:bg-white transition-all">
+                    Contact Us
+                </button>
+</div>
+</div>
+</nav>
+<main class="flex-grow">
+<!-- Hero Section -->
+<header class="relative overflow-hidden bg-primary pt-48 pb-32 border-b border-white/5">
+<div class="radar-sweep"></div>
+<div class="absolute inset-0 pointer-events-none" id="particle-container"></div>
+<div class="absolute inset-0 dot-matrix opacity-40"></div>
+<div class="max-w-container-max mx-auto px-gutter relative z-10">
+<div class="max-w-3xl">
+<div class="inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full mb-8">
+<span class="flex h-2 w-2 rounded-full bg-secondary-container animate-pulse"></span>
+<span class="font-label-md text-label-md text-white/60 uppercase tracking-[0.2em] text-[10px]">System Operational</span>
+</div>
+<h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-white mb-8 leading-[1.1]">
+                        Insights <span class="text-secondary-container italic">Built From Here.</span>
+</h1>
+<p class="font-body-lg text-body-lg text-white/60 max-w-xl mb-12 leading-relaxed">
+                        Explorations into industrial-grade digital architecture, cross-continental connectivity, and the future of resilient technical systems.
+                    </p>
+<div class="flex flex-wrap gap-4">
+<a class="bg-secondary-container text-on-secondary-container px-8 py-4 font-label-md text-label-md font-bold rounded flex items-center gap-2 hover:bg-white transition-colors" href="#featured">
+                            Read Featured <span class="material-symbols-outlined">arrow_downward</span>
+</a>
+<a class="border border-white/20 text-white px-8 py-4 font-label-md text-label-md font-bold rounded hover:bg-white/5 transition-colors" href="#">
+                            View All Series
+                        </a>
+</div>
+</div>
+</div>
+</header>
+<!-- Category Filter -->
+<section class="bg-white border-b border-outline-variant/30 sticky top-[72px] z-40">
+<div class="max-w-container-max mx-auto px-gutter overflow-x-auto scrollbar-hide">
+<div class="flex gap-10 py-5 whitespace-nowrap">
+<button class="font-label-md text-label-md text-secondary font-bold border-b-2 border-secondary pb-1">
+                        All Disciplines
+                    </button>
+<button class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors pb-1">Architecture</button>
+<button class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors pb-1">Case Studies</button>
+<button class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors pb-1">Industry Trends</button>
+<button class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors pb-1">Technical Deep-Dives</button>
+</div>
+</div>
+</section>
+<!-- Featured Article -->
+<section class="py-24 md:py-32 bg-white" id="featured">
+<div class="max-w-container-max mx-auto px-gutter">
+<div class="grid lg:grid-cols-12 gap-16 items-center">
+<div class="lg:col-span-7">
+<div class="relative group cursor-pointer overflow-hidden rounded-xl bg-primary">
+<img alt="Tech architectural diagram" class="w-full aspect-[4/3] object-cover opacity-80 group-hover:scale-105 transition-transform duration-1000" src="https://lh3.googleusercontent.com/aida-public/AB6AXuADHQtnRaGe2Iboy11PXZLiTJggk8aI-R3qMT5qIUpF2II0CyW-hRHfTropp8VNCCmW7goJlcG_eB1s0CazRjYir3yoDEfocZDRrNZVPllLaGks1TZnkMJF86v1ytj2jWMUpNdPvH2tzGgi26R9w9AAm6zedI8RdWkr4b40wGXRe7ojFlspcHZrQ6PfURleoWL_QAE0xbvAayFRtorT5opPiHr45lseQ68PD-E3GdMCyN3uAZRsHBxqwpqXxe79TvgbX5f02V0nbGQ"/>
+<div class="absolute bottom-6 left-6 flex gap-2">
+<span class="bg-primary/90 text-white px-4 py-1.5 font-label-md text-label-md font-bold uppercase tracking-widest text-[10px]">Architecture</span>
+<span class="bg-secondary-container text-on-secondary-container px-4 py-1.5 font-label-md text-label-md font-bold uppercase tracking-widest text-[10px]">12 MIN READ</span>
+</div>
+</div>
+</div>
+<div class="lg:col-span-5">
+<p class="font-label-md text-label-md text-secondary mb-6 font-bold tracking-[0.2em] uppercase text-[12px]">Featured Technical Insight</p>
+<h2 class="font-headline-xl text-headline-xl text-primary mb-8 leading-tight">The Offline-First Revolution: Architecting for Intermittent Connectivity</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-10 leading-relaxed">
+                            In industrial environments where connectivity is a luxury, not a guarantee, we explore how to build resilient systems that prioritize local data integrity while ensuring seamless eventual consistency across the cloud.
+                        </p>
+<div class="flex items-center gap-4 mb-12">
+<div class="h-14 w-14 rounded-full bg-primary flex items-center justify-center text-white font-bold text-lg">EC</div>
+<div>
+<p class="font-label-md text-label-md text-primary font-bold">Exchosoft Engineering Team</p>
+<p class="font-label-md text-label-md text-on-surface-variant">March 24, 2024</p>
+</div>
+</div>
+<button class="bg-primary text-on-primary px-10 py-4 font-label-md text-label-md font-bold rounded flex items-center gap-3 hover:bg-secondary transition-colors group">
+                            Full Article <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Blog Grid -->
+<section class="py-24 md:py-32 bg-surface-container-low">
+<div class="max-w-container-max mx-auto px-gutter">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-6">
+<div>
+<h3 class="font-headline-lg text-headline-lg text-primary mb-4">Latest Transmissions</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Global perspectives from our consultants and engineers.</p>
+</div>
+<a class="font-label-md text-label-md text-secondary font-bold flex items-center gap-2 hover:gap-4 transition-all" href="#">
+                        Explore Full Library <span class="material-symbols-outlined">east</span>
+</a>
+</div>
+<div class="grid md:grid-cols-2 gap-16">
+<!-- Card 1 -->
+<div class="group cursor-pointer">
+<div class="relative mb-8 overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-black/5">
+<img alt="Healthcare digital transformation" class="w-full aspect-[16/9] object-cover group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAo7Zw6IIhEbT_Qw9MnG_QicSfAkB6c6Wd43k6JtTCmhDwd9jtKegWZSkpzwbB0CofYIzmGgB08zGqj1wfPPbWuPx799MmA0kw5-_r6AVhddBmQ4SCbrtJ4i9I4_iYpln8PeShvscqGRzMZ_gCjMKVsMVpLcNqH-2AyOGkg1dmtxKmUc_umHpFeiNHkkqyhS0FuRMkFy4oPM-qYmUdmjL8Lg4xAftxc8UKeqvAjflolq9SqSROk6wlkSY-DF6nC6lqYKSGC5Lod4rE"/>
+<div class="absolute top-4 right-4">
+<div class="bg-white h-10 w-10 rounded-full flex items-center justify-center shadow-lg group-hover:bg-secondary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-xl">trending_up</span>
+</div>
+</div>
+</div>
+<span class="font-label-md text-label-md text-secondary font-bold uppercase tracking-widest text-[11px] mb-4 inline-block">Industry Trends</span>
+<h4 class="font-headline-md text-headline-md text-primary mb-5 group-hover:text-secondary transition-colors leading-snug">Digital Transformation in Healthcare: Reliability as the Core Requirement</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mb-8 line-clamp-3 leading-relaxed">
+                            Scaling diagnostic AI and telehealth across regions requires more than just code; it requires a structural understanding of high-availability networking in developing infrastructures.
+                        </p>
+<div class="flex items-center justify-between pt-6 border-t border-outline-variant/30">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span class="font-label-md text-label-md">8 min read</span>
+</div>
+<button class="font-label-md text-label-md text-primary font-bold flex items-center gap-1 group-hover:text-secondary transition-colors">
+                                Read More <span class="material-symbols-outlined text-base">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="group cursor-pointer">
+<div class="relative mb-8 overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-black/5">
+<img alt="Global network connectivity" class="w-full aspect-[16/9] object-cover group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQ1ve0Je4Boued9TC3bMKyChi9mh9ipvnktu8-ld2Fpf1VtBGKCVxRHC1AnqQEPRwNzLSAWUK54K86J4_RiiyJdBR9XFWfn2Z35fQMar7JjOhrd4i_rJ-Cy36i0HNUzDkqwBVtDrVa-_SH568fuEFyB0KR-fAPFyCXNIAbNV0z2OO6jd9hdWS92KYXmgv2X9VXEtiW1hRw3aOGPjekyET_eSv-qtAUP0sAnff9nsh0qv6caqEoDwA2ibr1GGE-sKymaRNj5eAe4JM"/>
+<div class="absolute top-4 right-4">
+<div class="bg-white h-10 w-10 rounded-full flex items-center justify-center shadow-lg group-hover:bg-secondary group-hover:text-white transition-colors">
+<span class="material-symbols-outlined text-xl">public</span>
+</div>
+</div>
+</div>
+<span class="font-label-md text-label-md text-secondary font-bold uppercase tracking-widest text-[11px] mb-4 inline-block">Case Studies</span>
+<h4 class="font-headline-md text-headline-md text-primary mb-5 group-hover:text-secondary transition-colors leading-snug">Building Technical Bridges Across the Diaspora: A New Consulting Framework</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mb-8 line-clamp-3 leading-relaxed">
+                            How Exchosoft uses collaborative engineering models to synchronize talent from Accra to London, creating high-velocity delivery pipelines for global enterprise clients.
+                        </p>
+<div class="flex items-center justify-between pt-6 border-t border-outline-variant/30">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span class="font-label-md text-label-md">15 min read</span>
+</div>
+<button class="font-label-md text-label-md text-primary font-bold flex items-center gap-1 group-hover:text-secondary transition-colors">
+                                Read More <span class="material-symbols-outlined text-base">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Newsletter Section -->
+<section class="py-32 bg-primary relative overflow-hidden">
+<div class="absolute inset-0 dot-matrix opacity-10"></div>
+<div class="max-w-container-max mx-auto px-gutter text-center relative z-10">
+<div class="inline-flex items-center gap-3 px-4 py-2 bg-white/5 border border-white/10 rounded mb-10">
+<span class="material-symbols-outlined text-secondary-container" style="font-variation-settings: 'FILL' 1;">rss_feed</span>
+<span class="font-label-md text-label-md text-white/60 uppercase tracking-[0.2em] text-[10px]">THE TRANSMISSION</span>
+</div>
+<h2 class="font-headline-xl text-headline-xl text-white mb-8 leading-tight">Stay Ahead of the Data Stream.</h2>
+<p class="font-body-lg text-body-lg text-white/60 max-w-2xl mx-auto mb-16 leading-relaxed">
+                    Subscribe to our monthly briefing for industrial leaders. High-fidelity insights on infrastructure, engineering, and digital strategy.
+                </p>
+<form class="max-w-xl mx-auto bg-white/5 border border-white/10 p-2 rounded-lg flex flex-col sm:flex-row gap-2">
+<input class="bg-transparent border-none text-white font-body-md flex-grow focus:ring-0 px-6 py-4 placeholder:text-white/30" placeholder="professional@email.com" type="email"/>
+<button class="bg-secondary-container text-on-secondary-container px-10 py-4 font-label-md text-label-md font-bold rounded hover:bg-white transition-colors" type="submit">
+                        Subscribe
+                    </button>
+</form>
+<p class="font-label-md text-label-md text-white/20 mt-6 uppercase tracking-widest text-[10px]">Zero spam. Pure technical value. Unsubscribe anytime.</p>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-primary border-t border-white/5 w-full">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 px-gutter py-24 max-w-container-max mx-auto">
+<div>
+<div class="flex items-center gap-2 mb-10">
+<span class="material-symbols-outlined text-secondary-container text-3xl">terminal</span>
+<span class="font-headline-md text-headline-md font-bold text-white">TechBlog</span>
+</div>
+<p class="font-body-md text-body-md text-white/40 mb-10 leading-relaxed">
+                    Industrial Reliability meets Cutting-Edge Innovation. A division of Exchosoft Consult.
+                </p>
+<div class="flex gap-4">
+<a class="h-12 w-12 border border-white/10 rounded-full flex items-center justify-center text-white/60 hover:border-secondary-container hover:text-secondary-container transition-all" href="#">
+<span class="material-symbols-outlined text-xl">share</span>
+</a>
+<a class="h-12 w-12 border border-white/10 rounded-full flex items-center justify-center text-white/60 hover:border-secondary-container hover:text-secondary-container transition-all" href="#">
+<span class="material-symbols-outlined text-xl">hub</span>
+</a>
+</div>
+</div>
+<div>
+<h5 class="font-label-md text-label-md font-bold text-white mb-10 uppercase tracking-widest text-[12px]">Exploration</h5>
+<ul class="space-y-5">
+<li><a class="font-label-md text-label-md text-white/40 hover:text-white transition-colors" href="#">Global Offices</a></li>
+<li><a class="font-label-md text-label-md text-white/40 hover:text-white transition-colors" href="#">Technical Specs</a></li>
+<li><a class="font-label-md text-label-md text-white/40 hover:text-white transition-colors" href="#">Frameworks</a></li>
+</ul>
+</div>
+<div>
+<h5 class="font-label-md text-label-md font-bold text-white mb-10 uppercase tracking-widest text-[12px]">Consultancy</h5>
+<ul class="space-y-5">
+<li><a class="font-label-md text-label-md text-white/40 hover:text-white transition-colors" href="#">Consultancy Framework</a></li>
+<li><a class="font-label-md text-label-md text-white/40 hover:text-white transition-colors" href="#">Success Stories</a></li>
+<li><a class="font-label-md text-label-md text-white/40 hover:text-white transition-colors" href="#">Partner Network</a></li>
+</ul>
+</div>
+<div>
+<h5 class="font-label-md text-label-md font-bold text-white mb-10 uppercase tracking-widest text-[12px]">Legal</h5>
+<ul class="space-y-5">
+<li><a class="font-label-md text-label-md text-white/40 hover:text-white transition-colors" href="#">Privacy Policy</a></li>
+<li><a class="font-label-md text-label-md text-white/40 hover:text-white transition-colors" href="#">Terms of Service</a></li>
+</ul>
+</div>
+</div>
+<div class="px-gutter py-10 border-t border-white/5">
+<p class="font-label-md text-label-md text-white/20 text-center uppercase tracking-[0.3em] text-[10px]">
+                © 2024 Exchosoft Consult. Industrial Reliability meets Cutting-Edge Innovation.
+            </p>
+</div>
+</footer>
+<script>
+        // Simple particle system for the hero background
+        const container = document.getElementById('particle-container');
+        const particleCount = 25;
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'data-stream';
+            
+            const startX = Math.random() * 100;
+            const startY = Math.random() * 100;
+            const duration = 8 + Math.random() * 15;
+            const delay = Math.random() * 10;
+            
+            particle.style.left = `${startX}%`;
+            particle.style.top = `${startY}%`;
+            
+            particle.animate([
+                { transform: 'translate(0, 0)', opacity: 0 },
+                { transform: `translate(${(Math.random() - 0.5) * 300}px, ${(Math.random() - 0.5) * 300}px)`, opacity: 0.4 },
+                { transform: `translate(${(Math.random() - 0.5) * 600}px, ${(Math.random() - 0.5) * 600}px)`, opacity: 0 }
+            ], {
+                duration: duration * 1000,
+                delay: delay * 1000,
+                iterations: Infinity,
+                easing: 'ease-in-out'
+            });
+            
+            container.appendChild(particle);
+        }
+
+        // Header scroll behavior
+        let lastScroll = 0;
+        const nav = document.getElementById('top-nav');
+        
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            if (currentScroll <= 100) {
+                nav.classList.remove('py-2', 'shadow-2xl');
+                nav.classList.add('py-4');
+                return;
+            }
+            
+            if (currentScroll > lastScroll) {
+                // Scrolling down
+                nav.style.transform = 'translateY(-100%)';
+            } else {
+                // Scrolling up
+                nav.style.transform = 'translateY(0)';
+                nav.classList.add('shadow-2xl', 'py-2');
+                nav.classList.remove('py-4');
+            }
+            lastScroll = currentScroll;
+        });
+    </script>
+</body></html>

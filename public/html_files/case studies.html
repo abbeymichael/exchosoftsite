@@ -7,60 +7,59 @@
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&amp;family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
             theme: {
                 extend: {
                     "colors": {
+                        "tertiary-fixed-dim": "#7dd2eb",
+                        "on-background": "#171c1f",
                         "surface-container-high": "#e5e9ec",
-                        "on-secondary-fixed-variant": "#004e5e",
+                        "primary-fixed": "#d2e4ff",
+                        "surface": "#f6fafd",
+                        "secondary": "#00677c",
+                        "on-tertiary-fixed": "#001f27",
+                        "tertiary": "#000a0e",
+                        "surface-container": "#eaeef1",
+                        "on-secondary-container": "#005d6f",
+                        "background": "#f6fafd",
+                        "surface-container-highest": "#dfe3e6",
+                        "on-secondary": "#ffffff",
+                        "inverse-primary": "#b5c8e5",
+                        "primary-fixed-dim": "#b5c8e5",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed": "#b0ecff",
+                        "on-primary-fixed-variant": "#364860",
+                        "on-primary": "#ffffff",
+                        "on-primary-container": "#7689a4",
+                        "primary": "#000917",
+                        "surface-container-lowest": "#ffffff",
                         "surface-container-low": "#f0f4f7",
+                        "on-error": "#ffffff",
+                        "secondary-fixed-dim": "#48d7fb",
+                        "inverse-on-surface": "#edf1f4",
                         "surface-bright": "#f6fafd",
                         "outline": "#74777d",
-                        "on-surface": "#171c1f",
-                        "surface-container-lowest": "#ffffff",
-                        "on-tertiary-fixed": "#001f27",
-                        "primary-container": "#0d2137",
-                        "tertiary": "#000a0e",
-                        "inverse-on-surface": "#edf1f4",
-                        "inverse-surface": "#2c3134",
-                        "on-tertiary-container": "#3792aa",
-                        "on-error": "#ffffff",
                         "on-tertiary-fixed-variant": "#004e5e",
-                        "inverse-primary": "#b5c8e5",
-                        "on-primary": "#ffffff",
-                        "error": "#ba1a1a",
-                        "surface-container": "#eaeef1",
-                        "tertiary-container": "#00242d",
-                        "on-secondary": "#ffffff",
-                        "on-primary-fixed-variant": "#364860",
-                        "on-error-container": "#93000a",
-                        "surface-container-highest": "#dfe3e6",
-                        "primary-fixed": "#d2e4ff",
-                        "on-background": "#171c1f",
-                        "surface-dim": "#d6dbdd",
-                        "tertiary-fixed-dim": "#7dd2eb",
-                        "tertiary-fixed": "#b0ecff",
-                        "secondary": "#00677c",
-                        "background": "#f6fafd",
-                        "outline-variant": "#c4c6cd",
-                        "primary": "#000917",
-                        "on-tertiary": "#ffffff",
                         "on-surface-variant": "#44474d",
-                        "error-container": "#ffdad6",
-                        "surface-tint": "#4d6079",
-                        "on-secondary-fixed": "#001f27",
-                        "on-primary-container": "#7689a4",
-                        "primary-fixed-dim": "#b5c8e5",
-                        "surface-variant": "#dfe3e6",
-                        "surface": "#f6fafd",
-                        "secondary-container": "#4cd9fd",
-                        "on-secondary-container": "#005d6f",
-                        "secondary-fixed-dim": "#48d7fb",
+                        "tertiary-container": "#00242d",
+                        "inverse-surface": "#2c3134",
                         "secondary-fixed": "#b1ecff",
-                        "on-primary-fixed": "#081c32"
+                        "on-tertiary-container": "#3792aa",
+                        "surface-variant": "#dfe3e6",
+                        "on-surface": "#171c1f",
+                        "error": "#ba1a1a",
+                        "outline-variant": "#c4c6cd",
+                        "on-error-container": "#93000a",
+                        "primary-container": "#0d2137",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed": "#001f27",
+                        "surface-tint": "#4d6079",
+                        "surface-dim": "#d6dbdd",
+                        "on-secondary-fixed-variant": "#004e5e",
+                        "on-primary-fixed": "#081c32",
+                        "secondary-container": "#4cd9fd"
                     },
                     "borderRadius": {
                         "DEFAULT": "0.25rem",
@@ -70,32 +69,32 @@
                     },
                     "spacing": {
                         "margin-mobile": "16px",
-                        "container-max": "1440px",
+                        "gutter": "24px",
                         "base": "8px",
-                        "margin-desktop": "64px",
-                        "gutter": "24px"
+                        "container-max": "1440px",
+                        "margin-desktop": "64px"
                     },
                     "fontFamily": {
-                        "code-snippet": ["DM Sans"],
-                        "body-lg": ["DM Sans"],
                         "headline-xl": ["Syne"],
                         "headline-lg": ["Syne"],
-                        "label-md": ["DM Sans"],
-                        "display-lg-mobile": ["Syne"],
-                        "headline-md": ["Syne"],
                         "display-lg": ["Syne"],
-                        "body-md": ["DM Sans"]
+                        "display-lg-mobile": ["Syne"],
+                        "label-md": ["DM Sans"],
+                        "body-md": ["DM Sans"],
+                        "code-snippet": ["DM Sans"],
+                        "body-lg": ["DM Sans"],
+                        "headline-md": ["Syne"]
                     },
                     "fontSize": {
-                        "code-snippet": ["13px", {"lineHeight": "1.5", "fontWeight": "500"}],
-                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
                         "headline-xl": ["48px", {"lineHeight": "1.2", "fontWeight": "700"}],
                         "headline-lg": ["32px", {"lineHeight": "1.3", "fontWeight": "700"}],
-                        "label-md": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "500"}],
-                        "display-lg-mobile": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "800"}],
-                        "headline-md": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
                         "display-lg": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
-                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}]
+                        "display-lg-mobile": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "800"}],
+                        "label-md": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "code-snippet": ["13px", {"lineHeight": "1.5", "fontWeight": "500"}],
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}]
                     }
                 }
             }
@@ -115,9 +114,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(76, 217, 253, 0.1), transparent);
+            background: linear-gradient(90deg, transparent, rgba(76, 217, 253, 0.05), transparent);
             transform: translateX(-100%);
-            animation: radar 4s infinite linear;
+            animation: radar 6s infinite linear;
             pointer-events: none;
         }
 
@@ -128,24 +127,23 @@
 
         .dot-matrix {
             background-image: radial-gradient(circle, #74777d 1px, transparent 1px);
-            background-size: 32px 32px;
+            background-size: 24px 24px;
             opacity: 0.1;
         }
 
         .glass-card {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(16px);
-            border: 1.5px solid rgba(76, 217, 253, 0.2);
+            background: rgba(255, 255, 255, 1);
+            border: 1px solid rgba(116, 119, 125, 0.1);
         }
 
         .scanline {
-            height: 2px;
+            height: 1px;
             background: #4cd9fd;
-            box-shadow: 0 0 10px #4cd9fd;
-            opacity: 0.5;
+            box-shadow: 0 0 8px #4cd9fd;
+            opacity: 0.4;
             position: absolute;
             width: 100%;
-            animation: scanline 8s linear infinite;
+            animation: scanline 10s linear infinite;
         }
 
         @keyframes scanline {
@@ -156,208 +154,189 @@
 </head>
 <body class="bg-surface text-on-surface font-body-md overflow-x-hidden">
 <!-- TopNavBar -->
-<header class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface/80 backdrop-blur-xl border-b border-outline-variant/30 shadow-sm">
+<header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-md border-b border-outline-variant/30">
 <nav class="flex justify-between items-center h-20 px-margin-desktop max-w-container-max mx-auto">
-<div class="font-headline-md text-headline-md font-bold text-primary tracking-tight cursor-pointer transition-transform active:scale-95">
+<div class="font-headline-md text-headline-md font-bold text-primary tracking-tight cursor-pointer">
                 Exchosoft Consult
             </div>
-<div class="hidden md:flex gap-gutter items-center">
+<div class="hidden md:flex gap-10 items-center">
 <a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="#">Case Studies</a>
 <a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="#">Architecture</a>
 <a class="font-body-md text-body-md text-secondary border-b-2 border-secondary pb-1 cursor-pointer" href="#">Impact</a>
 <a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="#">Global</a>
 <a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="#">Services</a>
 </div>
-<button class="bg-primary text-on-primary px-6 py-2 rounded-lg font-label-md text-label-md hover:bg-on-primary-fixed-variant transition-all duration-300 active:scale-95">
+<button class="bg-primary text-on-primary px-8 py-2.5 rounded-lg font-label-md text-label-md hover:bg-on-primary-fixed-variant transition-all active:scale-95">
                 Contact Us
             </button>
 </nav>
 </header>
 <!-- Hero Section -->
-<section class="relative min-h-[70vh] flex items-center pt-20 overflow-hidden bg-primary text-on-primary">
+<section class="relative min-h-[600px] flex items-center pt-20 overflow-hidden bg-[#000917]">
 <div class="dot-matrix absolute inset-0"></div>
 <div class="radar-sweep"></div>
-<!-- Decorative Particle Field Simulation -->
-<div class="absolute inset-0 opacity-20 pointer-events-none">
-<div class="absolute top-1/4 left-1/4 w-2 h-2 bg-secondary-container rounded-full animate-ping"></div>
-<div class="absolute top-1/2 left-3/4 w-2 h-2 bg-secondary-container rounded-full animate-ping [animation-delay:1s]"></div>
-<div class="absolute bottom-1/3 left-1/2 w-2 h-2 bg-secondary-container rounded-full animate-ping [animation-delay:2s]"></div>
-</div>
 <div class="relative px-margin-desktop max-w-container-max mx-auto w-full z-10">
-<div class="max-w-3xl">
-<span class="inline-block px-3 py-1 bg-secondary-container text-on-secondary-container font-label-md text-label-md rounded mb-6 tracking-widest uppercase">Global Portfolio</span>
-<h1 class="font-display-lg text-display-lg mb-6 leading-none">Impact Built From Here</h1>
-<p class="font-body-lg text-body-lg text-on-primary-container max-w-xl mb-10">
+<div class="max-w-4xl">
+<span class="inline-block px-4 py-1.5 bg-[#4cd9fd] text-[#001f27] font-bold text-[12px] rounded-sm mb-8 tracking-[0.2em] uppercase">Global Portfolio</span>
+<h1 class="font-display-lg text-display-lg text-white mb-8 leading-[1.05]">Impact Built <br/> From Here</h1>
+<p class="font-body-lg text-body-lg text-white/70 max-w-xl mb-12">
                     Transforming the backbone of critical industries across the continent. From digital spirituality to surgical precision, we build the systems that sustain growth.
                 </p>
-<div class="flex gap-4">
-<div class="h-1 w-24 bg-secondary-container"></div>
-<div class="h-1 w-12 bg-outline opacity-50"></div>
-<div class="h-1 w-6 bg-outline opacity-30"></div>
+<div class="flex items-center gap-4">
+<div class="h-[3px] w-24 bg-secondary-container"></div>
+<div class="h-[3px] w-12 bg-white/20"></div>
+<div class="h-[3px] w-6 bg-white/10"></div>
 </div>
 </div>
 </div>
-<!-- Right Side Industrial Ornament -->
-<div class="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 w-1/3 h-full opacity-30">
-<div class="border-l border-outline/20 h-full w-full relative">
-<div class="absolute top-20 right-20 text-right">
-<p class="text-secondary-container font-code-snippet text-code-snippet tracking-tighter">LATENCY_OPTIMIZATION</p>
-<p class="text-on-primary/60 font-code-snippet text-code-snippet">CORE_INFRA_STABLE_001</p>
+<!-- Right Decorative Element -->
+<div class="hidden lg:block absolute right-0 top-1/2 -translate-y-1/2 w-[40%] h-full">
+<div class="h-full border-l border-white/5 flex flex-col justify-between py-24 px-12">
+<div class="text-right space-y-1">
+<p class="text-secondary-container font-code-snippet text-[11px] tracking-widest opacity-60">LATENCY_OPTIMIZATION</p>
+<p class="text-white/40 font-code-snippet text-[11px] tracking-widest">CORE_INFRA_STABLE_001</p>
 </div>
-<div class="absolute bottom-40 right-40">
-<span class="material-symbols-outlined text-[120px] text-secondary-container/20">settings_input_component</span>
+<div class="flex justify-end pr-12">
+<span class="material-symbols-outlined text-[100px] text-white/5 font-light">settings_input_component</span>
 </div>
 </div>
 </div>
 </section>
-<!-- Project Index Grid -->
-<main class="py-24 px-margin-desktop max-w-container-max mx-auto bg-surface-bright relative">
-<div class="absolute top-0 left-0 w-full h-full dot-matrix pointer-events-none"></div>
-<div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-gutter">
+<!-- Implementation Log Grid -->
+<main class="py-24 px-margin-desktop max-w-container-max mx-auto bg-surface-bright">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-gutter">
 <div class="max-w-2xl">
-<h2 class="font-headline-xl text-headline-xl mb-4">The Implementation Log</h2>
-<p class="text-on-surface-variant font-body-md text-body-md">Architecting resilience through tailored digital frameworks. Filtered by sector and strategic impact.</p>
+<h2 class="font-headline-xl text-[56px] text-[#171c1f] mb-6">The Implementation Log</h2>
+<p class="text-on-surface-variant font-body-md text-body-md max-w-lg">Architecting resilience through tailored digital frameworks. Filtered by sector and strategic impact.</p>
 </div>
-<div class="flex gap-2">
-<button class="px-4 py-2 border border-outline/30 rounded font-label-md text-label-md hover:bg-surface-container transition-colors">ALL</button>
-<button class="px-4 py-2 border border-outline/30 rounded font-label-md text-label-md hover:bg-surface-container transition-colors">HEALTHCARE</button>
-<button class="px-4 py-2 border border-outline/30 rounded font-label-md text-label-md hover:bg-surface-container transition-colors">RELIGION</button>
-<button class="px-4 py-2 border border-outline/30 rounded font-label-md text-label-md hover:bg-surface-container transition-colors">DIASPORA</button>
+<div class="flex flex-wrap gap-3">
+<button class="px-6 py-2.5 border border-outline/20 rounded-md font-label-md text-[13px] text-on-surface/70 hover:bg-surface-container transition-colors tracking-widest">ALL</button>
+<button class="px-6 py-2.5 border border-outline/20 rounded-md font-label-md text-[13px] text-on-surface/70 hover:bg-surface-container transition-colors tracking-widest">HEALTHCARE</button>
+<button class="px-6 py-2.5 border border-outline/20 rounded-md font-label-md text-[13px] text-on-surface/70 hover:bg-surface-container transition-colors tracking-widest">RELIGION</button>
+<button class="px-6 py-2.5 border border-outline/20 rounded-md font-label-md text-[13px] text-on-surface/70 hover:bg-surface-container transition-colors tracking-widest">DIASPORA</button>
 </div>
 </div>
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter">
-<!-- Card 1: ChurchOps -->
-<article class="group glass-card flex flex-col transition-all duration-500 hover:-translate-y-2 hover:shadow-xl overflow-hidden">
-<div class="relative h-64 overflow-hidden border-b border-outline-variant/30">
-<img alt="Exchosoft ChurchOps technical visualization" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgXlSW-Jt51P60SHO1NHDQNSP3trYdNscIr13hsiepWEFUkiffqFk2Gk98u2P7RAEOppDKJ7xgBBqJMlc0mnk71SU1t_mzg8OCWb01Iat7RUEKeD_p5v3cTdHuJrjq2y5ugXywQxRXIOkjq1F9mgiStcYLHL-VOItLGeampNcPDb36c9Qs6EQ1hMa-xwaB1eM5rZCm4-58eYOYJFFaSn5FjlS6aF3DD13akIZpOgkH3RYShjg9L4HsVk4qpryucxcCHGk4u4cUCVM"/>
-<div class="absolute top-4 left-4 bg-primary text-on-primary px-3 py-1 font-label-md text-label-md">WEST AFRICA</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+<!-- Project Card 1 -->
+<article class="group glass-card flex flex-col hover:shadow-2xl transition-all duration-500 overflow-hidden">
+<div class="relative h-[280px] overflow-hidden bg-primary-container">
+<img alt="ChurchOps" class="w-full h-full object-cover grayscale-[0.2] transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgXlSW-Jt51P60SHO1NHDQNSP3trYdNscIr13hsiepWEFUkiffqFk2Gk98u2P7RAEOppDKJ7xgBBqJMlc0mnk71SU1t_mzg8OCWb01Iat7RUEKeD_p5v3cTdHuJrjq2y5ugXywQxRXIOkjq1F9mgiStcYLHL-VOItLGeampNcPDb36c9Qs6EQ1hMa-xwaB1eM5rZCm4-58eYOYJFFaSn5FjlS6aF3DD13akIZpOgkH3RYShjg9L4HsVk4qpryucxcCHGk4u4cUCVM"/>
+<div class="absolute top-5 left-5 bg-primary/90 text-white px-4 py-1.5 font-bold text-[11px] tracking-widest uppercase">West Africa</div>
 <div class="scanline"></div>
 </div>
 <div class="p-8 flex flex-col flex-grow">
-<div class="flex items-center gap-2 mb-4">
-<span class="material-symbols-outlined text-secondary-container">church</span>
-<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest">Digital Spirituality</span>
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-secondary-container text-xl">church</span>
+<span class="font-label-md text-[12px] text-on-surface-variant font-bold uppercase tracking-[0.15em]">Digital Spirituality</span>
 </div>
-<h3 class="font-headline-md text-headline-md mb-4">ChurchOps Framework</h3>
-<p class="text-on-surface-variant font-body-md text-body-md mb-8 flex-grow">
+<h3 class="font-headline-md text-[28px] text-[#171c1f] mb-5">ChurchOps Framework</h3>
+<p class="text-on-surface-variant font-body-md text-body-md leading-relaxed mb-8 flex-grow">
                         Enterprise management for megachurches. Integrated member tracking, financial transparency, and streaming infrastructure optimized for low-bandwidth regions.
                     </p>
 <div class="pt-6 border-t border-outline-variant/30 flex justify-between items-center">
-<span class="font-code-snippet text-code-snippet text-on-surface/50">#Infra_Scale_High</span>
-<a class="flex items-center gap-2 font-label-md text-label-md text-secondary hover:text-on-secondary-container transition-colors" href="#">
-                            VIEW DETAIL <span class="material-symbols-outlined text-sm">arrow_forward</span>
+<span class="font-code-snippet text-[12px] text-on-surface/40 tracking-wider">#Infra_Scale_High</span>
+<a class="flex items-center gap-2 font-bold text-[13px] text-secondary hover:text-primary transition-colors group/link" href="#">
+                            VIEW DETAIL <span class="material-symbols-outlined text-sm transition-transform group-hover/link:translate-x-1">arrow_forward</span>
 </a>
 </div>
 </div>
 </article>
-<!-- Card 2: ClinicOps -->
-<article class="group glass-card flex flex-col transition-all duration-500 hover:-translate-y-2 hover:shadow-xl overflow-hidden">
-<div class="relative h-64 overflow-hidden border-b border-outline-variant/30">
-<img alt="Exchosoft ClinicOps medical infrastructure" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQa_jXiu7jCZi2v9LDXy1-eMrJXbodB5MhACOevFGPHdF3ghgU8G0fp-SElzAcJ8T77d2yMA7iyEqyyikfFb5_nUWEuiGx-Tg_M1d77B0XlwN3MornJ9iY976dbYu6kRuU7RaSd9qbV4VDwwTFaWvTCcxFgJhIGmZyqyLE_bDKuSSqnF7QwTMSacIM7VyLibt3wfBG_jO7kOGmsaGwCPzHub7lZLGBZ4SX7wPOXfQHQDiV172vc9QIO2yfK-YWPh3_stlYYXI6UmA"/>
-<div class="absolute top-4 left-4 bg-primary text-on-primary px-3 py-1 font-label-md text-label-md">REGIONAL HUB</div>
+<!-- Project Card 2 -->
+<article class="group glass-card flex flex-col hover:shadow-2xl transition-all duration-500 overflow-hidden">
+<div class="relative h-[280px] overflow-hidden bg-primary-container">
+<img alt="ClinicOps" class="w-full h-full object-cover grayscale-[0.2] transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQa_jXiu7jCZi2v9LDXy1-eMrJXbodB5MhACOevFGPHdF3ghgU8G0fp-SElzAcJ8T77d2yMA7iyEqyyikfFb5_nUWEuiGx-Tg_M1d77B0XlwN3MornJ9iY976dbYu6kRuU7RaSd9qbV4VDwwTFaWvTCcxFgJhIGmZyqyLE_bDKuSSqnF7QwTMSacIM7VyLibt3wfBG_jO7kOGmsaGwCPzHub7lZLGBZ4SX7wPOXfQHQDiV172vc9QIO2yfK-YWPh3_stlYYXI6UmA"/>
+<div class="absolute top-5 left-5 bg-primary/90 text-white px-4 py-1.5 font-bold text-[11px] tracking-widest uppercase">Regional Hub</div>
 <div class="scanline"></div>
 </div>
 <div class="p-8 flex flex-col flex-grow">
-<div class="flex items-center gap-2 mb-4">
-<span class="material-symbols-outlined text-secondary-container">medical_services</span>
-<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest">Healthcare Tech</span>
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-secondary-container text-xl">medical_services</span>
+<span class="font-label-md text-[12px] text-on-surface-variant font-bold uppercase tracking-[0.15em]">Healthcare Tech</span>
 </div>
-<h3 class="font-headline-md text-headline-md mb-4">ClinicOps Ecosystem</h3>
-<p class="text-on-surface-variant font-body-md text-body-md mb-8 flex-grow">
+<h3 class="font-headline-md text-[28px] text-[#171c1f] mb-5">ClinicOps Ecosystem</h3>
+<p class="text-on-surface-variant font-body-md text-body-md leading-relaxed mb-8 flex-grow">
                         Digitizing patient journeys in regional hospitals. Offline-first EHR systems and real-time inventory management for life-critical supplies.
                     </p>
 <div class="pt-6 border-t border-outline-variant/30 flex justify-between items-center">
-<span class="font-code-snippet text-code-snippet text-on-surface/50">#Health_Stack_01</span>
-<a class="flex items-center gap-2 font-label-md text-label-md text-secondary hover:text-on-secondary-container transition-colors" href="#">
-                            VIEW DETAIL <span class="material-symbols-outlined text-sm">arrow_forward</span>
+<span class="font-code-snippet text-[12px] text-on-surface/40 tracking-wider">#Health_Stack_01</span>
+<a class="flex items-center gap-2 font-bold text-[13px] text-secondary hover:text-primary transition-colors group/link" href="#">
+                            VIEW DETAIL <span class="material-symbols-outlined text-sm transition-transform group-hover/link:translate-x-1">arrow_forward</span>
 </a>
 </div>
 </div>
 </article>
-<!-- Card 3: African Odysseys -->
-<article class="group glass-card flex flex-col transition-all duration-500 hover:-translate-y-2 hover:shadow-xl overflow-hidden">
-<div class="relative h-64 overflow-hidden border-b border-outline-variant/30 bg-primary-container flex items-center justify-center">
-<div class="absolute inset-0">
-<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-60" data-alt="A sophisticated data visualization of global diaspora connections. Stylized neon blue lines connect major world cities on a dark, minimalist technical map. The lighting is cinematic with high contrast between deep navy and vibrant cyan." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDR7PGzDSkaeY6jeXtqOyb8QbIGe_cYZRZCzzsbrC30VK8Y2oeWgGhmlMoe0nGXVwOR9M9yrVeuBgVovK-7W55dlodgOv2tvW-QeMx-PO4G8vTS5wHRKymXFD9lx_XNDoOShGlcYlBy_BUehmd0B4XWmzK0IVdGC2OTLL6T-Wzr6Znj6jMJikdT_5DSwoKtZxNDyM3dG5ZPs4EfzfXO803doM3gbxisxZQliOOa2QpGQ46Ubavrf-5SfU8s3A9MXE1hu_sNHg8Gc_M"/>
-</div>
-<div class="absolute top-4 left-4 bg-primary text-on-primary px-3 py-1 font-label-md text-label-md">GLOBAL NETWORK</div>
+<!-- Project Card 3 -->
+<article class="group glass-card flex flex-col hover:shadow-2xl transition-all duration-500 overflow-hidden">
+<div class="relative h-[280px] overflow-hidden bg-primary-container">
+<img alt="African Odysseys" class="w-full h-full object-cover grayscale-[0.2] transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDR7PGzDSkaeY6jeXtqOyb8QbIGe_cYZRZCzzsbrC30VK8Y2oeWgGhmlMoe0nGXVwOR9M9yrVeuBgVovK-7W55dlodgOv2tvW-QeMx-PO4G8vTS5wHRKymXFD9lx_XNDoOShGlcYlBy_BUehmd0B4XWmzK0IVdGC2OTLL6T-Wzr6Znj6jMJikdT_5DSwoKtZxNDyM3dG5ZPs4EfzfXO803doM3gbxisxZQliOOa2QpGQ46Ubavrf-5SfU8s3A9MXE1hu_sNHg8Gc_M"/>
+<div class="absolute top-5 left-5 bg-primary/90 text-white px-4 py-1.5 font-bold text-[11px] tracking-widest uppercase">Global Network</div>
 <div class="scanline"></div>
 </div>
 <div class="p-8 flex flex-col flex-grow">
-<div class="flex items-center gap-2 mb-4">
-<span class="material-symbols-outlined text-secondary-container">public</span>
-<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest">Diaspora Portal</span>
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-secondary-container text-xl">public</span>
+<span class="font-label-md text-[12px] text-on-surface-variant font-bold uppercase tracking-[0.15em]">Diaspora Portal</span>
 </div>
-<h3 class="font-headline-md text-headline-md mb-4">African Odysseys</h3>
-<p class="text-on-surface-variant font-body-md text-body-md mb-8 flex-grow">
+<h3 class="font-headline-md text-[28px] text-[#171c1f] mb-5">African Odysseys</h3>
+<p class="text-on-surface-variant font-body-md text-body-md leading-relaxed mb-8 flex-grow">
                         Connecting the global diaspora to local investment and heritage tracking. A high-trust platform built for cross-border financial and cultural exchange.
                     </p>
 <div class="pt-6 border-t border-outline-variant/30 flex justify-between items-center">
-<span class="font-code-snippet text-code-snippet text-on-surface/50">#Network_Effect</span>
-<a class="flex items-center gap-2 font-label-md text-label-md text-secondary hover:text-on-secondary-container transition-colors" href="#">
-                            VIEW DETAIL <span class="material-symbols-outlined text-sm">arrow_forward</span>
+<span class="font-code-snippet text-[12px] text-on-surface/40 tracking-wider">#Network_Effect</span>
+<a class="flex items-center gap-2 font-bold text-[13px] text-secondary hover:text-primary transition-colors group/link" href="#">
+                            VIEW DETAIL <span class="material-symbols-outlined text-sm transition-transform group-hover/link:translate-x-1">arrow_forward</span>
 </a>
 </div>
 </div>
 </article>
 </div>
 </main>
-<!-- Global Reach Section (Asymmetric) -->
-<section class="bg-surface-container py-24 relative overflow-hidden">
-<div class="px-margin-desktop max-w-container-max mx-auto grid grid-cols-1 lg:grid-cols-12 gap-gutter items-center">
+<!-- Global Presence Section -->
+<section class="bg-surface-container py-32 relative overflow-hidden">
+<div class="px-margin-desktop max-w-container-max mx-auto grid grid-cols-1 lg:grid-cols-12 gap-20 items-center">
 <div class="lg:col-span-5 relative z-10">
-<h2 class="font-headline-xl text-headline-xl mb-8">Engineering Presence, Everywhere.</h2>
-<div class="space-y-6">
-<div class="p-6 border-l-4 border-secondary-container bg-surface-container-highest/50">
-<h4 class="font-label-md text-label-md text-secondary-container uppercase mb-2">Cloud Sovereignty</h4>
-<p class="text-on-surface font-body-md">Building local data centers to ensure regional data remains secure and accessible within borders.</p>
+<h2 class="font-headline-xl text-[56px] text-primary mb-12 leading-tight">Engineering Presence, Everywhere.</h2>
+<div class="space-y-8">
+<div class="pl-8 py-2 border-l-[3px] border-secondary-container">
+<h4 class="font-bold text-[13px] text-secondary-container uppercase tracking-widest mb-3">Cloud Sovereignty</h4>
+<p class="text-on-surface font-body-md leading-relaxed">Building local data centers to ensure regional data remains secure and accessible within borders.</p>
 </div>
-<div class="p-6 border-l-4 border-outline bg-surface-container-highest/50">
-<h4 class="font-label-md text-label-md text-on-surface-variant uppercase mb-2">Architectural Integrity</h4>
-<p class="text-on-surface font-body-md">Systems designed for 99.99% uptime in environments with fluctuating power and connectivity.</p>
+<div class="pl-8 py-2 border-l-[3px] border-outline/20">
+<h4 class="font-bold text-[13px] text-on-surface-variant uppercase tracking-widest mb-3">Architectural Integrity</h4>
+<p class="text-on-surface font-body-md leading-relaxed opacity-80">Systems designed for 99.99% uptime in environments with fluctuating power and connectivity.</p>
 </div>
 </div>
 </div>
-<div class="lg:col-span-7 relative h-[500px]">
-<div class="absolute inset-0 rounded-2xl overflow-hidden shadow-2xl border border-outline-variant/20">
-<img class="w-full h-full object-cover" data-alt="A close-up shot of high-end circuit board architecture. The silicon chips are illuminated with vibrant cyan and white light. The aesthetic is extremely detailed and technical, emphasizing precision and industrial-grade quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxHI4jW5HiyfcWxOZlybkS8BQb-uSaWatLSQF7RVt-mxLSe6j2dU1c0SFHFgqssFi79p_JFCM3xbSt9r7o22xlxOmxpTv7Fp--M_Pzhe9ScA8YQd3M7Wfit7XLTCM5pvaUvSbAPp4D0URIWig5YH-H7arwp8D-bdzCQZxNOfpgSq-Wq0tJSmrOL52ssOXeBAfXKeoPbRp4BnMfbieGs18y1QkSM40FwyoXglDlDGzguzyi2pxqfCMdZGJGtlPTALtJp8gdr-T1_Ok"/>
-<div class="absolute inset-0 bg-primary/20 backdrop-brightness-75"></div>
-<div class="absolute bottom-8 right-8 bg-surface p-6 glass-card border-none">
-<div class="text-secondary font-headline-md text-headline-md mb-1">14+</div>
-<div class="font-label-md text-label-md uppercase text-on-surface-variant tracking-tighter">Countries Deployed</div>
+<div class="lg:col-span-7">
+<div class="relative h-[550px] rounded-3xl overflow-hidden shadow-3xl group">
+<img class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxHI4jW5HiyfcWxOZlybkS8BQb-uSaWatLSQF7RVt-mxLSe6j2dU1c0SFHFgqssFi79p_JFCM3xbSt9r7o22xlxOmxpTv7Fp--M_Pzhe9ScA8YQd3M7Wfit7XLTCM5pvaUvSbAPp4D0URIWig5YH-H7arwp8D-bdzCQZxNOfpgSq-Wq0tJSmrOL52ssOXeBAfXKeoPbRp4BnMfbieGs18y1QkSM40FwyoXglDlDGzguzyi2pxqfCMdZGJGtlPTALtJp8gdr-T1_Ok"/>
+<div class="absolute inset-0 bg-primary/10"></div>
+<div class="absolute bottom-10 right-10 bg-white p-10 shadow-2xl rounded-2xl border border-outline-variant/10">
+<div class="text-secondary font-headline-md text-[42px] font-bold mb-1">14+</div>
+<div class="font-bold text-[11px] uppercase text-on-surface-variant tracking-[0.1em]">Countries Deployed</div>
 </div>
 </div>
 </div>
 </div>
 </section>
 <!-- Footer -->
-<footer class="bg-primary text-on-primary w-full mt-auto">
-<div class="flex flex-col md:flex-row justify-between items-center py-margin-desktop px-margin-desktop max-w-container-max mx-auto gap-gutter">
-<div class="flex flex-col gap-4">
-<div class="font-headline-sm text-headline-sm text-on-primary">Exchosoft Consult</div>
-<p class="font-label-md text-label-md text-outline-variant max-w-xs">Industrial reliability meets cutting-edge innovation. Built from Here.</p>
+<footer class="bg-[#000917] text-white">
+<div class="max-w-container-max mx-auto px-margin-desktop py-20">
+<div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-12">
+<div class="space-y-6 max-w-sm">
+<div class="text-[24px] font-bold tracking-tight">Exchosoft Consult</div>
+<p class="text-white/50 text-[14px] leading-relaxed">Industrial reliability meets cutting-edge innovation. Built from Here.</p>
 </div>
-<div class="flex gap-8">
-<a class="font-label-md text-label-md text-outline-variant hover:text-surface-bright transition-colors" href="#">Privacy Policy</a>
-<a class="font-label-md text-label-md text-outline-variant hover:text-surface-bright transition-colors" href="#">Technical Docs</a>
-<a class="font-label-md text-label-md text-outline-variant hover:text-surface-bright transition-colors" href="#">Network Status</a>
-<a class="font-label-md text-label-md text-outline-variant hover:text-surface-bright transition-colors" href="#">Global Offices</a>
+<div class="flex flex-wrap gap-x-12 gap-y-6">
+<a class="text-[13px] font-medium text-white/60 hover:text-white transition-colors" href="#">Privacy Policy</a>
+<a class="text-[13px] font-medium text-white/60 hover:text-white transition-colors" href="#">Technical Docs</a>
+<a class="text-[13px] font-medium text-white/60 hover:text-white transition-colors" href="#">Network Status</a>
+<a class="text-[13px] font-medium text-white/60 hover:text-white transition-colors" href="#">Global Offices</a>
 </div>
-<div class="font-label-md text-label-md text-outline-variant">
-                © 2024 Exchosoft Consult. Built From Here.
-            </div>
+<div class="text-[13px] text-white/40">
+                    © 2024 Exchosoft Consult. Built From Here.
+                </div>
+</div>
 </div>
 </footer>
-<script>
-        // Micro-interaction for hover states on glass cards
-        document.querySelectorAll('.glass-card').forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                card.style.setProperty('--mouse-x', `${x}px`);
-                card.style.setProperty('--mouse-y', `${y}px`);
-            });
-        });
-    </script>
 </body></html>
