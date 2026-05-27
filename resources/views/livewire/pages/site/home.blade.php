@@ -153,13 +153,13 @@ new #[Layout('layouts.site')] #[Title('Exchosoft Consult — Software Developmen
     padding: 4rem; position: relative; z-index: 2;
   }
   .hero-logo-wrap {
-    width: 420px; height: 420px;
+    width: 560px; height: 560px;
     display: flex; align-items: center; justify-content: center;
     position: relative;
   }
   /* Core logo */
   .orbit-core {
-    width: 140px; height: 140px;
+    width: 160px; height: 160px;
     background: rgba(8, 18, 29, 0.95);
     border: 1px solid rgba(0,184,219,0.2);
     border-radius: 50%;
@@ -174,11 +174,11 @@ new #[Layout('layouts.site')] #[Title('Exchosoft Consult — Software Developmen
   }
   /* Radar canvas container */
   .radar-container {
-    position: absolute; inset: -40px;
+    position: absolute; inset: -60px;
     pointer-events: none; z-index: 1;
     display: flex; align-items: center; justify-content: center;
   }
-  #radarSweep { width: 500px; height: 500px; }
+  #radarSweep { width: 680px; height: 680px; }
   /* Icon nodes on ring */
   .orbit-icon {
     position: absolute;
@@ -469,7 +469,7 @@ new #[Layout('layouts.site')] #[Title('Exchosoft Consult — Software Developmen
     <div class="hero-logo-wrap" id="orbitWrap">
       {{-- Radar canvas background --}}
       <div class="radar-container">
-        <canvas id="radarSweep" width="500" height="500"></canvas>
+        <canvas id="radarSweep" width="680" height="680"></canvas>
       </div>
       {{-- Core logo --}}
       <div class="orbit-core">
@@ -510,8 +510,8 @@ new #[Layout('layouts.site')] #[Title('Exchosoft Consult — Software Developmen
 </section>
 <script>
 (function() {
-  const ORBIT_RADIUS = 205;
-  const CANVAS_SIZE  = 500;
+  const ORBIT_RADIUS = 280;
+  const CANVAS_SIZE  = 680;
   const SWEEP_SPEED  = 0.8;
   const TAIL_ANGLE   = Math.PI / 4;
   const LIT_WINDOW   = 0.15;
@@ -537,19 +537,19 @@ new #[Layout('layouts.site')] #[Title('Exchosoft Consult — Software Developmen
     const ns = normalize(sweepAngle);
     ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
     ctx.strokeStyle = 'rgba(0,184,219,0.05)'; ctx.lineWidth = 1;
-    for (let r = 50; r <= 240; r += 40) { ctx.beginPath(); ctx.arc(CX,CY,r,0,Math.PI*2); ctx.stroke(); }
+    for (let r = 60; r <= 320; r += 50) { ctx.beginPath(); ctx.arc(CX,CY,r,0,Math.PI*2); ctx.stroke(); }
     ctx.save();
     for (let i = 0; i < 60; i++) {
       const step = TAIL_ANGLE/60;
       const start = sweepAngle - TAIL_ANGLE + (i*step), end = start+step;
       const opacity = Math.pow(i/60,2)*0.22;
       ctx.beginPath(); ctx.moveTo(CX,CY);
-      ctx.arc(CX,CY,250,start,end); ctx.closePath();
+      ctx.arc(CX,CY,330,start,end); ctx.closePath();
       ctx.fillStyle = `rgba(0,184,219,${opacity})`; ctx.fill();
     }
     ctx.restore();
     ctx.beginPath(); ctx.moveTo(CX,CY);
-    ctx.lineTo(CX+250*Math.cos(sweepAngle), CY+250*Math.sin(sweepAngle));
+    ctx.lineTo(CX+330*Math.cos(sweepAngle), CY+330*Math.sin(sweepAngle));
     ctx.strokeStyle = 'rgba(0,230,255,0.6)'; ctx.lineWidth = 1.8; ctx.stroke();
     const cg = ctx.createRadialGradient(CX,CY,0,CX,CY,15);
     cg.addColorStop(0,'rgba(0,230,255,0.9)'); cg.addColorStop(0.5,'rgba(0,184,219,0.4)'); cg.addColorStop(1,'rgba(0,184,219,0)');

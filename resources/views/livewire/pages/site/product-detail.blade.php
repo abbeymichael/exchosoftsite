@@ -82,6 +82,89 @@ new #[Layout('layouts.site')] class extends Component
 
 <div>
 <style>
+/* ── PRODUCT DETAIL HERO ── */
+.pd-hero {
+  min-height: 100vh;
+  background: var(--navy);
+  position: relative; overflow: hidden;
+  display: flex; align-items: center;
+  padding-top: 58px;
+}
+#pd-hero-canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0.6; }
+.pd-hero-inner {
+  position: relative; z-index: 10;
+  width: 100%; max-width: 1200px; margin: 0 auto;
+  padding: 4rem 6rem;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+}
+.pd-hero-tag {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: rgba(0,184,219,0.1); border: 1px solid rgba(0,184,219,0.2);
+  color: var(--cyan); padding: 0.28rem 0.85rem; border-radius: 100px;
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+.pd-hero-tag span.pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); animation: pd-pulse 1.5s ease-in-out infinite; display: block; }
+@keyframes pd-pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.pd-hero h1 {
+  font-family: var(--font-display); font-size: clamp(2.2rem, 4vw, 3.5rem);
+  font-weight: 800; color: var(--white); line-height: 1.1; letter-spacing: -0.03em;
+  margin-bottom: 1rem;
+}
+.pd-hero h1 .accent { color: var(--cyan); }
+.pd-hero-sub { font-size: 1.05rem; color: rgba(255,255,255,0.5); font-weight: 300; line-height: 1.8; margin-bottom: 2.5rem; max-width: 420px; }
+.pd-hero-btns { display: flex; flex-wrap: wrap; gap: 1rem; }
+.pd-btn-buy {
+  background: var(--cyan); color: var(--white);
+  padding: 1rem 2rem; border-radius: 12px;
+  font-family: var(--font-display); font-weight: 700; font-size: 0.875rem;
+  border: none; cursor: pointer; transition: background 0.2s, transform 0.15s;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  text-decoration: none;
+}
+.pd-btn-buy:hover { background: var(--cyan-dark); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,184,219,0.2); }
+.pd-btn-ghost {
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.7); padding: 1rem 2rem; border-radius: 12px;
+  font-family: var(--font-display); font-weight: 700; font-size: 0.875rem;
+  text-decoration: none; transition: background 0.2s, color 0.2s;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+}
+.pd-btn-ghost:hover { background: rgba(255,255,255,0.1); color: white; }
+
+/* MOCKUP SIDE */
+.pd-mockup {
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px; overflow: hidden; position: relative;
+}
+.pd-mockup-bar {
+  background: rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05);
+  padding: 0.75rem 1rem; display: flex; align-items: center; gap: 0.5rem;
+}
+.pd-dot { width: 10px; height: 10px; border-radius: 50%; }
+.pd-dot-r { background: #ff5f57; } .pd-dot-y { background: #ffbd2e; } .pd-dot-g { background: #28ca41; }
+.pd-mockup-label { font-family: var(--font-display); font-size: 0.65rem; color: rgba(255,255,255,0.25); margin-left: auto; text-transform: uppercase; letter-spacing: 0.12em; }
+.pd-mockup-body { padding: 1.5rem; }
+.pd-mock-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.75rem; margin-bottom: 1rem; }
+.pd-mock-stat { background: rgba(255,255,255,0.05); border-radius: 10px; padding: 1rem; border: 1px solid rgba(255,255,255,0.06); }
+.pd-mock-stat-num { font-family: var(--font-display); font-size: 1.3rem; font-weight: 800; }
+.pd-mock-stat-lbl { font-size: 0.62rem; color: rgba(255,255,255,0.35); margin-top: 3px; }
+.pd-mock-chart { height: 120px; background: rgba(0,184,219,0.05); border-radius: 10px; border: 1px solid rgba(0,184,219,0.1); display: flex; align-items: flex-end; padding: 1rem; gap: 0.35rem; }
+.pd-chart-bar { flex: 1; background: rgba(0,184,219,0.4); border-radius: 3px 3px 0 0; }
+
+/* STATS BANNER */
+.pd-stats-banner {
+  background: var(--ice); border-bottom: 1px solid var(--border);
+  padding: 3rem 6rem;
+}
+.pd-stats-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(4,1fr); gap: 2rem;
+}
+.pd-stat-item { text-align: center; }
+.pd-stat-num { font-family: var(--font-display); font-size: 2rem; font-weight: 800; color: var(--cyan); letter-spacing: -0.03em; }
+.pd-stat-lbl { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-top: 0.3rem; }
+
   /* Product Body */
   .product-detail-body { padding: 4rem 6rem; }
   .product-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
@@ -302,7 +385,10 @@ new #[Layout('layouts.site')] class extends Component
   .success-msg { font-size: 0.9rem; color: #166534; margin-bottom: 1.25rem; }
 
   @media (max-width: 1024px) {
-    .detail-banner { padding: 2.5rem 2rem; }
+    .pd-hero-inner { grid-template-columns: 1fr; padding: 3rem 2rem; gap: 2rem; }
+    .pd-mockup { display: none; }
+    .pd-stats-banner { padding: 2.5rem 2rem; }
+    .pd-stats-inner { grid-template-columns: repeat(2,1fr); }
     .product-detail-body { padding: 2.5rem 2rem; }
     .product-detail-grid { grid-template-columns: 1fr; gap: 2.5rem; }
     .product-image-area { position: static; aspect-ratio: 16/9; }
@@ -311,24 +397,81 @@ new #[Layout('layouts.site')] class extends Component
     .purchase-success { margin: 2rem; }
   }
   @media (max-width: 640px) {
+    .pd-hero { padding-top: 58px; }
+    .pd-stats-inner { grid-template-columns: repeat(2,1fr); gap: 1.5rem; }
     .related-grid { grid-template-columns: 1fr; }
     .product-price-main { font-size: 1.8rem; }
   }
 </style>
 
-<!-- BANNER -->
-<x-page-banner
-    height="sm"
-    :title="$product->name"
-    :subtitle="$product->tagline ?? null"
-    :breadcrumbs="[
-        ['label'=>'Home','route'=>'home'],
-        ['label'=>'Products','route'=>'site.products'],
-        ['label'=>$product->name],
-    ]"
-    :tag="$product->linked_product_code ? strtoupper($product->linked_product_code) : ($product->category ? ucfirst($product->category) : null)"
-    :theme="$product->linked_product_code === 'churchops' ? 'green' : 'cyan'"
-/>
+{{-- ── HERO ── --}}
+<section class="pd-hero">
+  <canvas id="pd-hero-canvas"></canvas>
+  <div style="position:absolute;inset:0;background:linear-gradient(to br,var(--navy) via-transparent to var(--navy));pointer-events:none;"></div>
+  <div class="pd-hero-inner">
+    <div>
+      @php
+        $pdTag = $product->linked_product_code ? strtoupper($product->linked_product_code) : ($product->category ? ucfirst($product->category) : 'Product');
+        $isChurch = $product->linked_product_code === 'churchops';
+      @endphp
+      <div class="pd-hero-tag">
+        <span class="pulse"></span>
+        {{ $pdTag }}
+      </div>
+      <h1>{{ $product->name }}<br>@if($product->tagline)<span class="accent" style="font-size:0.65em;opacity:0.75;">{{ $product->tagline }}</span>@endif</h1>
+      @if($product->description)<p class="pd-hero-sub">{{ Str::limit($product->description, 160) }}</p>@endif
+      <div class="pd-hero-btns">
+        <button wire:click="openPurchase" class="pd-btn-buy">
+          <svg style="width:16px;height:16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+          Purchase License
+        </button>
+        <a href="{{ route('site.book-demo') }}" wire:navigate class="pd-btn-ghost">
+          <svg style="width:15px;height:15px;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          Book Demo
+        </a>
+      </div>
+    </div>
+    {{-- Decorative mockup --}}
+    <div class="pd-mockup">
+      <div class="pd-mockup-bar">
+        <span class="pd-dot pd-dot-r"></span><span class="pd-dot pd-dot-y"></span><span class="pd-dot pd-dot-g"></span>
+        <span class="pd-mockup-label">{{ $product->name }} Dashboard</span>
+      </div>
+      <div class="pd-mockup-body">
+        <div class="pd-mock-stats">
+          <div class="pd-mock-stat"><div class="pd-mock-stat-num" style="color:var(--cyan);">{{ $product->is_on_sale ? 'ON SALE' : number_format($product->price,0) }}</div><div class="pd-mock-stat-lbl">{{ $product->is_on_sale ? 'Special' : 'GHS' }}</div></div>
+          <div class="pd-mock-stat"><div class="pd-mock-stat-num" style="color:#7acfe8;">{{ $product->version ? 'v'.$product->version : '—' }}</div><div class="pd-mock-stat-lbl">Version</div></div>
+          <div class="pd-mock-stat"><div class="pd-mock-stat-num" style="color:#28ca41;">✓</div><div class="pd-mock-stat-lbl">{{ $product->platform ?? 'Available' }}</div></div>
+        </div>
+        <div class="pd-mock-chart">
+          @foreach([55,70,85,60,90,75,95] as $h)
+          <div class="pd-chart-bar" style="height:{{ $h }}%;"></div>
+          @endforeach
+        </div>
+        @if($product->features && count($product->features) > 0)
+        <div style="margin-top:1rem;display:flex;flex-direction:column;gap:0.4rem;">
+          @foreach(array_slice($product->features, 0, 3) as $f)
+          <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.7rem;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.04);border-radius:6px;padding:0.4rem 0.65rem;">
+            <svg style="width:12px;height:12px;flex-shrink:0;" fill="none" viewBox="0 0 24 24" stroke="var(--cyan)" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            {{ $f }}
+          </div>
+          @endforeach
+        </div>
+        @endif
+      </div>
+    </div>
+  </div>
+</section>
+
+{{-- Stats banner --}}
+<div class="pd-stats-banner">
+  <div class="pd-stats-inner">
+    <div class="pd-stat-item"><div class="pd-stat-num">{{ $product->platform ?? 'Desktop' }}</div><div class="pd-stat-lbl">Platform</div></div>
+    <div class="pd-stat-item"><div class="pd-stat-num">100%</div><div class="pd-stat-lbl">Offline First</div></div>
+    <div class="pd-stat-item"><div class="pd-stat-num">{{ $product->version ? 'v'.$product->version : 'Latest' }}</div><div class="pd-stat-lbl">Current Version</div></div>
+    <div class="pd-stat-item"><div class="pd-stat-num">Fast</div><div class="pd-stat-lbl">Deployment</div></div>
+  </div>
+</div>
 
 @if($purchaseSuccess)
 <div class="purchase-success">
@@ -547,3 +690,36 @@ new #[Layout('layouts.site')] class extends Component
 @endif
 
 </div>
+<script>
+(function(){
+  const canvas=document.getElementById('pd-hero-canvas');
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d');
+  let w,h,particles=[],angle=0;
+  const rings=[{r:0,speed:0.0015},{r:0.33,speed:0.0015},{r:0.66,speed:0.0015}];
+  function resize(){ w=canvas.width=window.innerWidth; h=canvas.height=canvas.parentElement.offsetHeight||window.innerHeight; }
+  window.addEventListener('resize',resize); resize();
+  const PC=60;
+  for(let i=0;i<PC;i++) particles.push({x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight,vx:(Math.random()-0.5)*0.4,vy:(Math.random()-0.5)*0.4,s:Math.random()*1.5+0.5,a:Math.random()*0.5+0.2});
+  function animate(){
+    ctx.clearRect(0,0,w,h);
+    const cx=w*0.82,cy=h*0.5,maxR=Math.max(w,h)*0.75;
+    particles.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0||p.x>w||p.y<0||p.y>h){ p.x=Math.random()*w; p.y=Math.random()*h; }
+      ctx.fillStyle=`rgba(0,184,219,${p.a})`;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.s,0,Math.PI*2); ctx.fill();
+    });
+    angle+=0.01;
+    const sg=ctx.createConicGradient(angle,cx,cy);
+    sg.addColorStop(0,'rgba(0,184,219,0.12)'); sg.addColorStop(0.1,'rgba(0,184,219,0)'); sg.addColorStop(1,'rgba(0,184,219,0)');
+    ctx.fillStyle=sg; ctx.beginPath(); ctx.arc(cx,cy,maxR,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='rgba(0,184,219,0.25)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx+Math.cos(angle)*maxR,cy+Math.sin(angle)*maxR); ctx.stroke();
+    rings.forEach(ring=>{ ring.r+=ring.speed; if(ring.r>1) ring.r=0;
+      ctx.strokeStyle=`rgba(0,184,219,${(1-ring.r)*0.35})`; ctx.beginPath(); ctx.arc(cx,cy,ring.r*maxR,0,Math.PI*2); ctx.stroke(); });
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+</script>
