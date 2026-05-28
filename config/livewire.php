@@ -25,7 +25,7 @@ return [
 
     'component_namespaces' => [
         'layouts' => resource_path('views/layouts'),
-        'pages'   => resource_path('views/livewire/pages'),
+        'pages'   => resource_path('views/pages'),
     ],
 
     /*
@@ -48,7 +48,7 @@ return [
 
     'make_command' => [
         'type'  => 'sfc',
-        'emoji' => false,
+        'emoji' => true,
         'with'  => [
             'js'   => false,
             'css'  => false,
@@ -132,7 +132,7 @@ return [
 
     'navigate' => [
         'show_progress_bar'  => true,
-        'progress_bar_color' => '#4F46E5',
+        'progress_bar_color' => '#0092b8',
     ],
 
     /*
