@@ -17,7 +17,7 @@ new #[Layout('layouts.site')] #[Title('Portfolio — Exchosoft Consult')] class 
             ->when($this->filterCategory, fn($q) => $q->where('category', $this->filterCategory))
             ->orderBy('sort_order')->latest()->paginate(12);
 
-        return view('livewire.pages.site.portfolio', compact('items'));
+        return view('pages.site.portfolio', compact('items'));
     }
 }; ?>
 

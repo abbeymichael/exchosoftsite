@@ -65,7 +65,7 @@ new #[Layout('layouts.site')] #[Title('Book a Demo — Exchosoft Consult')] clas
     public function render(): \Illuminate\View\View
     {
         $products = ShopProduct::published()->orderBy('name')->get(['id', 'name']);
-        return view('livewire.pages.site.book-demo', compact('products'));
+        return view('pages.site.book-demo', compact('products'));
     }
 }; ?>
 

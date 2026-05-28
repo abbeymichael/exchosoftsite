@@ -84,7 +84,7 @@ new #[Layout('layouts.admin')] #[Title('Demo Bookings — ExchoSoft')] class ext
             'completed'=> DemoBooking::where('status', 'completed')->count(),
         ];
 
-        return view('livewire.pages.admin.demo-bookings', compact('bookings', 'viewBooking', 'stats'));
+        return view('pages.admin.demo-bookings', compact('bookings', 'viewBooking', 'stats'));
     }
 }; ?>
 

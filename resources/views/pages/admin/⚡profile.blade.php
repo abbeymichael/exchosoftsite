@@ -102,7 +102,7 @@ new #[Layout('layouts.admin')] #[Title('My Profile — ExchoLicense')] class ext
 
     public function render()
     {
-        return view('livewire.pages.admin.profile', [
+        return view('pages.admin.profile', [
             'user' => Auth::user(),
         ]);
     }

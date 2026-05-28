@@ -78,7 +78,7 @@ new #[Layout('layouts.site')] #[Title('Exchosoft Consult — Software Developmen
             'demo_cta_subtitle' => $s['home_demo_cta_subtitle'] ?? "Book a live demonstration and see how our platforms handle your specific industry's challenges.",
         ];
 
-        return view('livewire.pages.site.home', compact('featuredProducts', 'latestPosts', 'featuredCases', 'featuredWork', 'cms'));
+        return view('pages.site.home', compact('featuredProducts', 'latestPosts', 'featuredCases', 'featuredWork', 'cms'));
     }
 }; ?>
 

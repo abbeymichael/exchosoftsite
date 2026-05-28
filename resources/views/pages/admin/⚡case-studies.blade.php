@@ -120,7 +120,7 @@ new #[Layout('layouts.admin')] #[Title('Case Studies — ExchoSoft')] class exte
 
         $shopProducts = ShopProduct::published()->orderBy('name')->get(['id', 'name']);
 
-        return view('livewire.pages.admin.case-studies', compact('studies', 'shopProducts'));
+        return view('pages.admin.case-studies', compact('studies', 'shopProducts'));
     }
 }; ?>
 

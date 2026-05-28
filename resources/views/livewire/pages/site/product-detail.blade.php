@@ -75,7 +75,7 @@ new #[Layout('layouts.site')] class extends Component
             ->limit(3)
             ->get();
 
-        return view('livewire.pages.site.product-detail', compact('relatedProducts'))
+        return view('pages.site.product-detail', compact('relatedProducts'))
             ->title($this->product->name . ' — Exchosoft Consult');
     }
 }; ?>

@@ -106,7 +106,7 @@ new #[Layout('layouts.admin')] #[Title('White Papers — ExchoSoft')] class exte
 
         $shopProducts = ShopProduct::published()->orderBy('name')->get(['id', 'name']);
 
-        return view('livewire.pages.admin.white-papers', compact('papers', 'shopProducts'));
+        return view('pages.admin.white-papers', compact('papers', 'shopProducts'));
     }
 }; ?>
 

@@ -8,7 +8,7 @@ new #[Layout('layouts.site')] #[Title('Our Services — Exchosoft Consult')] cla
 {
     public function render(): \Illuminate\View\View
     {
-        return view('livewire.pages.site.services');
+        return view('pages.site.services');
     }
 }; ?>
 

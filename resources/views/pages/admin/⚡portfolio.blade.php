@@ -112,7 +112,7 @@ new #[Layout('layouts.admin')] #[Title('Portfolio — ExchoSoft')] class extends
             ->orderBy('sort_order')->orderByDesc('created_at')
             ->paginate(15);
 
-        return view('livewire.pages.admin.portfolio', compact('items'));
+        return view('pages.admin.portfolio', compact('items'));
     }
 }; ?>
 

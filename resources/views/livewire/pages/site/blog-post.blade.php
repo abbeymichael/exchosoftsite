@@ -17,7 +17,7 @@ new #[Layout('layouts.site')] class extends Component
 
     public function render(): \Illuminate\View\View
     {
-        return view('livewire.pages.site.blog-post')->title($this->post->title . ' — ExchoSoft Blog');
+        return view('pages.site.blog-post')->title($this->post->title . ' — ExchoSoft Blog');
     }
 }; ?>
 

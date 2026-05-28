@@ -13,7 +13,7 @@ new #[Layout('layouts.site')] #[Title('White Papers — Exchosoft Consult')] cla
     public function render(): \Illuminate\View\View
     {
         $papers = WhitePaper::published()->latest('published_at')->paginate(9);
-        return view('livewire.pages.site.white-papers', compact('papers'));
+        return view('pages.site.white-papers', compact('papers'));
     }
 }; ?>
 

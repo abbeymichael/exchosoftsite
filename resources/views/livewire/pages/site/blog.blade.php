@@ -19,7 +19,7 @@ new #[Layout('layouts.site')] #[Title('Tech Blog — Exchosoft Consult')] class 
             ->when($this->filterCategory, fn($q) => $q->where('category', $this->filterCategory))
             ->latest('published_at')->paginate(9);
 
-        return view('livewire.pages.site.blog', compact('posts'));
+        return view('pages.site.blog', compact('posts'));
     }
 }; ?>
 

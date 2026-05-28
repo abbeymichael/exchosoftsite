@@ -124,16 +124,18 @@ new #[Layout('layouts.admin')] #[Title('Blog Posts — ExchoSoft')] class extend
         $this->resetValidation();
     }
 
-    public function render(): \Illuminate\View\View
+    // ──────────────────────────────────────────────────────────────────────────
+    // Computed
+    // ──────────────────────────────────────────────────────────────────────────
+
+    public function getPostsProperty()
     {
-        $posts = BlogPost::with('author')
+        return BlogPost::with('author')
             ->when($this->search, fn($q) => $q->where('title', 'like', '%'.$this->search.'%'))
             ->when($this->filterStatus, fn($q) => $q->where('status', $this->filterStatus))
             ->when($this->filterCategory, fn($q) => $q->where('category', $this->filterCategory))
             ->latest()
             ->paginate(15);
-
-        return view('livewire.pages.admin.blog-posts', compact('posts'));
     }
 }; ?>
 
@@ -188,7 +190,7 @@ new #[Layout('layouts.admin')] #[Title('Blog Posts — ExchoSoft')] class extend
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
-                        @forelse($posts as $post)
+                        @forelse($this->posts as $post)
                         <tr class="hover:bg-slate-50/50 transition-colors">
                             <td class="px-5 py-3">
                                 <div class="flex items-start gap-2">
@@ -233,7 +235,7 @@ new #[Layout('layouts.admin')] #[Title('Blog Posts — ExchoSoft')] class extend
                     </tbody>
                 </table>
             </div>
-            @if($posts->hasPages())<div class="border-t border-slate-100 px-5 py-4">{{ $posts->links() }}</div>@endif
+            @if($this->posts->hasPages())<div class="border-t border-slate-100 px-5 py-4">{{ $this->posts->links() }}</div>@endif
         </div>
     </div>
 
@@ -293,8 +295,8 @@ new #[Layout('layouts.admin')] #[Title('Blog Posts — ExchoSoft')] class extend
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Content</label>
-                    <livewire:markdown-editor 
-                        wire:model="content" 
+                    <livewire:markdown-editor
+                        wire:model="content"
                         placeholder="Write your blog post content with markdown..."
                         :rows="15"
                         :show-toolbar="true"

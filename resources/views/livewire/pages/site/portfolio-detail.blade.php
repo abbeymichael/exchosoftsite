@@ -15,7 +15,7 @@ new #[Layout('layouts.site')] class extends Component
 
     public function render(): \Illuminate\View\View
     {
-        return view('livewire.pages.site.portfolio-detail')->title($this->item->title . ' — ExchoSoft');
+        return view('pages.site.portfolio-detail')->title($this->item->title . ' — ExchoSoft');
     }
 }; ?>
 

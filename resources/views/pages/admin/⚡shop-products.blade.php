@@ -170,7 +170,7 @@ new #[Layout('layouts.admin')] #[Title('Shop Products — ExchoSoft')] class ext
             ->latest()
             ->paginate(15);
 
-        return view('livewire.pages.admin.shop-products', compact('products'));
+        return view('pages.admin.shop-products', compact('products'));
     }
 }; ?>
 

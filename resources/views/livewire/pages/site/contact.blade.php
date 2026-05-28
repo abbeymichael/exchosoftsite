@@ -55,7 +55,7 @@ new #[Layout('layouts.site')] #[Title('Contact Us — Exchosoft Consult')] class
 
     public function render(): \Illuminate\View\View
     {
-        return view('livewire.pages.site.contact');
+        return view('pages.site.contact');
     }
 }; ?>
 

@@ -174,7 +174,7 @@ new #[Layout('layouts.admin')] #[Title('Orders — ExchoSoft')] class extends Co
             'revenue'  => Order::where('payment_status', 'paid')->sum('total'),
         ];
 
-        return view('livewire.pages.admin.orders', compact('orders', 'viewOrder', 'viewLicenses', 'stats'));
+        return view('pages.admin.orders', compact('orders', 'viewOrder', 'viewLicenses', 'stats'));
     }
 }; ?>
 

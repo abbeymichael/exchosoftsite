@@ -264,7 +264,7 @@ new #[Layout('layouts.admin')] #[Title('Homepage Editor — ExchoSoft')] class e
 
     public function render(): \Illuminate\View\View
     {
-        return view('livewire.pages.admin.homepage-editor');
+        return view('pages.admin.homepage-editor');
     }
 }; ?>
 

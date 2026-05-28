@@ -8,7 +8,7 @@ new #[Layout('layouts.site')] #[Title('About — Exchosoft Consult')] class exte
 {
     public function render(): \Illuminate\View\View
     {
-        return view('livewire.pages.site.about');
+        return view('pages.site.about');
     }
 }; ?>
 

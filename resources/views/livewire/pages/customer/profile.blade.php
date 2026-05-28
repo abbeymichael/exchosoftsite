@@ -65,7 +65,7 @@ new #[Layout('layouts.site')] #[Title('My Profile — ExchoSoft')] class extends
 
     public function render(): \Illuminate\View\View
     {
-        return view('livewire.pages.customer.profile');
+        return view('pages.customer.profile');
     }
 }; ?>
 

@@ -281,7 +281,7 @@ new #[Layout('layouts.admin')] #[Title('Product Page Editor — ExchoSoft')] cla
     {
         $products = ShopProduct::published()->orderBy('sort_order')->get();
         $selected = $this->selectedProductId ? ShopProduct::find($this->selectedProductId) : null;
-        return view('livewire.pages.admin.product-page-editor', compact('products', 'selected'));
+        return view('pages.admin.product-page-editor', compact('products', 'selected'));
     }
 }; ?>
 

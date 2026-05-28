@@ -20,7 +20,7 @@ new #[Layout('layouts.site')] #[Title('My Account — ExchoSoft')] class extends
         $recentOrders  = Order::where('customer_user_id', $user->id)->with('items')->latest()->limit(5)->get();
         $upcomingDemos = DemoBooking::where('customer_user_id', $user->id)->upcoming()->limit(3)->get();
 
-        return view('livewire.pages.customer.dashboard', compact('stats', 'recentOrders', 'upcomingDemos'));
+        return view('pages.customer.dashboard', compact('stats', 'recentOrders', 'upcomingDemos'));
     }
 }; ?>
 

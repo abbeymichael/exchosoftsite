@@ -65,7 +65,7 @@ new #[Layout('layouts.admin')] #[Title('Consulting Inquiries — ExchoSoft')] cl
             'accepted' => ConsultingInquiry::where('status', 'accepted')->count(),
         ];
 
-        return view('livewire.pages.admin.consulting', compact('inquiries', 'viewInquiry', 'stats'));
+        return view('pages.admin.consulting', compact('inquiries', 'viewInquiry', 'stats'));
     }
 }; ?>
 

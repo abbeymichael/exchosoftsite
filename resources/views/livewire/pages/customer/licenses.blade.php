@@ -23,7 +23,7 @@ new #[Layout('layouts.site')] #[Title('My Licenses — ExchoSoft')] class extend
             ->with('shopProduct', 'order')
             ->get();
 
-        return view('livewire.pages.customer.licenses', compact('licenses', 'orderKeys'));
+        return view('pages.customer.licenses', compact('licenses', 'orderKeys'));
     }
 }; ?>
 

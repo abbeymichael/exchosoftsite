@@ -49,7 +49,7 @@ new #[Layout('layouts.auth')] #[Title('Create Account — ExchoSoft')] class ext
 
     public function render(): \Illuminate\View\View
     {
-        return view('livewire.pages.customer.auth.register');
+        return view('pages.customer.auth.register');
     }
 }; ?>
 

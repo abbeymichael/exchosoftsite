@@ -13,7 +13,7 @@ new #[Layout('layouts.site')] #[Title('Case Studies — Exchosoft Consult')] cla
     public function render(): \Illuminate\View\View
     {
         $studies = CaseStudy::published()->latest('published_at')->paginate(9);
-        return view('livewire.pages.site.case-studies', compact('studies'));
+        return view('pages.site.case-studies', compact('studies'));
     }
 }; ?>
 

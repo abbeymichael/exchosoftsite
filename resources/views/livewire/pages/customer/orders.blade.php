@@ -21,7 +21,7 @@ new #[Layout('layouts.site')] #[Title('My Orders — ExchoSoft')] class extends 
             ? Order::where('customer_user_id', auth()->id())->with('items.shopProduct')->find($this->viewId)
             : null;
 
-        return view('livewire.pages.customer.orders', compact('orders', 'viewOrder'));
+        return view('pages.customer.orders', compact('orders', 'viewOrder'));
     }
 }; ?>
 

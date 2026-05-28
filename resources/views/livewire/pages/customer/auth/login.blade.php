@@ -37,7 +37,7 @@ new #[Layout('layouts.auth')] #[Title('Sign In — ExchoSoft')] class extends Co
 
     public function render(): \Illuminate\View\View
     {
-        return view('livewire.pages.customer.auth.login');
+        return view('pages.customer.auth.login');
     }
 }; ?>
 

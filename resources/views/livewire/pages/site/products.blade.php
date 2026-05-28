@@ -42,7 +42,7 @@ new #[Layout('layouts.site')] #[Title('Products — Exchosoft Consult')] class e
         // Get unique linked product codes that have sections
         $linkedCodes = $featuredGroups->keys()->toArray();
 
-        return view('livewire.pages.site.products', compact(
+        return view('pages.site.products', compact(
             'products', 'featuredGroups', 'allPublished',
             'washSections', 'churchSections', 'linkedCodes'
         ));
