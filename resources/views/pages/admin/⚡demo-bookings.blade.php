@@ -5,6 +5,7 @@ use App\Models\ShopProduct;
 use App\Models\User;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -65,26 +66,34 @@ new #[Layout('layouts.admin')] #[Title('Demo Bookings — ExchoSoft')] class ext
         session()->flash('success', 'Status updated.');
     }
 
-    public function render(): \Illuminate\View\View
+    // ────────────────────────────────────────────────────────────────────────
+    #[Computed]
+    public function bookings()
     {
-        $bookings = DemoBooking::with(['shopProduct', 'customerUser', 'assignedAdmin'])
+        return DemoBooking::with(['shopProduct', 'customerUser', 'assignedAdmin'])
             ->when($this->search, fn($q) => $q->where('name', 'like', '%'.$this->search.'%')
                 ->orWhere('email', 'like', '%'.$this->search.'%')
                 ->orWhere('reference', 'like', '%'.$this->search.'%'))
             ->when($this->filterStatus, fn($q) => $q->where('status', $this->filterStatus))
             ->latest()
             ->paginate(15);
+    }
 
-        $viewBooking = $this->viewId ? DemoBooking::with(['shopProduct', 'customerUser'])->find($this->viewId) : null;
+    #[Computed]
+    public function viewBooking()
+    {
+        return $this->viewId ? DemoBooking::with(['shopProduct', 'customerUser'])->find($this->viewId) : null;
+    }
 
-        $stats = [
+    #[Computed]
+    public function stats()
+    {
+        return [
             'total'    => DemoBooking::count(),
             'pending'  => DemoBooking::where('status', 'pending')->count(),
             'upcoming' => DemoBooking::upcoming()->count(),
             'completed'=> DemoBooking::where('status', 'completed')->count(),
         ];
-
-        return view('pages.admin.demo-bookings', compact('bookings', 'viewBooking', 'stats'));
     }
 }; ?>
 
@@ -100,19 +109,19 @@ new #[Layout('layouts.admin')] #[Title('Demo Bookings — ExchoSoft')] class ext
         {{-- Stats --}}
         <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
             <div class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
-                <p class="text-2xl font-bold text-slate-900">{{ $stats['total'] }}</p>
+                <p class="text-2xl font-bold text-slate-900">{{ $this->stats['total'] }}</p>
                 <p class="text-sm text-slate-500">Total Bookings</p>
             </div>
             <div class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
-                <p class="text-2xl font-bold text-amber-600">{{ $stats['pending'] }}</p>
+                <p class="text-2xl font-bold text-amber-600">{{ $this->stats['pending'] }}</p>
                 <p class="text-sm text-slate-500">Pending Review</p>
             </div>
             <div class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
-                <p class="text-2xl font-bold text-cyan-600">{{ $stats['upcoming'] }}</p>
+                <p class="text-2xl font-bold text-cyan-600">{{ $this->stats['upcoming'] }}</p>
                 <p class="text-sm text-slate-500">Upcoming Demos</p>
             </div>
             <div class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
-                <p class="text-2xl font-bold text-green-600">{{ $stats['completed'] }}</p>
+                <p class="text-2xl font-bold text-green-600">{{ $this->stats['completed'] }}</p>
                 <p class="text-sm text-slate-500">Completed</p>
             </div>
         </div>
@@ -149,7 +158,7 @@ new #[Layout('layouts.admin')] #[Title('Demo Bookings — ExchoSoft')] class ext
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
-                        @forelse($bookings as $booking)
+                        @forelse($this->bookings as $booking)
                         @php
                             $colors = ['pending'=>'amber','confirmed'=>'green','rescheduled'=>'blue','completed'=>'emerald','cancelled'=>'red','no_show'=>'slate'];
                             $c = $colors[$booking->status] ?? 'slate';
@@ -210,12 +219,12 @@ new #[Layout('layouts.admin')] #[Title('Demo Bookings — ExchoSoft')] class ext
     </div>
 
     {{-- View Slide-over --}}
-    @if($viewBooking)
+    @if($this->viewBooking)
     <div class="fixed inset-0 z-50 flex">
         <div class="fixed inset-0 bg-slate-900/50" wire:click="closeView"></div>
         <div class="relative ml-auto w-full max-w-lg bg-white shadow-2xl flex flex-col h-full overflow-y-auto">
             <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4 sticky top-0 bg-white z-10">
-                <div><h2 class="text-base font-semibold text-slate-900">Booking Detail</h2><p class="text-xs font-mono text-slate-400">{{ $viewBooking->reference }}</p></div>
+                <div><h2 class="text-base font-semibold text-slate-900">Booking Detail</h2><p class="text-xs font-mono text-slate-400">{{ $this->viewBooking->reference }}</p></div>
                 <button wire:click="closeView" class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100">
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
@@ -223,35 +232,35 @@ new #[Layout('layouts.admin')] #[Title('Demo Bookings — ExchoSoft')] class ext
             <div class="px-6 py-5 space-y-4">
                 <div class="rounded-xl bg-slate-50 p-4 space-y-1">
                     <p class="text-xs font-semibold uppercase text-slate-500 mb-2">Contact</p>
-                    <p class="font-semibold text-slate-900">{{ $viewBooking->name }}</p>
-                    <p class="text-sm text-slate-500">{{ $viewBooking->email }}</p>
-                    @if($viewBooking->phone)<p class="text-sm text-slate-500">{{ $viewBooking->phone }}</p>@endif
-                    @if($viewBooking->company)<p class="text-sm text-slate-500">{{ $viewBooking->company }}</p>@endif
-                    @if($viewBooking->job_title)<p class="text-xs text-slate-400">{{ $viewBooking->job_title }}</p>@endif
+                    <p class="font-semibold text-slate-900">{{ $this->viewBooking->name }}</p>
+                    <p class="text-sm text-slate-500">{{ $this->viewBooking->email }}</p>
+                    @if($this->viewBooking->phone)<p class="text-sm text-slate-500">{{ $this->viewBooking->phone }}</p>@endif
+                    @if($this->viewBooking->company)<p class="text-sm text-slate-500">{{ $this->viewBooking->company }}</p>@endif
+                    @if($this->viewBooking->job_title)<p class="text-xs text-slate-400">{{ $this->viewBooking->job_title }}</p>@endif
                 </div>
                 <div class="grid grid-cols-2 gap-3 text-sm">
-                    <div><p class="text-xs text-slate-500">Product</p><p class="font-medium text-slate-900">{{ $viewBooking->product_name ?? $viewBooking->shopProduct?->name ?? '—' }}</p></div>
-                    <div><p class="text-xs text-slate-500">Demo Type</p><p class="font-medium text-slate-900 capitalize">{{ $viewBooking->demo_type }}</p></div>
-                    <div><p class="text-xs text-slate-500">Preferred Date</p><p class="font-medium text-slate-900">{{ $viewBooking->preferred_date->format('d M Y') }}</p></div>
-                    <div><p class="text-xs text-slate-500">Preferred Time</p><p class="font-medium text-slate-900">{{ $viewBooking->preferred_time ?? '—' }}</p></div>
-                    <div><p class="text-xs text-slate-500">Attendees</p><p class="font-medium text-slate-900">{{ $viewBooking->attendees }}</p></div>
-                    <div><p class="text-xs text-slate-500">Status</p><p class="font-medium text-slate-900 capitalize">{{ $viewBooking->status }}</p></div>
+                    <div><p class="text-xs text-slate-500">Product</p><p class="font-medium text-slate-900">{{ $this->viewBooking->product_name ?? $this->viewBooking->shopProduct?->name ?? '—' }}</p></div>
+                    <div><p class="text-xs text-slate-500">Demo Type</p><p class="font-medium text-slate-900 capitalize">{{ $this->viewBooking->demo_type }}</p></div>
+                    <div><p class="text-xs text-slate-500">Preferred Date</p><p class="font-medium text-slate-900">{{ $this->viewBooking->preferred_date->format('d M Y') }}</p></div>
+                    <div><p class="text-xs text-slate-500">Preferred Time</p><p class="font-medium text-slate-900">{{ $this->viewBooking->preferred_time ?? '—' }}</p></div>
+                    <div><p class="text-xs text-slate-500">Attendees</p><p class="font-medium text-slate-900">{{ $this->viewBooking->attendees }}</p></div>
+                    <div><p class="text-xs text-slate-500">Status</p><p class="font-medium text-slate-900 capitalize">{{ $this->viewBooking->status }}</p></div>
                 </div>
-                @if($viewBooking->requirements)
-                <div><p class="text-xs font-semibold uppercase text-slate-500 mb-1">Requirements</p><p class="text-sm text-slate-700 bg-slate-50 rounded-xl p-3">{{ $viewBooking->requirements }}</p></div>
+                @if($this->viewBooking->requirements)
+                <div><p class="text-xs font-semibold uppercase text-slate-500 mb-1">Requirements</p><p class="text-sm text-slate-700 bg-slate-50 rounded-xl p-3">{{ $this->viewBooking->requirements }}</p></div>
                 @endif
-                @if($viewBooking->message)
-                <div><p class="text-xs font-semibold uppercase text-slate-500 mb-1">Message</p><p class="text-sm text-slate-700 bg-slate-50 rounded-xl p-3">{{ $viewBooking->message }}</p></div>
+                @if($this->viewBooking->message)
+                <div><p class="text-xs font-semibold uppercase text-slate-500 mb-1">Message</p><p class="text-sm text-slate-700 bg-slate-50 rounded-xl p-3">{{ $this->viewBooking->message }}</p></div>
                 @endif
-                @if($viewBooking->confirmed_date)
+                @if($this->viewBooking->confirmed_date)
                 <div class="rounded-xl bg-green-50 border border-green-200 p-4">
                     <p class="text-xs font-semibold uppercase text-green-600 mb-2">Confirmed Details</p>
-                    <p class="text-sm text-slate-700">Date: {{ $viewBooking->confirmed_date->format('d M Y') }} at {{ $viewBooking->confirmed_time }}</p>
-                    @if($viewBooking->meeting_link)<a href="{{ $viewBooking->meeting_link }}" target="_blank" class="text-sm text-cyan-600 hover:underline">{{ $viewBooking->meeting_link }}</a>@endif
+                    <p class="text-sm text-slate-700">Date: {{ $this->viewBooking->confirmed_date->format('d M Y') }} at {{ $this->viewBooking->confirmed_time }}</p>
+                    @if($this->viewBooking->meeting_link)<a href="{{ $this->viewBooking->meeting_link }}" target="_blank" class="text-sm text-cyan-600 hover:underline">{{ $this->viewBooking->meeting_link }}</a>@endif
                 </div>
                 @endif
-                @if($viewBooking->admin_notes)
-                <div><p class="text-xs font-semibold uppercase text-slate-500 mb-1">Admin Notes</p><p class="text-sm text-slate-700 bg-slate-50 rounded-xl p-3">{{ $viewBooking->admin_notes }}</p></div>
+                @if($this->viewBooking->admin_notes)
+                <div><p class="text-xs font-semibold uppercase text-slate-500 mb-1">Admin Notes</p><p class="text-sm text-slate-700 bg-slate-50 rounded-xl p-3">{{ $this->viewBooking->admin_notes }}</p></div>
                 @endif
             </div>
         </div>

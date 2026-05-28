@@ -110,17 +110,22 @@ new #[Layout('layouts.admin')] #[Title('Case Studies — ExchoSoft')] class exte
         $this->resetValidation();
     }
 
-    public function render(): \Illuminate\View\View
+    // ────────────────────────────────────────────────────────────────────────────
+    // Computed Properties
+    // ────────────────────────────────────────────────────────────────────────────
+
+    public function getStudiesProperty()
     {
-        $studies = CaseStudy::with(['author', 'shopProduct'])
+        return CaseStudy::with(['author', 'shopProduct'])
             ->when($this->search, fn($q) => $q->where('title', 'like', '%'.$this->search.'%')
                 ->orWhere('client_name', 'like', '%'.$this->search.'%'))
             ->when($this->filterStatus, fn($q) => $q->where('status', $this->filterStatus))
             ->latest()->paginate(15);
+    }
 
-        $shopProducts = ShopProduct::published()->orderBy('name')->get(['id', 'name']);
-
-        return view('pages.admin.case-studies', compact('studies', 'shopProducts'));
+    public function getShopProductsProperty()
+    {
+        return ShopProduct::published()->orderBy('name')->get(['id', 'name']);
     }
 }; ?>
 
@@ -166,7 +171,7 @@ new #[Layout('layouts.admin')] #[Title('Case Studies — ExchoSoft')] class exte
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
-                        @forelse($studies as $study)
+                        @forelse($this->studies as $study)
                         <tr class="hover:bg-slate-50/50 transition-colors">
                             <td class="px-5 py-3">
                                 <p class="font-semibold text-slate-900">{{ $study->title }}</p>
@@ -200,7 +205,7 @@ new #[Layout('layouts.admin')] #[Title('Case Studies — ExchoSoft')] class exte
                     </tbody>
                 </table>
             </div>
-            @if($studies->hasPages())<div class="border-t border-slate-100 px-5 py-4">{{ $studies->links() }}</div>@endif
+            @if($this->studies->hasPages())<div class="border-t border-slate-100 px-5 py-4">{{ $this->studies->links() }}</div>@endif
         </div>
     </div>
 
@@ -241,7 +246,7 @@ new #[Layout('layouts.admin')] #[Title('Case Studies — ExchoSoft')] class exte
                         <label class="block text-xs font-semibold text-slate-600 mb-1">Linked Product</label>
                         <select wire:model="shop_product_id" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
                             <option value="">None</option>
-                            @foreach($shopProducts as $sp)
+                            @foreach($this->shopProducts as $sp)
                                 <option value="{{ $sp->id }}">{{ $sp->name }}</option>
                             @endforeach
                         </select>

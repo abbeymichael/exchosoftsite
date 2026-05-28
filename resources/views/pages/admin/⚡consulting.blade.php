@@ -4,6 +4,7 @@ use App\Models\ConsultingInquiry;
 use App\Models\User;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -45,9 +46,11 @@ new #[Layout('layouts.admin')] #[Title('Consulting Inquiries — ExchoSoft')] cl
         session()->flash('success', 'Inquiry updated.');
     }
 
-    public function render(): \Illuminate\View\View
+    // ────────────────────────────────────────────────────────────────────────
+    #[Computed]
+    public function inquiries()
     {
-        $inquiries = ConsultingInquiry::with(['customerUser', 'assignedAdmin'])
+        return ConsultingInquiry::with(['customerUser', 'assignedAdmin'])
             ->when($this->search, fn($q) => $q->where('name', 'like', '%'.$this->search.'%')
                 ->orWhere('email', 'like', '%'.$this->search.'%')
                 ->orWhere('subject', 'like', '%'.$this->search.'%'))
@@ -55,17 +58,23 @@ new #[Layout('layouts.admin')] #[Title('Consulting Inquiries — ExchoSoft')] cl
             ->when($this->filterType, fn($q) => $q->where('inquiry_type', $this->filterType))
             ->latest()
             ->paginate(15);
+    }
 
-        $viewInquiry = $this->viewId ? ConsultingInquiry::with(['customerUser'])->find($this->viewId) : null;
+    #[Computed]
+    public function viewInquiry()
+    {
+        return $this->viewId ? ConsultingInquiry::with(['customerUser'])->find($this->viewId) : null;
+    }
 
-        $stats = [
+    #[Computed]
+    public function stats()
+    {
+        return [
             'total'    => ConsultingInquiry::count(),
             'new'      => ConsultingInquiry::where('status', 'new')->count(),
             'reviewing'=> ConsultingInquiry::where('status', 'reviewing')->count(),
             'accepted' => ConsultingInquiry::where('status', 'accepted')->count(),
         ];
-
-        return view('pages.admin.consulting', compact('inquiries', 'viewInquiry', 'stats'));
     }
 }; ?>
 
@@ -81,19 +90,19 @@ new #[Layout('layouts.admin')] #[Title('Consulting Inquiries — ExchoSoft')] cl
         {{-- Stats --}}
         <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
             <div class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
-                <p class="text-2xl font-bold text-slate-900">{{ $stats['total'] }}</p>
+                <p class="text-2xl font-bold text-slate-900">{{ $this->stats['total'] }}</p>
                 <p class="text-sm text-slate-500">Total Inquiries</p>
             </div>
             <div class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
-                <p class="text-2xl font-bold text-cyan-600">{{ $stats['new'] }}</p>
+                <p class="text-2xl font-bold text-cyan-600">{{ $this->stats['new'] }}</p>
                 <p class="text-sm text-slate-500">New</p>
             </div>
             <div class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
-                <p class="text-2xl font-bold text-blue-600">{{ $stats['reviewing'] }}</p>
+                <p class="text-2xl font-bold text-blue-600">{{ $this->stats['reviewing'] }}</p>
                 <p class="text-sm text-slate-500">Reviewing</p>
             </div>
             <div class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
-                <p class="text-2xl font-bold text-green-600">{{ $stats['accepted'] }}</p>
+                <p class="text-2xl font-bold text-green-600">{{ $this->stats['accepted'] }}</p>
                 <p class="text-sm text-slate-500">Accepted</p>
             </div>
         </div>
@@ -138,7 +147,7 @@ new #[Layout('layouts.admin')] #[Title('Consulting Inquiries — ExchoSoft')] cl
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
-                        @forelse($inquiries as $inq)
+                        @forelse($this->inquiries as $inq)
                         @php
                             $colors = ['new'=>'cyan','reviewing'=>'blue','quoted'=>'violet','accepted'=>'green','declined'=>'red','completed'=>'emerald'];
                             $c = $colors[$inq->status] ?? 'slate';
@@ -183,12 +192,12 @@ new #[Layout('layouts.admin')] #[Title('Consulting Inquiries — ExchoSoft')] cl
     </div>
 
     {{-- View Slide-over --}}
-    @if($viewInquiry)
+    @if($this->viewInquiry)
     <div class="fixed inset-0 z-50 flex">
         <div class="fixed inset-0 bg-slate-900/50" wire:click="closeView"></div>
         <div class="relative ml-auto w-full max-w-lg bg-white shadow-2xl flex flex-col h-full overflow-y-auto">
             <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4 sticky top-0 bg-white z-10">
-                <div><h2 class="text-base font-semibold text-slate-900">Inquiry Detail</h2><p class="text-xs font-mono text-slate-400">{{ $viewInquiry->reference }}</p></div>
+                <div><h2 class="text-base font-semibold text-slate-900">Inquiry Detail</h2><p class="text-xs font-mono text-slate-400">{{ $this->viewInquiry->reference }}</p></div>
                 <button wire:click="closeView" class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100">
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
@@ -196,24 +205,24 @@ new #[Layout('layouts.admin')] #[Title('Consulting Inquiries — ExchoSoft')] cl
             <div class="px-6 py-5 space-y-4">
                 <div class="rounded-xl bg-slate-50 p-4">
                     <p class="text-xs font-semibold uppercase text-slate-500 mb-2">Contact</p>
-                    <p class="font-semibold text-slate-900">{{ $viewInquiry->name }}</p>
-                    <p class="text-sm text-slate-500">{{ $viewInquiry->email }}</p>
-                    @if($viewInquiry->phone)<p class="text-sm text-slate-500">{{ $viewInquiry->phone }}</p>@endif
-                    @if($viewInquiry->company)<p class="text-sm text-slate-500">{{ $viewInquiry->company }}</p>@endif
+                    <p class="font-semibold text-slate-900">{{ $this->viewInquiry->name }}</p>
+                    <p class="text-sm text-slate-500">{{ $this->viewInquiry->email }}</p>
+                    @if($this->viewInquiry->phone)<p class="text-sm text-slate-500">{{ $this->viewInquiry->phone }}</p>@endif
+                    @if($this->viewInquiry->company)<p class="text-sm text-slate-500">{{ $this->viewInquiry->company }}</p>@endif
                 </div>
                 <div class="grid grid-cols-2 gap-3 text-sm">
-                    <div><p class="text-xs text-slate-500">Type</p><p class="font-medium text-slate-900 capitalize">{{ $viewInquiry->inquiry_type }}</p></div>
-                    <div><p class="text-xs text-slate-500">Status</p><p class="font-medium text-slate-900 capitalize">{{ $viewInquiry->status }}</p></div>
-                    <div><p class="text-xs text-slate-500">Budget</p><p class="font-medium text-slate-900">{{ $viewInquiry->budget_range ?? '—' }}</p></div>
-                    <div><p class="text-xs text-slate-500">Timeline</p><p class="font-medium text-slate-900">{{ $viewInquiry->timeline ?? '—' }}</p></div>
+                    <div><p class="text-xs text-slate-500">Type</p><p class="font-medium text-slate-900 capitalize">{{ $this->viewInquiry->inquiry_type }}</p></div>
+                    <div><p class="text-xs text-slate-500">Status</p><p class="font-medium text-slate-900 capitalize">{{ $this->viewInquiry->status }}</p></div>
+                    <div><p class="text-xs text-slate-500">Budget</p><p class="font-medium text-slate-900">{{ $this->viewInquiry->budget_range ?? '—' }}</p></div>
+                    <div><p class="text-xs text-slate-500">Timeline</p><p class="font-medium text-slate-900">{{ $this->viewInquiry->timeline ?? '—' }}</p></div>
                 </div>
-                <div><p class="text-xs font-semibold uppercase text-slate-500 mb-1">Subject</p><p class="font-semibold text-slate-900">{{ $viewInquiry->subject }}</p></div>
-                <div><p class="text-xs font-semibold uppercase text-slate-500 mb-1">Description</p><p class="text-sm text-slate-700 bg-slate-50 rounded-xl p-3">{{ $viewInquiry->description }}</p></div>
-                @if($viewInquiry->how_heard)
-                <div><p class="text-xs text-slate-500">How they heard about us:</p><p class="text-sm text-slate-700">{{ $viewInquiry->how_heard }}</p></div>
+                <div><p class="text-xs font-semibold uppercase text-slate-500 mb-1">Subject</p><p class="font-semibold text-slate-900">{{ $this->viewInquiry->subject }}</p></div>
+                <div><p class="text-xs font-semibold uppercase text-slate-500 mb-1">Description</p><p class="text-sm text-slate-700 bg-slate-50 rounded-xl p-3">{{ $this->viewInquiry->description }}</p></div>
+                @if($this->viewInquiry->how_heard)
+                <div><p class="text-xs text-slate-500">How they heard about us:</p><p class="text-sm text-slate-700">{{ $this->viewInquiry->how_heard }}</p></div>
                 @endif
-                @if($viewInquiry->admin_notes)
-                <div><p class="text-xs font-semibold uppercase text-slate-500 mb-1">Admin Notes</p><p class="text-sm text-slate-700 bg-amber-50 rounded-xl p-3 border border-amber-100">{{ $viewInquiry->admin_notes }}</p></div>
+                @if($this->viewInquiry->admin_notes)
+                <div><p class="text-xs font-semibold uppercase text-slate-500 mb-1">Admin Notes</p><p class="text-sm text-slate-700 bg-amber-50 rounded-xl p-3 border border-amber-100">{{ $this->viewInquiry->admin_notes }}</p></div>
                 @endif
             </div>
         </div>

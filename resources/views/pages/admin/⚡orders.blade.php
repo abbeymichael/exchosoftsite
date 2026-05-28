@@ -146,9 +146,13 @@ new #[Layout('layouts.admin')] #[Title('Orders — ExchoSoft')] class extends Co
         return $generated;
     }
 
-    public function render(): \Illuminate\View\View
+    // ────────────────────────────────────────────────────────────────────────────
+    // Computed Properties
+    // ────────────────────────────────────────────────────────────────────────────
+
+    public function getOrdersProperty()
     {
-        $orders = Order::with(['customerUser', 'items'])
+        return Order::with(['customerUser', 'items'])
             ->when($this->search, function ($q) {
                 $q->where('order_number', 'like', '%'.$this->search.'%')
                   ->orWhere('guest_email', 'like', '%'.$this->search.'%')
@@ -158,23 +162,30 @@ new #[Layout('layouts.admin')] #[Title('Orders — ExchoSoft')] class extends Co
             ->when($this->filterPayment, fn($q) => $q->where('payment_status', $this->filterPayment))
             ->latest()
             ->paginate(15);
+    }
 
-        $viewOrder = $this->viewId
+    public function getViewOrderProperty()
+    {
+        return $this->viewId
             ? Order::with(['customerUser', 'items.shopProduct'])->find($this->viewId)
             : null;
+    }
 
-        $viewLicenses = $this->viewId
+    public function getViewLicensesProperty()
+    {
+        return $this->viewId
             ? License::where('shop_order_id', $this->viewId)->with('shopProduct')->get()
             : collect();
+    }
 
-        $stats = [
+    public function getStatsProperty()
+    {
+        return [
             'total'    => Order::count(),
             'pending'  => Order::where('status', 'pending')->count(),
             'paid'     => Order::where('payment_status', 'paid')->count(),
             'revenue'  => Order::where('payment_status', 'paid')->sum('total'),
         ];
-
-        return view('pages.admin.orders', compact('orders', 'viewOrder', 'viewLicenses', 'stats'));
     }
 }; ?>
 
@@ -190,11 +201,11 @@ new #[Layout('layouts.admin')] #[Title('Orders — ExchoSoft')] class extends Co
         {{-- Stats --}}
         <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
             <div class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
-                <p class="text-2xl font-bold text-slate-900">{{ number_format($stats['total']) }}</p>
+                <p class="text-2xl font-bold text-slate-900">{{ number_format($this->stats['total']) }}</p>
                 <p class="text-sm text-slate-500">Total Orders</p>
             </div>
             <div class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
-                <p class="text-2xl font-bold text-amber-600">{{ number_format($stats['pending']) }}</p>
+                <p class="text-2xl font-bold text-amber-600">{{ number_format($this->stats['pending']) }}</p>
                 <p class="text-sm text-slate-500">Pending</p>
             </div>
             <div class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
@@ -245,7 +256,7 @@ new #[Layout('layouts.admin')] #[Title('Orders — ExchoSoft')] class extends Co
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
-                        @forelse($orders as $order)
+                        @forelse($this->orders as $order)
                         @php
                             $statusColors = ['pending'=>'amber','processing'=>'blue','completed'=>'green','cancelled'=>'red','refunded'=>'slate'];
                             $sc = $statusColors[$order->status] ?? 'slate';
@@ -302,8 +313,8 @@ new #[Layout('layouts.admin')] #[Title('Orders — ExchoSoft')] class extends Co
                     </tbody>
                 </table>
             </div>
-            @if($orders->hasPages())
-                <div class="border-t border-slate-100 px-5 py-4">{{ $orders->links() }}</div>
+            @if($this->orders->hasPages())
+                <div class="border-t border-slate-100 px-5 py-4">{{ $this->orders->links() }}</div>
             @endif
         </div>
     </div>

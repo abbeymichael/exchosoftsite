@@ -3,6 +3,7 @@
 use App\Models\PortfolioItem;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -104,15 +105,15 @@ new #[Layout('layouts.admin')] #[Title('Portfolio — ExchoSoft')] class extends
         $this->resetValidation();
     }
 
-    public function render(): \Illuminate\View\View
+    // ────────────────────────────────────────────────────────────────────────
+    #[Computed]
+    public function items()
     {
-        $items = PortfolioItem::when($this->search, fn($q) => $q->where('title', 'like', '%'.$this->search.'%')
+        return PortfolioItem::when($this->search, fn($q) => $q->where('title', 'like', '%'.$this->search.'%')
                 ->orWhere('client_name', 'like', '%'.$this->search.'%'))
             ->when($this->filterCategory, fn($q) => $q->where('category', $this->filterCategory))
             ->orderBy('sort_order')->orderByDesc('created_at')
             ->paginate(15);
-
-        return view('pages.admin.portfolio', compact('items'));
     }
 }; ?>
 
@@ -161,7 +162,7 @@ new #[Layout('layouts.admin')] #[Title('Portfolio — ExchoSoft')] class extends
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
-                        @forelse($items as $item)
+                        @forelse($this->items as $item)
                         <tr class="hover:bg-slate-50/50 transition-colors">
                             <td class="px-5 py-3 text-slate-400 text-xs">{{ $item->sort_order }}</td>
                             <td class="px-5 py-3">
