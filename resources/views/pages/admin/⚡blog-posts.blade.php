@@ -292,8 +292,15 @@ new #[Layout('layouts.admin')] #[Title('Blog Posts — ExchoSoft')] class extend
                     <textarea wire:model="excerpt" rows="2" placeholder="Short summary shown in listings..." class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 resize-none"></textarea>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Content (Markdown/HTML)</label>
-                    <textarea wire:model="content" rows="10" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm font-mono focus:outline-none focus:border-cyan-400 resize-y"></textarea>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Content</label>
+                    <livewire:markdown-editor 
+                        wire:model="content" 
+                        placeholder="Write your blog post content with markdown..."
+                        :rows="15"
+                        :show-toolbar="true"
+                        :show-upload="true"
+                    />
+                    @error('content') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                 </div>
                 <div class="border-t border-slate-100 pt-3">
                     <p class="text-xs font-semibold uppercase text-slate-500 mb-2">SEO Meta</p>
