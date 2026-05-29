@@ -9,6 +9,7 @@ use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use Livewire\Attributes\Computed;
 
 new #[Layout('layouts.admin')] #[Title('My Profile — ExchoLicense')] class extends Component {
 
@@ -100,12 +101,13 @@ new #[Layout('layouts.admin')] #[Title('My Profile — ExchoLicense')] class ext
         $this->successMessage = 'Password changed successfully.';
     }
 
-    public function render()
+    #[Computed]
+    public function user(): User
     {
-        return view('pages.admin.profile', [
-            'user' => Auth::user(),
-        ]);
+        return Auth::user();
     }
+
+
 }; ?>
 
 <div>
@@ -159,11 +161,11 @@ new #[Layout('layouts.admin')] #[Title('My Profile — ExchoLicense')] class ext
                     <div class="relative flex-shrink-0">
                         @if($avatar)
                             <img src="{{ $avatar->temporaryUrl() }}" class="h-16 w-16 rounded-full object-cover ring-2 ring-slate-200" alt="Preview">
-                        @elseif($user->avatar)
-                            <img src="{{ asset('storage/' . $user->avatar) }}" class="h-16 w-16 rounded-full object-cover ring-2 ring-slate-200" alt="{{ $user->name }}">
+                        @elseif($this->user()->avatar)
+                            <img src="{{ asset('storage/' . $this->user()->avatar) }}" class="h-16 w-16 rounded-full object-cover ring-2 ring-slate-200" alt="{{ $this->user()->name }}">
                         @else
                             <div class="flex h-16 w-16 items-center justify-center rounded-full bg-cyan-500 text-white text-lg font-bold ring-2 ring-slate-200">
-                                {{ $user->initials() }}
+                                {{ $this->user()->initials() }}
                             </div>
                         @endif
                     </div>
@@ -201,22 +203,22 @@ new #[Layout('layouts.admin')] #[Title('My Profile — ExchoLicense')] class ext
                     <label class="block text-sm font-medium text-slate-700 mb-1.5">Role</label>
                     <div class="flex items-center gap-2">
                         <span class="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold
-                                     {{ $user->is_main_admin ? 'bg-violet-100 text-violet-700' : 'bg-cyan-50 text-cyan-700' }}">
-                            {{ $user->is_main_admin ? 'Main Admin' : ucwords(str_replace('_', ' ', $user->role)) }}
+                                     {{ $this->user()->is_main_admin ? 'bg-violet-100 text-violet-700' : 'bg-cyan-50 text-cyan-700' }}">
+                            {{ $this->user()->is_main_admin ? 'Main Admin' : ucwords(str_replace('_', ' ', $this->user()->role)) }}
                         </span>
-                        @if($user->is_main_admin)
+                        @if($this->user()->is_main_admin)
                             <span class="text-xs text-slate-400">— This account is protected and cannot be deleted.</span>
                         @endif
                     </div>
                 </div>
 
                 {{-- Last login --}}
-                @if($user->last_login_at)
+                @if($this->user()->last_login_at)
                 <div class="rounded-xl bg-slate-50 border border-slate-100 px-4 py-3 text-sm text-slate-600">
                     <span class="font-medium">Last login:</span>
-                    {{ $user->last_login_at->format('d M Y, H:i') }}
-                    @if($user->last_login_ip)
-                        <span class="text-slate-400">from {{ $user->last_login_ip }}</span>
+                    {{ $this->user()->last_login_at->format('d M Y, H:i') }}
+                    @if($this->user()->last_login_ip)
+                        <span class="text-slate-400">from {{ $this->user()->last_login_ip }}</span>
                     @endif
                 </div>
                 @endif

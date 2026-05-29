@@ -23,7 +23,6 @@ new #[Layout('layouts.admin')] #[Title('Consulting Inquiries — ExchoSoft')] cl
     public string $adminNotes = '';
     public string $newStatus = '';
 
-    public function viewInquiry(int $id): void { $this->viewId = $id; }
     public function closeView(): void { $this->viewId = null; }
 
     public function openNote(int $id): void
@@ -187,7 +186,7 @@ new #[Layout('layouts.admin')] #[Title('Consulting Inquiries — ExchoSoft')] cl
                     </tbody>
                 </table>
             </div>
-            @if($inquiries->hasPages())<div class="border-t border-slate-100 px-5 py-4">{{ $inquiries->links() }}</div>@endif
+            @if($this->inquiries->hasPages())<div class="border-t border-slate-100 px-5 py-4">{{ $this->inquiries->links() }}</div>@endif
         </div>
     </div>
 

@@ -10,6 +10,7 @@
         "laravel/framework": "^13.8",
         "laravel/sanctum": "^4.3",
         "laravel/tinker": "^3.0",
+        "league/commonmark": "^2.8",
         "livewire/livewire": "^4.3",
         "mckenziearts/livewire-markdown-editor": "^1.3"
     },

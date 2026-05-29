@@ -28,6 +28,9 @@ class License extends Model
         'type',
         'max_activations',
         'current_activations',
+        'issued_at',
+        'activated_at',
+        'last_seen_at',
         'status',
         'expires_at',
         'notes',
@@ -50,6 +53,9 @@ class License extends Model
     ];
 
     protected $casts = [
+        'issued_at'          => 'datetime',
+        'activated_at'       => 'datetime',
+        'last_seen_at'       => 'datetime',
         'expires_at'          => 'datetime',
         'suspended_at'        => 'datetime',
         'revoked_at'          => 'datetime',

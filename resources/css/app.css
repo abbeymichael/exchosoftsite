@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "../../vendor/mckenziearts/livewire-markdown-editor/resources/css/markdown-editor.css";
+@plugin "@tailwindcss/typography";
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -108,4 +109,5 @@
     --text-display-lg--line-height: 1.1;
     --text-display-lg--letter-spacing: -0.02em;
     --text-display-lg--font-weight: 800;
+
 }

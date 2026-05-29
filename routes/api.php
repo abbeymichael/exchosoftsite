@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\Api\V1\LicenseController;
 use App\Http\Controllers\Api\V1\Internal\ProvisioningController;
+use App\Http\Controllers\Api\V1\LicenseController;
 use Illuminate\Support\Facades\Route;
 
 /*

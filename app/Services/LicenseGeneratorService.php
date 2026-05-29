@@ -2,12 +2,11 @@
 
 namespace App\Services;
 
+use App\Models\Customer;
 use App\Models\License;
 use App\Models\LicenseBatch;
 use App\Models\Product;
-use App\Models\Customer;
 use Carbon\Carbon;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class LicenseGeneratorService
@@ -30,12 +29,14 @@ class LicenseGeneratorService
      *   metadata: array|null,
      * } $params
      * @param  int  $createdBy  User ID
-     * @return LicenseBatch
      */
     public function generateBatch(array $params, int $createdBy): LicenseBatch
     {
-        $product  = Product::findOrFail($params['product_id']);
-        $prefix   = strtoupper(substr(preg_replace('/[^A-Z0-9]/', '', $params['key_prefix'] ?? $product->product_code), 0, 8));
+        $product = Product::query()
+            ->when($params['product_id'] ?? null, fn ($q, $id) => $q->where('id', $id))
+            ->when($params['product_code'] ?? null, fn ($q, $code) => $q->orWhere('product_code', strtoupper($code)))
+            ->firstOrFail();
+        $prefix = strtoupper(substr(preg_replace('/[^A-Z0-9]/', '', $params['key_prefix'] ?? $product->product_code), 0, 8));
         $quantity = min((int) $params['quantity'], 10_000); // safety cap
 
         return DB::transaction(function () use ($params, $product, $prefix, $quantity, $createdBy) {
@@ -48,31 +49,31 @@ class LicenseGeneratorService
 
             // Create the batch record
             $batch = LicenseBatch::create([
-                'product_id'      => $product->id,
-                'created_by'      => $createdBy,
-                'label'           => $params['label'],
-                'key_prefix'      => $prefix,
-                'quantity'        => $quantity,
-                'reseller_tag'    => $params['reseller_tag'] ?? null,
-                'license_type'    => $params['license_type'] ?? 'lifetime',
-                'edition'         => $params['edition'] ?? 'standard',
+                'product_id' => $product->id,
+                'created_by' => $createdBy,
+                'label' => $params['label'],
+                'key_prefix' => $prefix,
+                'quantity' => $quantity,
+                'reseller_tag' => $params['reseller_tag'] ?? null,
+                'license_type' => $params['license_type'] ?? 'lifetime',
+                'edition' => $params['edition'] ?? 'standard',
                 'max_activations' => $params['max_activations'] ?? $product->max_devices ?? 1,
-                'expires_at'      => $expiresAt,
-                'duration_days'   => $params['duration_days'] ?? null,
-                'notes'           => $params['notes'] ?? null,
-                'metadata'        => $params['metadata'] ?? null,
+                'expires_at' => $expiresAt,
+                'duration_days' => $params['duration_days'] ?? null,
+                'notes' => $params['notes'] ?? null,
+                'metadata' => $params['metadata'] ?? null,
                 'total_generated' => 0,
             ]);
 
             // Generate licenses in chunks to avoid memory pressure
-            $chunkSize   = 500;
-            $generated   = 0;
+            $chunkSize = 500;
+            $generated = 0;
             $existingKeys = [];
 
             while ($generated < $quantity) {
                 $toGenerate = min($chunkSize, $quantity - $generated);
-                $chunk      = [];
-                $attempts   = 0;
+                $chunk = [];
+                $attempts = 0;
 
                 while (count($chunk) < $toGenerate && $attempts < $toGenerate * 5) {
                     $key = License::generateKey($prefix);
@@ -82,20 +83,20 @@ class LicenseGeneratorService
                         $now = now();
 
                         $chunk[] = [
-                            'product_id'      => $product->id,
-                            'customer_id'     => null,
-                            'batch_id'        => $batch->id,
-                            'license_key'     => $key,
-                            'key_prefix'      => $prefix,
-                            'edition'         => $params['edition'] ?? 'standard',
-                            'type'            => $params['license_type'] ?? 'lifetime',
+                            'product_id' => $product->id,
+                            'customer_id' => null,
+                            'batch_id' => $batch->id,
+                            'license_key' => $key,
+                            'key_prefix' => $prefix,
+                            'edition' => $params['edition'] ?? 'standard',
+                            'type' => $params['license_type'] ?? 'lifetime',
                             'max_activations' => $params['max_activations'] ?? $product->max_devices ?? 1,
                             'current_activations' => 0,
-                            'status'          => 'active',
-                            'expires_at'      => $expiresAt,
-                            'is_renewable'    => in_array($params['license_type'] ?? '', ['monthly', 'annual', 'yearly', 'trial']),
-                            'created_at'      => $now,
-                            'updated_at'      => $now,
+                            'status' => 'active',
+                            'expires_at' => $expiresAt,
+                            'is_renewable' => in_array($params['license_type'] ?? '', ['monthly', 'annual', 'yearly', 'trial']),
+                            'created_at' => $now,
+                            'updated_at' => $now,
                         ];
                     }
 
@@ -109,9 +110,9 @@ class LicenseGeneratorService
             $batch->update(['total_generated' => $generated]);
 
             AuditService::log('batch.generated', $batch, [
-                'quantity'  => $generated,
-                'product'   => $product->name,
-                'prefix'    => $prefix,
+                'quantity' => $generated,
+                'product' => $product->name,
+                'prefix' => $prefix,
             ]);
 
             return $batch->fresh();
@@ -123,10 +124,10 @@ class LicenseGeneratorService
      */
     public function createCustomerLicense(array $params): License
     {
-        $product  = Product::findOrFail($params['product_id']);
+        $product = Product::findOrFail($params['product_id']);
         $customer = Customer::findOrFail($params['customer_id']);
 
-        $prefix    = strtoupper(substr($params['key_prefix'] ?? $product->product_code, 0, 8));
+        $prefix = strtoupper(substr($params['key_prefix'] ?? $product->product_code, 0, 8));
         $expiresAt = $this->resolveExpiry(
             $params['type'] ?? 'lifetime',
             $params['expires_at'] ?? null,
@@ -134,34 +135,34 @@ class LicenseGeneratorService
         );
 
         $license = License::create([
-            'product_id'      => $product->id,
-            'customer_id'     => $customer->id,
-            'batch_id'        => $params['batch_id'] ?? null,
-            'license_key'     => License::generateUniqueKey($prefix),
-            'key_prefix'      => $prefix,
-            'edition'         => $params['edition'] ?? 'standard',
-            'type'            => $params['type'] ?? 'lifetime',
+            'product_id' => $product->id,
+            'customer_id' => $customer->id,
+            'batch_id' => $params['batch_id'] ?? null,
+            'license_key' => License::generateUniqueKey($prefix),
+            'key_prefix' => $prefix,
+            'edition' => $params['edition'] ?? 'standard',
+            'type' => $params['type'] ?? 'lifetime',
             'max_activations' => $params['max_activations'] ?? $product->max_devices ?? 1,
-            'status'          => $params['status'] ?? 'active',
-            'expires_at'      => $expiresAt,
-            'order_id'        => $params['order_id'] ?? null,
-            'transaction_id'  => $params['transaction_id'] ?? null,
-            'reseller_id'     => $params['reseller_id'] ?? null,
-            'support_tier'    => $params['support_tier'] ?? 'standard',
-            'is_renewable'    => $params['is_renewable'] ?? true,
+            'status' => $params['status'] ?? 'active',
+            'expires_at' => $expiresAt,
+            'order_id' => $params['order_id'] ?? null,
+            'transaction_id' => $params['transaction_id'] ?? null,
+            'reseller_id' => $params['reseller_id'] ?? null,
+            'support_tier' => $params['support_tier'] ?? 'standard',
+            'is_renewable' => $params['is_renewable'] ?? true,
             'grace_period_days' => $params['grace_period_days'] ?? 0,
-            'notes'           => $params['notes'] ?? null,
-            'metadata'        => $params['metadata'] ?? null,
+            'notes' => $params['notes'] ?? null,
+            'metadata' => $params['metadata'] ?? null,
             // Enterprise licensing fields (Phase 2)
-            'features'          => $params['features'] ?? null,
-            'min_app_version'   => $params['min_app_version'] ?? null,
-            'max_app_version'   => $params['max_app_version'] ?? null,
+            'features' => $params['features'] ?? null,
+            'min_app_version' => $params['min_app_version'] ?? null,
+            'max_app_version' => $params['max_app_version'] ?? null,
         ]);
 
         AuditService::log('license.created', $license, [
             'customer' => $customer->email,
-            'product'  => $product->name,
-            'type'     => $license->type,
+            'product' => $product->name,
+            'type' => $license->type,
         ]);
 
         // Fire webhook if product has one configured
@@ -169,8 +170,8 @@ class LicenseGeneratorService
             WebhookService::dispatch($product, 'license.created', [
                 'license_key' => $license->license_key,
                 'customer_email' => $customer->email,
-                'order_id'    => $license->order_id,
-                'expires_at'  => $license->expires_at?->toDateString(),
+                'order_id' => $license->order_id,
+                'expires_at' => $license->expires_at?->toDateString(),
             ]);
         }
 
@@ -182,32 +183,32 @@ class LicenseGeneratorService
      */
     public function createTrial(array $params): License
     {
-        $product      = Product::findOrFail($params['product_id']);
-        $trialDays    = $params['trial_days'] ?? 14;
-        $prefix       = strtoupper(substr($product->product_code, 0, 4)) . 'T';
+        $product = Product::findOrFail($params['product_id']);
+        $trialDays = $params['trial_days'] ?? 14;
+        $prefix = strtoupper(substr($product->product_code, 0, 4)).'T';
 
         $license = License::create([
-            'product_id'      => $product->id,
-            'customer_id'     => $params['customer_id'] ?? null,
-            'license_key'     => License::generateUniqueKey($prefix),
-            'key_prefix'      => $prefix,
-            'edition'         => $params['edition'] ?? 'standard',
-            'type'            => 'trial',
+            'product_id' => $product->id,
+            'customer_id' => $params['customer_id'] ?? null,
+            'license_key' => License::generateUniqueKey($prefix),
+            'key_prefix' => $prefix,
+            'edition' => $params['edition'] ?? 'standard',
+            'type' => 'trial',
             'max_activations' => $params['max_activations'] ?? 1,
-            'status'          => 'trial',
-            'expires_at'      => now()->addDays($trialDays),
-            'is_renewable'    => false,
-            'notes'           => "Trial license – {$trialDays} days",
-            'metadata'        => $params['metadata'] ?? null,
+            'status' => 'trial',
+            'expires_at' => now()->addDays($trialDays),
+            'is_renewable' => false,
+            'notes' => "Trial license – {$trialDays} days",
+            'metadata' => $params['metadata'] ?? null,
             // Enterprise licensing fields (Phase 2)
-            'features'        => $params['features'] ?? null,
+            'features' => $params['features'] ?? null,
             'min_app_version' => $params['min_app_version'] ?? null,
             'max_app_version' => $params['max_app_version'] ?? null,
         ]);
 
         AuditService::log('license.trial_created', $license, [
             'trial_days' => $trialDays,
-            'product'    => $product->name,
+            'product' => $product->name,
         ]);
 
         return $license->fresh(['product', 'customer']);
@@ -232,11 +233,11 @@ class LicenseGeneratorService
         }
 
         return match ($type) {
-            'trial'   => now()->addDays(14)->endOfDay(),
+            'trial' => now()->addDays(14)->endOfDay(),
             'monthly' => now()->addMonth()->endOfDay(),
             'annual',
-            'yearly'  => now()->addYear()->endOfDay(),
-            default   => null,
+            'yearly' => now()->addYear()->endOfDay(),
+            default => null,
         };
     }
 }

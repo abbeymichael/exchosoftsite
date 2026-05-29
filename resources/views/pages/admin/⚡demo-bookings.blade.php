@@ -25,7 +25,7 @@ new #[Layout('layouts.admin')] #[Title('Demo Bookings — ExchoSoft')] class ext
     public string $meetingLink = '';
     public string $adminNotes = '';
 
-    public function viewBooking(int $id): void { $this->viewId = $id; }
+
     public function closeView(): void { $this->viewId = null; }
 
     public function openConfirm(int $id): void
@@ -212,8 +212,8 @@ new #[Layout('layouts.admin')] #[Title('Demo Bookings — ExchoSoft')] class ext
                     </tbody>
                 </table>
             </div>
-            @if($bookings->hasPages())
-                <div class="border-t border-slate-100 px-5 py-4">{{ $bookings->links() }}</div>
+            @if($this->bookings->hasPages())
+                <div class="border-t border-slate-100 px-5 py-4">{{ $this->bookings->links() }}</div>
             @endif
         </div>
     </div>

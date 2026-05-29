@@ -5,6 +5,7 @@ use App\Models\ShopProduct;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+use Livewire\Attributes\Computed;
 
 new #[Layout('layouts.admin')] #[Title('Product Page Editor — ExchoSoft')] class extends Component
 {
@@ -277,12 +278,18 @@ new #[Layout('layouts.admin')] #[Title('Product Page Editor — ExchoSoft')] cla
         session()->flash('success', 'Specs saved!');
     }
 
-    public function render(): \Illuminate\View\View
+    #[Computed]
+    public function products(): \Illuminate\Database\Eloquent\Collection
     {
-        $products = ShopProduct::published()->orderBy('sort_order')->get();
-        $selected = $this->selectedProductId ? ShopProduct::find($this->selectedProductId) : null;
-        return view('pages.admin.product-page-editor', compact('products', 'selected'));
+        return ShopProduct::published()->orderBy('sort_order')->get();
     }
+
+    #[Computed]
+    public function selectedProduct(): ?ShopProduct
+    {
+        return $this->selectedProductId ? ShopProduct::find($this->selectedProductId) : null;
+    }
+
 }; ?>
 
 <div>
@@ -368,7 +375,7 @@ new #[Layout('layouts.admin')] #[Title('Product Page Editor — ExchoSoft')] cla
         {{-- ══ Product selector ══ --}}
         <div class="ppe-card">
             <div class="ppe-section-head">Select a product to edit its page content</div>
-            @if($products->isEmpty())
+            @if($this->products->isEmpty())
             <div class="ppe-empty">
                 <h3>No published products yet</h3>
                 <p class="text-sm mb-4">Publish a product from the Shop Products manager to start editing its page.</p>
@@ -379,9 +386,9 @@ new #[Layout('layouts.admin')] #[Title('Product Page Editor — ExchoSoft')] cla
             </div>
             @else
             <div class="flex flex-wrap gap-2">
-                @foreach($products as $product)
+                @foreach($this->products as $product)
                 @php
-                    $isActive = $selectedProductId === $product->id;
+                    $isActive = $this->selectedProductId === $product->id;
                     $themeColor = match($product->linked_product_code) {
                         'washops'   => '#0891b2',
                         'churchops' => '#1a6b4a',
@@ -399,22 +406,22 @@ new #[Layout('layouts.admin')] #[Title('Product Page Editor — ExchoSoft')] cla
                 @endforeach
             </div>
 
-            @if($selected)
+            @if($this->selectedProduct)
             <div class="mt-4 flex items-center gap-4 text-xs text-slate-500 border-t border-slate-100 pt-3">
-                <span class="font-semibold text-slate-700">{{ $selected->name }}</span>
-                @if($selected->tagline)<span class="text-slate-400">{{ $selected->tagline }}</span>@endif
-                @if($selected->linked_product_code)
-                    <span class="bg-slate-100 text-slate-500 rounded-full px-2 py-0.5 font-mono">{{ $selected->linked_product_code }}</span>
+                <span class="font-semibold text-slate-700">{{ $this->selectedProduct->name }}</span>
+                @if($this->selectedProduct->tagline)<span class="text-slate-400">{{ $this->selectedProduct->tagline }}</span>@endif
+                @if($this->selectedProduct->linked_product_code)
+                    <span class="bg-slate-100 text-slate-500 rounded-full px-2 py-0.5 font-mono">{{ $this->selectedProduct->linked_product_code }}</span>
                 @endif
                 <span class="ml-auto">
-                    @if($selected->is_published)<span class="text-green-600 font-semibold">● Published</span>@else<span class="text-slate-400">● Draft</span>@endif
+                    @if($this->selectedProduct->is_published)<span class="text-green-600 font-semibold">● Published</span>@else<span class="text-slate-400">● Draft</span>@endif
                 </span>
             </div>
             @endif
             @endif
         </div>
 
-        @if($selected)
+        @if($this->selectedProduct)
         {{-- ══ Section tabs ══ --}}
         <div class="flex gap-1 bg-slate-50 p-1.5 rounded-xl border border-slate-100 w-fit">
             @foreach([
@@ -434,7 +441,7 @@ new #[Layout('layouts.admin')] #[Title('Product Page Editor — ExchoSoft')] cla
         @if($activeSection === 'hero')
         <div class="ppe-card space-y-5">
             <div class="flex items-center justify-between">
-                <div class="ppe-section-head mb-0">🎯 Hero Section — {{ $selected->name }}</div>
+                <div class="ppe-section-head mb-0">🎯 Hero Section — {{ $this->selectedProduct->name }}</div>
                 <button wire:click="saveHero" class="ppe-btn-save"
                         style="background: {{ $themes[$hero_theme]['color'] ?? '#0891b2' }}">
                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>

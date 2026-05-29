@@ -202,7 +202,7 @@ new #[Layout('layouts.admin')] #[Title('Portfolio — ExchoSoft')] class extends
                     </tbody>
                 </table>
             </div>
-            @if($items->hasPages())<div class="border-t border-slate-100 px-5 py-4">{{ $items->links() }}</div>@endif
+            @if($this->items->hasPages())<div class="border-t border-slate-100 px-5 py-4">{{ $this->items->links() }}</div>@endif
         </div>
     </div>
 
@@ -224,7 +224,7 @@ new #[Layout('layouts.admin')] #[Title('Portfolio — ExchoSoft')] class extends
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Description</label>
-                    <textarea wire:model="description" rows="3" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 resize-none"></textarea>
+                    <livewire:markdown-editor wire:model="description" :height="'150px'" placeholder="Description" />
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>

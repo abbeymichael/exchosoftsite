@@ -6,6 +6,7 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\Attributes\Computed;
 
 new #[Layout('layouts.admin')] #[Title('White Papers — ExchoSoft')] class extends Component
 {
@@ -97,17 +98,21 @@ new #[Layout('layouts.admin')] #[Title('White Papers — ExchoSoft')] class exte
         $this->resetValidation();
     }
 
-    public function render(): \Illuminate\View\View
+    #[Computed]
+    public function papers()
     {
-        $papers = WhitePaper::with(['author', 'shopProduct'])
+        return WhitePaper::with(['author', 'shopProduct'])
             ->when($this->search, fn($q) => $q->where('title', 'like', '%'.$this->search.'%'))
             ->when($this->filterStatus, fn($q) => $q->where('status', $this->filterStatus))
             ->latest()->paginate(15);
-
-        $shopProducts = ShopProduct::published()->orderBy('name')->get(['id', 'name']);
-
-        return view('pages.admin.white-papers', compact('papers', 'shopProducts'));
     }
+
+    #[Computed]
+    public function shopProducts()    {
+        return ShopProduct::published()->orderBy('name')->get(['id', 'name']);
+    }
+
+
 }; ?>
 
 <div>
@@ -152,7 +157,7 @@ new #[Layout('layouts.admin')] #[Title('White Papers — ExchoSoft')] class exte
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
-                        @forelse($papers as $paper)
+                        @forelse($this->papers as $paper)
                         <tr class="hover:bg-slate-50/50 transition-colors">
                             <td class="px-5 py-3">
                                 <p class="font-semibold text-slate-900">{{ $paper->title }}</p>
@@ -188,7 +193,7 @@ new #[Layout('layouts.admin')] #[Title('White Papers — ExchoSoft')] class exte
                     </tbody>
                 </table>
             </div>
-            @if($papers->hasPages())<div class="border-t border-slate-100 px-5 py-4">{{ $papers->links() }}</div>@endif
+            @if($this->papers->hasPages())<div class="border-t border-slate-100 px-5 py-4">{{ $this->papers->links() }}</div>@endif
         </div>
     </div>
 
@@ -214,7 +219,8 @@ new #[Layout('layouts.admin')] #[Title('White Papers — ExchoSoft')] class exte
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Summary</label>
-                    <textarea wire:model="summary" rows="3" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 resize-none"></textarea>
+                    <livewire:markdown-editor wire:model="summary" :height="'150px'" />
+
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
@@ -239,7 +245,7 @@ new #[Layout('layouts.admin')] #[Title('White Papers — ExchoSoft')] class exte
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Linked Product</label>
                     <select wire:model="shop_product_id" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
                         <option value="">None</option>
-                        @foreach($shopProducts as $sp)
+                        @foreach($this->shopProducts as $sp)
                             <option value="{{ $sp->id }}">{{ $sp->name }}</option>
                         @endforeach
                     </select>

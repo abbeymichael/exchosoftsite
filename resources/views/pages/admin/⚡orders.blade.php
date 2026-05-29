@@ -8,6 +8,7 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\Attributes\Computed;
 
 new #[Layout('layouts.admin')] #[Title('Orders — ExchoSoft')] class extends Component
 {
@@ -150,6 +151,7 @@ new #[Layout('layouts.admin')] #[Title('Orders — ExchoSoft')] class extends Co
     // Computed Properties
     // ────────────────────────────────────────────────────────────────────────────
 
+    #[Computed]
     public function getOrdersProperty()
     {
         return Order::with(['customerUser', 'items'])
@@ -164,6 +166,7 @@ new #[Layout('layouts.admin')] #[Title('Orders — ExchoSoft')] class extends Co
             ->paginate(15);
     }
 
+    #[Computed]
     public function getViewOrderProperty()
     {
         return $this->viewId
@@ -171,6 +174,7 @@ new #[Layout('layouts.admin')] #[Title('Orders — ExchoSoft')] class extends Co
             : null;
     }
 
+    #[Computed]
     public function getViewLicensesProperty()
     {
         return $this->viewId
@@ -178,6 +182,7 @@ new #[Layout('layouts.admin')] #[Title('Orders — ExchoSoft')] class extends Co
             : collect();
     }
 
+    #[Computed]
     public function getStatsProperty()
     {
         return [
@@ -209,11 +214,11 @@ new #[Layout('layouts.admin')] #[Title('Orders — ExchoSoft')] class extends Co
                 <p class="text-sm text-slate-500">Pending</p>
             </div>
             <div class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
-                <p class="text-2xl font-bold text-green-600">{{ number_format($stats['paid']) }}</p>
+                <p class="text-2xl font-bold text-green-600">{{ number_format($this->stats['paid']) }}</p>
                 <p class="text-sm text-slate-500">Paid Orders</p>
             </div>
             <div class="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
-                <p class="text-2xl font-bold text-cyan-600">GHS {{ number_format($stats['revenue'], 2) }}</p>
+                <p class="text-2xl font-bold text-cyan-600">GHS {{ number_format($this->stats['revenue'], 2) }}</p>
                 <p class="text-sm text-slate-500">Total Revenue</p>
             </div>
         </div>
@@ -320,14 +325,14 @@ new #[Layout('layouts.admin')] #[Title('Orders — ExchoSoft')] class extends Co
     </div>
 
     {{-- Order Detail Slide-over --}}
-    @if($viewOrder)
+    @if($this->viewOrder)
     <div class="fixed inset-0 z-50 flex">
         <div class="fixed inset-0 bg-slate-900/50" wire:click="closeView"></div>
         <div class="relative ml-auto w-full max-w-lg bg-white shadow-2xl flex flex-col h-full overflow-y-auto">
             <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4 sticky top-0 bg-white z-10">
                 <div>
                     <h2 class="text-base font-semibold text-slate-900">Order Detail</h2>
-                    <p class="text-xs font-mono text-slate-400">{{ $viewOrder->order_number }}</p>
+                    <p class="text-xs font-mono text-slate-400">{{ $this->viewOrder->order_number }}</p>
                 </div>
                 <button wire:click="closeView" class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100">
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -337,16 +342,16 @@ new #[Layout('layouts.admin')] #[Title('Orders — ExchoSoft')] class extends Co
                 {{-- Customer --}}
                 <div class="rounded-xl bg-slate-50 p-4">
                     <p class="text-xs font-semibold uppercase text-slate-500 mb-2">Customer</p>
-                    <p class="font-semibold text-slate-900">{{ $viewOrder->customer_name }}</p>
-                    <p class="text-sm text-slate-500">{{ $viewOrder->customer_email }}</p>
-                    @if($viewOrder->guest_phone) <p class="text-sm text-slate-500">{{ $viewOrder->guest_phone }}</p> @endif
-                    @if($viewOrder->guest_company) <p class="text-sm text-slate-500">{{ $viewOrder->guest_company }}</p> @endif
+                    <p class="font-semibold text-slate-900">{{ $this->viewOrder->customer_name }}</p>
+                    <p class="text-sm text-slate-500">{{ $this->viewOrder->customer_email }}</p>
+                    @if($this->viewOrder->guest_phone) <p class="text-sm text-slate-500">{{ $this->viewOrder->guest_phone }}</p> @endif
+                    @if($this->viewOrder->guest_company) <p class="text-sm text-slate-500">{{ $this->viewOrder->guest_company }}</p> @endif
                 </div>
                 {{-- Items --}}
                 <div>
                     <p class="text-xs font-semibold uppercase text-slate-500 mb-2">Items</p>
                     <div class="space-y-2">
-                        @foreach($viewOrder->items as $item)
+                        @foreach($this->viewOrder->items as $item)
                         <div class="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3">
                             <div>
                                 <p class="font-medium text-slate-900">{{ $item->product_name }}</p>
@@ -363,39 +368,39 @@ new #[Layout('layouts.admin')] #[Title('Orders — ExchoSoft')] class extends Co
                 </div>
                 {{-- Totals --}}
                 <div class="rounded-xl bg-slate-50 p-4 space-y-1.5">
-                    <div class="flex justify-between text-sm text-slate-600"><span>Subtotal</span><span>GHS {{ number_format($viewOrder->subtotal, 2) }}</span></div>
-                    @if($viewOrder->discount > 0)
-                    <div class="flex justify-between text-sm text-green-600"><span>Discount</span><span>-GHS {{ number_format($viewOrder->discount, 2) }}</span></div>
+                    <div class="flex justify-between text-sm text-slate-600"><span>Subtotal</span><span>GHS {{ number_format($this->viewOrder->subtotal, 2) }}</span></div>
+                    @if($this->viewOrder->discount > 0)
+                    <div class="flex justify-between text-sm text-green-600"><span>Discount</span><span>-GHS {{ number_format($this->viewOrder->discount, 2) }}</span></div>
                     @endif
-                    @if($viewOrder->tax > 0)
-                    <div class="flex justify-between text-sm text-slate-600"><span>Tax</span><span>GHS {{ number_format($viewOrder->tax, 2) }}</span></div>
+                    @if($this->viewOrder->tax > 0)
+                    <div class="flex justify-between text-sm text-slate-600"><span>Tax</span><span>GHS {{ number_format($this->viewOrder->tax, 2) }}</span></div>
                     @endif
-                    <div class="flex justify-between font-bold text-slate-900 pt-1 border-t border-slate-200"><span>Total</span><span>GHS {{ number_format($viewOrder->total, 2) }}</span></div>
+                    <div class="flex justify-between font-bold text-slate-900 pt-1 border-t border-slate-200"><span>Total</span><span>GHS {{ number_format($this->viewOrder->total, 2) }}</span></div>
                 </div>
                 {{-- Meta --}}
                 <div class="grid grid-cols-2 gap-3 text-sm">
-                    <div><p class="text-xs text-slate-500">Payment Method</p><p class="font-medium text-slate-900 capitalize">{{ $viewOrder->payment_method ?? 'N/A' }}</p></div>
-                    <div><p class="text-xs text-slate-500">Payment Status</p><p class="font-medium text-slate-900 capitalize">{{ $viewOrder->payment_status }}</p></div>
-                    <div><p class="text-xs text-slate-500">Order Status</p><p class="font-medium text-slate-900 capitalize">{{ $viewOrder->status }}</p></div>
-                    <div><p class="text-xs text-slate-500">Fulfillment</p><p class="font-medium text-slate-900 capitalize">{{ $viewOrder->fulfillment_status }}</p></div>
-                    @if($viewOrder->paid_at)
-                    <div><p class="text-xs text-slate-500">Paid At</p><p class="font-medium text-slate-900">{{ $viewOrder->paid_at->format('d M Y H:i') }}</p></div>
+                    <div><p class="text-xs text-slate-500">Payment Method</p><p class="font-medium text-slate-900 capitalize">{{ $this->viewOrder->payment_method ?? 'N/A' }}</p></div>
+                    <div><p class="text-xs text-slate-500">Payment Status</p><p class="font-medium text-slate-900 capitalize">{{ $this->viewOrder->payment_status }}</p></div>
+                    <div><p class="text-xs text-slate-500">Order Status</p><p class="font-medium text-slate-900 capitalize">{{ $this->viewOrder->status }}</p></div>
+                    <div><p class="text-xs text-slate-500">Fulfillment</p><p class="font-medium text-slate-900 capitalize">{{ $this->viewOrder->fulfillment_status }}</p></div>
+                    @if($this->viewOrder->paid_at)
+                    <div><p class="text-xs text-slate-500">Paid At</p><p class="font-medium text-slate-900">{{ $this->viewOrder->paid_at->format('d M Y H:i') }}</p></div>
                     @endif
                 </div>
-                @if($viewOrder->customer_note)
-                <div><p class="text-xs font-semibold uppercase text-slate-500 mb-1">Customer Note</p><p class="text-sm text-slate-700 bg-slate-50 rounded-xl p-3">{{ $viewOrder->customer_note }}</p></div>
+                @if($this->viewOrder->customer_note)
+                <div><p class="text-xs font-semibold uppercase text-slate-500 mb-1">Customer Note</p><p class="text-sm text-slate-700 bg-slate-50 rounded-xl p-3">{{ $this->viewOrder->customer_note }}</p></div>
                 @endif
 
                 {{-- ── LICENSE SECTION ──────────────────────────────── --}}
                 @php
-                    $hasLicenseProducts = $viewOrder->items->where('shopProduct.requires_license', true)->count() > 0
-                        || $viewOrder->items->contains(fn($i) => $i->shopProduct?->requires_license);
+                    $hasLicenseProducts = $this->viewOrder->items->where('shopProduct.requires_license', true)->count() > 0
+                        || $this->viewOrder->items->contains(fn($i) => $i->shopProduct?->requires_license);
                 @endphp
                 <div class="rounded-xl border border-cyan-100 bg-cyan-50 p-4">
                     <div class="flex items-center justify-between mb-3">
                         <p class="text-xs font-semibold uppercase text-cyan-700">🔑 Licenses</p>
-                        @if($viewOrder->payment_status === 'paid')
-                        <button wire:click="generateLicenses({{ $viewOrder->id }})"
+                        @if($this->viewOrder->payment_status === 'paid')
+                        <button wire:click="generateLicenses({{ $this->viewOrder->id }})"
                                 class="inline-flex items-center gap-1.5 rounded-lg bg-cyan-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-cyan-700 transition-colors">
                             <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
                             Generate / Regenerate
@@ -406,7 +411,7 @@ new #[Layout('layouts.admin')] #[Title('Orders — ExchoSoft')] class extends Co
                     </div>
                     @if($viewLicenses->isEmpty())
                         <p class="text-sm text-cyan-600">No licenses generated yet.
-                            @if($viewOrder->payment_status === 'paid') Click "Generate" above. @else Mark order as paid to generate licenses. @endif
+                            @if($this->viewOrder->payment_status === 'paid') Click "Generate" above. @else Mark order as paid to generate licenses. @endif
                         </p>
                     @else
                         <div class="space-y-2">
@@ -438,8 +443,8 @@ new #[Layout('layouts.admin')] #[Title('Orders — ExchoSoft')] class extends Co
 
                 {{-- Actions --}}
                 <div class="flex gap-2 pt-2 sticky bottom-0 bg-white pb-4">
-                    @if($viewOrder->payment_status !== 'paid')
-                    <button wire:click="markPaid({{ $viewOrder->id }})"
+                    @if($this->viewOrder->payment_status !== 'paid')
+                    <button wire:click="markPaid({{ $this->viewOrder->id }})"
                             class="flex-1 rounded-xl bg-green-600 py-2.5 text-sm font-semibold text-white hover:bg-green-700 transition-colors">
                         ✓ Mark as Paid &amp; Generate Licenses
                     </button>

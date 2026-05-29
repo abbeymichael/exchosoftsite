@@ -258,15 +258,15 @@ new #[Layout('layouts.admin')] #[Title('Case Studies — ExchoSoft')] class exte
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">The Challenge</label>
-                    <textarea wire:model="challenge" rows="3" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 resize-none"></textarea>
+                    <livewire:markdown-editor wire:model="challenge" />
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Our Solution</label>
-                    <textarea wire:model="solution" rows="3" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 resize-none"></textarea>
+                    <livewire:markdown-editor wire:model="solution" />
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Results Achieved</label>
-                    <textarea wire:model="results" rows="3" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 resize-none"></textarea>
+                    <livewire:markdown-editor wire:model="results" />
                 </div>
                 <div class="flex gap-3 pt-2 border-t border-slate-100 sticky bottom-0 bg-white pb-2">
                     <button type="submit" class="flex-1 rounded-xl bg-cyan-600 py-2.5 text-sm font-semibold text-white hover:bg-cyan-700 transition-colors">{{ $editMode ? 'Update' : 'Create' }}</button>

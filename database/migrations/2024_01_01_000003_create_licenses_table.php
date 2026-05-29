@@ -17,7 +17,17 @@ return new class extends Migration
             $table->enum('type', ['lifetime', 'monthly', 'annual', 'trial', 'floating', 'multi-device'])->default('lifetime');
             $table->integer('max_activations')->default(1);
             $table->integer('current_activations')->default(0);
-            $table->enum('status', ['active', 'expired', 'suspended', 'revoked', 'trial'])->default('active');
+            $table->timestamp('issued_at')->nullable();
+            $table->timestamp('activated_at')->nullable();
+            $table->timestamp('last_seen_at')->nullable();
+            $table->enum('status', [
+                'inactive',
+                'active',
+                'expired',
+                'suspended',
+                'revoked',
+                'trial',
+            ])->default('active');
             $table->timestamp('expires_at')->nullable();
             $table->string('notes')->nullable();
             $table->timestamps();

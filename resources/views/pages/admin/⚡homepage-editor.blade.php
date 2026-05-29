@@ -262,10 +262,7 @@ new #[Layout('layouts.admin')] #[Title('Homepage Editor — ExchoSoft')] class e
         session()->flash('success', 'Homepage content saved successfully!');
     }
 
-    public function render(): \Illuminate\View\View
-    {
-        return view('pages.admin.homepage-editor');
-    }
+   
 }; ?>
 
 <div>
