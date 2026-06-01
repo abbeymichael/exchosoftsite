@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Page;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -32,7 +33,8 @@ new #[Layout('layouts.admin')] #[Title('Pages — ExchoSoft')] class extends Com
         'data-processing-agreement' => 'site.data-processing-agreement',
     ];
 
-    public function getPagesProperty()
+    #[Computed]
+    public function pages()
     {
         return Page::withCount('versions')
             ->when($this->search, fn($q) => $q->where('title', 'like', '%'.$this->search.'%')

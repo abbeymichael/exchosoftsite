@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\BlogPost;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -128,7 +129,8 @@ new #[Layout('layouts.admin')] #[Title('Blog Posts — ExchoSoft')] class extend
     // Computed
     // ──────────────────────────────────────────────────────────────────────────
 
-    public function getPostsProperty()
+    #[Computed]
+    public function posts()
     {
         return BlogPost::with('author')
             ->when($this->search, fn($q) => $q->where('title', 'like', '%'.$this->search.'%'))

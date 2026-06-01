@@ -8,13 +8,13 @@ new #[Layout('layouts.site')] class extends Component
 {
     use LoadsPageSeo;
 
-    public function render(): \Illuminate\View\View
+    public function mount(): void
     {
-        $this->loadPageSeo('services');
-        return view('pages.site.services', $this->seoViewData(
+        $this->loadPageSeo(
+            'services',
             'Our Services — Exchosoft Consult',
             'Exchosoft offers custom software development, technology consulting, system architecture, digital transformation, and long-term tech partnership for African businesses.'
-        ));
+        );
     }
 }; ?>
 

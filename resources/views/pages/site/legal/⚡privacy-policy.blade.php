@@ -8,13 +8,13 @@ new #[Layout('layouts.site')] class extends Component
 {
     use LoadsPageSeo;
 
-    public function render(): \Illuminate\View\View
+    public function mount(): void
     {
-        $this->loadPageSeo('privacy-policy');
-        return view('pages.site.legal.privacy-policy', $this->seoViewData(
+        $this->loadPageSeo(
+            'privacy-policy',
             'Privacy Policy — Exchosoft Consult',
             'Read the Exchosoft Consult privacy policy. Learn how we collect, use, store, and protect your personal information.'
-        ));
+        );
     }
 }; ?>
 

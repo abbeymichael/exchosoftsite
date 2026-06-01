@@ -8,21 +8,21 @@ use Livewire\Component;
 new #[Layout('layouts.site')] class extends Component {
     public BlogPost $post;
 
+    // Exposed to layout as $title
+    public string $title = '';
+
     public function mount(string $slug): void
     {
         $this->post = BlogPost::published()->where('slug', $slug)->firstOrFail();
         $this->post->increment('views');
+
+        $this->title = $this->post->title . ' — ExchoSoft Blog';
 
         $converter = new CommonMarkConverter([
             'html_input' => 'strip',
             'allow_unsafe_links' => false,
         ]);
         $this->post->content = $converter->convert($this->post->content ?? '')->getContent();
-    }
-
-    public function render(): \Illuminate\View\View
-    {
-        return view('pages.site.blog-post')->title($this->post->title . ' — ExchoSoft Blog');
     }
 }; ?>
 

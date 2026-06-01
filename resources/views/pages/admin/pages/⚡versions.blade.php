@@ -2,6 +2,7 @@
 
 use App\Models\Page;
 use App\Models\PageVersion;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -22,7 +23,8 @@ new #[Layout('layouts.admin')] #[Title('Version History — ExchoSoft')] class e
     }
 
     // ── Version list ──────────────────────────────────────────────────────────
-    public function getVersionsProperty()
+    #[Computed]
+    public function versions()
     {
         return $this->page->versions()->latest()->get();
     }
@@ -33,7 +35,8 @@ new #[Layout('layouts.admin')] #[Title('Version History — ExchoSoft')] class e
         $this->previewId = $id;
     }
 
-    public function getPreviewVersionProperty(): ?PageVersion
+    #[Computed]
+    public function previewVersion(): ?PageVersion
     {
         if (!$this->previewId) return null;
         return $this->page->versions()->find($this->previewId);
