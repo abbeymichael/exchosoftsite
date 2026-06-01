@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+<meta charset="utf-8" />
+<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+<title>Exchosoft Consult — Software Development &amp; Technology Consultancy</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+<script>
+tailwind.config = {
+  darkMode:"class",
+  theme:{ extend:{
+    colors:{
+      "surface-tint":"#4d6079","secondary-fixed":"#b1ecff","primary":"#000917",
+      "on-primary-container":"#7689a4","surface-container-high":"#e5e9ec",
+      "error":"#ba1a1a","on-surface":"#171c1f","surface-dim":"#d6dbdd",
+      "secondary":"#00677c","outline-variant":"#c4c6cd","surface-container-lowest":"#ffffff",
+      "inverse-on-surface":"#edf1f4","secondary-container":"#4cd9fd",
+      "inverse-primary":"#b5c8e5","surface":"#f6fafd","primary-container":"#0d2137",
+      "on-secondary":"#ffffff","primary-fixed-dim":"#b5c8e5",
+      "on-tertiary-container":"#3792aa","tertiary":"#000a0e",
+      "secondary-fixed-dim":"#48d7fb","inverse-surface":"#2c3134",
+      "tertiary-fixed-dim":"#7dd2eb","background":"#f6fafd","outline":"#74777d",
+      "on-primary":"#ffffff","on-primary-fixed":"#081c32","tertiary-fixed":"#b0ecff",
+      "tertiary-container":"#00242d","surface-container-low":"#f0f4f7",
+      "surface-container-highest":"#dfe3e6","on-background":"#171c1f",
+      "surface-container":"#eaeef1","surface-bright":"#f6fafd",
+      "on-surface-variant":"#44474d","on-secondary-container":"#005d6f",
+      "surface-variant":"#dfe3e6","primary-fixed":"#d2e4ff",
+      "cyan":"#00b8db","cyan-dark":"#0091ad","cyan-deep":"#006d82",
+      "sky":"#7acfe8","sky-light":"#e5f7fb",
+      "navy":"#0d2137","navy-deepest":"#08121d","navy-mid":"#162d47",
+      "ice":"#f4f8fb","text-primary":"#0d2137","text-secondary":"#3a5a72",
+      "text-muted":"#7a9ab0",
+    },
+    fontFamily:{
+      syne:["Syne","sans-serif"], dm:["DM Sans","sans-serif"],
+      "body-md":["DM Sans"],"headline-xl":["Syne"],"headline-md":["Syne"],
+      "headline-lg":["Syne"],"label-md":["DM Sans"],
+    },
+    animation:{"fade-up":"fadeUp .6s ease both"},
+    keyframes:{ fadeUp:{ from:{opacity:"0",transform:"translateY(18px)"}, to:{opacity:"1",transform:"translateY(0)"} } },
+  }}
+}
+</script>
+<style>
+  /* Animation delays — can't be done inline in Tailwind CDN */
+  .d1{animation-delay:.1s} .d2{animation-delay:.2s} .d3{animation-delay:.3s} .d4{animation-delay:.4s}
+
+  /* Mega menu — JS-toggled, needs display:grid which Tailwind can't toggle */
+  .mega-menu-content{display:none;opacity:0;transform:translateY(-8px);transition:opacity .25s ease-out,transform .25s ease-out;pointer-events:none;}
+  .mega-menu-content.is-visible{display:grid;opacity:1;transform:translateY(0);pointer-events:all;}
+
+  /* Safe hover bridge — pseudo-element, can't be inline */
+  .mega-trigger::after{content:'';position:absolute;bottom:-16px;left:-20px;right:-20px;height:16px;}
+
+  /* Dot-matrix footer pattern — radial-gradient bg, no Tailwind utility */
+  .dot-matrix{background-image:radial-gradient(#c4c6cd 0.5px,transparent 0.5px);background-size:24px 24px;}
+
+  /* Radar — conic-gradient + pseudo-element glow line + keyframes */
+  .radar-beam{position:absolute;inset:0;border-radius:50%;animation:radarRotate 4s linear infinite;background:conic-gradient(from 0deg at 50% 50%,rgba(76,217,253,.55) 0deg,rgba(0,184,219,.18) 40deg,transparent 90deg);}
+  @keyframes radarRotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+  .radar-disc::after{content:'';position:absolute;top:50%;left:50%;width:50%;height:1.5px;background:linear-gradient(to right,rgba(76,217,253,.9),rgba(76,217,253,0));transform-origin:left center;animation:radarRotate 4s linear infinite;margin-top:-.75px;}
+
+  /* Orbit icon tooltip — ::after pseudo-element */
+  .orbit-icon::after{content:attr(data-label);position:absolute;bottom:-26px;left:50%;transform:translateX(-50%);background:rgba(0,184,219,.15);border:1px solid rgba(76,217,253,.25);color:#4cd9fd;font-size:.62rem;font-family:'Syne',sans-serif;font-weight:700;letter-spacing:.04em;padding:2px 8px;border-radius:4px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .3s;}
+  .orbit-icon:hover::after,.orbit-icon.lit::after{opacity:1;}
+
+  /* Orbit icon lit glow state — JS-toggled */
+  .orbit-icon.lit{background:rgba(8,18,29,.95)!important;border-color:rgba(76,217,253,.85)!important;box-shadow:0 0 18px rgba(76,217,253,.45),0 0 6px rgba(76,217,253,.2),inset 0 0 8px rgba(76,217,253,.07)!important;}
+  .orbit-icon.lit svg{opacity:1!important;filter:drop-shadow(0 0 5px rgba(76,217,253,.9))!important;}
+</style>
+</head>
+
+<body class="bg-surface font-dm text-on-surface antialiased min-h-screen flex flex-col">
+
+<!-- ── Sticky shell ─────────────────────────────────────── -->
+<div class="sticky top-0 z-50 flex flex-col" id="sticky-shell">
+
+  <!-- Notification Bar -->
+  <div class="border-b border-cyan/20 transition-all duration-300" id="notification-bar" style="background:linear-gradient(90deg,#08121d 0%,#0d2137 40%,#0a1e30 60%,#08121d 100%);box-shadow:0 1px 0 rgba(0,184,219,.12),inset 0 1px 0 rgba(0,184,219,.06);">
+    <div class="relative flex items-center justify-center py-2 px-10">
+      <span class="absolute left-4 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-cyan opacity-70 hidden md:block" style="box-shadow:0 0 6px rgba(0,184,219,.8)"></span>
+      <p class="text-[12px] text-white/85 tracking-wide text-center">
+        <span class="text-cyan font-semibold mr-1">New ↗</span>Case Study: Healthcare Digital Transformation in Ghana —
+        <a class="text-secondary-fixed hover:text-white underline-offset-2 hover:underline transition-colors" href="#">Read Now</a>
+      </p>
+      <button onclick="closeNotificationBar()" class="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-all" aria-label="Dismiss notification">
+        <span class="material-symbols-outlined text-base leading-none">close</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="border-b border-outline-variant/20 shadow-sm transition-all duration-500" id="main-header" style="background:rgba(0,9,23,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);">
+    <nav class="flex justify-between items-center w-full px-4 md:px-16 py-3">
+      <!-- Brand -->
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-secondary-container text-3xl" style="font-variation-settings:'FILL' 1;">hub</span>
+        <a class="font-syne text-2xl font-bold tracking-tight text-white" href="#">Exchosoft Consult</a>
+      </div>
+      <!-- Desktop nav -->
+      <ul class="hidden md:flex items-center gap-8">
+        <li><a class="text-sm font-medium tracking-widest uppercase text-white/70 hover:text-secondary-fixed transition-colors" href="#">Home</a></li>
+        <li><a class="text-sm font-medium tracking-widest uppercase text-white/70 hover:text-secondary-fixed transition-colors" href="#">About</a></li>
+        <!-- Products mega menu -->
+        <li class="mega-menu-item group relative">
+          <button class="mega-trigger relative flex items-center gap-1 text-sm font-medium tracking-widest uppercase text-white/70 group-hover:text-secondary-fixed transition-colors">
+            Products <span class="material-symbols-outlined text-sm">keyboard_arrow_down</span>
+          </button>
+          <div class="mega-menu-content absolute top-full -left-64 w-[900px] mt-4 bg-primary-container border border-outline-variant/10 rounded-xl shadow-2xl overflow-hidden">
+            <div class="flex min-h-[380px]">
+              <div class="w-2/5 relative overflow-hidden group/banner">
+                <img alt="Industrial Tech" class="w-full h-full object-cover transition-transform duration-700 group-hover/banner:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzMn91WgaDgGY6P8lfrr9NxZ5nBjQ8KXq4oLbcklS5SFeQRa1vkh6me5r-jZdSTNvH7mXykISAlWHG0ur08fNly3CA9zJIGi3J_r2GzwbVpc8hSZPhrGPkEzWm1b5cYab4O6kxje6kko3TQlGse9JP1m1I55HFhrdYxXRFSkhJNR8KqPoB1e2qio7v7nLlQokrzjKBbFd0L_WGtsm9MO_USmIhspJFCyUvbZEDIK6LpjV5nb07D_yqCxusJ1RCAnwVkQi9mqjdQlM" />
+                <div class="absolute inset-0 bg-primary/40" style="background-image:radial-gradient(#c4c6cd .5px,transparent .5px);background-size:24px 24px;"></div>
+                <div class="absolute inset-0 bg-gradient-to-l from-primary/80 to-transparent"></div>
+                <div class="absolute bottom-8 left-8 right-8">
+                  <div class="h-px w-12 bg-secondary-container mb-4"></div>
+                  <h5 class="text-white font-bold text-lg font-syne">Operational Excellence</h5>
+                  <p class="text-secondary-fixed text-sm">Reliability at every scale.</p>
+                </div>
+              </div>
+              <div class="w-3/5 p-8">
+                <div class="mb-6 flex items-center justify-between border-b border-white/10 pb-4">
+                  <span class="text-xs font-bold text-secondary-fixed uppercase tracking-widest">Solutions Portfolio</span>
+                  <a class="text-xs font-bold text-white hover:text-secondary-container transition-colors flex items-center gap-1" href="#">Explore All Products <span class="material-symbols-outlined text-xs">arrow_forward</span></a>
+                </div>
+                <div class="grid grid-cols-2 gap-x-8 gap-y-6">
+                  <a class="group/item flex items-start gap-3 hover:bg-white/5 p-2 -m-2 rounded-lg transition-colors" href="#">
+                    <span class="material-symbols-outlined text-secondary-container text-xl mt-0.5 shrink-0" style="font-variation-settings:'FILL' 1;">local_laundry_service</span>
+                    <div><p class="text-sm font-bold text-white group-hover/item:text-secondary-fixed transition-colors">WashOps</p><p class="text-[11px] text-on-primary-container mt-0.5">Laundry management</p></div>
+                  </a>
+                  <a class="group/item flex items-start gap-3 hover:bg-white/5 p-2 -m-2 rounded-lg transition-colors" href="#">
+                    <span class="material-symbols-outlined text-secondary-container text-xl mt-0.5 shrink-0" style="font-variation-settings:'FILL' 1;">church</span>
+                    <div><p class="text-sm font-bold text-white group-hover/item:text-secondary-fixed transition-colors">ChurchOps</p><p class="text-[11px] text-on-primary-container mt-0.5">Faith community management</p></div>
+                  </a>
+                  <a class="group/item flex items-start gap-3 hover:bg-white/5 p-2 -m-2 rounded-lg transition-colors" href="#">
+                    <span class="material-symbols-outlined text-secondary-container text-xl mt-0.5 shrink-0" style="font-variation-settings:'FILL' 1;">monitor_heart</span>
+                    <div><p class="text-sm font-bold text-white group-hover/item:text-secondary-fixed transition-colors">ClinicOps</p><p class="text-[11px] text-on-primary-container mt-0.5">Healthcare management</p></div>
+                  </a>
+                  <a class="group/item flex items-start gap-3 hover:bg-white/5 p-2 -m-2 rounded-lg transition-colors" href="#">
+                    <span class="material-symbols-outlined text-secondary-container text-xl mt-0.5 shrink-0" style="font-variation-settings:'FILL' 1;">biotech</span>
+                    <div><p class="text-sm font-bold text-white group-hover/item:text-secondary-fixed transition-colors">LabOps</p><p class="text-[11px] text-on-primary-container mt-0.5">Laboratory systems</p></div>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+        <!-- Services mega menu -->
+        <li class="mega-menu-item group relative">
+          <button class="mega-trigger relative flex items-center gap-1 text-sm font-medium tracking-widest uppercase text-white/70 group-hover:text-secondary-fixed transition-colors">
+            Services <span class="material-symbols-outlined text-sm">keyboard_arrow_down</span>
+          </button>
+          <div class="mega-menu-content absolute top-full -left-32 w-[620px] mt-4 bg-primary-container border border-outline-variant/10 rounded-xl shadow-2xl overflow-hidden">
+            <div class="p-8">
+              <div class="mb-6 flex items-center justify-between border-b border-white/10 pb-4">
+                <span class="text-xs font-bold text-secondary-fixed uppercase tracking-widest">Our Expertise</span>
+                <a class="text-xs font-bold text-white hover:text-secondary-container transition-colors flex items-center gap-1" href="#">All Services <span class="material-symbols-outlined text-xs">arrow_forward</span></a>
+              </div>
+              <div class="grid grid-cols-2 gap-x-8 gap-y-5">
+                <a class="group/item flex items-start gap-3 hover:bg-white/5 p-2 -m-2 rounded-lg transition-colors" href="#">
+                  <span class="material-symbols-outlined text-secondary-container text-xl mt-0.5 shrink-0" style="font-variation-settings:'FILL' 1;">code</span>
+                  <div><p class="text-sm font-bold text-white group-hover/item:text-secondary-fixed transition-colors">Custom Development</p><p class="text-[11px] text-on-primary-container mt-0.5">Built for your exact workflows</p></div>
+                </a>
+                <a class="group/item flex items-start gap-3 hover:bg-white/5 p-2 -m-2 rounded-lg transition-colors" href="#">
+                  <span class="material-symbols-outlined text-secondary-container text-xl mt-0.5 shrink-0" style="font-variation-settings:'FILL' 1;">psychology</span>
+                  <div><p class="text-sm font-bold text-white group-hover/item:text-secondary-fixed transition-colors">Technology Consulting</p><p class="text-[11px] text-on-primary-container mt-0.5">Strategic guidance, real-world lens</p></div>
+                </a>
+                <a class="group/item flex items-start gap-3 hover:bg-white/5 p-2 -m-2 rounded-lg transition-colors" href="#">
+                  <span class="material-symbols-outlined text-secondary-container text-xl mt-0.5 shrink-0" style="font-variation-settings:'FILL' 1;">architecture</span>
+                  <div><p class="text-sm font-bold text-white group-hover/item:text-secondary-fixed transition-colors">System Architecture</p><p class="text-[11px] text-on-primary-container mt-0.5">Offline-first, cloud-ready designs</p></div>
+                </a>
+                <a class="group/item flex items-start gap-3 hover:bg-white/5 p-2 -m-2 rounded-lg transition-colors" href="#">
+                  <span class="material-symbols-outlined text-secondary-container text-xl mt-0.5 shrink-0" style="font-variation-settings:'FILL' 1;">transform</span>
+                  <div><p class="text-sm font-bold text-white group-hover/item:text-secondary-fixed transition-colors">Digital Transformation</p><p class="text-[11px] text-on-primary-container mt-0.5">Modernization on your terms</p></div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </li>
+        <!-- Case Studies mega menu -->
+        <li class="mega-menu-item group relative">
+          <button class="mega-trigger relative flex items-center gap-1 text-sm font-medium tracking-widest uppercase text-white/70 group-hover:text-secondary-fixed transition-colors">
+            Case Studies <span class="material-symbols-outlined text-sm">keyboard_arrow_down</span>
+          </button>
+          <div class="mega-menu-content absolute top-full -left-48 w-[480px] mt-4 bg-primary-container border border-outline-variant/10 rounded-xl shadow-2xl overflow-hidden">
+            <div class="p-8">
+              <div class="mb-5 flex items-center justify-between border-b border-white/10 pb-4">
+                <span class="text-[10px] font-bold text-secondary-fixed uppercase tracking-widest">Case Studies</span>
+                <a class="text-[10px] font-bold text-white/60 hover:text-secondary-fixed flex items-center gap-1" href="#">View All <span class="material-symbols-outlined text-xs">arrow_forward</span></a>
+              </div>
+              <div class="space-y-3">
+                <a class="flex items-start gap-3 p-3 rounded-xl bg-white/5 hover:bg-secondary-container/10 border border-white/5 hover:border-secondary-container/30 transition-all" href="#">
+                  <span class="material-symbols-outlined text-secondary-container text-xl mt-0.5">monitor_heart</span>
+                  <div><p class="text-sm font-bold text-white">Healthcare Transformation</p><p class="text-[10px] text-on-primary-container mt-0.5">Optimizing clinical workflows in Accra.</p></div>
+                </a>
+                <a class="flex items-start gap-3 p-3 rounded-xl bg-white/5 hover:bg-secondary-container/10 border border-white/5 hover:border-secondary-container/30 transition-all" href="#">
+                  <span class="material-symbols-outlined text-secondary-container text-xl mt-0.5">language</span>
+                  <div><p class="text-sm font-bold text-white">Global Supply Chain</p><p class="text-[10px] text-on-primary-container mt-0.5">End-to-end visibility for intercontinental trade.</p></div>
+                </a>
+                <a class="flex items-start gap-3 p-3 rounded-xl bg-white/5 hover:bg-secondary-container/10 border border-white/5 hover:border-secondary-container/30 transition-all" href="#">
+                  <span class="material-symbols-outlined text-secondary-container text-xl mt-0.5">church</span>
+                  <div><p class="text-sm font-bold text-white">Faith Community Ops</p><p class="text-[10px] text-on-primary-container mt-0.5">Scaling religious institutions across West Africa.</p></div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </li>
+        <li><a class="text-sm font-medium tracking-widest uppercase text-white/70 hover:text-secondary-fixed transition-colors" href="#">Insights</a></li>
+      </ul>
+      <!-- CTA + mobile hamburger -->
+      <div class="flex items-center gap-3">
+        <a class="hidden md:inline-flex items-center gap-2 bg-secondary-container text-primary font-bold text-sm px-5 py-2.5 rounded-full hover:bg-secondary-fixed-dim transition-colors" href="#cta">Talk to Us</a>
+        <button onclick="toggleMobileMenu()" class="md:hidden w-9 h-9 flex items-center justify-center rounded-full text-white hover:bg-white/10 transition-colors">
+          <span class="material-symbols-outlined" id="menu-icon">menu</span>
+        </button>
+      </div>
+    </nav>
+  </header>
+</div>
+
+<!-- Mobile overlay -->
+<div class="fixed inset-0 bg-black/50 z-40 hidden" id="mobile-overlay" onclick="toggleMobileMenu()"></div>
+<!-- Mobile menu -->
+<div class="fixed top-0 right-0 h-full w-[85vw] max-w-sm z-50 translate-x-full transition-transform duration-300 overflow-y-auto" id="mobile-menu" style="background:rgba(0,9,23,.98);backdrop-filter:blur(20px);">
+  <div class="flex items-center justify-between p-6 border-b border-white/10">
+    <span class="font-syne text-lg font-bold text-white">Exchosoft Consult</span>
+    <button onclick="toggleMobileMenu()" class="w-8 h-8 flex items-center justify-center rounded-full text-white/70 hover:text-white hover:bg-white/10 transition-all">
+      <span class="material-symbols-outlined text-lg">close</span>
+    </button>
+  </div>
+  <ul class="p-6 space-y-1">
+    <li><a class="flex items-center gap-3 py-4 border-b border-white/8 text-white font-syne text-lg hover:text-secondary-fixed transition-colors" href="#"><span class="material-symbols-outlined text-secondary-container text-xl" style="font-variation-settings:'FILL' 1;">home</span>Home</a></li>
+    <li><a class="flex items-center gap-3 py-4 border-b border-white/8 text-white font-syne text-lg hover:text-secondary-fixed transition-colors" href="#"><span class="material-symbols-outlined text-secondary-container text-xl" style="font-variation-settings:'FILL' 1;">info</span>About</a></li>
+    <li>
+      <button onclick="toggleAccordion('products-acc')" class="w-full flex items-center justify-between py-4 border-b border-white/8 text-white font-syne text-lg hover:text-secondary-fixed transition-colors">
+        <span class="flex items-center gap-3"><span class="material-symbols-outlined text-secondary-container text-xl" style="font-variation-settings:'FILL' 1;">deployed_code</span>Products</span>
+        <span class="material-symbols-outlined text-sm transition-transform" id="products-chevron">expand_more</span>
+      </button>
+      <div class="hidden pl-10 pb-4 space-y-3" id="products-acc">
+        <a class="block py-2 text-sm text-on-primary-container hover:text-white transition-colors" href="#">WashOps</a>
+        <a class="block py-2 text-sm text-on-primary-container hover:text-white transition-colors" href="#">ChurchOps</a>
+        <a class="block py-2 text-sm text-on-primary-container hover:text-white transition-colors" href="#">ClinicOps</a>
+        <a class="block py-2 text-sm text-on-primary-container hover:text-white transition-colors" href="#">LabOps</a>
+      </div>
+    </li>
+    <li><a class="flex items-center gap-3 py-4 border-b border-white/8 text-white font-syne text-lg hover:text-secondary-fixed transition-colors" href="#"><span class="material-symbols-outlined text-secondary-container text-xl" style="font-variation-settings:'FILL' 1;">build</span>Services</a></li>
+    <li><a class="flex items-center gap-3 py-4 border-b border-white/8 text-white font-syne text-lg hover:text-secondary-fixed transition-colors" href="#"><span class="material-symbols-outlined text-secondary-container text-xl" style="font-variation-settings:'FILL' 1;">lightbulb</span>Insights</a></li>
+  </ul>
+  <div class="mt-8 px-6 space-y-4">
+    <button class="w-full bg-secondary-container text-primary font-bold py-4 rounded-full text-base shadow-lg hover:bg-secondary-fixed-dim transition-colors">Talk to Us</button>
+    <div class="flex items-center justify-center gap-4 pt-2">
+      <a class="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center hover:bg-secondary-container hover:text-primary transition-all text-white/60" href="#"><span class="material-symbols-outlined text-sm">public</span></a>
+      <a class="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center hover:bg-secondary-container hover:text-primary transition-all text-white/60" href="#"><span class="material-symbols-outlined text-sm">alternate_email</span></a>
+    </div>
+  </div>
+</div>
+
+<main class="flex-grow">
+
+  <!-- ═══ HERO ═══════════════════════════════════════════ -->
+  <section class="relative min-h-screen bg-navy-deepest grid grid-cols-1 lg:grid-cols-2 overflow-hidden pt-20">
+    <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_70%_50%,rgba(0,184,219,0.06)_0%,transparent_60%),radial-gradient(circle_at_20%_80%,rgba(122,207,232,0.03)_0%,transparent_50%)]"></div>
+    <div class="absolute inset-0 pointer-events-none opacity-[.03]" style="background-image:linear-gradient(#00b8db 1px,transparent 1px),linear-gradient(90deg,#00b8db 1px,transparent 1px);background-size:60px 60px;"></div>
+    <!-- Text col -->
+    <div class="relative z-10 flex flex-col justify-center px-8 md:px-16 lg:pl-24 py-16">
+      <div class="animate-fade-up d1 flex items-center gap-2 bg-cyan/10 border border-cyan/25 text-cyan px-4 py-1.5 rounded-full text-xs font-medium tracking-widest mb-8 w-fit uppercase">
+        <span class="w-1.5 h-1.5 bg-cyan rounded-full"></span> Ghana-Based · Africa · Caribbean · Diaspora
+      </div>
+      <h1 class="animate-fade-up d2 font-syne text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] tracking-tighter mb-6">
+        Technology Consultancy Built on <em class="text-cyan not-italic">Real-World</em> Experience
+      </h1>
+      <p class="animate-fade-up d3 text-lg text-white/60 max-w-lg mb-10 font-light leading-relaxed">
+        We're a software development and consultancy firm serving Black businesses across Africa, the Caribbean, and the diaspora—building custom solutions that work in your reality, not just in theory.
+      </p>
+      <div class="animate-fade-up d4 flex flex-wrap gap-4">
+        <a class="bg-cyan text-white px-8 py-3.5 rounded-lg font-syne text-base font-semibold hover:bg-cyan-dark hover:-translate-y-0.5 transition-all" href="#cta">Talk to Us</a>
+        <a class="bg-transparent text-white border border-white/20 px-8 py-3.5 rounded-lg font-syne text-base font-semibold hover:border-cyan hover:bg-cyan/10 transition-all" href="#services">Our Expertise</a>
+      </div>
+    </div>
+    <!-- Radar col -->
+    <div class="hidden lg:flex relative z-10 items-center justify-center p-16 animate-fade-up d3">
+      <div class="relative w-[560px] h-[560px] flex items-center justify-center" id="orbitWrap">
+        <!-- CSS radar disc -->
+        <div class="radar-disc absolute inset-0 rounded-full pointer-events-none z-[1]">
+          <div class="absolute rounded-full border border-[rgba(76,217,253,0.12)]" style="inset:0;top:50%;left:50%;transform:translate(-50%,-50%);width:100%;height:100%;"></div>
+          <div class="absolute rounded-full border border-[rgba(76,217,253,0.12)]" style="top:50%;left:50%;transform:translate(-50%,-50%);width:72%;height:72%;"></div>
+          <div class="absolute rounded-full border border-[rgba(76,217,253,0.12)]" style="top:50%;left:50%;transform:translate(-50%,-50%);width:46%;height:46%;"></div>
+          <div class="absolute rounded-full border border-[rgba(76,217,253,0.12)]" style="top:50%;left:50%;transform:translate(-50%,-50%);width:22%;height:22%;"></div>
+          <div class="radar-beam"></div>
+        </div>
+        <!-- Core hub -->
+        <div class="relative z-20 w-40 h-40 rounded-full flex items-center justify-center" style="background:rgba(8,18,29,.95);border:1px solid rgba(0,184,219,.2);box-shadow:0 0 50px rgba(0,184,219,.1);">
+          <span class="material-symbols-outlined text-secondary-container" style="font-size:3rem;font-variation-settings:'FILL' 1;">hub</span>
+        </div>
+        <!-- Orbit icons -->
+        <div class="orbit-icon absolute w-[52px] h-[52px] rounded-[14px] flex items-center justify-center z-30 cursor-default backdrop-blur-sm transition-all duration-300" style="top:50%;left:50%;margin-left:-26px;margin-top:-26px;background:rgba(8,18,29,.88);border:1px solid rgba(76,217,253,.18);" data-angle="0" data-label="Web Dev"><svg class="w-[22px] h-[22px] fill-none stroke-[#4cd9fd] stroke-[1.8] opacity-60" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3c0 0-4 3.5-4 9s4 9 4 9 4-3.5 4-9-4-9-4-9z"/><line x1="3" x2="21" y1="12" y2="12"/></svg></div>
+        <div class="orbit-icon absolute w-[52px] h-[52px] rounded-[14px] flex items-center justify-center z-30 cursor-default backdrop-blur-sm transition-all duration-300" style="top:50%;left:50%;margin-left:-26px;margin-top:-26px;background:rgba(8,18,29,.88);border:1px solid rgba(76,217,253,.18);" data-angle="45" data-label="Mobile Apps"><svg class="w-[22px] h-[22px] fill-none stroke-[#4cd9fd] stroke-[1.8] opacity-60" viewBox="0 0 24 24"><rect height="20" rx="2" width="10" x="7" y="2"/><line x1="12" x2="12" y1="18" y2="18"/></svg></div>
+        <div class="orbit-icon absolute w-[52px] h-[52px] rounded-[14px] flex items-center justify-center z-30 cursor-default backdrop-blur-sm transition-all duration-300" style="top:50%;left:50%;margin-left:-26px;margin-top:-26px;background:rgba(8,18,29,.88);border:1px solid rgba(76,217,253,.18);" data-angle="90" data-label="Databases"><svg class="w-[22px] h-[22px] fill-none stroke-[#4cd9fd] stroke-[1.8] opacity-60" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/></svg></div>
+        <div class="orbit-icon absolute w-[52px] h-[52px] rounded-[14px] flex items-center justify-center z-30 cursor-default backdrop-blur-sm transition-all duration-300" style="top:50%;left:50%;margin-left:-26px;margin-top:-26px;background:rgba(8,18,29,.88);border:1px solid rgba(76,217,253,.18);" data-angle="135" data-label="Cloud"><svg class="w-[22px] h-[22px] fill-none stroke-[#4cd9fd] stroke-[1.8] opacity-60" viewBox="0 0 24 24"><path d="M18 10a6 6 0 0 0-12 0 4 4 0 0 0 0 8h12a4 4 0 0 0 0-8z"/></svg></div>
+        <div class="orbit-icon absolute w-[52px] h-[52px] rounded-[14px] flex items-center justify-center z-30 cursor-default backdrop-blur-sm transition-all duration-300" style="top:50%;left:50%;margin-left:-26px;margin-top:-26px;background:rgba(8,18,29,.88);border:1px solid rgba(76,217,253,.18);" data-angle="180" data-label="Custom Software"><svg class="w-[22px] h-[22px] fill-none stroke-[#4cd9fd] stroke-[1.8] opacity-60" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+        <div class="orbit-icon absolute w-[52px] h-[52px] rounded-[14px] flex items-center justify-center z-30 cursor-default backdrop-blur-sm transition-all duration-300" style="top:50%;left:50%;margin-left:-26px;margin-top:-26px;background:rgba(8,18,29,.88);border:1px solid rgba(76,217,253,.18);" data-angle="225" data-label="Security"><svg class="w-[22px] h-[22px] fill-none stroke-[#4cd9fd] stroke-[1.8] opacity-60" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <div class="orbit-icon absolute w-[52px] h-[52px] rounded-[14px] flex items-center justify-center z-30 cursor-default backdrop-blur-sm transition-all duration-300" style="top:50%;left:50%;margin-left:-26px;margin-top:-26px;background:rgba(8,18,29,.88);border:1px solid rgba(76,217,253,.18);" data-angle="270" data-label="Analytics"><svg class="w-[22px] h-[22px] fill-none stroke-[#4cd9fd] stroke-[1.8] opacity-60" viewBox="0 0 24 24"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg></div>
+        <div class="orbit-icon absolute w-[52px] h-[52px] rounded-[14px] flex items-center justify-center z-30 cursor-default backdrop-blur-sm transition-all duration-300" style="top:50%;left:50%;margin-left:-26px;margin-top:-26px;background:rgba(8,18,29,.88);border:1px solid rgba(76,217,253,.18);" data-angle="315" data-label="API &amp; Integration"><svg class="w-[22px] h-[22px] fill-none stroke-[#4cd9fd] stroke-[1.8] opacity-60" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3m8 0h3a2 2 0 0 0 2-2v-3"/><circle cx="12" cy="12" r="3"/></svg></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ STATS BAR ══════════════════════════════════════ -->
+  <div class="bg-surface-container-low border-b border-outline-variant/20 px-8 md:px-24 py-10 grid grid-cols-2 md:grid-cols-4 gap-8">
+    <div class="text-center"><div class="font-syne text-3xl font-extrabold text-secondary tracking-tight">10+</div><div class="text-xs text-on-surface-variant mt-1 uppercase tracking-wider font-semibold">Industries served</div></div>
+    <div class="text-center"><div class="font-syne text-3xl font-extrabold text-secondary tracking-tight">3</div><div class="text-xs text-on-surface-variant mt-1 uppercase tracking-wider font-semibold">Continents reached</div></div>
+    <div class="text-center"><div class="font-syne text-3xl font-extrabold text-secondary tracking-tight">100%</div><div class="text-xs text-on-surface-variant mt-1 uppercase tracking-wider font-semibold">Custom solutions</div></div>
+    <div class="text-center"><div class="font-syne text-3xl font-extrabold text-secondary tracking-tight">Offline</div><div class="text-xs text-on-surface-variant mt-1 uppercase tracking-wider font-semibold">First architecture</div></div>
+  </div>
+
+  <!-- ═══ WHO WE ARE ════════════════════════════════════ -->
+  <section class="bg-surface py-24 px-8 md:px-24 grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center" id="about">
+    <div class="space-y-6">
+      <p class="text-xs font-bold tracking-[.2em] text-secondary uppercase">Who We Are</p>
+      <h2 class="font-syne text-3xl md:text-4xl font-extrabold tracking-tight text-primary leading-[1.15]">Built for the Conditions You Actually Operate In</h2>
+      <p class="text-on-surface-variant leading-relaxed">Exchosoft Consult is a Ghana-based technology consultancy and software development company. We've built systems for churches, hospitals, pharmacies, laboratories, laundries, heritage organizations — each one custom-designed for that specific business.</p>
+      <p class="text-on-surface-variant leading-relaxed">We understand the conditions our clients operate in because we're here too.</p>
+    </div>
+    <div class="flex flex-col gap-4">
+      <div class="bg-surface-container-low border-l-[3px] border-secondary-container p-5 rounded-r-lg"><strong class="block font-syne text-primary font-bold text-sm mb-1 uppercase tracking-wide">Intermittent connectivity</strong><span class="text-sm text-on-surface-variant">We build systems that keep working when the internet drops.</span></div>
+      <div class="bg-surface-container-low border-l-[3px] border-secondary-container p-5 rounded-r-lg"><strong class="block font-syne text-primary font-bold text-sm mb-1 uppercase tracking-wide">Power challenges</strong><span class="text-sm text-on-surface-variant">Offline-first architecture means no data is lost during outages.</span></div>
+      <div class="bg-surface-container-low border-l-[3px] border-secondary-container p-5 rounded-r-lg"><strong class="block font-syne text-primary font-bold text-sm mb-1 uppercase tracking-wide">Mobile-first users</strong><span class="text-sm text-on-surface-variant">Designed from the ground up for how your customers actually access technology.</span></div>
+      <div class="bg-surface-container-low border-l-[3px] border-secondary-container p-5 rounded-r-lg"><strong class="block font-syne text-primary font-bold text-sm mb-1 uppercase tracking-wide">Local payment systems</strong><span class="text-sm text-on-surface-variant">Integrated with the payment infrastructure your market already uses.</span></div>
+    </div>
+  </section>
+
+  <!-- ═══ APPROACH ══════════════════════════════════════ -->
+  <section class="bg-primary py-24 px-8 md:px-24" id="approach">
+    <p class="text-xs font-bold tracking-[.2em] text-secondary-fixed uppercase mb-4">Our Approach</p>
+    <h2 class="font-syne text-3xl md:text-4xl font-extrabold tracking-tight text-white leading-[1.15]">What We've Learned Building Software Across Industries</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-14">
+      <div class="bg-white/5 border border-secondary-container/15 rounded-xl p-8 hover:border-secondary-container/40 hover:bg-secondary-container/5 transition-all group">
+        <div class="w-11 h-11 rounded-lg bg-secondary-container/15 flex items-center justify-center mb-5 group-hover:bg-secondary-container/25 transition-colors"><svg class="w-5 h-5 fill-none stroke-secondary-container stroke-[1.75]" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+        <h3 class="font-syne text-white font-bold text-lg mb-3">Every Business Needs Its Own Solution</h3>
+        <p class="text-sm text-white/50 leading-relaxed">Off-the-shelf software forces unacceptable compromises. Each business has unique workflows deserving technology built specifically for how they operate.</p>
+      </div>
+      <div class="bg-white/5 border border-secondary-container/15 rounded-xl p-8 hover:border-secondary-container/40 hover:bg-secondary-container/5 transition-all group">
+        <div class="w-11 h-11 rounded-lg bg-secondary-container/15 flex items-center justify-center mb-5 group-hover:bg-secondary-container/25 transition-colors"><svg class="w-5 h-5 fill-none stroke-secondary-container stroke-[1.75]" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M8 12h8M12 8v8"/></svg></div>
+        <h3 class="font-syne text-white font-bold text-lg mb-3">Offline-First When It Matters</h3>
+        <p class="text-sm text-white/50 leading-relaxed">We pioneered offline-first architecture for clients who can't afford downtime — hospitals, pharmacies, churches — with automatic cloud sync when online.</p>
+      </div>
+      <div class="bg-white/5 border border-secondary-container/15 rounded-xl p-8 hover:border-secondary-container/40 hover:bg-secondary-container/5 transition-all group">
+        <div class="w-11 h-11 rounded-lg bg-secondary-container/15 flex items-center justify-center mb-5 group-hover:bg-secondary-container/25 transition-colors"><svg class="w-5 h-5 fill-none stroke-secondary-container stroke-[1.75]" viewBox="0 0 24 24"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z"/><path d="M10 6.5h4M6.5 10v4M17.5 10v4M10 17.5h4"/></svg></div>
+        <h3 class="font-syne text-white font-bold text-lg mb-3">Unified Systems, Clear Insights</h3>
+        <p class="text-sm text-white/50 leading-relaxed">We unify business workflows into cohesive systems that give management complete visibility and analytics that clearly identify where improvements are needed.</p>
+      </div>
+      <div class="bg-white/5 border border-secondary-container/15 rounded-xl p-8 hover:border-secondary-container/40 hover:bg-secondary-container/5 transition-all group">
+        <div class="w-11 h-11 rounded-lg bg-secondary-container/15 flex items-center justify-center mb-5 group-hover:bg-secondary-container/25 transition-colors"><svg class="w-5 h-5 fill-none stroke-secondary-container stroke-[1.75]" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/></svg></div>
+        <h3 class="font-syne text-white font-bold text-lg mb-3">LAN Collaboration</h3>
+        <p class="text-sm text-white/50 leading-relaxed">For businesses with multiple locations or devices, we implement local network capabilities — real-time collaboration even when external connectivity fails.</p>
+      </div>
+      <div class="bg-white/5 border border-secondary-container/15 rounded-xl p-8 hover:border-secondary-container/40 hover:bg-secondary-container/5 transition-all group">
+        <div class="w-11 h-11 rounded-lg bg-secondary-container/15 flex items-center justify-center mb-5 group-hover:bg-secondary-container/25 transition-colors"><svg class="w-5 h-5 fill-none stroke-secondary-container stroke-[1.75]" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <h3 class="font-syne text-white font-bold text-lg mb-3">Security &amp; Reliability</h3>
+        <p class="text-sm text-white/50 leading-relaxed">From financial institutions to healthcare providers, we build with security baked in — not bolted on — because your data deserves that standard.</p>
+      </div>
+      <div class="bg-white/5 border border-secondary-container/15 rounded-xl p-8 hover:border-secondary-container/40 hover:bg-secondary-container/5 transition-all group">
+        <div class="w-11 h-11 rounded-lg bg-secondary-container/15 flex items-center justify-center mb-5 group-hover:bg-secondary-container/25 transition-colors"><svg class="w-5 h-5 fill-none stroke-secondary-container stroke-[1.75]" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <h3 class="font-syne text-white font-bold text-lg mb-3">Long-Term Partnership</h3>
+        <p class="text-sm text-white/50 leading-relaxed">We're not just building software — we're building systems that grow with your business and adapt as your needs change. We stay involved.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ INDUSTRIES ════════════════════════════════════ -->
+  <section class="bg-surface-container-low py-24 px-8 md:px-24" id="industries">
+    <p class="text-xs font-bold tracking-[.2em] text-secondary uppercase mb-4">Experience</p>
+    <h2 class="font-syne text-3xl md:text-4xl font-extrabold tracking-tight text-primary leading-[1.15]">Industries We've Served</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-14">
+      <div class="bg-surface border border-outline-variant/30 rounded-xl p-7 hover:border-secondary-container hover:shadow-xl hover:shadow-secondary-container/10 transition-all"><div class="w-2 h-2 bg-secondary-container rounded-full mb-4"></div><h3 class="font-syne text-primary font-bold text-base mb-2">Healthcare &amp; Medical</h3><p class="text-sm text-on-surface-variant leading-relaxed">Hospital management systems, pharmacy solutions, and laboratory platforms — offline-first, designed to work when connectivity doesn't.</p></div>
+      <div class="bg-surface border border-outline-variant/30 rounded-xl p-7 hover:border-secondary-container hover:shadow-xl hover:shadow-secondary-container/10 transition-all"><div class="w-2 h-2 bg-secondary-container rounded-full mb-4"></div><h3 class="font-syne text-primary font-bold text-base mb-2">Faith-Based Organizations</h3><p class="text-sm text-on-surface-variant leading-relaxed">Comprehensive management systems for churches covering membership, events, donations, and complete financial transparency.</p></div>
+      <div class="bg-surface border border-outline-variant/30 rounded-xl p-7 hover:border-secondary-container hover:shadow-xl hover:shadow-secondary-container/10 transition-all"><div class="w-2 h-2 bg-secondary-container rounded-full mb-4"></div><h3 class="font-syne text-primary font-bold text-base mb-2">Service Industries</h3><p class="text-sm text-on-surface-variant leading-relaxed">From laundry management to operational platforms — tracking orders, managing workflows, and handling billing seamlessly.</p></div>
+      <div class="bg-surface border border-outline-variant/30 rounded-xl p-7 hover:border-secondary-container hover:shadow-xl hover:shadow-secondary-container/10 transition-all"><div class="w-2 h-2 bg-secondary-container rounded-full mb-4"></div><h3 class="font-syne text-primary font-bold text-base mb-2">Heritage &amp; Cultural</h3><p class="text-sm text-on-surface-variant leading-relaxed">Partnering with Black History Walks and African Odysseys, building platforms for cultural preservation and diaspora engagement.</p></div>
+      <div class="bg-surface border border-outline-variant/30 rounded-xl p-7 hover:border-secondary-container hover:shadow-xl hover:shadow-secondary-container/10 transition-all"><div class="w-2 h-2 bg-secondary-container rounded-full mb-4"></div><h3 class="font-syne text-primary font-bold text-base mb-2">Financial Services</h3><p class="text-sm text-on-surface-variant leading-relaxed">Working with institutions like Ghana Union Assurance, building secure, reliable financial systems that meet institutional standards.</p></div>
+      <div class="bg-surface border border-outline-variant/30 rounded-xl p-7 hover:border-secondary-container hover:shadow-xl hover:shadow-secondary-container/10 transition-all"><div class="w-2 h-2 bg-secondary-container rounded-full mb-4"></div><h3 class="font-syne text-primary font-bold text-base mb-2">Cross-Continental Initiatives</h3><p class="text-sm text-on-surface-variant leading-relaxed">Supporting the African Caribbean Summit and ACIS — technology that bridges communities across continents.</p></div>
+    </div>
+  </section>
+
+  <!-- ═══ SERVICES ══════════════════════════════════════ -->
+  <section class="bg-surface py-24 px-8 md:px-24" id="services">
+    <p class="text-xs font-bold tracking-[.2em] text-secondary uppercase mb-4">What We Offer</p>
+    <h2 class="font-syne text-3xl md:text-4xl font-extrabold tracking-tight text-primary leading-[1.15]">Our Services</h2>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mt-14">
+      <div class="p-8 border border-outline-variant/30 rounded-xl flex gap-6 items-start hover:border-secondary-container transition-colors"><div class="font-syne font-bold text-2xl text-secondary-container leading-none">01</div><div><h3 class="font-syne text-primary font-bold text-lg mb-2">Custom Software Development</h3><p class="text-sm text-on-surface-variant leading-relaxed">Built from the ground up for your specific operations, workflows, and challenges. No templates. No forcing your business into pre-made molds.</p></div></div>
+      <div class="p-8 border border-outline-variant/30 rounded-xl flex gap-6 items-start hover:border-secondary-container transition-colors"><div class="font-syne font-bold text-2xl text-secondary-container leading-none">02</div><div><h3 class="font-syne text-primary font-bold text-lg mb-2">Technology Consulting</h3><p class="text-sm text-on-surface-variant leading-relaxed">Strategic guidance on technology investments, system architecture, and digital transformation based on real-world experience.</p></div></div>
+      <div class="p-8 border border-outline-variant/30 rounded-xl flex gap-6 items-start hover:border-secondary-container transition-colors"><div class="font-syne font-bold text-2xl text-secondary-container leading-none">03</div><div><h3 class="font-syne text-primary font-bold text-lg mb-2">System Architecture &amp; Design</h3><p class="text-sm text-on-surface-variant leading-relaxed">Offline-first capabilities, cloud integration, or LAN collaboration — we design architectures that match your realities.</p></div></div>
+      <div class="p-8 border border-outline-variant/30 rounded-xl flex gap-6 items-start hover:border-secondary-container transition-colors"><div class="font-syne font-bold text-2xl text-secondary-container leading-none">04</div><div><h3 class="font-syne text-primary font-bold text-lg mb-2">Business Process Analysis</h3><p class="text-sm text-on-surface-variant leading-relaxed">We analyze your workflows to identify bottlenecks and opportunities for improvement through better technology integration.</p></div></div>
+      <div class="p-8 border border-outline-variant/30 rounded-xl flex gap-6 items-start hover:border-secondary-container transition-colors"><div class="font-syne font-bold text-2xl text-secondary-container leading-none">05</div><div><h3 class="font-syne text-primary font-bold text-lg mb-2">Digital Transformation</h3><p class="text-sm text-on-surface-variant leading-relaxed">Complete operational modernization that respects how your business actually works, rather than forcing you into someone else's model.</p></div></div>
+      <div class="p-8 border border-outline-variant/30 rounded-xl flex gap-6 items-start hover:border-secondary-container transition-colors"><div class="font-syne font-bold text-2xl text-secondary-container leading-none">06</div><div><h3 class="font-syne text-primary font-bold text-lg mb-2">Ongoing Support &amp; Evolution</h3><p class="text-sm text-on-surface-variant leading-relaxed">Technology needs change as businesses grow. We provide continued consultation and development as your needs evolve over time.</p></div></div>
+    </div>
+  </section>
+
+  <!-- ═══ WHY US ═════════════════════════════════════════ -->
+  <section class="bg-primary-container py-24 px-8 md:px-24">
+    <p class="text-xs font-bold tracking-[.2em] text-secondary-fixed uppercase mb-4">Why Exchosoft</p>
+    <h2 class="font-syne text-3xl md:text-4xl font-extrabold tracking-tight text-white leading-[1.15]">Why Work With Us</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mt-14">
+      <div class="flex gap-5"><div class="w-[3px] bg-secondary-container rounded-full shrink-0"></div><div><h3 class="font-syne text-white font-bold text-lg mb-2">We Build What You Actually Need</h3><p class="text-sm text-white/50 leading-relaxed">Not what we think you should need. Not what worked for someone else. We listen, understand your operations, and build specifically for you.</p></div></div>
+      <div class="flex gap-5"><div class="w-[3px] bg-secondary-container rounded-full shrink-0"></div><div><h3 class="font-syne text-white font-bold text-lg mb-2">We Understand Your Context</h3><p class="text-sm text-white/50 leading-relaxed">From Lagos to London, Accra to Atlanta — we understand the infrastructure challenges and operational conditions of doing business across our markets.</p></div></div>
+      <div class="flex gap-5"><div class="w-[3px] bg-secondary-container rounded-full shrink-0"></div><div><h3 class="font-syne text-white font-bold text-lg mb-2">We've Done This Before</h3><p class="text-sm text-white/50 leading-relaxed">Our experience across healthcare, faith organizations, service industries, and financial services means proven expertise with full customization.</p></div></div>
+      <div class="flex gap-5"><div class="w-[3px] bg-secondary-container rounded-full shrink-0"></div><div><h3 class="font-syne text-white font-bold text-lg mb-2">We Think Long-Term</h3><p class="text-sm text-white/50 leading-relaxed">We're not just building software — we're building systems that will grow with your business and adapt as your needs change over time.</p></div></div>
+    </div>
+  </section>
+
+  <!-- ═══ CLIENTS ════════════════════════════════════════ -->
+  <section class="bg-surface-container-low py-24 px-8 md:px-24 text-center">
+    <p class="text-xs font-bold tracking-[.2em] text-secondary uppercase mb-4">Organizations We've Worked With</p>
+    <h2 class="font-syne text-3xl md:text-4xl font-extrabold tracking-tight text-primary mb-3">Trusted Across Industries</h2>
+    <p class="text-on-surface-variant mb-12 max-w-xl mx-auto">Proud to have partnered with organizations across Africa, the Caribbean, and the diaspora.</p>
+    <div class="flex flex-wrap justify-center gap-3">
+      <div class="bg-surface border border-outline-variant/30 px-6 py-2.5 rounded-full text-sm font-medium text-on-surface-variant hover:border-secondary-container hover:text-secondary transition-all cursor-default">Black History Walks</div>
+      <div class="bg-surface border border-outline-variant/30 px-6 py-2.5 rounded-full text-sm font-medium text-on-surface-variant hover:border-secondary-container hover:text-secondary transition-all cursor-default">African Odysseys</div>
+      <div class="bg-surface border border-outline-variant/30 px-6 py-2.5 rounded-full text-sm font-medium text-on-surface-variant hover:border-secondary-container hover:text-secondary transition-all cursor-default">African Caribbean Summit</div>
+      <div class="bg-surface border border-outline-variant/30 px-6 py-2.5 rounded-full text-sm font-medium text-on-surface-variant hover:border-secondary-container hover:text-secondary transition-all cursor-default">Ghana Union Assurance</div>
+      <div class="bg-surface border border-outline-variant/30 px-6 py-2.5 rounded-full text-sm font-medium text-on-surface-variant hover:border-secondary-container hover:text-secondary transition-all cursor-default">ACIS</div>
+      <div class="bg-surface border border-outline-variant/30 px-6 py-2.5 rounded-full text-sm font-medium text-on-surface-variant hover:border-secondary-container hover:text-secondary transition-all cursor-default">Churches across West Africa</div>
+      <div class="bg-surface border border-outline-variant/30 px-6 py-2.5 rounded-full text-sm font-medium text-on-surface-variant hover:border-secondary-container hover:text-secondary transition-all cursor-default">Hospitals &amp; Pharmacies</div>
+      <div class="bg-surface border border-outline-variant/30 px-6 py-2.5 rounded-full text-sm font-medium text-on-surface-variant hover:border-secondary-container hover:text-secondary transition-all cursor-default">Laboratories</div>
+      <div class="bg-surface border border-outline-variant/30 px-6 py-2.5 rounded-full text-sm font-medium text-on-surface-variant hover:border-secondary-container hover:text-secondary transition-all cursor-default">SMEs</div>
+    </div>
+  </section>
+
+  <!-- ═══ CTA ════════════════════════════════════════════ -->
+  <section class="bg-secondary-container py-24 px-8 md:px-24 text-center" id="cta">
+    <h2 class="font-syne text-4xl md:text-5xl font-extrabold text-primary tracking-tight mb-4">Let's Talk About Your Business</h2>
+    <p class="text-primary/70 max-w-lg mx-auto mb-12 text-lg">Every business is different. Every challenge is unique. Let's discuss what you're trying to achieve and explore how we can build technology that actually fits your operations.</p>
+    <a class="font-syne bg-primary text-white px-10 py-4 rounded-full font-bold text-lg inline-block hover:-translate-y-0.5 hover:shadow-2xl transition-all" href="mailto:contact@exchosoft.com">Schedule a Consultation</a>
+    <span class="block mt-6 text-sm text-primary/60">Or email us directly at <a class="text-primary font-medium underline underline-offset-4" href="mailto:contact@exchosoft.com">contact@exchosoft.com</a></span>
+  </section>
+
+</main>
+
+<!-- ═══ FOOTER ════════════════════════════════════════ -->
+<footer class="relative bg-primary pt-20 pb-10 px-4 md:px-16 text-white overflow-hidden">
+  <div class="absolute inset-0 dot-matrix opacity-20 pointer-events-none"></div>
+  <div class="absolute inset-0 bg-gradient-to-b from-primary/60 via-primary/80 to-primary/95 pointer-events-none"></div>
+  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-secondary/5 blur-[120px] rounded-full pointer-events-none"></div>
+  <div class="relative z-10 max-w-7xl mx-auto">
+    <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-x-8 gap-y-10 mb-16">
+      <div class="col-span-2 lg:col-span-1">
+        <div class="flex items-center gap-2 mb-6"><span class="material-symbols-outlined text-secondary-container text-3xl" style="font-variation-settings:'FILL' 1;">hub</span><span class="font-syne text-xl font-bold">Exchosoft Consult</span></div>
+        <p class="text-on-primary-container text-sm leading-relaxed mb-6">Built From Here.<br/>Industrial Reliability meets Cutting-Edge Innovation.</p>
+        <div class="flex gap-4">
+          <a class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-secondary-container hover:text-primary transition-all" href="#"><span class="material-symbols-outlined text-sm">public</span></a>
+          <a class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-secondary-container hover:text-primary transition-all" href="#"><span class="material-symbols-outlined text-sm">alternate_email</span></a>
+        </div>
+      </div>
+      <div><h6 class="font-syne font-bold text-secondary-fixed text-xs uppercase tracking-widest mb-6">Solutions</h6><ul class="space-y-4 text-sm text-on-primary-container"><li><a class="hover:text-white transition-colors" href="#">WashOps</a></li><li><a class="hover:text-white transition-colors" href="#">ChurchOps</a></li><li><a class="hover:text-white transition-colors" href="#">ClinicOps</a></li><li><a class="hover:text-white transition-colors" href="#">LabOps</a></li></ul></div>
+      <div><h6 class="font-syne font-bold text-secondary-fixed text-xs uppercase tracking-widest mb-6">Expertise</h6><ul class="space-y-4 text-sm text-on-primary-container"><li><a class="hover:text-white transition-colors" href="#">Custom Development</a></li><li><a class="hover:text-white transition-colors" href="#">Consulting</a></li><li><a class="hover:text-white transition-colors" href="#">Architecture</a></li><li><a class="hover:text-white transition-colors" href="#">Digital Transformation</a></li></ul></div>
+      <div><h6 class="font-syne font-bold text-secondary-fixed text-xs uppercase tracking-widest mb-6">Resources</h6><ul class="space-y-4 text-sm text-on-primary-container"><li><a class="hover:text-white transition-colors" href="#">About Us</a></li><li><a class="hover:text-white transition-colors" href="#">Insights</a></li><li><a class="hover:text-white transition-colors" href="#">Case Studies</a></li><li><a class="hover:text-white transition-colors" href="#">Global Support</a></li></ul></div>
+      <div class="col-span-2 lg:col-span-1">
+        <h6 class="font-syne font-bold text-secondary-fixed text-xs uppercase tracking-widest mb-6">Talk to Us</h6>
+        <p class="text-xs text-on-primary-container mb-4">Subscribe to our industrial insights.</p>
+        <div class="flex bg-white/5 rounded-full p-1 border border-white/10">
+          <input class="bg-transparent border-none text-xs flex-grow px-4 focus:ring-0 text-white placeholder-white/30" placeholder="Email" type="email" />
+          <button class="bg-secondary-container text-primary px-4 py-2 rounded-full text-[10px] font-bold uppercase">Join</button>
+        </div>
+      </div>
+    </div>
+    <div class="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] text-on-primary-container">
+      <p>© 2024 Exchosoft Consult. All rights reserved.</p>
+      <div class="flex flex-wrap justify-center gap-6">
+        <a class="hover:text-white transition-colors" href="#">Privacy Policy</a>
+        <a class="hover:text-white transition-colors" href="#">Terms of Service</a>
+        <a class="hover:text-white transition-colors" href="#">Security Architecture</a>
+        <a class="hover:text-white transition-colors" href="#">Cookie Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Cookie Banner -->
+<div class="fixed bottom-6 left-6 right-6 md:left-auto md:right-8 md:max-w-md z-[100] transform transition-all duration-500" id="cookie-banner">
+  <div class="border border-secondary-container/30 p-6 rounded-xl shadow-2xl backdrop-blur-xl" style="background:rgba(0,9,23,.95);">
+    <div class="flex items-start gap-4">
+      <div class="w-10 h-10 rounded-full bg-secondary-container/20 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-secondary-container">cookie</span></div>
+      <div>
+        <p class="text-sm text-white mb-4 leading-relaxed">We use essential cookies to ensure our high-fidelity platforms function as intended. View our <a class="text-secondary-fixed underline" href="#">Cookie Policy</a> for more info.</p>
+        <div class="flex gap-3">
+          <button class="flex-grow bg-secondary-container hover:bg-secondary-fixed-dim text-primary font-bold py-2 px-4 rounded-lg text-xs transition-colors" onclick="dismissCookieBanner()">Accept All</button>
+          <button class="px-4 py-2 rounded-lg text-xs font-bold text-white hover:bg-white/5 transition-colors" onclick="dismissCookieBanner()">Preferences</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function closeNotificationBar() {
+    const bar = document.getElementById('notification-bar');
+    bar.style.maxHeight = bar.offsetHeight + 'px';
+    bar.style.overflow = 'hidden';
+    requestAnimationFrame(() => {
+      bar.style.transition = 'max-height .35s ease, opacity .25s ease';
+      bar.style.maxHeight = '0';
+      bar.style.opacity = '0';
+    });
+    setTimeout(() => bar.remove(), 380);
+  }
+
+  (function () {
+    let hoverTimers = {};
+    function openMenu(item) {
+      document.querySelectorAll('.mega-menu-item').forEach(el => { if (el !== item) closeMenu(el, true); });
+      const menu = item.querySelector('.mega-menu-content');
+      if (!menu) return;
+      if (hoverTimers[item.dataset.menuId]) clearTimeout(hoverTimers[item.dataset.menuId]);
+      menu.style.display = 'grid';
+      requestAnimationFrame(() => requestAnimationFrame(() => menu.classList.add('is-visible')));
+      item.dataset.open = 'true';
+      const chevron = item.querySelector('.mega-trigger .material-symbols-outlined');
+      if (chevron) chevron.style.transform = 'rotate(180deg)';
+    }
+    function closeMenu(item, immediate) {
+      const menu = item.querySelector('.mega-menu-content');
+      if (!menu) return;
+      if (hoverTimers[item.dataset.menuId]) clearTimeout(hoverTimers[item.dataset.menuId]);
+      hoverTimers[item.dataset.menuId] = setTimeout(() => {
+        menu.classList.remove('is-visible');
+        setTimeout(() => { if (!menu.classList.contains('is-visible')) menu.style.display = 'none'; }, 260);
+        item.dataset.open = 'false';
+        const chevron = item.querySelector('.mega-trigger .material-symbols-outlined');
+        if (chevron) chevron.style.transform = 'rotate(0deg)';
+      }, immediate ? 0 : 120);
+    }
+    function toggleMenu(item) { item.dataset.open === 'true' ? closeMenu(item, true) : openMenu(item); }
+    document.querySelectorAll('.mega-menu-item').forEach((item, i) => {
+      item.dataset.menuId = 'menu-' + i;
+      item.dataset.open = 'false';
+      const trigger = item.querySelector('.mega-trigger');
+      if (!trigger) return;
+      trigger.querySelector('.material-symbols-outlined').style.transition = 'transform .25s ease';
+      trigger.addEventListener('click', e => { e.stopPropagation(); toggleMenu(item); });
+      item.addEventListener('mouseenter', () => { if (hoverTimers[item.dataset.menuId]) clearTimeout(hoverTimers[item.dataset.menuId]); openMenu(item); });
+      item.addEventListener('mouseleave', () => closeMenu(item, false));
+    });
+    document.addEventListener('click', () => document.querySelectorAll('.mega-menu-item').forEach(item => closeMenu(item, true)));
+  })();
+
+  function toggleMobileMenu() {
+    const menu = document.getElementById('mobile-menu');
+    const overlay = document.getElementById('mobile-overlay');
+    const icon = document.getElementById('menu-icon');
+    const isClosed = menu.classList.contains('translate-x-full');
+    menu.classList.toggle('translate-x-full', !isClosed);
+    overlay.classList.toggle('hidden', !isClosed);
+    icon.textContent = isClosed ? 'close' : 'menu';
+    document.body.style.overflow = isClosed ? 'hidden' : 'auto';
+  }
+
+  function toggleAccordion(id) {
+    const acc = document.getElementById(id);
+    const isHidden = acc.classList.toggle('hidden');
+    const chevron = document.getElementById(id.replace('-acc', '-chevron'));
+    if (chevron) chevron.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(180deg)';
+  }
+
+  function dismissCookieBanner() {
+    const banner = document.getElementById('cookie-banner');
+    banner.style.opacity = '0';
+    banner.style.transform = 'translateY(20px)';
+    setTimeout(() => banner.remove(), 500);
+  }
+
+  window.addEventListener('scroll', () => {
+    const header = document.getElementById('main-header');
+    if (!header) return;
+    if (window.scrollY > 20) {
+      header.classList.add('py-1'); header.classList.remove('py-4');
+      header.style.backgroundColor = 'rgba(0,9,23,.98)';
+    } else {
+      header.classList.add('py-4'); header.classList.remove('py-1');
+      header.style.backgroundColor = 'rgba(0,9,23,.95)';
+    }
+  });
+</script>
+
+<script>
+  (function () {
+    const PERIOD_MS = 4000, HIT_DEG = 22, LIT_MS = 900;
+    const wrap = document.getElementById('orbitWrap');
+    const icons = Array.from(document.querySelectorAll('.orbit-icon'));
+    const litUntil = new Array(icons.length).fill(0);
+    const angles = icons.map(ic => parseFloat(ic.dataset.angle) || 0);
+    function layout() {
+      if (!wrap) return;
+      const R = wrap.offsetWidth * 0.42;
+      icons.forEach((ic, i) => {
+        const rad = (angles[i] - 90) * Math.PI / 180;
+        ic.style.transform = `translate(${R * Math.cos(rad)}px,${R * Math.sin(rad)}px)`;
+      });
+    }
+    layout();
+    window.addEventListener('resize', layout);
+    function tick(ts) {
+      const beamDeg = ((ts % PERIOD_MS) / PERIOD_MS) * 360;
+      angles.forEach((iconDeg, i) => {
+        let diff = Math.abs(beamDeg - iconDeg) % 360;
+        if (diff > 180) diff = 360 - diff;
+        if (diff < HIT_DEG) litUntil[i] = ts + LIT_MS;
+        icons[i].classList.toggle('lit', ts < litUntil[i]);
+      });
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  })();
+</script>
+
+</body>
+</html>

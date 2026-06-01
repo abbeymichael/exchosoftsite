@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PageVersion extends Model
 {
+    use HasUuids;
     protected $fillable = ['page_id', 'snapshot', 'changed_by', 'note'];
 
     protected $casts = ['snapshot' => 'array'];

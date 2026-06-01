@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>All Page Banners — Exchosoft</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@300,0..1&display=swap" rel="stylesheet"/>
+<script>
+tailwind.config = {
+  theme: { extend: {
+    colors: {
+      cyan: "#00b8db", "cyan-dark": "#0091ad",
+      navy: "#0d2137", "navy-deepest": "#08121d", "navy-mid": "#162d47",
+      "secondary-container": "#4cd9fd",
+    },
+    fontFamily: { syne: ["Syne","sans-serif"], dm: ["DM Sans","sans-serif"] },
+    animation: { "fade-up": "fadeUp .55s ease both" },
+    keyframes: { fadeUp: { from: { opacity:"0", transform:"translateY(14px)" }, to: { opacity:"1", transform:"translateY(0)" } } }
+  }}
+}
+</script>
+<!-- Only two things that can't be Tailwind: delay utilities + glow pseudo-elements -->
+<style>
+  .d1{animation-delay:.05s} .d2{animation-delay:.14s} .d3{animation-delay:.23s} .d4{animation-delay:.33s} .d5{animation-delay:.42s}
+  .banner-glow::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 80% at var(--gx,70%) 50%,rgba(0,184,219,.11) 0%,transparent 70%),radial-gradient(ellipse 28% 45% at var(--gx2,15%) 85%,rgba(122,207,232,.05) 0%,transparent 60%);pointer-events:none;}
+</style>
+</head>
+<body class="bg-slate-100 font-dm">
+
+<!-- ─── MACRO: every banner is this shell ───────────────────────────────
+  Outer div:  relative overflow-hidden bg-navy-deepest border-b border-cyan/10 py-20
+  Grid bg:    absolute inset-0 opacity-[.03] [background-image:...]
+  Top line:   absolute top-0 inset-x-0 h-0.5 bg-gradient-to-r ...
+  Ornament:   absolute right-[7%] top-1/2 -translate-y-1/2 w-44 h-44 opacity-[.06]
+  Inner wrap: relative z-10 max-w-6xl mx-auto px-10
+──────────────────────────────────────────────────────────────────────── -->
+
+<!-- ══════════════════════ 1 · ABOUT ══════════════════════ -->
+<p class="text-center text-[11px] tracking-widest uppercase text-slate-400 pt-8 pb-2">1 — About</p>
+<div class="relative overflow-hidden bg-navy-deepest border-b border-cyan/10 py-20 banner-glow" style="--gx:72%;--gx2:12%;">
+  <!-- grid -->
+  <div class="absolute inset-0 opacity-[.03] pointer-events-none" style="background-image:linear-gradient(#00b8db 1px,transparent 1px),linear-gradient(90deg,#00b8db 1px,transparent 1px);background-size:60px 60px;"></div>
+  <!-- top accent -->
+  <div class="absolute top-0 inset-x-0 h-0.5 bg-gradient-to-r from-transparent via-cyan to-transparent"></div>
+  <!-- ornament -->
+  <svg class="absolute right-[7%] top-1/2 -translate-y-1/2 w-44 h-44 opacity-[.06] pointer-events-none" viewBox="0 0 180 180" fill="none">
+    <circle cx="90" cy="90" r="88" stroke="#00b8db" stroke-width="1"/><circle cx="90" cy="90" r="60" stroke="#00b8db" stroke-width="1"/><circle cx="90" cy="90" r="32" stroke="#00b8db" stroke-width="1"/>
+    <line x1="2" y1="90" x2="178" y2="90" stroke="#00b8db" stroke-width=".5"/><line x1="90" y1="2" x2="90" y2="178" stroke="#00b8db" stroke-width=".5"/>
+    <line x1="27" y1="27" x2="153" y2="153" stroke="#00b8db" stroke-width=".5"/><line x1="153" y1="27" x2="27" y2="153" stroke="#00b8db" stroke-width=".5"/>
+    <circle cx="90" cy="90" r="4" fill="#00b8db"/>
+  </svg>
+  <div class="relative z-10 max-w-6xl mx-auto px-10">
+    <nav class="animate-fade-up d1 flex items-center gap-1.5 text-[11px] font-medium tracking-widest uppercase text-white/40 mb-5">
+      <a href="/" class="hover:text-cyan transition-colors">Home</a><span class="text-cyan/30">›</span><span class="text-cyan font-semibold">About Us</span>
+    </nav>
+    <div class="animate-fade-up d2 inline-flex items-center gap-1.5 bg-cyan/[.08] border border-cyan/20 text-cyan text-[11px] font-semibold tracking-widest uppercase px-3.5 py-1 rounded-full mb-4">
+      <span class="material-symbols-outlined text-[13px]" style="font-variation-settings:'FILL' 1">info</span> Our Story
+    </div>
+    <h1 class="animate-fade-up d3 font-syne text-5xl font-extrabold text-white tracking-tight leading-[1.1] mb-3">Built for <span class="text-cyan">Africa</span>,<br>by People Who Know It</h1>
+    <p class="animate-fade-up d4 text-white/50 text-base leading-relaxed max-w-xl">We're a Ghana-based technology consultancy building software that works in the real conditions of Africa, the Caribbean, and the diaspora.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════ 2 · SERVICES ══════════════════════ -->
+<p class="text-center text-[11px] tracking-widest uppercase text-slate-400 pt-8 pb-2">2 — Services</p>
+<div class="relative overflow-hidden bg-navy-deepest border-b border-cyan/10 py-20 banner-glow" style="--gx:25%;--gx2:80%;">
+  <div class="absolute inset-0 opacity-[.03] pointer-events-none" style="background-image:linear-gradient(#00b8db 1px,transparent 1px),linear-gradient(90deg,#00b8db 1px,transparent 1px);background-size:60px 60px;"></div>
+  <div class="absolute top-0 inset-x-0 h-0.5 bg-gradient-to-r from-transparent via-cyan to-transparent"></div>
+  <svg class="absolute right-[7%] top-1/2 -translate-y-1/2 w-40 h-40 opacity-[.06] pointer-events-none" viewBox="0 0 160 160" fill="none">
+    <rect x="1" y="1" width="158" height="158" rx="20" stroke="#00b8db" stroke-width="1"/><rect x="24" y="24" width="112" height="112" rx="12" stroke="#00b8db" stroke-width="1"/><rect x="48" y="48" width="64" height="64" rx="6" stroke="#00b8db" stroke-width="1"/>
+    <line x1="1" y1="80" x2="159" y2="80" stroke="#00b8db" stroke-width=".5"/><line x1="80" y1="1" x2="80" y2="159" stroke="#00b8db" stroke-width=".5"/>
+    <circle cx="80" cy="80" r="5" fill="#00b8db"/>
+  </svg>
+  <div class="relative z-10 max-w-6xl mx-auto px-10">
+    <nav class="animate-fade-up d1 flex items-center gap-1.5 text-[11px] font-medium tracking-widest uppercase text-white/40 mb-5">
+      <a href="/" class="hover:text-cyan transition-colors">Home</a><span class="text-cyan/30">›</span><span class="text-cyan font-semibold">Services</span>
+    </nav>
+    <div class="animate-fade-up d2 inline-flex items-center gap-1.5 bg-cyan/[.08] border border-cyan/20 text-cyan text-[11px] font-semibold tracking-widest uppercase px-3.5 py-1 rounded-full mb-4">
+      <span class="material-symbols-outlined text-[13px]" style="font-variation-settings:'FILL' 1">build</span> What We Do
+    </div>
+    <h1 class="animate-fade-up d3 font-syne text-5xl font-extrabold text-white tracking-tight leading-[1.1] mb-3">End-to-End <span class="text-cyan">Technology</span><br>Solutions</h1>
+    <p class="animate-fade-up d4 text-white/50 text-base leading-relaxed max-w-xl">From custom software to cloud infrastructure — every service we offer is tailored to work within your specific constraints and context.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════ 3 · CONTACT ══════════════════════ -->
+<p class="text-center text-[11px] tracking-widest uppercase text-slate-400 pt-8 pb-2">3 — Contact</p>
+<div class="relative overflow-hidden bg-navy-deepest border-b border-cyan/10 py-20 banner-glow" style="--gx:60%;--gx2:18%;">
+  <div class="absolute inset-0 opacity-[.03] pointer-events-none" style="background-image:linear-gradient(#00b8db 1px,transparent 1px),linear-gradient(90deg,#00b8db 1px,transparent 1px);background-size:60px 60px;"></div>
+  <div class="absolute top-0 inset-x-0 h-0.5 bg-gradient-to-r from-transparent via-cyan to-transparent"></div>
+  <svg class="absolute right-[10%] top-1/2 -translate-y-1/2 w-36 h-36 opacity-[.05] pointer-events-none" viewBox="0 0 150 150" fill="none">
+    <polygon points="75,4 144,40 144,110 75,146 6,110 6,40" stroke="#00b8db" stroke-width="1"/><polygon points="75,28 122,54 122,96 75,122 28,96 28,54" stroke="#00b8db" stroke-width="1"/><polygon points="75,52 100,68 100,82 75,98 50,82 50,68" stroke="#00b8db" stroke-width="1"/>
+    <circle cx="75" cy="75" r="5" fill="#00b8db"/>
+  </svg>
+  <div class="relative z-10 max-w-6xl mx-auto px-10">
+    <nav class="animate-fade-up d1 flex items-center gap-1.5 text-[11px] font-medium tracking-widest uppercase text-white/40 mb-5">
+      <a href="/" class="hover:text-cyan transition-colors">Home</a><span class="text-cyan/30">›</span><span class="text-cyan font-semibold">Contact</span>
+    </nav>
+    <div class="animate-fade-up d2 inline-flex items-center gap-1.5 bg-cyan/[.08] border border-cyan/20 text-cyan text-[11px] font-semibold tracking-widest uppercase px-3.5 py-1 rounded-full mb-4">
+      <span class="material-symbols-outlined text-[13px]" style="font-variation-settings:'FILL' 1">mail</span> Get In Touch
+    </div>
+    <h1 class="animate-fade-up d3 font-syne text-5xl font-extrabold text-white tracking-tight leading-[1.1] mb-3">Let's Build<br><span class="text-cyan">Something Real</span></h1>
+    <p class="animate-fade-up d4 text-white/50 text-base leading-relaxed max-w-xl">Tell us what you're working on. We'll tell you honestly whether we're the right team for it.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════ 4 · PRODUCTS ══════════════════════ -->
+<p class="text-center text-[11px] tracking-widest uppercase text-slate-400 pt-8 pb-2">4 — Products</p>
+<div class="relative overflow-hidden bg-navy-deepest border-b border-cyan/10 py-20 banner-glow" style="--gx:68%;--gx2:12%;">
+  <div class="absolute inset-0 opacity-[.03] pointer-events-none" style="background-image:linear-gradient(#00b8db 1px,transparent 1px),linear-gradient(90deg,#00b8db 1px,transparent 1px);background-size:60px 60px;"></div>
+  <div class="absolute top-0 inset-x-0 h-0.5 bg-gradient-to-r from-transparent via-cyan to-transparent"></div>
+  <svg class="absolute right-[7%] top-1/2 -translate-y-1/2 w-44 h-44 opacity-[.06] pointer-events-none" viewBox="0 0 180 180" fill="none">
+    <rect x="1" y="1" width="178" height="178" rx="16" stroke="#00b8db" stroke-width="1"/><rect x="22" y="22" width="136" height="136" rx="10" stroke="#00b8db" stroke-width="1"/><rect x="44" y="44" width="92" height="92" rx="6" stroke="#00b8db" stroke-width="1"/><rect x="66" y="66" width="48" height="48" rx="4" stroke="#00b8db" stroke-width="1"/>
+    <line x1="90" y1="1" x2="90" y2="179" stroke="#00b8db" stroke-width=".5"/><line x1="1" y1="90" x2="179" y2="90" stroke="#00b8db" stroke-width=".5"/>
+    <circle cx="90" cy="90" r="5" fill="#00b8db"/>
+  </svg>
+  <div class="relative z-10 max-w-6xl mx-auto px-10">
+    <nav class="animate-fade-up d1 flex items-center gap-1.5 text-[11px] font-medium tracking-widest uppercase text-white/40 mb-5">
+      <a href="/" class="hover:text-cyan transition-colors">Home</a><span class="text-cyan/30">›</span><span class="text-cyan font-semibold">Products</span>
+    </nav>
+    <div class="animate-fade-up d2 inline-flex items-center gap-1.5 bg-cyan/[.08] border border-cyan/20 text-cyan text-[11px] font-semibold tracking-widest uppercase px-3.5 py-1 rounded-full mb-4">
+      <span class="material-symbols-outlined text-[13px]" style="font-variation-settings:'FILL' 1">deployed_code</span> Our Products
+    </div>
+    <h1 class="animate-fade-up d3 font-syne text-5xl font-extrabold text-white tracking-tight leading-[1.1] mb-3">Software Built for <span class="text-cyan">Your Reality</span></h1>
+    <p class="animate-fade-up d4 text-white/50 text-base leading-relaxed max-w-xl">Ready-to-deploy tools and platforms crafted for African businesses — offline-first, resilient, and built to scale.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════ 5 · PRODUCT DETAIL ══════════════════════ -->
+<p class="text-center text-[11px] tracking-widest uppercase text-slate-400 pt-8 pb-2">5 — Product Detail</p>
+<div class="relative overflow-hidden bg-navy-deepest border-b border-cyan/10 py-20 banner-glow" style="--gx:55%;--gx2:20%;">
+  <div class="absolute inset-0 opacity-[.03] pointer-events-none" style="background-image:linear-gradient(#00b8db 1px,transparent 1px),linear-gradient(90deg,#00b8db 1px,transparent 1px);background-size:60px 60px;"></div>
+  <div class="absolute top-0 inset-x-0 h-0.5 bg-gradient-to-r from-transparent via-cyan to-transparent"></div>
+  <svg class="absolute right-[7%] top-1/2 -translate-y-1/2 w-44 h-44 opacity-[.06] pointer-events-none" viewBox="0 0 180 180" fill="none">
+    <rect x="1" y="1" width="178" height="178" rx="16" stroke="#00b8db" stroke-width="1"/><rect x="22" y="22" width="136" height="136" rx="10" stroke="#00b8db" stroke-width="1"/>
+    <rect x="66" y="66" width="48" height="48" rx="4" fill="rgba(0,184,219,.08)" stroke="#00b8db" stroke-width="1"/>
+    <line x1="90" y1="1" x2="90" y2="65" stroke="#00b8db" stroke-width=".5"/><line x1="90" y1="115" x2="90" y2="179" stroke="#00b8db" stroke-width=".5"/>
+    <line x1="1" y1="90" x2="65" y2="90" stroke="#00b8db" stroke-width=".5"/><line x1="115" y1="90" x2="179" y2="90" stroke="#00b8db" stroke-width=".5"/>
+    <circle cx="90" cy="90" r="5" fill="#00b8db"/>
+  </svg>
+  <div class="relative z-10 max-w-6xl mx-auto px-10">
+    <nav class="animate-fade-up d1 flex items-center gap-1.5 text-[11px] font-medium tracking-widest uppercase text-white/40 mb-5">
+      <a href="/" class="hover:text-cyan transition-colors">Home</a><span class="text-cyan/30">›</span>
+      <a href="/products" class="hover:text-cyan transition-colors">Products</a><span class="text-cyan/30">›</span>
+      <span class="text-cyan font-semibold">ClinicOS</span>
+    </nav>
+    <div class="animate-fade-up d2 inline-flex items-center gap-1.5 bg-cyan/[.08] border border-cyan/20 text-cyan text-[11px] font-semibold tracking-widest uppercase px-3.5 py-1 rounded-full mb-4">
+      <span class="material-symbols-outlined text-[13px]" style="font-variation-settings:'FILL' 1">deployed_code</span> Product
+    </div>
+    <h1 class="animate-fade-up d3 font-syne text-5xl font-extrabold text-white tracking-tight leading-[1.1] mb-3"><span class="text-cyan">ClinicOS</span> — Healthcare Management Platform</h1>
+    <div class="animate-fade-up d4 flex flex-wrap items-center gap-3 mt-4">
+      <span class="inline-flex items-center gap-1.5 bg-white/[.05] border border-white/10 text-white/55 text-[11px] font-medium px-3 py-1 rounded-md"><span class="material-symbols-outlined text-[13px]">category</span>Healthcare</span>
+      <span class="inline-flex items-center gap-1.5 bg-white/[.05] border border-white/10 text-white/55 text-[11px] font-medium px-3 py-1 rounded-md"><span class="material-symbols-outlined text-[13px]">devices</span>Web · Android</span>
+      <span class="inline-flex items-center gap-1.5 bg-cyan/[.07] border border-cyan/25 text-cyan text-[11px] font-medium px-3 py-1 rounded-md"><span class="material-symbols-outlined text-[13px]">wifi_off</span>Offline-First</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ 6 · CASE STUDIES ══════════════════════ -->
+<p class="text-center text-[11px] tracking-widest uppercase text-slate-400 pt-8 pb-2">6 — Case Studies</p>
+<div class="relative overflow-hidden bg-navy-deepest border-b border-cyan/10 py-20 banner-glow" style="--gx:30%;--gx2:80%;">
+  <div class="absolute inset-0 opacity-[.03] pointer-events-none" style="background-image:linear-gradient(#00b8db 1px,transparent 1px),linear-gradient(90deg,#00b8db 1px,transparent 1px);background-size:60px 60px;"></div>
+  <div class="absolute top-0 inset-x-0 h-0.5 bg-gradient-to-r from-transparent via-cyan to-transparent"></div>
+  <svg class="absolute right-[7%] top-1/2 -translate-y-1/2 w-44 h-44 opacity-[.06] pointer-events-none" viewBox="0 0 180 180" fill="none">
+    <circle cx="90" cy="90" r="88" stroke="#00b8db" stroke-width="1"/><circle cx="90" cy="90" r="62" stroke="#00b8db" stroke-width="1"/><circle cx="90" cy="90" r="36" stroke="#00b8db" stroke-width="1"/><circle cx="90" cy="90" r="12" stroke="#00b8db" stroke-width="1"/>
+    <line x1="2" y1="90" x2="178" y2="90" stroke="#00b8db" stroke-width=".5"/><line x1="90" y1="2" x2="90" y2="178" stroke="#00b8db" stroke-width=".5"/>
+    <circle cx="90" cy="90" r="4" fill="#00b8db"/>
+  </svg>
+  <div class="relative z-10 max-w-6xl mx-auto px-10">
+    <nav class="animate-fade-up d1 flex items-center gap-1.5 text-[11px] font-medium tracking-widest uppercase text-white/40 mb-5">
+      <a href="/" class="hover:text-cyan transition-colors">Home</a><span class="text-cyan/30">›</span><span class="text-cyan font-semibold">Case Studies</span>
+    </nav>
+    <div class="animate-fade-up d2 inline-flex items-center gap-1.5 bg-cyan/[.08] border border-cyan/20 text-cyan text-[11px] font-semibold tracking-widest uppercase px-3.5 py-1 rounded-full mb-4">
+      <span class="material-symbols-outlined text-[13px]" style="font-variation-settings:'FILL' 1">bar_chart_4_bars</span> Impact Stories
+    </div>
+    <h1 class="animate-fade-up d3 font-syne text-5xl font-extrabold text-white tracking-tight leading-[1.1] mb-3">Real Projects,<br><span class="text-cyan">Measurable Results</span></h1>
+    <p class="animate-fade-up d4 text-white/50 text-base leading-relaxed max-w-xl">See how we've helped organisations across Africa, the Caribbean, and the diaspora solve real technology challenges.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════ 7 · CASE STUDY DETAIL ══════════════════════ -->
+<p class="text-center text-[11px] tracking-widest uppercase text-slate-400 pt-8 pb-2">7 — Case Study Detail</p>
+<div class="relative overflow-hidden bg-navy-deepest border-b border-cyan/10 py-20 banner-glow" style="--gx:55%;--gx2:10%;">
+  <div class="absolute inset-0 opacity-[.03] pointer-events-none" style="background-image:linear-gradient(#00b8db 1px,transparent 1px),linear-gradient(90deg,#00b8db 1px,transparent 1px);background-size:60px 60px;"></div>
+  <div class="absolute top-0 inset-x-0 h-0.5 bg-gradient-to-r from-transparent via-cyan to-transparent"></div>
+  <svg class="absolute right-[7%] top-1/2 -translate-y-1/2 w-44 h-44 opacity-[.06] pointer-events-none" viewBox="0 0 180 180" fill="none">
+    <circle cx="90" cy="90" r="88" stroke="#00b8db" stroke-width="1"/><circle cx="90" cy="90" r="60" stroke="#00b8db" stroke-width="1"/>
+    <circle cx="90" cy="54" r="10" fill="rgba(0,184,219,.1)" stroke="#00b8db" stroke-width="1"/>
+    <circle cx="90" cy="126" r="10" fill="rgba(0,184,219,.1)" stroke="#00b8db" stroke-width="1"/>
+    <circle cx="54" cy="90" r="10" fill="rgba(0,184,219,.1)" stroke="#00b8db" stroke-width="1"/>
+    <circle cx="126" cy="90" r="10" fill="rgba(0,184,219,.1)" stroke="#00b8db" stroke-width="1"/>
+    <circle cx="90" cy="90" r="5" fill="#00b8db"/>
+  </svg>
+  <div class="relative z-10 max-w-6xl mx-auto px-10">
+    <nav class="animate-fade-up d1 flex items-center gap-1.5 text-[11px] font-medium tracking-widest uppercase text-white/40 mb-5">
+      <a href="/" class="hover:text-cyan transition-colors">Home</a><span class="text-cyan/30">›</span>
+      <a href="/case-studies" class="hover:text-cyan transition-colors">Case Studies</a><span class="text-cyan/30">›</span>
+      <span class="text-cyan font-semibold">Healthcare Transformation</span>
+    </nav>
+    <div class="animate-fade-up d2 inline-flex items-center gap-1.5 bg-cyan/[.08] border border-cyan/20 text-cyan text-[11px] font-semibold tracking-widest uppercase px-3.5 py-1 rounded-full mb-4">
+      <span class="material-symbols-outlined text-[13px]" style="font-variation-settings:'FILL' 1">monitor_heart</span> Case Study
+    </div>
+    <h1 class="animate-fade-up d3 font-syne text-5xl font-extrabold text-white tracking-tight leading-[1.1] mb-3"><span class="text-cyan">Healthcare Digital</span><br>Transformation in Ghana</h1>
+    <div class="animate-fade-up d4 flex flex-wrap items-center gap-3 mt-4">
+      <span class="inline-flex items-center gap-1.5 bg-white/[.05] border border-white/10 text-white/55 text-[11px] font-medium px-3 py-1 rounded-md"><span class="material-symbols-outlined text-[13px]">business</span>Korle Bu Teaching Hospital</span>
+      <span class="inline-flex items-center gap-1.5 bg-white/[.05] border border-white/10 text-white/55 text-[11px] font-medium px-3 py-1 rounded-md"><span class="material-symbols-outlined text-[13px]">calendar_month</span>2024</span>
+      <span class="inline-flex items-center gap-1.5 bg-cyan/[.07] border border-cyan/25 text-cyan text-[11px] font-medium px-3 py-1 rounded-md"><span class="material-symbols-outlined text-[13px]">trending_up</span>40% Efficiency Gain</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ 8 · PORTFOLIO ══════════════════════ -->
+<p class="text-center text-[11px] tracking-widest uppercase text-slate-400 pt-8 pb-2">8 — Portfolio</p>
+<div class="relative overflow-hidden bg-navy-deepest border-b border-cyan/10 py-20 banner-glow" style="--gx:75%;--gx2:25%;">
+  <div class="absolute inset-0 opacity-[.03] pointer-events-none" style="background-image:linear-gradient(#00b8db 1px,transparent 1px),linear-gradient(90deg,#00b8db 1px,transparent 1px);background-size:60px 60px;"></div>
+  <div class="absolute top-0 inset-x-0 h-0.5 bg-gradient-to-r from-transparent via-cyan to-transparent"></div>
+  <svg class="absolute right-[7%] top-1/2 -translate-y-1/2 w-44 h-44 opacity-[.06] pointer-events-none" viewBox="0 0 180 180" fill="none">
+    <polygon points="90,4 174,46 174,134 90,176 6,134 6,46" stroke="#00b8db" stroke-width="1"/><polygon points="90,30 150,63 150,117 90,150 30,117 30,63" stroke="#00b8db" stroke-width="1"/><polygon points="90,56 126,75 126,105 90,124 54,105 54,75" stroke="#00b8db" stroke-width="1"/>
+    <line x1="90" y1="4" x2="90" y2="176" stroke="#00b8db" stroke-width=".5"/>
+    <circle cx="90" cy="90" r="5" fill="#00b8db"/>
+  </svg>
+  <div class="relative z-10 max-w-6xl mx-auto px-10">
+    <nav class="animate-fade-up d1 flex items-center gap-1.5 text-[11px] font-medium tracking-widest uppercase text-white/40 mb-5">
+      <a href="/" class="hover:text-cyan transition-colors">Home</a><span class="text-cyan/30">›</span><span class="text-cyan font-semibold">Portfolio</span>
+    </nav>
+    <div class="animate-fade-up d2 inline-flex items-center gap-1.5 bg-cyan/[.08] border border-cyan/20 text-cyan text-[11px] font-semibold tracking-widest uppercase px-3.5 py-1 rounded-full mb-4">
+      <span class="material-symbols-outlined text-[13px]" style="font-variation-settings:'FILL' 1">grid_view</span> Our Work
+    </div>
+    <h1 class="animate-fade-up d3 font-syne text-5xl font-extrabold text-white tracking-tight leading-[1.1] mb-3">Projects We're<br><span class="text-cyan">Proud Of</span></h1>
+    <p class="animate-fade-up d4 text-white/50 text-base leading-relaxed max-w-xl">A curated selection of the software, platforms, and systems we've shipped for clients across multiple industries and continents.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════ 9 · PORTFOLIO DETAIL ══════════════════════ -->
+<p class="text-center text-[11px] tracking-widest uppercase text-slate-400 pt-8 pb-2">9 — Portfolio Detail</p>
+<div class="relative overflow-hidden bg-navy-deepest border-b border-cyan/10 py-20 banner-glow" style="--gx:40%;--gx2:85%;">
+  <div class="absolute inset-0 opacity-[.03] pointer-events-none" style="background-image:linear-gradient(#00b8db 1px,transparent 1px),linear-gradient(90deg,#00b8db 1px,transparent 1px);background-size:60px 60px;"></div>
+  <div class="absolute top-0 inset-x-0 h-0.5 bg-gradient-to-r from-transparent via-cyan to-transparent"></div>
+  <svg class="absolute right-[7%] top-1/2 -translate-y-1/2 w-44 h-44 opacity-[.06] pointer-events-none" viewBox="0 0 180 180" fill="none">
+    <polygon points="90,4 174,46 174,134 90,176 6,134 6,46" stroke="#00b8db" stroke-width="1"/><polygon points="90,40 138,65 138,115 90,140 42,115 42,65" stroke="#00b8db" stroke-width="1"/>
+    <polygon points="90,76 112,88 112,102 90,114 68,102 68,88" fill="rgba(0,184,219,.08)" stroke="#00b8db" stroke-width="1"/>
+    <circle cx="90" cy="90" r="5" fill="#00b8db"/>
+  </svg>
+  <div class="relative z-10 max-w-6xl mx-auto px-10">
+    <nav class="animate-fade-up d1 flex items-center gap-1.5 text-[11px] font-medium tracking-widest uppercase text-white/40 mb-5">
+      <a href="/" class="hover:text-cyan transition-colors">Home</a><span class="text-cyan/30">›</span>
+      <a href="/portfolio" class="hover:text-cyan transition-colors">Portfolio</a><span class="text-cyan/30">›</span>
+      <span class="text-cyan font-semibold">AgriTrack Platform</span>
+    </nav>
+    <div class="animate-fade-up d2 inline-flex items-center gap-1.5 bg-cyan/[.08] border border-cyan/20 text-cyan text-[11px] font-semibold tracking-widest uppercase px-3.5 py-1 rounded-full mb-4">
+      <span class="material-symbols-outlined text-[13px]" style="font-variation-settings:'FILL' 1">grid_view</span> Portfolio
+    </div>
+    <h1 class="animate-fade-up d3 font-syne text-5xl font-extrabold text-white tracking-tight leading-[1.1] mb-3"><span class="text-cyan">AgriTrack</span> — Farm-to-Market Supply Chain</h1>
+    <div class="animate-fade-up d4 flex flex-wrap items-center gap-3 mt-4">
+      <span class="inline-flex items-center gap-1.5 bg-white/[.05] border border-white/10 text-white/55 text-[11px] font-medium px-3 py-1 rounded-md"><span class="material-symbols-outlined text-[13px]">category</span>Agriculture</span>
+      <span class="inline-flex items-center gap-1.5 bg-white/[.05] border border-white/10 text-white/55 text-[11px] font-medium px-3 py-1 rounded-md"><span class="material-symbols-outlined text-[13px]">public</span>Ghana · Ivory Coast</span>
+      <span class="inline-flex items-center gap-1.5 bg-white/[.05] border border-white/10 text-white/55 text-[11px] font-medium px-3 py-1 rounded-md"><span class="material-symbols-outlined text-[13px]">code</span>React · Laravel · MySQL</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ 10 · BLOG ══════════════════════ -->
+<p class="text-center text-[11px] tracking-widest uppercase text-slate-400 pt-8 pb-2">10 — Blog</p>
+<div class="relative overflow-hidden bg-navy-deepest border-b border-cyan/10 py-20 banner-glow" style="--gx:22%;--gx2:78%;">
+  <div class="absolute inset-0 opacity-[.03] pointer-events-none" style="background-image:linear-gradient(#00b8db 1px,transparent 1px),linear-gradient(90deg,#00b8db 1px,transparent 1px);background-size:60px 60px;"></div>
+  <div class="absolute top-0 inset-x-0 h-0.5 bg-gradient-to-r from-transparent via-cyan to-transparent"></div>
+  <svg class="absolute right-[7%] top-1/2 -translate-y-1/2 w-44 h-44 opacity-[.06] pointer-events-none" viewBox="0 0 180 180" fill="none">
+    <rect x="20" y="30" width="140" height="18" rx="4" stroke="#00b8db" stroke-width="1"/>
+    <rect x="20" y="58" width="100" height="18" rx="4" stroke="#00b8db" stroke-width="1"/>
+    <rect x="20" y="86" width="120" height="18" rx="4" stroke="#00b8db" stroke-width="1"/>
+    <rect x="20" y="114" width="80" height="18" rx="4" stroke="#00b8db" stroke-width="1"/>
+    <rect x="20" y="142" width="110" height="18" rx="4" stroke="#00b8db" stroke-width="1"/>
+    <circle cx="9" cy="39" r="4" fill="#00b8db"/><circle cx="9" cy="67" r="4" fill="#00b8db"/><circle cx="9" cy="95" r="4" fill="#00b8db"/><circle cx="9" cy="123" r="4" fill="#00b8db"/><circle cx="9" cy="151" r="4" fill="#00b8db"/>
+  </svg>
+  <div class="relative z-10 max-w-6xl mx-auto px-10">
+    <nav class="animate-fade-up d1 flex items-center gap-1.5 text-[11px] font-medium tracking-widest uppercase text-white/40 mb-5">
+      <a href="/" class="hover:text-cyan transition-colors">Home</a><span class="text-cyan/30">›</span><span class="text-cyan font-semibold">Blog</span>
+    </nav>
+    <div class="animate-fade-up d2 inline-flex items-center gap-1.5 bg-cyan/[.08] border border-cyan/20 text-cyan text-[11px] font-semibold tracking-widest uppercase px-3.5 py-1 rounded-full mb-4">
+      <span class="material-symbols-outlined text-[13px]" style="font-variation-settings:'FILL' 1">article</span> Insights
+    </div>
+    <h1 class="animate-fade-up d3 font-syne text-5xl font-extrabold text-white tracking-tight leading-[1.1] mb-3">Thinking Out Loud<br>About <span class="text-cyan">African Tech</span></h1>
+    <p class="animate-fade-up d4 text-white/50 text-base leading-relaxed max-w-xl">Perspectives on software, infrastructure, and digital transformation from a team building in the context that others write think-pieces about.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════ 11 · BLOG DETAIL ══════════════════════ -->
+<p class="text-center text-[11px] tracking-widest uppercase text-slate-400 pt-8 pb-2">11 — Blog Detail</p>
+<div class="relative overflow-hidden bg-navy-deepest border-b border-cyan/10 py-20 banner-glow" style="--gx:65%;--gx2:18%;">
+  <div class="absolute inset-0 opacity-[.03] pointer-events-none" style="background-image:linear-gradient(#00b8db 1px,transparent 1px),linear-gradient(90deg,#00b8db 1px,transparent 1px);background-size:60px 60px;"></div>
+  <div class="absolute top-0 inset-x-0 h-0.5 bg-gradient-to-r from-transparent via-cyan to-transparent"></div>
+  <svg class="absolute right-[7%] top-1/2 -translate-y-1/2 w-44 h-44 opacity-[.06] pointer-events-none" viewBox="0 0 180 180" fill="none">
+    <rect x="20" y="40" width="140" height="100" rx="8" stroke="#00b8db" stroke-width="1"/>
+    <rect x="32" y="55" width="116" height="12" rx="3" stroke="#00b8db" stroke-width="1"/>
+    <rect x="32" y="75" width="90" height="8" rx="2" stroke="#00b8db" stroke-width=".8"/><rect x="32" y="91" width="108" height="8" rx="2" stroke="#00b8db" stroke-width=".8"/><rect x="32" y="107" width="76" height="8" rx="2" stroke="#00b8db" stroke-width=".8"/>
+    <circle cx="38" cy="130" r="5" fill="rgba(0,184,219,.15)" stroke="#00b8db" stroke-width="1"/>
+    <rect x="50" y="127" width="60" height="6" rx="2" stroke="#00b8db" stroke-width=".8"/>
+  </svg>
+  <div class="relative z-10 max-w-6xl mx-auto px-10">
+    <nav class="animate-fade-up d1 flex items-center gap-1.5 text-[11px] font-medium tracking-widest uppercase text-white/40 mb-5">
+      <a href="/" class="hover:text-cyan transition-colors">Home</a><span class="text-cyan/30">›</span>
+      <a href="/blog" class="hover:text-cyan transition-colors">Blog</a><span class="text-cyan/30">›</span>
+      <span class="text-cyan font-semibold">Why Offline-First Matters</span>
+    </nav>
+    <div class="animate-fade-up d2 inline-flex items-center gap-1.5 bg-cyan/[.08] border border-cyan/20 text-cyan text-[11px] font-semibold tracking-widest uppercase px-3.5 py-1 rounded-full mb-4">
+      <span class="material-symbols-outlined text-[13px]" style="font-variation-settings:'FILL' 1">article</span> Blog Post
+    </div>
+    <h1 class="animate-fade-up d3 font-syne text-5xl font-extrabold text-white tracking-tight leading-[1.1] mb-3">Why <span class="text-cyan">Offline-First</span> Is<br>Not Optional in Africa</h1>
+    <div class="animate-fade-up d4 flex flex-wrap items-center gap-3 mt-4">
+      <span class="inline-flex items-center gap-1.5 bg-white/[.05] border border-white/10 text-white/55 text-[11px] font-medium px-3 py-1 rounded-md"><span class="material-symbols-outlined text-[13px]">person</span>Kwame Asante</span>
+      <span class="inline-flex items-center gap-1.5 bg-white/[.05] border border-white/10 text-white/55 text-[11px] font-medium px-3 py-1 rounded-md"><span class="material-symbols-outlined text-[13px]">calendar_month</span>May 2025</span>
+      <span class="inline-flex items-center gap-1.5 bg-white/[.05] border border-white/10 text-white/55 text-[11px] font-medium px-3 py-1 rounded-md"><span class="material-symbols-outlined text-[13px]">schedule</span>6 min read</span>
+      <span class="inline-flex items-center gap-1.5 bg-cyan/[.07] border border-cyan/25 text-cyan text-[11px] font-medium px-3 py-1 rounded-md"><span class="material-symbols-outlined text-[13px]">label</span>Infrastructure</span>
+    </div>
+  </div>
+</div>
+
+<div class="h-16"></div>
+</body>
+</html>

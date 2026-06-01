@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\CaseStudy;
-use App\Models\ShopProduct;
+use App\Models\Product;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -54,7 +54,7 @@ new #[Layout('layouts.admin')] #[Title('Case Studies — ExchoSoft')] class exte
         $this->results = $cs->results ?? '';
         $this->status = $cs->status;
         $this->is_featured = $cs->is_featured;
-        $this->shop_product_id = $cs->shop_product_id ? (string) $cs->shop_product_id : '';
+        $this->product_id = $cs->shop_product_id ? (string) $cs->shop_product_id : '';
         $this->meta_title = $cs->meta_title ?? '';
         $this->meta_description = $cs->meta_description ?? '';
         $this->showForm = true;
@@ -80,7 +80,7 @@ new #[Layout('layouts.admin')] #[Title('Case Studies — ExchoSoft')] class exte
             'results'         => $this->results,
             'status'          => $this->status,
             'is_featured'     => $this->is_featured,
-            'shop_product_id' => $this->shop_product_id ?: null,
+            'product_id' => $this->shop_product_id ?: null,
             'meta_title'      => $this->meta_title,
             'meta_description'=> $this->meta_description,
             'published_at'    => $this->status === 'published' ? now() : null,
@@ -128,7 +128,7 @@ new #[Layout('layouts.admin')] #[Title('Case Studies — ExchoSoft')] class exte
     #[Computed]
     public function shopProducts()
     {
-        return ShopProduct::published()->orderBy('name')->get(['id', 'name']);
+        return Product::published()->orderBy('name')->get(['id', 'name']);
     }
 }; ?>
 

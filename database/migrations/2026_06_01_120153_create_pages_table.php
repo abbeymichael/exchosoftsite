@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('banner_image')->nullable();
             $table->string('banner_cta_text')->nullable();
             $table->string('banner_cta_url')->nullable();
+            $table->text('content')->nullable();       // markdown content for the page body
 
             // SEO
             $table->string('meta_title')->nullable();

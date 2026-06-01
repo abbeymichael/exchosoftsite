@@ -245,7 +245,7 @@ new #[Layout('layouts.admin')] #[Title('Blog Posts — ExchoSoft')] class extend
     @if($showForm)
     <div class="fixed inset-0 z-50 flex">
         <div class="fixed inset-0 bg-slate-900/50" wire:click="$set('showForm', false)"></div>
-        <div class="relative ml-auto w-full max-w-2xl bg-white shadow-2xl flex flex-col h-full overflow-y-auto">
+        <div class="relative ml-auto w-full max-w-4xl bg-white shadow-2xl flex flex-col h-full overflow-y-auto">
             <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4 sticky top-0 bg-white z-10">
                 <h2 class="text-base font-semibold text-slate-900">{{ $editMode ? 'Edit Post' : 'New Blog Post' }}</h2>
                 <button wire:click="$set('showForm', false)" class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100">

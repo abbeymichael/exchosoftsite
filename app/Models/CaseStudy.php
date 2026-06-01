@@ -13,7 +13,7 @@ class CaseStudy extends Model
     protected $fillable = [
         'author_id', 'title', 'slug', 'client_name', 'client_industry',
         'client_logo', 'cover_image', 'challenge', 'solution', 'results',
-        'metrics', 'content', 'tags', 'shop_product_id',
+        'metrics', 'content', 'tags', 'product_id',
         'status', 'published_at', 'views', 'is_featured',
         'meta_title', 'meta_description',
     ];
@@ -32,7 +32,7 @@ class CaseStudy extends Model
 
     public function shopProduct(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(ShopProduct::class);
+        return $this->belongsTo(Product::class);
     }
 
     public function scopePublished($query)

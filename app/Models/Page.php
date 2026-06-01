@@ -11,7 +11,7 @@ class Page extends Model
 {
     use HasUuids;
     protected $fillable = [
-        'key', 'title',
+        'key', 'title','content',
         'banner_heading', 'banner_subheading', 'banner_image',
         'banner_cta_text', 'banner_cta_url',
         'meta_title', 'meta_description', 'meta_keywords', 'canonical_url',
@@ -43,7 +43,7 @@ class Page extends Model
     /**
      * Save current state as a version snapshot before updating.
      */
-    public function snapshot(string $changedBy = null, string $note = null): void
+    public function snapshot(?string $changedBy = null, ?string $note = null): void
     {
         $this->versions()->create([
             'snapshot'   => $this->toArray(),
