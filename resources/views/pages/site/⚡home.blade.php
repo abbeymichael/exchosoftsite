@@ -13,14 +13,25 @@ new #[Layout('layouts.site')] class extends Component
 {
     use LoadsPageSeo;
 
-    public function render(): \Illuminate\View\View
-    {
-        $this->loadPageSeo('home');
+    // ── Data loaded in mount ──────────────────────────────────────────────────
+    public array $cms               = [];
+    public mixed $featuredProducts  = null;
+    public mixed $latestPosts       = null;
+    public mixed $featuredCases     = null;
+    public mixed $featuredWork      = null;
 
-        $featuredProducts = Product::published()->featured()->orderBy('sort_order')->limit(3)->get();
-        $latestPosts      = BlogPost::published()->latest('published_at')->limit(3)->get();
-        $featuredCases    = CaseStudy::published()->featured()->limit(3)->get();
-        $featuredWork     = PortfolioItem::published()->featured()->orderBy('sort_order')->limit(4)->get();
+    public function mount(): void
+    {
+        $this->loadPageSeo(
+            'home',
+            'Exchosoft Consult — Software Development & Technology Consultancy',
+            "We're a software development and consultancy firm serving Black businesses across Africa, the Caribbean, and the diaspora."
+        );
+
+        $this->featuredProducts = Product::published()->featured()->orderBy('sort_order')->limit(3)->get();
+        $this->latestPosts      = BlogPost::published()->latest('published_at')->limit(3)->get();
+        $this->featuredCases    = CaseStudy::published()->featured()->limit(3)->get();
+        $this->featuredWork     = PortfolioItem::published()->featured()->orderBy('sort_order')->limit(4)->get();
 
         // Load all homepage settings from DB
         $s = SiteSetting::getGroup('homepage');
@@ -28,7 +39,7 @@ new #[Layout('layouts.site')] class extends Component
         // Helper to parse JSON safely
         $j = fn($key, $default = []) => isset($s[$key]) ? (is_string($s[$key]) ? (json_decode($s[$key], true) ?? $default) : $s[$key]) : $default;
 
-        $cms = [
+        $this->cms = [
             // Hero — use Page banner fields if set, fall back to SiteSettings
             'hero_tag'           => $this->pageSeo?->banner_subheading ?? $s['home_hero_tag'] ?? 'Ghana-Based · Africa · Caribbean · Diaspora',
             'hero_title_raw'     => $this->pageSeo?->banner_heading ?? $s['home_hero_title'] ?? 'Technology Consultancy Built on **Real-World** Experience',
@@ -81,14 +92,6 @@ new #[Layout('layouts.site')] class extends Component
             'demo_cta_title'    => $s['home_demo_cta_title'] ?? 'See Our Software in Action',
             'demo_cta_subtitle' => $s['home_demo_cta_subtitle'] ?? "Book a live demonstration and see how our platforms handle your specific industry's challenges.",
         ];
-
-        return view('pages.site.home', array_merge(
-            compact('featuredProducts', 'latestPosts', 'featuredCases', 'featuredWork', 'cms'),
-            $this->seoViewData(
-                'Exchosoft Consult — Software Development & Technology Consultancy',
-                "We're a software development and consultancy firm serving Black businesses across Africa, the Caribbean, and the diaspora."
-            )
-        ));
     }
 }; ?>
 

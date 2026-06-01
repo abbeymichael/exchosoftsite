@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -46,7 +47,8 @@ new #[Layout('layouts.admin')] #[Title('Admin Management — ExchoLicense')] cla
     // Computed
     // ──────────────────────────────────────────────────────────────────────────
 
-    public function getAdminsProperty()
+    #[Computed]
+    public function admins()
     {
         return User::query()
             ->when($this->search, fn ($q) =>

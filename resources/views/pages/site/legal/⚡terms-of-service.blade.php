@@ -8,13 +8,13 @@ new #[Layout('layouts.site')] class extends Component
 {
     use LoadsPageSeo;
 
-    public function render(): \Illuminate\View\View
+    public function mount(): void
     {
-        $this->loadPageSeo('terms-of-service');
-        return view('pages.site.legal.terms-of-service', $this->seoViewData(
+        $this->loadPageSeo(
+            'terms-of-service',
             'Terms of Service — Exchosoft Consult',
             'Read the Exchosoft Consult terms of service governing use of our website, software products, and consulting services.'
-        ));
+        );
     }
 }; ?>
 

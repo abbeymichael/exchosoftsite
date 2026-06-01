@@ -8,13 +8,13 @@ new #[Layout('layouts.site')] class extends Component
 {
     use LoadsPageSeo;
 
-    public function render(): \Illuminate\View\View
+    public function mount(): void
     {
-        $this->loadPageSeo('data-processing-agreement');
-        return view('pages.site.legal.data-processing-agreement', $this->seoViewData(
+        $this->loadPageSeo(
+            'data-processing-agreement',
             'Data Processing Agreement — Exchosoft Consult',
             'Read the Exchosoft Data Processing Agreement (DPA) — the terms under which we process personal data on behalf of clients and partners.'
-        ));
+        );
     }
 }; ?>
 

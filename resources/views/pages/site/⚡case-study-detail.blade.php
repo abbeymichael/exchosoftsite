@@ -9,9 +9,14 @@ new #[Layout('layouts.site')] class extends Component
 {
     public CaseStudy $study;
 
+    // Exposed to layout as $title
+    public string $title = '';
+
     public function mount(string $slug): void
     {
         $this->study = CaseStudy::published()->where('slug', $slug)->firstOrFail();
+
+        $this->title = $this->study->title . ' — ExchoSoft';
 
         $converter = new CommonMarkConverter([
             'html_input'         => 'strip',
@@ -24,11 +29,6 @@ new #[Layout('layouts.site')] class extends Component
                 $this->study->{$field} = $converter->convert($this->study->{$field})->getContent();
             }
         }
-    }
-
-    public function title(): string
-    {
-        return $this->study->title . ' — ExchoSoft';
     }
 }; ?>
 

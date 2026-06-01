@@ -8,13 +8,13 @@ new #[Layout('layouts.site')] class extends Component
 {
     use LoadsPageSeo;
 
-    public function render(): \Illuminate\View\View
+    public function mount(): void
     {
-        $this->loadPageSeo('book-demo');
-        return view('pages.site.book-demo', $this->seoViewData(
+        $this->loadPageSeo(
+            'book-demo',
             'Book a Free Demo — Exchosoft Consult',
             'Book a free live demo of Exchosoft software. See WashOps, ChurchOps, or any of our platforms in action — tailored to your industry.'
-        ));
+        );
     }
 }; ?>
 

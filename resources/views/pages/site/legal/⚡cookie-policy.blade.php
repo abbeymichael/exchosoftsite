@@ -8,15 +8,13 @@ new #[Layout('layouts.site')] class extends Component
 {
     use LoadsPageSeo;
 
-
-
-    public function render(): \Illuminate\View\View
+    public function mount(): void
     {
-        $this->loadPageSeo('cookie-policy');
-        return view('pages.site.home', $this->seoViewData(
+        $this->loadPageSeo(
+            'cookie-policy',
             'Cookie Policy — Exchosoft Consult',
             'Read the Exchosoft cookie policy — what cookies we use, why we use them, and how you can manage your preferences.'
-        ));
+        );
     }
 }; ?>
 

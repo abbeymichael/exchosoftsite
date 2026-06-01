@@ -26,13 +26,13 @@ new #[Layout('layouts.site')] class extends Component
         $this->reset(['name','email','subject','message']);
     }
 
-    public function render(): \Illuminate\View\View
+    public function mount(): void
     {
-        $this->loadPageSeo('contact');
-        return view('pages.site.contact', $this->seoViewData(
+        $this->loadPageSeo(
+            'contact',
             'Contact Us — Exchosoft Consult',
             "Get in touch with Exchosoft Consult. Tell us what you need and we'll be honest about what we can build."
-        ));
+        );
     }
 }; ?>
 

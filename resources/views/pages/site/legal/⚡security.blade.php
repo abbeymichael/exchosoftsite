@@ -8,13 +8,13 @@ new #[Layout('layouts.site')] class extends Component
 {
     use LoadsPageSeo;
 
-    public function render(): \Illuminate\View\View
+    public function mount(): void
     {
-        $this->loadPageSeo('security');
-        return view('pages.site.legal.security', $this->seoViewData(
+        $this->loadPageSeo(
+            'security',
             'Security — Exchosoft Consult',
-            'Read about Exchosoft's approach to security — how we protect client data, manage vulnerabilities, and maintain secure systems.'
-        ));
+            'Read about Exchosoft\'s approach to security — how we protect client data, manage vulnerabilities, and maintain secure systems.'
+        );
     }
 }; ?>
 

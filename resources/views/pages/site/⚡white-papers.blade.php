@@ -8,13 +8,13 @@ new #[Layout('layouts.site')] class extends Component
 {
     use LoadsPageSeo;
 
-    public function render(): \Illuminate\View\View
+    public function mount(): void
     {
-        $this->loadPageSeo('white-papers');
-        return view('pages.site.white-papers', $this->seoViewData(
+        $this->loadPageSeo(
+            'white-papers',
             'White Papers — Exchosoft Consult',
             'Download Exchosoft white papers on offline-first architecture, software development in Africa, and technology for emerging markets.'
-        ));
+        );
     }
 }; ?>
 

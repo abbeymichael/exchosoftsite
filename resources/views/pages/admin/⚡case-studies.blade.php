@@ -2,6 +2,7 @@
 
 use App\Models\CaseStudy;
 use App\Models\ShopProduct;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -114,7 +115,8 @@ new #[Layout('layouts.admin')] #[Title('Case Studies — ExchoSoft')] class exte
     // Computed Properties
     // ────────────────────────────────────────────────────────────────────────────
 
-    public function getStudiesProperty()
+    #[Computed]
+    public function studies()
     {
         return CaseStudy::with(['author', 'shopProduct'])
             ->when($this->search, fn($q) => $q->where('title', 'like', '%'.$this->search.'%')
@@ -123,7 +125,8 @@ new #[Layout('layouts.admin')] #[Title('Case Studies — ExchoSoft')] class exte
             ->latest()->paginate(15);
     }
 
-    public function getShopProductsProperty()
+    #[Computed]
+    public function shopProducts()
     {
         return ShopProduct::published()->orderBy('name')->get(['id', 'name']);
     }

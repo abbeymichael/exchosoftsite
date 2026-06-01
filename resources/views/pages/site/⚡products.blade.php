@@ -2,6 +2,7 @@
 
 use App\Models\ProductPageSection;
 use App\Models\ShopProduct;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -13,6 +14,22 @@ new #[Layout('layouts.site')] #[Title('Products — Exchosoft Consult')] class e
     public string $search = '';
     public string $filterCategory = '';
 
+    // Static data loaded once in mount
+    public mixed $featuredGroups  = null;
+    public mixed $allPublished    = null;
+    public mixed $washSections    = null;
+    public mixed $churchSections  = null;
+    public array $linkedCodes     = [];
+
+    public function mount(): void
+    {
+        $this->featuredGroups  = ShopProduct::published()->whereNotNull('linked_product_code')->orderBy('sort_order')->get()->groupBy('linked_product_code');
+        $this->allPublished    = ShopProduct::published()->orderBy('sort_order')->get();
+        $this->washSections    = ProductPageSection::getForProduct('washops');
+        $this->churchSections  = ProductPageSection::getForProduct('churchops');
+        $this->linkedCodes     = $this->featuredGroups->keys()->toArray();
+    }
+
     public function updatingSearch(): void
     {
         $this->resetPage();
@@ -22,23 +39,15 @@ new #[Layout('layouts.site')] #[Title('Products — Exchosoft Consult')] class e
         $this->resetPage();
     }
 
-    public function render(): \Illuminate\View\View
+    #[Computed]
+    public function products()
     {
-        $products = ShopProduct::published()->when($this->search, fn($q) => $q->where('name', 'like', '%' . $this->search . '%')->orWhere('tagline', 'like', '%' . $this->search . '%'))->when($this->filterCategory, fn($q) => $q->where('category', $this->filterCategory))->orderBy('sort_order')->latest()->paginate(12);
-
-        // Group published products by linked_product_code for the hero sections
-        $featuredGroups = ShopProduct::published()->whereNotNull('linked_product_code')->orderBy('sort_order')->get()->groupBy('linked_product_code');
-
-        $allPublished = ShopProduct::published()->orderBy('sort_order')->get();
-
-        // Load dynamic page sections for known product codes
-        $washSections = ProductPageSection::getForProduct('washops');
-        $churchSections = ProductPageSection::getForProduct('churchops');
-
-        // Get unique linked product codes that have sections
-        $linkedCodes = $featuredGroups->keys()->toArray();
-
-        return view('pages.site.products', compact('products', 'featuredGroups', 'allPublished', 'washSections', 'churchSections', 'linkedCodes'));
+        return ShopProduct::published()
+            ->when($this->search, fn($q) => $q->where('name', 'like', '%' . $this->search . '%')->orWhere('tagline', 'like', '%' . $this->search . '%'))
+            ->when($this->filterCategory, fn($q) => $q->where('category', $this->filterCategory))
+            ->orderBy('sort_order')
+            ->latest()
+            ->paginate(12);
     }
 }; ?>
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Page;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -206,7 +207,8 @@ new #[Layout('layouts.admin')] #[Title('Edit Page — ExchoSoft')] class extends
         'data-processing-agreement' => 'site.data-processing-agreement',
     ];
 
-    public function getLiveUrlAttribute(): ?string
+    #[Computed]
+    public function liveUrl(): ?string
     {
         $routeName = self::$routeMap[$this->key] ?? null;
         if (!$routeName) {

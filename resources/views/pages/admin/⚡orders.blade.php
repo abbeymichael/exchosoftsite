@@ -4,6 +4,7 @@ use App\Models\License;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -152,7 +153,7 @@ new #[Layout('layouts.admin')] #[Title('Orders — ExchoSoft')] class extends Co
     // ────────────────────────────────────────────────────────────────────────────
 
     #[Computed]
-    public function getOrdersProperty()
+    public function orders()
     {
         return Order::with(['customerUser', 'items'])
             ->when($this->search, function ($q) {
@@ -167,7 +168,7 @@ new #[Layout('layouts.admin')] #[Title('Orders — ExchoSoft')] class extends Co
     }
 
     #[Computed]
-    public function getViewOrderProperty()
+    public function viewOrder()
     {
         return $this->viewId
             ? Order::with(['customerUser', 'items.shopProduct'])->find($this->viewId)
@@ -175,7 +176,7 @@ new #[Layout('layouts.admin')] #[Title('Orders — ExchoSoft')] class extends Co
     }
 
     #[Computed]
-    public function getViewLicensesProperty()
+    public function viewLicenses()
     {
         return $this->viewId
             ? License::where('shop_order_id', $this->viewId)->with('shopProduct')->get()
@@ -183,7 +184,7 @@ new #[Layout('layouts.admin')] #[Title('Orders — ExchoSoft')] class extends Co
     }
 
     #[Computed]
-    public function getStatsProperty()
+    public function stats()
     {
         return [
             'total'    => Order::count(),
