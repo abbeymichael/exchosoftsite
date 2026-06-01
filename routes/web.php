@@ -50,6 +50,14 @@ Route::prefix('')->name('')->group(function () {
 
         // Book Demo (public)
         Route::livewire('/book-demo', 'pages::site.book-demo')->name('book-demo');
+
+
+                // ── Legal & Policy pages ───────────────────────────────────────────
+        Route::livewire('/privacy-policy',           'pages::site.legal.privacy-policy')->name('privacy-policy');
+        Route::livewire('/terms-of-service',         'pages::site.legal.terms-of-service')->name('terms-of-service');
+        Route::livewire('/security',                 'pages::site.legal.security')->name('security');
+        Route::livewire('/cookie-policy',            'pages::site.legal.cookie-policy')->name('cookie-policy');
+        Route::livewire('/data-processing-agreement', 'pages::site.legal.data-processing-agreement')->name('data-processing-agreement');
     });
 });
 
@@ -106,9 +114,10 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     // Overview
     Route::livewire('/dashboard', 'pages::admin.dashboard')->name('dashboard');
 
-    // ── Page Editors ───────────────────────────────────────────────────────
-    Route::livewire('/homepage-editor', 'pages::admin.homepage-editor')->name('homepage-editor');
-    Route::livewire('/product-page-editor', 'pages::admin.product-page-editor')->name('product-page-editor');
+        // ── Page Editors ───────────────────────────────────────────────────────
+    Route::livewire('/pages',                        'pages::admin.pages.index')->name('pages.index');
+    Route::livewire('/pages/{key}/edit',             'pages::admin.pages.edit')->name('pages.edit');
+    Route::livewire('/pages/{key}/versions',         'pages::admin.pages.versions')->name('pages.versions');
 
     // ── Website Management ─────────────────────────────────────────────────
     Route::livewire('/shop-products', 'pages::admin.shop-products')->name('shop-products');

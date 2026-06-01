@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 
-<html class="scroll-smooth" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Exchosoft Consult — Software Development &amp; Technology Consultancy</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&amp;family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&amp;display=swap" rel="stylesheet"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script>
+<html class="scroll-smooth" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Exchosoft Consult — Software Development &amp; Technology Consultancy</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&amp;family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
         tailwind.config = {
             theme: {
                 extend: {
@@ -35,17 +39,39 @@
             }
         }
     </script>
-<style>
+    <style>
         /* Custom animations not easily handled by standard Tailwind */
         @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(24px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        .animate-fade-up { animation: fadeUp 0.7s ease both; }
-        .delay-100 { animation-delay: 0.1s; }
-        .delay-200 { animation-delay: 0.2s; }
-        .delay-300 { animation-delay: 0.3s; }
-        .delay-400 { animation-delay: 0.4s; }
+
+        .animate-fade-up {
+            animation: fadeUp 0.7s ease both;
+        }
+
+        .delay-100 {
+            animation-delay: 0.1s;
+        }
+
+        .delay-200 {
+            animation-delay: 0.2s;
+        }
+
+        .delay-300 {
+            animation-delay: 0.3s;
+        }
+
+        .delay-400 {
+            animation-delay: 0.4s;
+        }
 
         /* Custom Radar Overlay Layouts */
         .radar-container {
@@ -57,11 +83,13 @@
             align-items: center;
             justify-content: center;
         }
+
         .orbit-icon::after {
             content: attr(data-label);
             position: absolute;
             bottom: -28px;
-            left: 50%; transform: translateX(-50%);
+            left: 50%;
+            transform: translateX(-50%);
             background: rgba(0, 184, 219, 0.15);
             border: 1px solid rgba(0, 184, 219, 0.2);
             color: #00b8db;
@@ -75,458 +103,646 @@
             pointer-events: none;
             transition: opacity 0.3s;
         }
-        .orbit-icon:hover::after { opacity: 1; }
+
+        .orbit-icon:hover::after {
+            opacity: 1;
+        }
     </style>
 </head>
+
 <body class="font-body text-navy bg-white overflow-x-hidden leading-relaxed">
-<!-- NAV -->
-<nav class="fixed top-0 left-0 right-0 z-[100] px-6 md:px-16 py-5 flex items-center justify-between bg-white/90 backdrop-blur-xl border-b border-cyan/15">
-<a class="flex items-center gap-3 font-display text-lg font-bold text-navy no-underline tracking-tighter" href="#">
-<img alt="Exchosoft logo" class="h-9 w-auto" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDr39BmC_Rh0nvoJVQYfUnDCAUuU2L0NxBKPh5-pKnWTkrSeuVA2-O-J3fBvN3ojkmmYXBotIg1Phh6qA95Eilq3j9RXB1kO3XI2VDaxEl2JJFbseYME9xy5x7z7morfoS3QHLBI9LeE5i5q6JlNf9aeVE5DG8ZxwQjQAaeeYGbHVuJx_Dmt8oHV0924uP_nd5T9GPSruimZ_FvMGBRqfo-GRGUW4TopH3ZsvEhk2NEt6OyQcw3IPuhrGH6BR1D1X6V1sCp5NCEL3Q"/>
-        Exchosoft Consult
-    </a>
-<ul class="hidden md:flex gap-10 list-none">
-<li><a class="text-sm font-medium text-slate-600 hover:text-cyan transition-colors" href="#about">About</a></li>
-<li><a class="text-sm font-medium text-slate-600 hover:text-cyan transition-colors" href="#approach">Approach</a></li>
-<li><a class="text-sm font-medium text-slate-600 hover:text-cyan transition-colors" href="#industries">Industries</a></li>
-<li><a class="text-sm font-medium text-slate-600 hover:text-cyan transition-colors" href="#services">Services</a></li>
-</ul>
-<a class="bg-cyan text-white px-5 py-2.5 rounded-md font-display text-sm font-semibold hover:bg-cyan-dark transition-colors" href="#cta">Talk to Us</a>
-</nav>
-<!-- HERO -->
-<section class="relative min-h-screen bg-navy-deepest grid grid-cols-1 lg:grid-cols-2 overflow-hidden pt-20">
-<!-- Grid BG -->
-<div class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_70%_50%,rgba(0,184,219,0.06)_0%,transparent_60%),radial-gradient(circle_at_20%_80%,rgba(122,207,232,0.03)_0%,transparent_50%)]"></div>
-<div class="absolute inset-0 pointer-events-none opacity-[0.03]" style="background-image: linear-gradient(#00b8db 1px, transparent 1px), linear-gradient(90deg, #00b8db 1px, transparent 1px); background-size: 60px 60px;"></div>
-<div class="relative z-10 flex flex-col justify-center px-8 md:px-16 lg:pl-24 py-16">
-<div class="animate-fade-up delay-100 flex items-center gap-2 bg-cyan/10 border border-cyan/25 text-cyan px-4 py-1.5 rounded-full text-xs font-medium tracking-widest mb-8 w-fit uppercase">
-<span class="w-1.5 h-1.5 bg-cyan rounded-full"></span> Ghana-Based · Africa · Caribbean · Diaspora
+    <!-- NAV -->
+    <nav
+        class="fixed top-0 left-0 right-0 z-[100] px-6 md:px-16 py-5 flex items-center justify-between bg-white/90 backdrop-blur-xl border-b border-cyan/15">
+        <a class="flex items-center gap-3 font-display text-lg font-bold text-navy no-underline tracking-tighter"
+            href="#">
+            <img alt="Exchosoft logo" class="h-9 w-auto"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDr39BmC_Rh0nvoJVQYfUnDCAUuU2L0NxBKPh5-pKnWTkrSeuVA2-O-J3fBvN3ojkmmYXBotIg1Phh6qA95Eilq3j9RXB1kO3XI2VDaxEl2JJFbseYME9xy5x7z7morfoS3QHLBI9LeE5i5q6JlNf9aeVE5DG8ZxwQjQAaeeYGbHVuJx_Dmt8oHV0924uP_nd5T9GPSruimZ_FvMGBRqfo-GRGUW4TopH3ZsvEhk2NEt6OyQcw3IPuhrGH6BR1D1X6V1sCp5NCEL3Q" />
+            Exchosoft Consult
+        </a>
+        <ul class="hidden md:flex gap-10 list-none">
+            <li><a class="text-sm font-medium text-slate-600 hover:text-cyan transition-colors" href="#about">About</a>
+            </li>
+            <li><a class="text-sm font-medium text-slate-600 hover:text-cyan transition-colors"
+                    href="#approach">Approach</a></li>
+            <li><a class="text-sm font-medium text-slate-600 hover:text-cyan transition-colors"
+                    href="#industries">Industries</a></li>
+            <li><a class="text-sm font-medium text-slate-600 hover:text-cyan transition-colors"
+                    href="#services">Services</a></li>
+        </ul>
+        <a class="bg-cyan text-white px-5 py-2.5 rounded-md font-display text-sm font-semibold hover:bg-cyan-dark transition-colors"
+            href="#cta">Talk to Us</a>
+    </nav>
+    <!-- HERO -->
+    <section class="relative min-h-screen bg-navy-deepest grid grid-cols-1 lg:grid-cols-2 overflow-hidden pt-20">
+        <!-- Grid BG -->
+        <div
+            class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_70%_50%,rgba(0,184,219,0.06)_0%,transparent_60%),radial-gradient(circle_at_20%_80%,rgba(122,207,232,0.03)_0%,transparent_50%)]">
         </div>
-<h1 class="animate-fade-up delay-200 font-display text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] tracking-tighter mb-6">
-            Technology Consultancy Built on <em class="text-cyan not-italic">Real-World</em> Experience
-        </h1>
-<p class="animate-fade-up delay-300 text-lg text-white/60 max-w-lg mb-10 font-light leading-relaxed">
-            We're a software development and consultancy firm serving Black businesses across Africa, the Caribbean, and the diaspora—building custom solutions that work in your reality, not just in theory.
-        </p>
-<div class="animate-fade-up delay-400 flex flex-wrap gap-4">
-<a class="bg-cyan text-white px-8 py-3.5 rounded-lg font-display text-base font-semibold hover:bg-cyan-dark hover:-translate-y-0.5 transition-all" href="#cta">Talk to Us</a>
-<a class="bg-transparent text-white border border-white/20 px-8 py-3.5 rounded-lg font-display text-base font-semibold hover:border-cyan hover:bg-cyan/10 transition-all" href="#services">Our Expertise</a>
-</div>
-</div>
-<div class="hidden lg:flex relative z-5 items-center justify-center p-16 animate-fade-up delay-300">
-<div class="relative w-[420px] h-[420px] flex items-center justify-center" id="orbitWrap">
-<!-- Radar Canvas Container -->
-<div class="radar-container">
-<canvas height="500" id="radarSweep" width="500"></canvas>
-</div>
-<!-- Core Logo -->
-<div class="relative z-20 w-36 h-36 bg-navy-deepest/95 border border-cyan/20 rounded-full flex items-center justify-center shadow-[0_0_50px_rgba(0,184,219,0.1)]">
-<img alt="Exchosoft" class="w-24 h-auto relative z-[2]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBtlxFyYH_mnla6CyxZ6KTAe7dsfux1fZB81Zx68CdGyw6OeGOZOHNZacvHiH-xyrPpZopUKMHUBOYmHXbExzFNx4BFUGl6fwv0gF7jKT1JK-1M6BbP8GCt6b19eU-_gOvneCqEyQ-8sA5MA-fD6pd2IQzC3f5OcwBCj4z7ICuNoyk5IRA3odrj6uxT_NuyLFuOIz008aO8F4jR8eXwKkxtitMxkhHIej2klZFha6a4ZuDhBpT7oojtrwcL61nNUayS2j08GWi4FA"/>
-</div>
-<!-- Interactive Icons -->
-<div class="orbit-icon absolute z-30 w-12 h-12 bg-navy/80 border border-cyan/15 rounded-xl flex items-center justify-center backdrop-blur-sm -ml-6 -mt-6 transition-all duration-300" data-angle="0" data-label="Web Dev">
-<svg class="w-[22px] h-[22px] fill-none stroke-cyan stroke-[1.8] opacity-60 transition-all" viewbox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 3c0 0-4 3.5-4 9s4 9 4 9 4-3.5 4-9-4-9-4-9z"></path><line x1="3" x2="21" y1="12" y2="12"></line></svg>
-</div>
-<div class="orbit-icon absolute z-30 w-12 h-12 bg-navy/80 border border-cyan/15 rounded-xl flex items-center justify-center backdrop-blur-sm -ml-6 -mt-6 transition-all duration-300" data-angle="45" data-label="Mobile Apps">
-<svg class="w-[22px] h-[22px] fill-none stroke-cyan stroke-[1.8] opacity-60 transition-all" viewbox="0 0 24 24"><rect height="20" rx="2" width="10" x="7" y="2"></rect><line x1="12" x2="12" y1="18" y2="18"></line></svg>
-</div>
-<div class="orbit-icon absolute z-30 w-12 h-12 bg-navy/80 border border-cyan/15 rounded-xl flex items-center justify-center backdrop-blur-sm -ml-6 -mt-6 transition-all duration-300" data-angle="90" data-label="Databases">
-<svg class="w-[22px] h-[22px] fill-none stroke-cyan stroke-[1.8] opacity-60 transition-all" viewbox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"></path><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"></path></svg>
-</div>
-<div class="orbit-icon absolute z-30 w-12 h-12 bg-navy/80 border border-cyan/15 rounded-xl flex items-center justify-center backdrop-blur-sm -ml-6 -mt-6 transition-all duration-300" data-angle="135" data-label="Cloud">
-<svg class="w-[22px] h-[22px] fill-none stroke-cyan stroke-[1.8] opacity-60 transition-all" viewbox="0 0 24 24"><path d="M18 10a6 6 0 0 0-12 0 4 4 0 0 0 0 8h12a4 4 0 0 0 0-8z"></path></svg>
-</div>
-<div class="orbit-icon absolute z-30 w-12 h-12 bg-navy/80 border border-cyan/15 rounded-xl flex items-center justify-center backdrop-blur-sm -ml-6 -mt-6 transition-all duration-300" data-angle="180" data-label="Custom Software">
-<svg class="w-[22px] h-[22px] fill-none stroke-cyan stroke-[1.8] opacity-60 transition-all" viewbox="0 0 24 24"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
-</div>
-<div class="orbit-icon absolute z-30 w-12 h-12 bg-navy/80 border border-cyan/15 rounded-xl flex items-center justify-center backdrop-blur-sm -ml-6 -mt-6 transition-all duration-300" data-angle="225" data-label="Security">
-<svg class="w-[22px] h-[22px] fill-none stroke-cyan stroke-[1.8] opacity-60 transition-all" viewbox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-</div>
-<div class="orbit-icon absolute z-30 w-12 h-12 bg-navy/80 border border-cyan/15 rounded-xl flex items-center justify-center backdrop-blur-sm -ml-6 -mt-6 transition-all duration-300" data-angle="270" data-label="Analytics">
-<svg class="w-[22px] h-[22px] fill-none stroke-cyan stroke-[1.8] opacity-60 transition-all" viewbox="0 0 24 24"><line x1="18" x2="18" y1="20" y2="10"></line><line x1="12" x2="12" y1="20" y2="4"></line><line x1="6" x2="6" y1="20" y2="14"></line></svg>
-</div>
-<div class="orbit-icon absolute z-30 w-12 h-12 bg-navy/80 border border-cyan/15 rounded-xl flex items-center justify-center backdrop-blur-sm -ml-6 -mt-6 transition-all duration-300" data-angle="315" data-label="API &amp; Integration">
-<svg class="w-[22px] h-[22px] fill-none stroke-cyan stroke-[1.8] opacity-60 transition-all" viewbox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3m8 0h3a2 2 0 0 0 2-2v-3"></path><circle cx="12" cy="12" r="3"></circle></svg>
-</div>
-</div>
-</div>
-</section>
-<!-- STATS BAR -->
-<div class="bg-ice border-b border-cyan/15 px-8 md:px-24 py-10 grid grid-cols-2 md:grid-cols-4 gap-8">
-<div class="text-center">
-<div class="font-display text-3xl font-extrabold text-cyan tracking-tighter">10+</div>
-<div class="text-xs text-slate-400 mt-1 uppercase tracking-wider font-semibold">Industries served</div>
-</div>
-<div class="text-center">
-<div class="font-display text-3xl font-extrabold text-cyan tracking-tighter">3</div>
-<div class="text-xs text-slate-400 mt-1 uppercase tracking-wider font-semibold">Continents reached</div>
-</div>
-<div class="text-center">
-<div class="font-display text-3xl font-extrabold text-cyan tracking-tighter">100%</div>
-<div class="text-xs text-slate-400 mt-1 uppercase tracking-wider font-semibold">Custom solutions</div>
-</div>
-<div class="text-center">
-<div class="font-display text-3xl font-extrabold text-cyan tracking-tighter">Offline</div>
-<div class="text-xs text-slate-400 mt-1 uppercase tracking-wider font-semibold">First architecture</div>
-</div>
-</div>
-<!-- WHO WE ARE -->
-<section class="bg-white py-24 px-8 md:px-24 grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center" id="about">
-<div class="space-y-6">
-<p class="text-xs font-bold tracking-[0.2em] text-cyan uppercase">Who We Are</p>
-<h2 class="font-display text-3xl md:text-4xl font-extrabold tracking-tighter text-navy leading-[1.15]">Built for the Conditions You Actually Operate In</h2>
-<p class="text-base text-slate-600 leading-relaxed">Exchosoft Consult is a Ghana-based technology consultancy and software development company. We've built systems for churches, hospitals, pharmacies, laboratories, laundries, heritage organizations, and more—each one custom-designed for that specific business.</p>
-<p class="text-base text-slate-600 leading-relaxed">We understand the conditions our clients operate in because we're here too.</p>
-</div>
-<div class="flex flex-col gap-4">
-<div class="bg-ice border-l-[3px] border-cyan p-5 rounded-r-lg">
-<strong class="block text-navy font-display font-semibold text-sm mb-1 uppercase tracking-wide">Intermittent connectivity</strong>
-<span class="text-sm text-slate-600">We build systems that keep working when the internet drops.</span>
-</div>
-<div class="bg-ice border-l-[3px] border-cyan p-5 rounded-r-lg">
-<strong class="block text-navy font-display font-semibold text-sm mb-1 uppercase tracking-wide">Power challenges</strong>
-<span class="text-sm text-slate-600">Offline-first architecture means no data is lost during outages.</span>
-</div>
-<div class="bg-ice border-l-[3px] border-cyan p-5 rounded-r-lg">
-<strong class="block text-navy font-display font-semibold text-sm mb-1 uppercase tracking-wide">Mobile-first users</strong>
-<span class="text-sm text-slate-600">Designed from the ground up for how your customers actually access technology.</span>
-</div>
-<div class="bg-ice border-l-[3px] border-cyan p-5 rounded-r-lg">
-<strong class="block text-navy font-display font-semibold text-sm mb-1 uppercase tracking-wide">Local payment systems</strong>
-<span class="text-sm text-slate-600">Integrated with the payment infrastructure your market already uses.</span>
-</div>
-</div>
-</section>
-<!-- APPROACH -->
-<section class="bg-navy py-24 px-8 md:px-24" id="approach">
-<p class="text-xs font-bold tracking-[0.2em] text-sky uppercase mb-4">Our Approach</p>
-<h2 class="font-display text-3xl md:text-4xl font-extrabold tracking-tighter text-white leading-[1.15]">What We've Learned Building Software Across Industries</h2>
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-14">
-<div class="bg-white/5 border border-cyan/15 rounded-xl p-8 hover:border-cyan/40 hover:bg-cyan/5 transition-all group">
-<div class="w-11 h-11 rounded-lg bg-cyan/15 flex items-center justify-center mb-5 group-hover:bg-cyan/25 transition-colors">
-<svg class="w-5 h-5 stroke-cyan fill-none stroke-[1.75]" viewbox="0 0 24 24"><rect height="7" rx="1" width="7" x="3" y="3"></rect><rect height="7" rx="1" width="7" x="14" y="3"></rect><rect height="7" rx="1" width="7" x="3" y="14"></rect><rect height="7" rx="1" width="7" x="14" y="14"></rect></svg>
-</div>
-<h3 class="text-white font-display font-bold text-lg mb-3">Every Business Needs Its Own Solution</h3>
-<p class="text-sm text-white/50 leading-relaxed font-light">Off-the-shelf software forces unacceptable compromises. Each business has unique workflows, and they deserve technology built specifically for how they operate.</p>
-</div>
-<div class="bg-white/5 border border-cyan/15 rounded-xl p-8 hover:border-cyan/40 hover:bg-cyan/5 transition-all group">
-<div class="w-11 h-11 rounded-lg bg-cyan/15 flex items-center justify-center mb-5 group-hover:bg-cyan/25 transition-colors">
-<svg class="w-5 h-5 stroke-cyan fill-none stroke-[1.75]" viewbox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"></path><path d="M8 12h8M12 8v8"></path></svg>
-</div>
-<h3 class="text-white font-display font-bold text-lg mb-3">Offline-First When It Matters</h3>
-<p class="text-sm text-white/50 leading-relaxed font-light">We pioneered offline-first architecture for clients who can't afford downtime — hospitals, pharmacies, churches — with automatic cloud sync when online.</p>
-</div>
-<div class="bg-white/5 border border-cyan/15 rounded-xl p-8 hover:border-cyan/40 hover:bg-cyan/5 transition-all group">
-<div class="w-11 h-11 rounded-lg bg-cyan/15 flex items-center justify-center mb-5 group-hover:bg-cyan/25 transition-colors">
-<svg class="w-5 h-5 stroke-cyan fill-none stroke-[1.75]" viewbox="0 0 24 24"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z"></path><path d="M10 6.5h4M6.5 10v4M17.5 10v4M10 17.5h4"></path></svg>
-</div>
-<h3 class="text-white font-display font-bold text-lg mb-3">Unified Systems, Clear Insights</h3>
-<p class="text-sm text-white/50 leading-relaxed font-light">We unify business workflows into cohesive systems that give management complete visibility and analytics that clearly identify where improvements are needed.</p>
-</div>
-<div class="bg-white/5 border border-cyan/15 rounded-xl p-8 hover:border-cyan/40 hover:bg-cyan/5 transition-all group">
-<div class="w-11 h-11 rounded-lg bg-cyan/15 flex items-center justify-center mb-5 group-hover:bg-cyan/25 transition-colors">
-<svg class="w-5 h-5 stroke-cyan fill-none stroke-[1.75]" viewbox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"></path><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"></path></svg>
-</div>
-<h3 class="text-white font-display font-bold text-lg mb-3">LAN Collaboration</h3>
-<p class="text-sm text-white/50 leading-relaxed font-light">For businesses with multiple locations or devices, we implement local network capabilities — real-time collaboration even when external connectivity fails.</p>
-</div>
-<div class="bg-white/5 border border-cyan/15 rounded-xl p-8 hover:border-cyan/40 hover:bg-cyan/5 transition-all group">
-<div class="w-11 h-11 rounded-lg bg-cyan/15 flex items-center justify-center mb-5 group-hover:bg-cyan/25 transition-colors">
-<svg class="w-5 h-5 stroke-cyan fill-none stroke-[1.75]" viewbox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-</div>
-<h3 class="text-white font-display font-bold text-lg mb-3">Security &amp; Reliability</h3>
-<p class="text-sm text-white/50 leading-relaxed font-light">From financial institutions to healthcare providers, we build with security baked in — not bolted on — because your data deserves that standard.</p>
-</div>
-<div class="bg-white/5 border border-cyan/15 rounded-xl p-8 hover:border-cyan/40 hover:bg-cyan/5 transition-all group">
-<div class="w-11 h-11 rounded-lg bg-cyan/15 flex items-center justify-center mb-5 group-hover:bg-cyan/25 transition-colors">
-<svg class="w-5 h-5 stroke-cyan fill-none stroke-[1.75]" viewbox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
-</div>
-<h3 class="text-white font-display font-bold text-lg mb-3">Long-Term Partnership</h3>
-<p class="text-sm text-white/50 leading-relaxed font-light">We're not just building software — we're building systems that grow with your business and adapt as your needs change. We stay involved.</p>
-</div>
-</div>
-</section>
-<!-- INDUSTRIES -->
-<section class="bg-ice py-24 px-8 md:px-24" id="industries">
-<p class="text-xs font-bold tracking-[0.2em] text-cyan uppercase mb-4">Experience</p>
-<h2 class="font-display text-3xl md:text-4xl font-extrabold tracking-tighter text-navy leading-[1.15]">Industries We've Served</h2>
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-14">
-<div class="bg-white border border-cyan/15 rounded-xl p-7 hover:border-cyan hover:shadow-xl hover:shadow-cyan/10 transition-all">
-<div class="w-2 h-2 bg-cyan rounded-full mb-4"></div>
-<h3 class="text-navy font-display font-bold text-base mb-2">Healthcare &amp; Medical</h3>
-<p class="text-sm text-slate-600 leading-relaxed">Hospital management systems, pharmacy solutions, and laboratory platforms — offline-first, designed to work when connectivity doesn't.</p>
-</div>
-<div class="bg-white border border-cyan/15 rounded-xl p-7 hover:border-cyan hover:shadow-xl hover:shadow-cyan/10 transition-all">
-<div class="w-2 h-2 bg-cyan rounded-full mb-4"></div>
-<h3 class="text-navy font-display font-bold text-base mb-2">Faith-Based Organizations</h3>
-<p class="text-sm text-slate-600 leading-relaxed">Comprehensive management systems for churches covering membership, events, donations, and complete financial transparency.</p>
-</div>
-<div class="bg-white border border-cyan/15 rounded-xl p-7 hover:border-cyan hover:shadow-xl hover:shadow-cyan/10 transition-all">
-<div class="w-2 h-2 bg-cyan rounded-full mb-4"></div>
-<h3 class="text-navy font-display font-bold text-base mb-2">Service Industries</h3>
-<p class="text-sm text-slate-600 leading-relaxed">From laundry management to operational platforms — tracking orders, managing workflows, and handling billing seamlessly.</p>
-</div>
-<div class="bg-white border border-cyan/15 rounded-xl p-7 hover:border-cyan hover:shadow-xl hover:shadow-cyan/10 transition-all">
-<div class="w-2 h-2 bg-cyan rounded-full mb-4"></div>
-<h3 class="text-navy font-display font-bold text-base mb-2">Heritage &amp; Cultural</h3>
-<p class="text-sm text-slate-600 leading-relaxed">Partnering with Black History Walks and African Odysseys, building platforms for cultural preservation and diaspora engagement.</p>
-</div>
-<div class="bg-white border border-cyan/15 rounded-xl p-7 hover:border-cyan hover:shadow-xl hover:shadow-cyan/10 transition-all">
-<div class="w-2 h-2 bg-cyan rounded-full mb-4"></div>
-<h3 class="text-navy font-display font-bold text-base mb-2">Financial Services</h3>
-<p class="text-sm text-slate-600 leading-relaxed">Working with institutions like Ghana Union Assurance, building secure, reliable financial systems that meet institutional standards.</p>
-</div>
-<div class="bg-white border border-cyan/15 rounded-xl p-7 hover:border-cyan hover:shadow-xl hover:shadow-cyan/10 transition-all">
-<div class="w-2 h-2 bg-cyan rounded-full mb-4"></div>
-<h3 class="text-navy font-display font-bold text-base mb-2">Cross-Continental Initiatives</h3>
-<p class="text-sm text-slate-600 leading-relaxed">Supporting the African Caribbean Summit and ACIS — technology that bridges communities across continents.</p>
-</div>
-</div>
-</section>
-<!-- SERVICES -->
-<section class="bg-white py-24 px-8 md:px-24" id="services">
-<p class="text-xs font-bold tracking-[0.2em] text-cyan uppercase mb-4">What We Offer</p>
-<h2 class="font-display text-3xl md:text-4xl font-extrabold tracking-tighter text-navy leading-[1.15]">Our Services</h2>
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mt-14">
-<div class="p-8 border border-cyan/15 rounded-xl flex gap-6 items-start hover:border-cyan transition-colors">
-<div class="font-display text-2xl font-extrabold text-sky-light leading-none">01</div>
-<div>
-<h3 class="text-navy font-display font-bold text-lg mb-2">Custom Software Development</h3>
-<p class="text-sm text-slate-600 leading-relaxed">Built from the ground up for your specific operations, workflows, and challenges. No templates. No forcing your business into pre-made molds.</p>
-</div>
-</div>
-<div class="p-8 border border-cyan/15 rounded-xl flex gap-6 items-start hover:border-cyan transition-colors">
-<div class="font-display text-2xl font-extrabold text-sky-light leading-none">02</div>
-<div>
-<h3 class="text-navy font-display font-bold text-lg mb-2">Technology Consulting</h3>
-<p class="text-sm text-slate-600 leading-relaxed">Strategic guidance on technology investments, system architecture, and digital transformation based on real-world experience.</p>
-</div>
-</div>
-<div class="p-8 border border-cyan/15 rounded-xl flex gap-6 items-start hover:border-cyan transition-colors">
-<div class="font-display text-2xl font-extrabold text-sky-light leading-none">03</div>
-<div>
-<h3 class="text-navy font-display font-bold text-lg mb-2">System Architecture &amp; Design</h3>
-<p class="text-sm text-slate-600 leading-relaxed">Offline-first capabilities, cloud integration, or LAN collaboration — we design architectures that match your realities.</p>
-</div>
-</div>
-<div class="p-8 border border-cyan/15 rounded-xl flex gap-6 items-start hover:border-cyan transition-colors">
-<div class="font-display text-2xl font-extrabold text-sky-light leading-none">04</div>
-<div>
-<h3 class="text-navy font-display font-bold text-lg mb-2">Business Process Analysis</h3>
-<p class="text-sm text-slate-600 leading-relaxed">We analyze your workflows to identify bottlenecks and opportunities for improvement through better technology integration.</p>
-</div>
-</div>
-<div class="p-8 border border-cyan/15 rounded-xl flex gap-6 items-start hover:border-cyan transition-colors">
-<div class="font-display text-2xl font-extrabold text-sky-light leading-none">05</div>
-<div>
-<h3 class="text-navy font-display font-bold text-lg mb-2">Digital Transformation</h3>
-<p class="text-sm text-slate-600 leading-relaxed">Complete operational modernization that respects how your business actually works, rather than forcing you into someone else's model.</p>
-</div>
-</div>
-<div class="p-8 border border-cyan/15 rounded-xl flex gap-6 items-start hover:border-cyan transition-colors">
-<div class="font-display text-2xl font-extrabold text-sky-light leading-none">06</div>
-<div>
-<h3 class="text-navy font-display font-bold text-lg mb-2">Ongoing Support &amp; Evolution</h3>
-<p class="text-sm text-slate-600 leading-relaxed">Technology needs change as businesses grow. We provide continued consultation and development as your needs evolve over time.</p>
-</div>
-</div>
-</div>
-</section>
-<!-- WHY US -->
-<section class="bg-navy py-24 px-8 md:px-24">
-<p class="text-xs font-bold tracking-[0.2em] text-sky uppercase mb-4">Why Exchosoft</p>
-<h2 class="font-display text-3xl md:text-4xl font-extrabold tracking-tighter text-white leading-[1.15]">Why Work With Us</h2>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-10 mt-14">
-<div class="flex gap-5">
-<div class="w-[3px] bg-cyan rounded-full shrink-0"></div>
-<div>
-<h3 class="text-white font-display font-bold text-lg mb-2">We Build What You Actually Need</h3>
-<p class="text-sm text-white/50 leading-relaxed font-light">Not what we think you should need. Not what worked for someone else. We listen, understand your operations, and build specifically for you.</p>
-</div>
-</div>
-<div class="flex gap-5">
-<div class="w-[3px] bg-cyan rounded-full shrink-0"></div>
-<div>
-<h3 class="text-white font-display font-bold text-lg mb-2">We Understand Your Context</h3>
-<p class="text-sm text-white/50 leading-relaxed font-light">From Lagos to London, Accra to Atlanta — we understand the infrastructure challenges and operational conditions of doing business across our markets.</p>
-</div>
-</div>
-<div class="flex gap-5">
-<div class="w-[3px] bg-cyan rounded-full shrink-0"></div>
-<div>
-<h3 class="text-white font-display font-bold text-lg mb-2">We've Done This Before</h3>
-<p class="text-sm text-white/50 leading-relaxed font-light">Our experience across healthcare, faith organizations, service industries, and financial services means proven expertise with full customization.</p>
-</div>
-</div>
-<div class="flex gap-5">
-<div class="w-[3px] bg-cyan rounded-full shrink-0"></div>
-<div>
-<h3 class="text-white font-display font-bold text-lg mb-2">We Think Long-Term</h3>
-<p class="text-sm text-white/50 leading-relaxed font-light">We're not just building software — we're building systems that will grow with your business and adapt as your needs change over time.</p>
-</div>
-</div>
-</div>
-</section>
-<!-- TRUST -->
-<section class="bg-ice py-24 px-8 md:px-24 text-center">
-<p class="text-xs font-bold tracking-[0.2em] text-cyan uppercase mb-4">Organizations We've Worked With</p>
-<h2 class="font-display text-3xl md:text-4xl font-extrabold tracking-tighter text-navy mb-3">Trusted Across Industries</h2>
-<p class="text-slate-600 mb-12 max-w-xl mx-auto">Proud to have partnered with organizations across Africa, the Caribbean, and the diaspora.</p>
-<div class="flex flex-wrap justify-center gap-3">
-<div class="bg-white border border-cyan/15 px-6 py-2.5 rounded-full text-sm font-medium text-slate-600 hover:border-cyan hover:text-cyan-deep transition-all">Black History Walks</div>
-<div class="bg-white border border-cyan/15 px-6 py-2.5 rounded-full text-sm font-medium text-slate-600 hover:border-cyan hover:text-cyan-deep transition-all">African Odysseys</div>
-<div class="bg-white border border-cyan/15 px-6 py-2.5 rounded-full text-sm font-medium text-slate-600 hover:border-cyan hover:text-cyan-deep transition-all">African Caribbean Summit</div>
-<div class="bg-white border border-cyan/15 px-6 py-2.5 rounded-full text-sm font-medium text-slate-600 hover:border-cyan hover:text-cyan-deep transition-all">Ghana Union Assurance</div>
-<div class="bg-white border border-cyan/15 px-6 py-2.5 rounded-full text-sm font-medium text-slate-600 hover:border-cyan hover:text-cyan-deep transition-all">ACIS</div>
-<div class="bg-white border border-cyan/15 px-6 py-2.5 rounded-full text-sm font-medium text-slate-600 hover:border-cyan hover:text-cyan-deep transition-all">Churches across West Africa</div>
-<div class="bg-white border border-cyan/15 px-6 py-2.5 rounded-full text-sm font-medium text-slate-600 hover:border-cyan hover:text-cyan-deep transition-all">Hospitals &amp; Pharmacies</div>
-<div class="bg-white border border-cyan/15 px-6 py-2.5 rounded-full text-sm font-medium text-slate-600 hover:border-cyan hover:text-cyan-deep transition-all">Laboratories</div>
-<div class="bg-white border border-cyan/15 px-6 py-2.5 rounded-full text-sm font-medium text-slate-600 hover:border-cyan hover:text-cyan-deep transition-all">SMEs</div>
-</div>
-</section>
-<!-- CTA -->
-<section class="bg-cyan py-24 px-8 md:px-24 text-center" id="cta">
-<h2 class="font-display text-4xl md:text-5xl font-extrabold text-white tracking-tighter mb-4">Let's Talk About Your Business</h2>
-<p class="text-white/80 max-w-lg mx-auto mb-12 text-lg">Every business is different. Every challenge is unique. Let's discuss what you're trying to achieve and explore how we can build technology that actually fits your operations.</p>
-<a class="bg-white text-cyan-deep px-10 py-4 rounded-lg font-display text-lg font-bold inline-block hover:-translate-y-0.5 hover:shadow-2xl transition-all" href="mailto:contact@exchosoft.com">Schedule a Consultation</a>
-<span class="block mt-6 text-sm text-white/70">Or email us directly at <a class="text-white font-medium underline underline-offset-4" href="mailto:contact@exchosoft.com">contact@exchosoft.com</a></span>
-</section>
-<!-- FOOTER -->
-<footer class="bg-navy px-8 md:px-24 py-12 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6">
-<div class="text-center md:text-left">
-<div class="font-display font-bold text-white text-lg tracking-tighter">Exchosoft Consult</div>
-<div class="text-xs text-white/40 mt-1">Software Development &amp; Technology Consultancy</div>
-</div>
-<div class="text-xs text-white/40 text-center md:text-right leading-relaxed">
-        Accra, Ghana<br/>
-        Serving Africa, the Caribbean &amp; the Diaspora
+        <div class="absolute inset-0 pointer-events-none opacity-[0.03]"
+            style="background-image: linear-gradient(#00b8db 1px, transparent 1px), linear-gradient(90deg, #00b8db 1px, transparent 1px); background-size: 60px 60px;">
+        </div>
+        <div class="relative z-10 flex flex-col justify-center px-8 md:px-16 lg:pl-24 py-16">
+            <div
+                class="animate-fade-up delay-100 flex items-center gap-2 bg-cyan/10 border border-cyan/25 text-cyan px-4 py-1.5 rounded-full text-xs font-medium tracking-widest mb-8 w-fit uppercase">
+                <span class="w-1.5 h-1.5 bg-cyan rounded-full"></span> Ghana-Based · Africa · Caribbean · Diaspora
+            </div>
+            <h1
+                class="animate-fade-up delay-200 font-display text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] tracking-tighter mb-6">
+                Technology Consultancy Built on <em class="text-cyan not-italic">Real-World</em> Experience
+            </h1>
+            <p class="animate-fade-up delay-300 text-lg text-white/60 max-w-lg mb-10 font-light leading-relaxed">
+                We're a software development and consultancy firm serving Black businesses across Africa, the Caribbean,
+                and the diaspora—building custom solutions that work in your reality, not just in theory.
+            </p>
+            <div class="animate-fade-up delay-400 flex flex-wrap gap-4">
+                <a class="bg-cyan text-white px-8 py-3.5 rounded-lg font-display text-base font-semibold hover:bg-cyan-dark hover:-translate-y-0.5 transition-all"
+                    href="#cta">Talk to Us</a>
+                <a class="bg-transparent text-white border border-white/20 px-8 py-3.5 rounded-lg font-display text-base font-semibold hover:border-cyan hover:bg-cyan/10 transition-all"
+                    href="#services">Our Expertise</a>
+            </div>
+        </div>
+        <div class="hidden lg:flex relative z-5 items-center justify-center p-16 animate-fade-up delay-300">
+            <div class="relative w-[420px] h-[420px] flex items-center justify-center" id="orbitWrap">
+                <!-- Radar Canvas Container -->
+                <div class="radar-container">
+                    <canvas height="500" id="radarSweep" width="500"></canvas>
+                </div>
+                <!-- Core Logo -->
+                <div
+                    class="relative z-20 w-36 h-36 bg-navy-deepest/95 border border-cyan/20 rounded-full flex items-center justify-center shadow-[0_0_50px_rgba(0,184,219,0.1)]">
+                    <img alt="Exchosoft" class="w-24 h-auto relative z-[2]"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBtlxFyYH_mnla6CyxZ6KTAe7dsfux1fZB81Zx68CdGyw6OeGOZOHNZacvHiH-xyrPpZopUKMHUBOYmHXbExzFNx4BFUGl6fwv0gF7jKT1JK-1M6BbP8GCt6b19eU-_gOvneCqEyQ-8sA5MA-fD6pd2IQzC3f5OcwBCj4z7ICuNoyk5IRA3odrj6uxT_NuyLFuOIz008aO8F4jR8eXwKkxtitMxkhHIej2klZFha6a4ZuDhBpT7oojtrwcL61nNUayS2j08GWi4FA" />
+                </div>
+                <!-- Interactive Icons -->
+                <div class="orbit-icon absolute z-30 w-12 h-12 bg-navy/80 border border-cyan/15 rounded-xl flex items-center justify-center backdrop-blur-sm -ml-6 -mt-6 transition-all duration-300"
+                    data-angle="0" data-label="Web Dev">
+                    <svg class="w-[22px] h-[22px] fill-none stroke-cyan stroke-[1.8] opacity-60 transition-all"
+                        viewbox="0 0 24 24">
+                        <circle cx="12" cy="12" r="9"></circle>
+                        <path d="M12 3c0 0-4 3.5-4 9s4 9 4 9 4-3.5 4-9-4-9-4-9z"></path>
+                        <line x1="3" x2="21" y1="12" y2="12"></line>
+                    </svg>
+                </div>
+                <div class="orbit-icon absolute z-30 w-12 h-12 bg-navy/80 border border-cyan/15 rounded-xl flex items-center justify-center backdrop-blur-sm -ml-6 -mt-6 transition-all duration-300"
+                    data-angle="45" data-label="Mobile Apps">
+                    <svg class="w-[22px] h-[22px] fill-none stroke-cyan stroke-[1.8] opacity-60 transition-all"
+                        viewbox="0 0 24 24">
+                        <rect height="20" rx="2" width="10" x="7" y="2"></rect>
+                        <line x1="12" x2="12" y1="18" y2="18"></line>
+                    </svg>
+                </div>
+                <div class="orbit-icon absolute z-30 w-12 h-12 bg-navy/80 border border-cyan/15 rounded-xl flex items-center justify-center backdrop-blur-sm -ml-6 -mt-6 transition-all duration-300"
+                    data-angle="90" data-label="Databases">
+                    <svg class="w-[22px] h-[22px] fill-none stroke-cyan stroke-[1.8] opacity-60 transition-all"
+                        viewbox="0 0 24 24">
+                        <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                        <path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"></path>
+                        <path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"></path>
+                    </svg>
+                </div>
+                <div class="orbit-icon absolute z-30 w-12 h-12 bg-navy/80 border border-cyan/15 rounded-xl flex items-center justify-center backdrop-blur-sm -ml-6 -mt-6 transition-all duration-300"
+                    data-angle="135" data-label="Cloud">
+                    <svg class="w-[22px] h-[22px] fill-none stroke-cyan stroke-[1.8] opacity-60 transition-all"
+                        viewbox="0 0 24 24">
+                        <path d="M18 10a6 6 0 0 0-12 0 4 4 0 0 0 0 8h12a4 4 0 0 0 0-8z"></path>
+                    </svg>
+                </div>
+                <div class="orbit-icon absolute z-30 w-12 h-12 bg-navy/80 border border-cyan/15 rounded-xl flex items-center justify-center backdrop-blur-sm -ml-6 -mt-6 transition-all duration-300"
+                    data-angle="180" data-label="Custom Software">
+                    <svg class="w-[22px] h-[22px] fill-none stroke-cyan stroke-[1.8] opacity-60 transition-all"
+                        viewbox="0 0 24 24">
+                        <polyline points="16 18 22 12 16 6"></polyline>
+                        <polyline points="8 6 2 12 8 18"></polyline>
+                    </svg>
+                </div>
+                <div class="orbit-icon absolute z-30 w-12 h-12 bg-navy/80 border border-cyan/15 rounded-xl flex items-center justify-center backdrop-blur-sm -ml-6 -mt-6 transition-all duration-300"
+                    data-angle="225" data-label="Security">
+                    <svg class="w-[22px] h-[22px] fill-none stroke-cyan stroke-[1.8] opacity-60 transition-all"
+                        viewbox="0 0 24 24">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                </div>
+                <div class="orbit-icon absolute z-30 w-12 h-12 bg-navy/80 border border-cyan/15 rounded-xl flex items-center justify-center backdrop-blur-sm -ml-6 -mt-6 transition-all duration-300"
+                    data-angle="270" data-label="Analytics">
+                    <svg class="w-[22px] h-[22px] fill-none stroke-cyan stroke-[1.8] opacity-60 transition-all"
+                        viewbox="0 0 24 24">
+                        <line x1="18" x2="18" y1="20" y2="10"></line>
+                        <line x1="12" x2="12" y1="20" y2="4"></line>
+                        <line x1="6" x2="6" y1="20" y2="14"></line>
+                    </svg>
+                </div>
+                <div class="orbit-icon absolute z-30 w-12 h-12 bg-navy/80 border border-cyan/15 rounded-xl flex items-center justify-center backdrop-blur-sm -ml-6 -mt-6 transition-all duration-300"
+                    data-angle="315" data-label="API &amp; Integration">
+                    <svg class="w-[22px] h-[22px] fill-none stroke-cyan stroke-[1.8] opacity-60 transition-all"
+                        viewbox="0 0 24 24">
+                        <path
+                            d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3m8 0h3a2 2 0 0 0 2-2v-3">
+                        </path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- STATS BAR -->
+    <div class="bg-ice border-b border-cyan/15 px-8 md:px-24 py-10 grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div class="text-center">
+            <div class="font-display text-3xl font-extrabold text-cyan tracking-tighter">10+</div>
+            <div class="text-xs text-slate-400 mt-1 uppercase tracking-wider font-semibold">Industries served</div>
+        </div>
+        <div class="text-center">
+            <div class="font-display text-3xl font-extrabold text-cyan tracking-tighter">3</div>
+            <div class="text-xs text-slate-400 mt-1 uppercase tracking-wider font-semibold">Continents reached</div>
+        </div>
+        <div class="text-center">
+            <div class="font-display text-3xl font-extrabold text-cyan tracking-tighter">100%</div>
+            <div class="text-xs text-slate-400 mt-1 uppercase tracking-wider font-semibold">Custom solutions</div>
+        </div>
+        <div class="text-center">
+            <div class="font-display text-3xl font-extrabold text-cyan tracking-tighter">Offline</div>
+            <div class="text-xs text-slate-400 mt-1 uppercase tracking-wider font-semibold">First architecture</div>
+        </div>
     </div>
-</footer>
-<script>
-/**
- * RADAR ANIMATION
- * Requires Canvas Context
- */
-(function() {
-  const ORBIT_RADIUS = 205;
-  const CANVAS_SIZE = 500;
-  const SWEEP_SPEED = 0.8; // Radians per second
-  const TAIL_ANGLE = Math.PI / 4; // 45 degrees
-  const LIT_WINDOW = 0.15; // Detection range for lighting icons
+    <!-- WHO WE ARE -->
+    <section class="bg-white py-24 px-8 md:px-24 grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center"
+        id="about">
+        <div class="space-y-6">
+            <p class="text-xs font-bold tracking-[0.2em] text-cyan uppercase">Who We Are</p>
+            <h2 class="font-display text-3xl md:text-4xl font-extrabold tracking-tighter text-navy leading-[1.15]">Built
+                for the Conditions You Actually Operate In</h2>
+            <p class="text-base text-slate-600 leading-relaxed">Exchosoft Consult is a Ghana-based technology
+                consultancy and software development company. We've built systems for churches, hospitals, pharmacies,
+                laboratories, laundries, heritage organizations, and more—each one custom-designed for that specific
+                business.</p>
+            <p class="text-base text-slate-600 leading-relaxed">We understand the conditions our clients operate in
+                because we're here too.</p>
+        </div>
+        <div class="flex flex-col gap-4">
+            <div class="bg-ice border-l-[3px] border-cyan p-5 rounded-r-lg">
+                <strong
+                    class="block text-navy font-display font-semibold text-sm mb-1 uppercase tracking-wide">Intermittent
+                    connectivity</strong>
+                <span class="text-sm text-slate-600">We build systems that keep working when the internet drops.</span>
+            </div>
+            <div class="bg-ice border-l-[3px] border-cyan p-5 rounded-r-lg">
+                <strong class="block text-navy font-display font-semibold text-sm mb-1 uppercase tracking-wide">Power
+                    challenges</strong>
+                <span class="text-sm text-slate-600">Offline-first architecture means no data is lost during
+                    outages.</span>
+            </div>
+            <div class="bg-ice border-l-[3px] border-cyan p-5 rounded-r-lg">
+                <strong
+                    class="block text-navy font-display font-semibold text-sm mb-1 uppercase tracking-wide">Mobile-first
+                    users</strong>
+                <span class="text-sm text-slate-600">Designed from the ground up for how your customers actually access
+                    technology.</span>
+            </div>
+            <div class="bg-ice border-l-[3px] border-cyan p-5 rounded-r-lg">
+                <strong class="block text-navy font-display font-semibold text-sm mb-1 uppercase tracking-wide">Local
+                    payment systems</strong>
+                <span class="text-sm text-slate-600">Integrated with the payment infrastructure your market already
+                    uses.</span>
+            </div>
+        </div>
+    </section>
+    <!-- APPROACH -->
+    <section class="bg-navy py-24 px-8 md:px-24" id="approach">
+        <p class="text-xs font-bold tracking-[0.2em] text-sky uppercase mb-4">Our Approach</p>
+        <h2 class="font-display text-3xl md:text-4xl font-extrabold tracking-tighter text-white leading-[1.15]">What
+            We've Learned Building Software Across Industries</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-14">
+            <div
+                class="bg-white/5 border border-cyan/15 rounded-xl p-8 hover:border-cyan/40 hover:bg-cyan/5 transition-all group">
+                <div
+                    class="w-11 h-11 rounded-lg bg-cyan/15 flex items-center justify-center mb-5 group-hover:bg-cyan/25 transition-colors">
+                    <svg class="w-5 h-5 stroke-cyan fill-none stroke-[1.75]" viewbox="0 0 24 24">
+                        <rect height="7" rx="1" width="7" x="3" y="3"></rect>
+                        <rect height="7" rx="1" width="7" x="14" y="3"></rect>
+                        <rect height="7" rx="1" width="7" x="3" y="14"></rect>
+                        <rect height="7" rx="1" width="7" x="14" y="14"></rect>
+                    </svg>
+                </div>
+                <h3 class="text-white font-display font-bold text-lg mb-3">Every Business Needs Its Own Solution</h3>
+                <p class="text-sm text-white/50 leading-relaxed font-light">Off-the-shelf software forces unacceptable
+                    compromises. Each business has unique workflows, and they deserve technology built specifically for
+                    how they operate.</p>
+            </div>
+            <div
+                class="bg-white/5 border border-cyan/15 rounded-xl p-8 hover:border-cyan/40 hover:bg-cyan/5 transition-all group">
+                <div
+                    class="w-11 h-11 rounded-lg bg-cyan/15 flex items-center justify-center mb-5 group-hover:bg-cyan/25 transition-colors">
+                    <svg class="w-5 h-5 stroke-cyan fill-none stroke-[1.75]" viewbox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"></path>
+                        <path d="M8 12h8M12 8v8"></path>
+                    </svg>
+                </div>
+                <h3 class="text-white font-display font-bold text-lg mb-3">Offline-First When It Matters</h3>
+                <p class="text-sm text-white/50 leading-relaxed font-light">We pioneered offline-first architecture for
+                    clients who can't afford downtime — hospitals, pharmacies, churches — with automatic cloud sync when
+                    online.</p>
+            </div>
+            <div
+                class="bg-white/5 border border-cyan/15 rounded-xl p-8 hover:border-cyan/40 hover:bg-cyan/5 transition-all group">
+                <div
+                    class="w-11 h-11 rounded-lg bg-cyan/15 flex items-center justify-center mb-5 group-hover:bg-cyan/25 transition-colors">
+                    <svg class="w-5 h-5 stroke-cyan fill-none stroke-[1.75]" viewbox="0 0 24 24">
+                        <path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z"></path>
+                        <path d="M10 6.5h4M6.5 10v4M17.5 10v4M10 17.5h4"></path>
+                    </svg>
+                </div>
+                <h3 class="text-white font-display font-bold text-lg mb-3">Unified Systems, Clear Insights</h3>
+                <p class="text-sm text-white/50 leading-relaxed font-light">We unify business workflows into cohesive
+                    systems that give management complete visibility and analytics that clearly identify where
+                    improvements are needed.</p>
+            </div>
+            <div
+                class="bg-white/5 border border-cyan/15 rounded-xl p-8 hover:border-cyan/40 hover:bg-cyan/5 transition-all group">
+                <div
+                    class="w-11 h-11 rounded-lg bg-cyan/15 flex items-center justify-center mb-5 group-hover:bg-cyan/25 transition-colors">
+                    <svg class="w-5 h-5 stroke-cyan fill-none stroke-[1.75]" viewbox="0 0 24 24">
+                        <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                        <path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"></path>
+                        <path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"></path>
+                    </svg>
+                </div>
+                <h3 class="text-white font-display font-bold text-lg mb-3">LAN Collaboration</h3>
+                <p class="text-sm text-white/50 leading-relaxed font-light">For businesses with multiple locations or
+                    devices, we implement local network capabilities — real-time collaboration even when external
+                    connectivity fails.</p>
+            </div>
+            <div
+                class="bg-white/5 border border-cyan/15 rounded-xl p-8 hover:border-cyan/40 hover:bg-cyan/5 transition-all group">
+                <div
+                    class="w-11 h-11 rounded-lg bg-cyan/15 flex items-center justify-center mb-5 group-hover:bg-cyan/25 transition-colors">
+                    <svg class="w-5 h-5 stroke-cyan fill-none stroke-[1.75]" viewbox="0 0 24 24">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-white font-display font-bold text-lg mb-3">Security &amp; Reliability</h3>
+                <p class="text-sm text-white/50 leading-relaxed font-light">From financial institutions to healthcare
+                    providers, we build with security baked in — not bolted on — because your data deserves that
+                    standard.</p>
+            </div>
+            <div
+                class="bg-white/5 border border-cyan/15 rounded-xl p-8 hover:border-cyan/40 hover:bg-cyan/5 transition-all group">
+                <div
+                    class="w-11 h-11 rounded-lg bg-cyan/15 flex items-center justify-center mb-5 group-hover:bg-cyan/25 transition-colors">
+                    <svg class="w-5 h-5 stroke-cyan fill-none stroke-[1.75]" viewbox="0 0 24 24">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                    </svg>
+                </div>
+                <h3 class="text-white font-display font-bold text-lg mb-3">Long-Term Partnership</h3>
+                <p class="text-sm text-white/50 leading-relaxed font-light">We're not just building software — we're
+                    building systems that grow with your business and adapt as your needs change. We stay involved.</p>
+            </div>
+        </div>
+    </section>
+    <!-- INDUSTRIES -->
+    <section class="bg-ice py-24 px-8 md:px-24" id="industries">
+        <p class="text-xs font-bold tracking-[0.2em] text-cyan uppercase mb-4">Experience</p>
+        <h2 class="font-display text-3xl md:text-4xl font-extrabold tracking-tighter text-navy leading-[1.15]">
+            Industries We've Served</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-14">
+            <div
+                class="bg-white border border-cyan/15 rounded-xl p-7 hover:border-cyan hover:shadow-xl hover:shadow-cyan/10 transition-all">
+                <div class="w-2 h-2 bg-cyan rounded-full mb-4"></div>
+                <h3 class="text-navy font-display font-bold text-base mb-2">Healthcare &amp; Medical</h3>
+                <p class="text-sm text-slate-600 leading-relaxed">Hospital management systems, pharmacy solutions, and
+                    laboratory platforms — offline-first, designed to work when connectivity doesn't.</p>
+            </div>
+            <div
+                class="bg-white border border-cyan/15 rounded-xl p-7 hover:border-cyan hover:shadow-xl hover:shadow-cyan/10 transition-all">
+                <div class="w-2 h-2 bg-cyan rounded-full mb-4"></div>
+                <h3 class="text-navy font-display font-bold text-base mb-2">Faith-Based Organizations</h3>
+                <p class="text-sm text-slate-600 leading-relaxed">Comprehensive management systems for churches covering
+                    membership, events, donations, and complete financial transparency.</p>
+            </div>
+            <div
+                class="bg-white border border-cyan/15 rounded-xl p-7 hover:border-cyan hover:shadow-xl hover:shadow-cyan/10 transition-all">
+                <div class="w-2 h-2 bg-cyan rounded-full mb-4"></div>
+                <h3 class="text-navy font-display font-bold text-base mb-2">Service Industries</h3>
+                <p class="text-sm text-slate-600 leading-relaxed">From laundry management to operational platforms —
+                    tracking orders, managing workflows, and handling billing seamlessly.</p>
+            </div>
+            <div
+                class="bg-white border border-cyan/15 rounded-xl p-7 hover:border-cyan hover:shadow-xl hover:shadow-cyan/10 transition-all">
+                <div class="w-2 h-2 bg-cyan rounded-full mb-4"></div>
+                <h3 class="text-navy font-display font-bold text-base mb-2">Heritage &amp; Cultural</h3>
+                <p class="text-sm text-slate-600 leading-relaxed">Partnering with Black History Walks and African
+                    Odysseys, building platforms for cultural preservation and diaspora engagement.</p>
+            </div>
+            <div
+                class="bg-white border border-cyan/15 rounded-xl p-7 hover:border-cyan hover:shadow-xl hover:shadow-cyan/10 transition-all">
+                <div class="w-2 h-2 bg-cyan rounded-full mb-4"></div>
+                <h3 class="text-navy font-display font-bold text-base mb-2">Financial Services</h3>
+                <p class="text-sm text-slate-600 leading-relaxed">Working with institutions like Ghana Union Assurance,
+                    building secure, reliable financial systems that meet institutional standards.</p>
+            </div>
+            <div
+                class="bg-white border border-cyan/15 rounded-xl p-7 hover:border-cyan hover:shadow-xl hover:shadow-cyan/10 transition-all">
+                <div class="w-2 h-2 bg-cyan rounded-full mb-4"></div>
+                <h3 class="text-navy font-display font-bold text-base mb-2">Cross-Continental Initiatives</h3>
+                <p class="text-sm text-slate-600 leading-relaxed">Supporting the African Caribbean Summit and ACIS —
+                    technology that bridges communities across continents.</p>
+            </div>
+        </div>
+    </section>
+    <!-- SERVICES -->
+    <section class="bg-white py-24 px-8 md:px-24" id="services">
+        <p class="text-xs font-bold tracking-[0.2em] text-cyan uppercase mb-4">What We Offer</p>
+        <h2 class="font-display text-3xl md:text-4xl font-extrabold tracking-tighter text-navy leading-[1.15]">Our
+            Services</h2>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mt-14">
+            <div
+                class="p-8 border border-cyan/15 rounded-xl flex gap-6 items-start hover:border-cyan transition-colors">
+                <div class="font-display text-2xl font-extrabold text-sky-light leading-none">01</div>
+                <div>
+                    <h3 class="text-navy font-display font-bold text-lg mb-2">Custom Software Development</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">Built from the ground up for your specific
+                        operations, workflows, and challenges. No templates. No forcing your business into pre-made
+                        molds.</p>
+                </div>
+            </div>
+            <div
+                class="p-8 border border-cyan/15 rounded-xl flex gap-6 items-start hover:border-cyan transition-colors">
+                <div class="font-display text-2xl font-extrabold text-sky-light leading-none">02</div>
+                <div>
+                    <h3 class="text-navy font-display font-bold text-lg mb-2">Technology Consulting</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">Strategic guidance on technology investments,
+                        system architecture, and digital transformation based on real-world experience.</p>
+                </div>
+            </div>
+            <div
+                class="p-8 border border-cyan/15 rounded-xl flex gap-6 items-start hover:border-cyan transition-colors">
+                <div class="font-display text-2xl font-extrabold text-sky-light leading-none">03</div>
+                <div>
+                    <h3 class="text-navy font-display font-bold text-lg mb-2">System Architecture &amp; Design</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">Offline-first capabilities, cloud integration, or
+                        LAN collaboration — we design architectures that match your realities.</p>
+                </div>
+            </div>
+            <div
+                class="p-8 border border-cyan/15 rounded-xl flex gap-6 items-start hover:border-cyan transition-colors">
+                <div class="font-display text-2xl font-extrabold text-sky-light leading-none">04</div>
+                <div>
+                    <h3 class="text-navy font-display font-bold text-lg mb-2">Business Process Analysis</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">We analyze your workflows to identify bottlenecks
+                        and opportunities for improvement through better technology integration.</p>
+                </div>
+            </div>
+            <div
+                class="p-8 border border-cyan/15 rounded-xl flex gap-6 items-start hover:border-cyan transition-colors">
+                <div class="font-display text-2xl font-extrabold text-sky-light leading-none">05</div>
+                <div>
+                    <h3 class="text-navy font-display font-bold text-lg mb-2">Digital Transformation</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">Complete operational modernization that respects
+                        how your business actually works, rather than forcing you into someone else's model.</p>
+                </div>
+            </div>
+            <div
+                class="p-8 border border-cyan/15 rounded-xl flex gap-6 items-start hover:border-cyan transition-colors">
+                <div class="font-display text-2xl font-extrabold text-sky-light leading-none">06</div>
+                <div>
+                    <h3 class="text-navy font-display font-bold text-lg mb-2">Ongoing Support &amp; Evolution</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">Technology needs change as businesses grow. We
+                        provide continued consultation and development as your needs evolve over time.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- WHY US -->
+    <section class="bg-navy py-24 px-8 md:px-24">
+        <p class="text-xs font-bold tracking-[0.2em] text-sky uppercase mb-4">Why Exchosoft</p>
+        <h2 class="font-display text-3xl md:text-4xl font-extrabold tracking-tighter text-white leading-[1.15]">Why Work
+            With Us</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mt-14">
+            <div class="flex gap-5">
+                <div class="w-[3px] bg-cyan rounded-full shrink-0"></div>
+                <div>
+                    <h3 class="text-white font-display font-bold text-lg mb-2">We Build What You Actually Need</h3>
+                    <p class="text-sm text-white/50 leading-relaxed font-light">Not what we think you should need. Not
+                        what worked for someone else. We listen, understand your operations, and build specifically for
+                        you.</p>
+                </div>
+            </div>
+            <div class="flex gap-5">
+                <div class="w-[3px] bg-cyan rounded-full shrink-0"></div>
+                <div>
+                    <h3 class="text-white font-display font-bold text-lg mb-2">We Understand Your Context</h3>
+                    <p class="text-sm text-white/50 leading-relaxed font-light">From Lagos to London, Accra to Atlanta —
+                        we understand the infrastructure challenges and operational conditions of doing business across
+                        our markets.</p>
+                </div>
+            </div>
+            <div class="flex gap-5">
+                <div class="w-[3px] bg-cyan rounded-full shrink-0"></div>
+                <div>
+                    <h3 class="text-white font-display font-bold text-lg mb-2">We've Done This Before</h3>
+                    <p class="text-sm text-white/50 leading-relaxed font-light">Our experience across healthcare, faith
+                        organizations, service industries, and financial services means proven expertise with full
+                        customization.</p>
+                </div>
+            </div>
+            <div class="flex gap-5">
+                <div class="w-[3px] bg-cyan rounded-full shrink-0"></div>
+                <div>
+                    <h3 class="text-white font-display font-bold text-lg mb-2">We Think Long-Term</h3>
+                    <p class="text-sm text-white/50 leading-relaxed font-light">We're not just building software — we're
+                        building systems that will grow with your business and adapt as your needs change over time.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- TRUST -->
+    <section class="bg-ice py-24 px-8 md:px-24 text-center">
+        <p class="text-xs font-bold tracking-[0.2em] text-cyan uppercase mb-4">Organizations We've Worked With</p>
+        <h2 class="font-display text-3xl md:text-4xl font-extrabold tracking-tighter text-navy mb-3">Trusted Across
+            Industries</h2>
+        <p class="text-slate-600 mb-12 max-w-xl mx-auto">Proud to have partnered with organizations across Africa, the
+            Caribbean, and the diaspora.</p>
+        <div class="flex flex-wrap justify-center gap-3">
+            <div
+                class="bg-white border border-cyan/15 px-6 py-2.5 rounded-full text-sm font-medium text-slate-600 hover:border-cyan hover:text-cyan-deep transition-all">
+                Black History Walks</div>
+            <div
+                class="bg-white border border-cyan/15 px-6 py-2.5 rounded-full text-sm font-medium text-slate-600 hover:border-cyan hover:text-cyan-deep transition-all">
+                African Odysseys</div>
+            <div
+                class="bg-white border border-cyan/15 px-6 py-2.5 rounded-full text-sm font-medium text-slate-600 hover:border-cyan hover:text-cyan-deep transition-all">
+                African Caribbean Summit</div>
+            <div
+                class="bg-white border border-cyan/15 px-6 py-2.5 rounded-full text-sm font-medium text-slate-600 hover:border-cyan hover:text-cyan-deep transition-all">
+                Ghana Union Assurance</div>
+            <div
+                class="bg-white border border-cyan/15 px-6 py-2.5 rounded-full text-sm font-medium text-slate-600 hover:border-cyan hover:text-cyan-deep transition-all">
+                ACIS</div>
+            <div
+                class="bg-white border border-cyan/15 px-6 py-2.5 rounded-full text-sm font-medium text-slate-600 hover:border-cyan hover:text-cyan-deep transition-all">
+                Churches across West Africa</div>
+            <div
+                class="bg-white border border-cyan/15 px-6 py-2.5 rounded-full text-sm font-medium text-slate-600 hover:border-cyan hover:text-cyan-deep transition-all">
+                Hospitals &amp; Pharmacies</div>
+            <div
+                class="bg-white border border-cyan/15 px-6 py-2.5 rounded-full text-sm font-medium text-slate-600 hover:border-cyan hover:text-cyan-deep transition-all">
+                Laboratories</div>
+            <div
+                class="bg-white border border-cyan/15 px-6 py-2.5 rounded-full text-sm font-medium text-slate-600 hover:border-cyan hover:text-cyan-deep transition-all">
+                SMEs</div>
+        </div>
+    </section>
+    <!-- CTA -->
+    <section class="bg-cyan py-24 px-8 md:px-24 text-center" id="cta">
+        <h2 class="font-display text-4xl md:text-5xl font-extrabold text-white tracking-tighter mb-4">Let's Talk About
+            Your Business</h2>
+        <p class="text-white/80 max-w-lg mx-auto mb-12 text-lg">Every business is different. Every challenge is unique.
+            Let's discuss what you're trying to achieve and explore how we can build technology that actually fits your
+            operations.</p>
+        <a class="bg-white text-cyan-deep px-10 py-4 rounded-lg font-display text-lg font-bold inline-block hover:-translate-y-0.5 hover:shadow-2xl transition-all"
+            href="mailto:contact@exchosoft.com">Schedule a Consultation</a>
+        <span class="block mt-6 text-sm text-white/70">Or email us directly at <a
+                class="text-white font-medium underline underline-offset-4"
+                href="mailto:contact@exchosoft.com">contact@exchosoft.com</a></span>
+    </section>
+    <!-- FOOTER -->
+    <footer
+        class="bg-navy px-8 md:px-24 py-12 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="text-center md:text-left">
+            <div class="font-display font-bold text-white text-lg tracking-tighter">Exchosoft Consult</div>
+            <div class="text-xs text-white/40 mt-1">Software Development &amp; Technology Consultancy</div>
+        </div>
+        <div class="text-xs text-white/40 text-center md:text-right leading-relaxed">
+            Accra, Ghana<br />
+            Serving Africa, the Caribbean &amp; the Diaspora
+        </div>
+    </footer>
+    <script>
+            /**
+             * RADAR ANIMATION
+             * Requires Canvas Context
+             */
+            (function () {
+                const ORBIT_RADIUS = 205;
+                const CANVAS_SIZE = 500;
+                const SWEEP_SPEED = 0.8; // Radians per second
+                const TAIL_ANGLE = Math.PI / 4; // 45 degrees
+                const LIT_WINDOW = 0.15; // Detection range for lighting icons
 
-  const canvas = document.getElementById('radarSweep');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const CX = CANVAS_SIZE / 2;
-  const CY = CANVAS_SIZE / 2;
+                const canvas = document.getElementById('radarSweep');
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                const CX = CANVAS_SIZE / 2;
+                const CY = CANVAS_SIZE / 2;
 
-  const icons = Array.from(document.querySelectorAll('.orbit-icon'));
+                const icons = Array.from(document.querySelectorAll('.orbit-icon'));
 
-  // Initialize icons
-  icons.forEach(icon => {
-    const deg = parseFloat(icon.dataset.angle);
-    const rad = (deg - 90) * (Math.PI / 180);
-    const tx = ORBIT_RADIUS * Math.cos(rad);
-    const ty = ORBIT_RADIUS * Math.sin(rad);
-    icon.style.transform = `translate(${tx}px, ${ty}px)`;
-    icon._rad = rad;
-    icon._glow = 0;
-  });
+                // Initialize icons
+                icons.forEach(icon => {
+                    const deg = parseFloat(icon.dataset.angle);
+                    const rad = (deg - 90) * (Math.PI / 180);
+                    const tx = ORBIT_RADIUS * Math.cos(rad);
+                    const ty = ORBIT_RADIUS * Math.sin(rad);
+                    icon.style.transform = `translate(${tx}px, ${ty}px)`;
+                    icon._rad = rad;
+                    icon._glow = 0;
+                });
 
-  let sweepAngle = -Math.PI / 2;
-  let lastTime = null;
+                let sweepAngle = -Math.PI / 2;
+                let lastTime = null;
 
-  function normalize(a) {
-    return ((a % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
-  }
+                function normalize(a) {
+                    return ((a % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+                }
 
-  function draw(timestamp) {
-    if (!lastTime) lastTime = timestamp;
-    const dt = (timestamp - lastTime) / 1000;
-    lastTime = timestamp;
+                function draw(timestamp) {
+                    if (!lastTime) lastTime = timestamp;
+                    const dt = (timestamp - lastTime) / 1000;
+                    lastTime = timestamp;
 
-    sweepAngle += SWEEP_SPEED * dt;
-    const normalizedSweep = normalize(sweepAngle);
+                    sweepAngle += SWEEP_SPEED * dt;
+                    const normalizedSweep = normalize(sweepAngle);
 
-    ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+                    ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
 
-    // 1. Concentric Rings
-    ctx.strokeStyle = 'rgba(0, 184, 219, 0.05)';
-    ctx.lineWidth = 1;
-    for (let r = 50; r <= 240; r += 40) {
-      ctx.beginPath();
-      ctx.arc(CX, CY, r, 0, Math.PI * 2);
-      ctx.stroke();
-    }
+                    // 1. Concentric Rings
+                    ctx.strokeStyle = 'rgba(0, 184, 219, 0.05)';
+                    ctx.lineWidth = 1;
+                    for (let r = 50; r <= 240; r += 40) {
+                        ctx.beginPath();
+                        ctx.arc(CX, CY, r, 0, Math.PI * 2);
+                        ctx.stroke();
+                    }
 
-    // 2. Sonar Wedge
-    ctx.save();
-    const SLICES = 60;
-    for (let i = 0; i < SLICES; i++) {
-      const step = TAIL_ANGLE / SLICES;
-      const start = sweepAngle - TAIL_ANGLE + (i * step);
-      const end = start + step;
-      const opacity = Math.pow(i / SLICES, 2) * 0.22;
-      ctx.beginPath();
-      ctx.moveTo(CX, CY);
-      ctx.arc(CX, CY, 250, start, end);
-      ctx.closePath();
-      ctx.fillStyle = `rgba(0, 184, 219, ${opacity})`;
-      ctx.fill();
-    }
-    ctx.restore();
+                    // 2. Sonar Wedge
+                    ctx.save();
+                    const SLICES = 60;
+                    for (let i = 0; i < SLICES; i++) {
+                        const step = TAIL_ANGLE / SLICES;
+                        const start = sweepAngle - TAIL_ANGLE + (i * step);
+                        const end = start + step;
+                        const opacity = Math.pow(i / SLICES, 2) * 0.22;
+                        ctx.beginPath();
+                        ctx.moveTo(CX, CY);
+                        ctx.arc(CX, CY, 250, start, end);
+                        ctx.closePath();
+                        ctx.fillStyle = `rgba(0, 184, 219, ${opacity})`;
+                        ctx.fill();
+                    }
+                    ctx.restore();
 
-    // 3. Leading Line
-    ctx.beginPath();
-    ctx.moveTo(CX, CY);
-    ctx.lineTo(CX + 250 * Math.cos(sweepAngle), CY + 250 * Math.sin(sweepAngle));
-    ctx.strokeStyle = 'rgba(0, 230, 255, 0.6)';
-    ctx.lineWidth = 1.8;
-    ctx.stroke();
+                    // 3. Leading Line
+                    ctx.beginPath();
+                    ctx.moveTo(CX, CY);
+                    ctx.lineTo(CX + 250 * Math.cos(sweepAngle), CY + 250 * Math.sin(sweepAngle));
+                    ctx.strokeStyle = 'rgba(0, 230, 255, 0.6)';
+                    ctx.lineWidth = 1.8;
+                    ctx.stroke();
 
-    // 4. Core Node Glow
-    const coreGlow = ctx.createRadialGradient(CX, CY, 0, CX, CY, 15);
-    coreGlow.addColorStop(0, 'rgba(0, 230, 255, 0.9)');
-    coreGlow.addColorStop(0.5, 'rgba(0, 184, 219, 0.4)');
-    coreGlow.addColorStop(1, 'rgba(0, 184, 219, 0)');
-    ctx.beginPath();
-    ctx.arc(CX, CY, 15, 0, Math.PI * 2);
-    ctx.fillStyle = coreGlow;
-    ctx.fill();
+                    // 4. Core Node Glow
+                    const coreGlow = ctx.createRadialGradient(CX, CY, 0, CX, CY, 15);
+                    coreGlow.addColorStop(0, 'rgba(0, 230, 255, 0.9)');
+                    coreGlow.addColorStop(0.5, 'rgba(0, 184, 219, 0.4)');
+                    coreGlow.addColorStop(1, 'rgba(0, 184, 219, 0)');
+                    ctx.beginPath();
+                    ctx.arc(CX, CY, 15, 0, Math.PI * 2);
+                    ctx.fillStyle = coreGlow;
+                    ctx.fill();
 
-    // 5. Icon Lighting Interaction
-    icons.forEach(icon => {
-      const iconRad = normalize(icon._rad);
-      const diff = Math.abs(normalizedSweep - iconRad);
-      const isHit = diff < LIT_WINDOW || (Math.PI * 2 - diff) < LIT_WINDOW;
+                    // 5. Icon Lighting Interaction
+                    icons.forEach(icon => {
+                        const iconRad = normalize(icon._rad);
+                        const diff = Math.abs(normalizedSweep - iconRad);
+                        const isHit = diff < LIT_WINDOW || (Math.PI * 2 - diff) < LIT_WINDOW;
 
-      if (isHit) {
-        icon._glow = 1.0;
-      } else {
-        icon._glow = Math.max(0, icon._glow - dt * 2.5);
-      }
+                        if (isHit) {
+                            icon._glow = 1.0;
+                        } else {
+                            icon._glow = Math.max(0, icon._glow - dt * 2.5);
+                        }
 
-      const g = icon._glow;
-      if (g > 0.05) {
-        icon.style.background = `rgba(13, 33, 55, ${0.8 + 0.1 * g})`;
-        icon.style.borderColor = `rgba(0, 184, 219, ${0.15 + 0.7 * g})`;
-        icon.style.boxShadow = `0 0 ${12 + 20 * g}px rgba(0, 184, 219, ${0.1 + 0.4 * g})`;
-        const svg = icon.querySelector('svg');
-        svg.style.opacity = 0.6 + 0.4 * g;
-        svg.style.filter = `drop-shadow(0 0 ${4 * g}px rgba(0, 230, 255, 0.8))`;
-      } else {
-        icon.style.background = 'rgba(13, 33, 55, 0.8)';
-        icon.style.borderColor = 'rgba(0, 184, 219, 0.15)';
-        icon.style.boxShadow = 'none';
-        const svg = icon.querySelector('svg');
-        svg.style.opacity = '0.6';
-        svg.style.filter = 'none';
-      }
-    });
+                        const g = icon._glow;
+                        if (g > 0.05) {
+                            icon.style.background = `rgba(13, 33, 55, ${0.8 + 0.1 * g})`;
+                            icon.style.borderColor = `rgba(0, 184, 219, ${0.15 + 0.7 * g})`;
+                            icon.style.boxShadow = `0 0 ${12 + 20 * g}px rgba(0, 184, 219, ${0.1 + 0.4 * g})`;
+                            const svg = icon.querySelector('svg');
+                            svg.style.opacity = 0.6 + 0.4 * g;
+                            svg.style.filter = `drop-shadow(0 0 ${4 * g}px rgba(0, 230, 255, 0.8))`;
+                        } else {
+                            icon.style.background = 'rgba(13, 33, 55, 0.8)';
+                            icon.style.borderColor = 'rgba(0, 184, 219, 0.15)';
+                            icon.style.boxShadow = 'none';
+                            const svg = icon.querySelector('svg');
+                            svg.style.opacity = '0.6';
+                            svg.style.filter = 'none';
+                        }
+                    });
 
-    requestAnimationFrame(draw);
-  }
-  requestAnimationFrame(draw);
-})();
-</script>
-</body></html>
+                    requestAnimationFrame(draw);
+                }
+                requestAnimationFrame(draw);
+            })();
+    </script>
+</body>
+
+</html>

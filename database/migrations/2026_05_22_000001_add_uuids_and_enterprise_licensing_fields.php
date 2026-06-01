@@ -38,7 +38,6 @@ return new class extends Migration
         // ── 1. Add UUIDs to every key entity table ────────────────────────────
 
         $tables = [
-            'products',
             'customers',
             'licenses',
             'license_activations',
@@ -74,16 +73,7 @@ return new class extends Migration
 
         // ── 3. Products: version constraints + offline TTL + grace default ────
 
-        Schema::table('products', function (Blueprint $table) {
-            $table->string('min_app_version', 32)->nullable()->after('current_version')
-                ->comment('Default minimum app version for licenses of this product');
-            $table->string('max_app_version', 32)->nullable()->after('min_app_version')
-                ->comment('Default maximum app version allowed (null = no upper bound)');
-            $table->unsignedSmallInteger('offline_ttl_hours')->default(168)->after('max_app_version')
-                ->comment('Hours a cached validation response is valid offline (default 7 days)');
-            $table->unsignedSmallInteger('grace_period_days')->default(0)->after('offline_ttl_hours')
-                ->comment('Default grace period in days for licenses of this product');
-        });
+
 
         // ── 4. Validation logs: response nonce, source, offline_valid_until ──
 
@@ -120,7 +110,6 @@ return new class extends Migration
             'license_activations',
             'licenses',
             'customers',
-            'products',
         ];
 
         foreach ($tables as $table) {

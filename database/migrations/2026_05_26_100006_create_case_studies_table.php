@@ -23,7 +23,7 @@ return new class extends Migration
             $table->json('metrics')->nullable(); // [{"label":"Revenue Increase","value":"45%"}]
             $table->longText('content')->nullable();
             $table->json('tags')->nullable();
-            $table->foreignId('shop_product_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('product_id')->nullable()->constrained()->nullOnDelete();
             $table->string('status')->default('draft'); // draft, published, archived
             $table->timestamp('published_at')->nullable();
             $table->integer('views')->default(0);

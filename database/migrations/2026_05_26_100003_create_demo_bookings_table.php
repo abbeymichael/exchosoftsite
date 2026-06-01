@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->string('company')->nullable();
             $table->string('job_title')->nullable();
-            $table->foreignId('shop_product_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('product_id')->nullable()->constrained()->nullOnDelete();
             $table->string('product_name')->nullable(); // for display
             $table->string('demo_type')->default('online'); // online, onsite
             $table->date('preferred_date');
