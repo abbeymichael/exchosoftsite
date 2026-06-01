@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             ActivationSeeder::class,
             SubscriptionSeeder::class,
             SiteSettingsSeeder::class,
+            PageSeeder::class,
         ]);
     }
 }

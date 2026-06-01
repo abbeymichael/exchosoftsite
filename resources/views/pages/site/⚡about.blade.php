@@ -1,14 +1,20 @@
 <?php
 
+use App\Livewire\Concerns\LoadsPageSeo;
 use Livewire\Attributes\Layout;
-use Livewire\Attributes\Title;
 use Livewire\Component;
 
-new #[Layout('layouts.site')] #[Title('About — Exchosoft Consult')] class extends Component
+new #[Layout('layouts.site')] class extends Component
 {
+    use LoadsPageSeo;
+
     public function render(): \Illuminate\View\View
     {
-        return view('pages.site.about');
+        $this->loadPageSeo('about');
+        return view('pages.site.about', $this->seoViewData(
+            'About Us — Exchosoft Consult',
+            'Learn about Exchosoft Consult — a Ghana-based software development firm specialising in offline-first systems for Africa, the Caribbean, and the diaspora.'
+        ));
     }
 }; ?>
 
