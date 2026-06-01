@@ -4,7 +4,7 @@ use App\Livewire\Concerns\LoadsPageSeo;
 use App\Models\BlogPost;
 use App\Models\CaseStudy;
 use App\Models\PortfolioItem;
-use App\Models\ShopProduct;
+use App\Models\Product;
 use App\Models\SiteSetting;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -17,7 +17,7 @@ new #[Layout('layouts.site')] class extends Component
     {
         $this->loadPageSeo('home');
 
-        $featuredProducts = ShopProduct::published()->featured()->orderBy('sort_order')->limit(3)->get();
+        $featuredProducts = Product::published()->featured()->orderBy('sort_order')->limit(3)->get();
         $latestPosts      = BlogPost::published()->latest('published_at')->limit(3)->get();
         $featuredCases    = CaseStudy::published()->featured()->limit(3)->get();
         $featuredWork     = PortfolioItem::published()->featured()->orderBy('sort_order')->limit(4)->get();

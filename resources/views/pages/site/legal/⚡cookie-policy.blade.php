@@ -8,10 +8,12 @@ new #[Layout('layouts.site')] class extends Component
 {
     use LoadsPageSeo;
 
+
+
     public function render(): \Illuminate\View\View
     {
         $this->loadPageSeo('cookie-policy');
-        return view('pages.site.legal.cookie-policy', $this->seoViewData(
+        return view('pages.site.home', $this->seoViewData(
             'Cookie Policy — Exchosoft Consult',
             'Read the Exchosoft cookie policy — what cookies we use, why we use them, and how you can manage your preferences.'
         ));
@@ -32,7 +34,7 @@ new #[Layout('layouts.site')] class extends Component
 </header>
 <section class="site-section" style="background:var(--white);max-width:800px;margin:0 auto;">
   <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:2rem;">Last updated: {{ $pageSeo?->updated_at?->format('d F Y') ?? date('d F Y') }}</p>
-  
+
     <div style="margin-bottom:2.5rem;">
       <h2 style="font-family:var(--font-display);font-size:1.15rem;font-weight:700;color:var(--navy);margin-bottom:0.75rem;">What Are Cookies</h2>
       <p style="font-size:0.9rem;color:var(--text-secondary);line-height:1.85;">Cookies are small text files that are stored on your device when you visit a website. They help websites remember your preferences and understand how you use the site.</p>
