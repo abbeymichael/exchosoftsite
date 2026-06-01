@@ -5,6 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title ?? 'Exchosoft Consult — Software Development & Technology Consultancy' }}</title>
     <meta name="description" content="{{ $metaDescription ?? 'Exchosoft Consult is a Ghana-based technology consultancy and software development company serving Black businesses across Africa, the Caribbean, and the diaspora.' }}">
+    @if(!empty($metaKeywords))
+    <meta name="keywords" content="{{ $metaKeywords }}">
+    @endif
+    @if(!empty($canonicalUrl))
+    <link rel="canonical" href="{{ $canonicalUrl }}">
+    @endif
+    {{-- Open Graph --}}
+    @if(!empty($ogTitle))
+    <meta property="og:title" content="{{ $ogTitle }}">
+    @endif
+    @if(!empty($ogDescription))
+    <meta property="og:description" content="{{ $ogDescription }}">
+    @endif
+    @if(!empty($ogImage))
+    <meta property="og:image" content="{{ $ogImage }}">
+    @endif
+    <meta property="og:type" content="{{ $ogType ?? 'website' }}">
+    <meta property="og:url" content="{{ url()->current() }}">
+    {{-- Twitter Card --}}
+    <meta name="twitter:card" content="{{ $twitterCard ?? 'summary_large_image' }}">
+    @if(!empty($twitterTitle))
+    <meta name="twitter:title" content="{{ $twitterTitle }}">
+    @elseif(!empty($ogTitle))
+    <meta name="twitter:title" content="{{ $ogTitle }}">
+    @endif
+    @if(!empty($twitterDescription))
+    <meta name="twitter:description" content="{{ $twitterDescription }}">
+    @elseif(!empty($ogDescription))
+    <meta name="twitter:description" content="{{ $ogDescription }}">
+    @endif
+    @if(!empty($twitterImage))
+    <meta name="twitter:image" content="{{ $twitterImage }}">
+    @elseif(!empty($ogImage))
+    <meta name="twitter:image" content="{{ $ogImage }}">
+    @endif
+    {{-- Schema.org JSON-LD --}}
+    @if(!empty($schemaMarkup))
+    <script type="application/ld+json">{!! json_encode($schemaMarkup, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}</script>
+    @endif
     @php $faviconIco = public_path('assets/images/icon.ico'); @endphp
     @if(file_exists($faviconIco) && filesize($faviconIco) > 0)
         <link rel="icon" type="image/x-icon" href="{{ asset('assets/images/icon.ico') }}">
@@ -544,6 +583,11 @@
 
     <div class="footer-bottom">
         <p>&copy; {{ date('Y') }} Exchosoft Consult. All rights reserved.</p>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center;">
+            <a href="{{ route('site.privacy-policy') }}" wire:navigate style="font-size:0.72rem;color:rgba(255,255,255,0.28);text-decoration:none;" class="hover:text-cyan-400">Privacy</a>
+            <a href="{{ route('site.terms-of-service') }}" wire:navigate style="font-size:0.72rem;color:rgba(255,255,255,0.28);text-decoration:none;" class="hover:text-cyan-400">Terms</a>
+            <a href="{{ route('site.cookie-policy') }}" wire:navigate style="font-size:0.72rem;color:rgba(255,255,255,0.28);text-decoration:none;" class="hover:text-cyan-400">Cookies</a>
+        </div>
         <div class="footer-location">
             <span class="footer-location-dot"></span>
             Accra, Ghana &mdash; Serving Africa, the Caribbean &amp; the Diaspora

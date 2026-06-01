@@ -1,18 +1,22 @@
 <?php
 
+use App\Livewire\Concerns\LoadsPageSeo;
 use App\Models\BlogPost;
 use App\Models\CaseStudy;
 use App\Models\PortfolioItem;
 use App\Models\ShopProduct;
 use App\Models\SiteSetting;
 use Livewire\Attributes\Layout;
-use Livewire\Attributes\Title;
 use Livewire\Component;
 
-new #[Layout('layouts.site')] #[Title('Exchosoft Consult — Software Development & Technology Consultancy')] class extends Component
+new #[Layout('layouts.site')] class extends Component
 {
+    use LoadsPageSeo;
+
     public function render(): \Illuminate\View\View
     {
+        $this->loadPageSeo('home');
+
         $featuredProducts = ShopProduct::published()->featured()->orderBy('sort_order')->limit(3)->get();
         $latestPosts      = BlogPost::published()->latest('published_at')->limit(3)->get();
         $featuredCases    = CaseStudy::published()->featured()->limit(3)->get();
@@ -25,11 +29,11 @@ new #[Layout('layouts.site')] #[Title('Exchosoft Consult — Software Developmen
         $j = fn($key, $default = []) => isset($s[$key]) ? (is_string($s[$key]) ? (json_decode($s[$key], true) ?? $default) : $s[$key]) : $default;
 
         $cms = [
-            // Hero
-            'hero_tag'           => $s['home_hero_tag'] ?? 'Ghana-Based · Africa · Caribbean · Diaspora',
-            'hero_title_raw'     => $s['home_hero_title'] ?? 'Technology Consultancy Built on **Real-World** Experience',
+            // Hero — use Page banner fields if set, fall back to SiteSettings
+            'hero_tag'           => $this->pageSeo?->banner_subheading ?? $s['home_hero_tag'] ?? 'Ghana-Based · Africa · Caribbean · Diaspora',
+            'hero_title_raw'     => $this->pageSeo?->banner_heading ?? $s['home_hero_title'] ?? 'Technology Consultancy Built on **Real-World** Experience',
             'hero_subtitle'      => $s['home_hero_subtitle'] ?? "We're a software development and consultancy firm serving Black businesses across Africa, the Caribbean, and the diaspora.",
-            'hero_btn_primary'   => $s['home_hero_btn_primary_label'] ?? 'Talk to Us',
+            'hero_btn_primary'   => $this->pageSeo?->banner_cta_text ?? $s['home_hero_btn_primary_label'] ?? 'Talk to Us',
             'hero_btn_secondary' => $s['home_hero_btn_secondary_label'] ?? 'Our Products',
             // Stats
             'stats' => $j('home_stats', [
@@ -78,9 +82,16 @@ new #[Layout('layouts.site')] #[Title('Exchosoft Consult — Software Developmen
             'demo_cta_subtitle' => $s['home_demo_cta_subtitle'] ?? "Book a live demonstration and see how our platforms handle your specific industry's challenges.",
         ];
 
-        return view('pages.site.home', compact('featuredProducts', 'latestPosts', 'featuredCases', 'featuredWork', 'cms'));
+        return view('pages.site.home', array_merge(
+            compact('featuredProducts', 'latestPosts', 'featuredCases', 'featuredWork', 'cms'),
+            $this->seoViewData(
+                'Exchosoft Consult — Software Development & Technology Consultancy',
+                "We're a software development and consultancy firm serving Black businesses across Africa, the Caribbean, and the diaspora."
+            )
+        ));
     }
 }; ?>
+
 
 <div>
 <style>
