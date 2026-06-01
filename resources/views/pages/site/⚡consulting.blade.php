@@ -19,17 +19,15 @@ new #[Layout('layouts.site')] class extends Component
 }; ?>
 
 <div>
-<header class="page-banner">
-  <div class="page-banner-dots"></div>
-  <div class="page-banner-glow"></div>
-  <div class="page-banner-accent"></div>
-  <div class="page-banner-content">
-    <nav class="page-breadcrumb"><a href="{{ route('home') }}" wire:navigate>Home</a><span class="sep">/</span><span class="current">Consulting</span></nav>
-    <div class="page-banner-tag"><span style="width:5px;height:5px;border-radius:50%;background:rgba(122,207,232,0.7);display:inline-block;"></span> Tech Consulting</div>
-    <h1>{{ $pageBannerHeading ?: 'Technology Consulting That Tells the Truth' }}</h1>
-    <p class="page-banner-sub">{{ $pageBannerSubheading ?: 'We help businesses understand exactly what technology they need — and what they don't.' }}</p>
-  </div>
-</header>
+<x-page-banner
+    tag="Tech Consulting"
+    tagIcon="psychology"
+    title='Technology Consulting That <span style="color:#00b8db;">Tells the Truth</span>'
+    subtitle="{{ $pageBannerSubheading ?: 'We help businesses understand exactly what technology they need — and what they don\'t.' }}"
+    :breadcrumbs="[['label'=>'Home','route'=>'home'],['label'=>'Consulting']]"
+    glowX="68%"
+    glowX2="12%"
+></x-page-banner>
 
 <section class="site-section" style="background:var(--white);">
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;">

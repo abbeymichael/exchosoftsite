@@ -1381,18 +1381,22 @@ new #[Layout('layouts.site')] #[Title('Products — Exchosoft Consult')] class e
     </style>
 
     {{-- ── HERO ── --}}
-    <section class="products-hero">
-        <div class="products-hero-bg"></div>
-        <div class="products-hero-grid"></div>
-        <canvas id="products-particle-canvas"></canvas>
-        <canvas id="products-radar-canvas"></canvas>
-        <div class="products-hero-content">
-            <div class="products-hero-tag"><span></span> Industry Solutions</div>
-            <h1>Software Built for <br /><em>Real Conditions</em></h1>
-            <p class="products-hero-sub">Sector-specific platforms designed with an offline-first philosophy, engineered
-                for the infrastructure and business realities of emerging markets.</p>
-        </div>
-    </section>
+    <x-page-banner
+    tag="Our Products"
+    tagIcon="deployed_code"
+    title='Software Built for <span style="color:#00b8db;">Your Reality</span>'
+    subtitle="Ready-to-deploy tools and platforms crafted for African businesses — offline-first, resilient, and built to scale."
+    :breadcrumbs="[['label'=>'Home','route'=>'home'],['label'=>'Products']]"
+    glowX="68%"
+    glowX2="12%"
+>
+  <svg slot="ornament" class="absolute right-[7%] top-1/2 -translate-y-1/2 w-44 h-44 opacity-[.06] pointer-events-none" viewBox="0 0 180 180" fill="none">
+    <rect x="1" y="1" width="178" height="178" rx="16" stroke="#00b8db" stroke-width="1"/><rect x="22" y="22" width="136" height="136" rx="10" stroke="#00b8db" stroke-width="1"/><rect x="44" y="44" width="92" height="92" rx="6" stroke="#00b8db" stroke-width="1"/><rect x="66" y="66" width="48" height="48" rx="4" stroke="#00b8db" stroke-width="1"/>
+    <line x1="90" y1="1" x2="90" y2="179" stroke="#00b8db" stroke-width=".5"/><line x1="1" y1="90" x2="179" y2="90" stroke="#00b8db" stroke-width=".5"/>
+    <circle cx="90" cy="90" r="5" fill="#00b8db"/>
+  </svg>
+</x-page-banner>
+
 
     {{-- ── CATALOG CARDS ── --}}
     <section class="products-catalog">

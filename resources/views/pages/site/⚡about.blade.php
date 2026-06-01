@@ -179,21 +179,21 @@ new #[Layout('layouts.site')] class extends Component
 </style>
 
 {{-- ── HERO BANNER ── --}}
-<header class="about-hero">
-  <canvas class="about-hero-canvas" id="about-banner-canvas"></canvas>
-  <div class="about-hero-dots"></div>
-  <div class="about-hero-left-line"></div>
-  <div class="about-hero-content">
-    <div class="about-hero-crumb">
-      <a href="{{ route('home') }}" wire:navigate>Home</a>
-      <span class="sep">/</span>
-      <span class="current">About Us</span>
-    </div>
-    <div class="about-hero-tag"><span></span> Our Story</div>
-    <h1>Built From <span class="gradient">Here.</span><br>Built For Here.</h1>
-    <p class="about-hero-sub">We are a Ghana-based technology consultancy that builds software for the real conditions of doing business across Africa, the Caribbean, and the diaspora — not the ideal conditions someone else imagined.</p>
-  </div>
-</header>
+<x-page-banner
+    tag="Our Story"
+    tagIcon="info"
+    title='Built for <span style="color:#00b8db;">Africa</span>,<br>by People Who Know It'
+    subtitle="We're a Ghana-based technology consultancy building software that works in the real conditions of Africa, the Caribbean, and the diaspora."
+    :breadcrumbs="[['label'=>'Home','route'=>'home'],['label'=>'About Us']]"
+    glowX="72%"
+    glowX2="12%"
+>
+  <svg slot="ornament" class="absolute right-[7%] top-1/2 -translate-y-1/2 w-44 h-44 opacity-[.06] pointer-events-none" viewBox="0 0 180 180" fill="none">
+    <circle cx="90" cy="90" r="88" stroke="#00b8db" stroke-width="1"/><circle cx="90" cy="90" r="60" stroke="#00b8db" stroke-width="1"/><circle cx="90" cy="90" r="32" stroke="#00b8db" stroke-width="1"/>
+    <line x1="2" y1="90" x2="178" y2="90" stroke="#00b8db" stroke-width=".5"/><line x1="90" y1="2" x2="90" y2="178" stroke="#00b8db" stroke-width=".5"/>
+    <circle cx="90" cy="90" r="4" fill="#00b8db"/>
+  </svg>
+</x-page-banner>
 
 {{-- ── BRAND STORY ── --}}
 <section class="about-section story-grid" style="background: var(--white);">

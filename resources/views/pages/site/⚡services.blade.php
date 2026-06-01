@@ -36,21 +36,21 @@ new #[Layout('layouts.site')] class extends Component
   @media (max-width: 640px) { .services-grid { grid-template-columns: 1fr; } }
 </style>
 
-<header class="services-hero">
-  <div class="page-banner-dots"></div>
-  <div class="page-banner-glow"></div>
-  <div class="page-banner-accent"></div>
-  <div class="page-banner-content">
-    <nav class="page-breadcrumb">
-      <a href="{{ route('home') }}" wire:navigate>Home</a>
-      <span class="sep">/</span>
-      <span class="current">Services</span>
-    </nav>
-    <div class="page-banner-tag"><span style="width:5px;height:5px;border-radius:50%;background:rgba(122,207,232,0.7);display:inline-block;"></span> What We Do</div>
-    <h1>{{ $pageBannerHeading ?: 'Services Built Around Your Reality' }}</h1>
-    <p class="page-banner-sub">{{ $pageBannerSubheading ?: 'From custom software development to full technology consulting — everything built for the specific conditions of your market.' }}</p>
-  </div>
-</header>
+<x-page-banner
+    tag="What We Do"
+    tagIcon="build"
+    title='End-to-End <span style="color:#00b8db;">Technology</span><br>Solutions'
+    subtitle="{{ $pageBannerSubheading ?: 'From custom software development to full technology consulting — everything built for the specific conditions of your market.' }}"
+    :breadcrumbs="[['label'=>'Home','route'=>'home'],['label'=>'Services']]"
+    glowX="25%"
+    glowX2="80%"
+>
+  <svg slot="ornament" class="absolute right-[7%] top-1/2 -translate-y-1/2 w-40 h-40 opacity-[.06] pointer-events-none" viewBox="0 0 160 160" fill="none">
+    <rect x="1" y="1" width="158" height="158" rx="20" stroke="#00b8db" stroke-width="1"/><rect x="24" y="24" width="112" height="112" rx="12" stroke="#00b8db" stroke-width="1"/><rect x="48" y="48" width="64" height="64" rx="6" stroke="#00b8db" stroke-width="1"/>
+    <line x1="1" y1="80" x2="159" y2="80" stroke="#00b8db" stroke-width=".5"/><line x1="80" y1="1" x2="80" y2="159" stroke="#00b8db" stroke-width=".5"/>
+    <circle cx="80" cy="80" r="5" fill="#00b8db"/>
+  </svg>
+</x-page-banner>
 
 <section class="site-section" style="background:var(--white);">
   <p class="section-tag-label">Our Capabilities</p>

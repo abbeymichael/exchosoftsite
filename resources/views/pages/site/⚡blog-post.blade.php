@@ -125,48 +125,52 @@ new #[Layout('layouts.site')] class extends Component {
 
 
     {{-- ── BANNER ── --}}
-    <section class="relative flex items-end overflow-hidden bg-[var(--navy)]"
-             style="height:70vh; min-height:420px; max-height:640px;">
+    <x-page-banner
+    tag="Blog Post"
+    tagIcon="article"
+    :title='"<span style='color:#00b8db;'>".e($post->title ?? \''). "</span>"'
+    :subtitle="null"
+    :breadcrumbs="[['label'=>'Home','route'=>'home'],['label'=>'Blog','route'=>'site.blog'],['label'=>Str::limit($post->title ?? \'Post\',40)]]"
+    glowX="65%"
+    glowX2="18%"
+>
+  @if($post->category || $post->published_at || $post->read_time_minutes)
+  <div class="d4 flex flex-wrap items-center gap-3 mt-4" style="animation:fadeUp .55s ease .33s both;">
+    @if($post->author_name ?? false)
+    <span class="inline-flex items-center gap-1.5 text-[11px] font-medium px-3 py-1 rounded-md"
+          style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.55);">
+      <span class="material-symbols-outlined text-[13px]">person</span>{{ $post->author_name }}
+    </span>
+    @endif
+    @if($post->published_at)
+    <span class="inline-flex items-center gap-1.5 text-[11px] font-medium px-3 py-1 rounded-md"
+          style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.55);">
+      <span class="material-symbols-outlined text-[13px]">calendar_month</span>{{ $post->published_at->format("M Y") }}
+    </span>
+    @endif
+    @if($post->read_time_minutes)
+    <span class="inline-flex items-center gap-1.5 text-[11px] font-medium px-3 py-1 rounded-md"
+          style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.55);">
+      <span class="material-symbols-outlined text-[13px]">schedule</span>{{ $post->read_time_minutes }} min read
+    </span>
+    @endif
+    @if($post->category)
+    <span class="inline-flex items-center gap-1.5 text-[11px] font-medium px-3 py-1 rounded-md"
+          style="background:rgba(0,184,219,.07);border:1px solid rgba(0,184,219,.25);color:#00b8db;">
+      <span class="material-symbols-outlined text-[13px]">label</span>{{ $post->category }}
+    </span>
+    @endif
+  </div>
+  @endif
+  <svg slot="ornament" class="absolute right-[7%] top-1/2 -translate-y-1/2 w-44 h-44 opacity-[.06] pointer-events-none" viewBox="0 0 180 180" fill="none">
+    <rect x="20" y="40" width="140" height="100" rx="8" stroke="#00b8db" stroke-width="1"/>
+    <rect x="32" y="55" width="116" height="12" rx="3" stroke="#00b8db" stroke-width="1"/>
+    <rect x="32" y="75" width="90" height="8" rx="2" stroke="#00b8db" stroke-width=".8"/><rect x="32" y="91" width="108" height="8" rx="2" stroke="#00b8db" stroke-width=".8"/>
+    <circle cx="38" cy="130" r="5" fill="rgba(0,184,219,.15)" stroke="#00b8db" stroke-width="1"/>
+    <rect x="50" y="127" width="60" height="6" rx="2" stroke="#00b8db" stroke-width=".8"/>
+  </svg>
+</x-page-banner>
 
-        @if ($post->cover_image)
-            <img src="{{ asset('storage/' . $post->cover_image) }}"
-                 alt="{{ $post->title }}"
-                 class="absolute inset-0 h-full w-full object-cover opacity-60">
-        @endif
-
-        <div class="bp-radar"></div>
-
-        <div class="absolute inset-0"
-             style="background: linear-gradient(to top, var(--navy) 0%, rgba(13,33,55,0.4) 50%, transparent 100%)"></div>
-
-        <div class="relative z-10 w-full max-w-[1100px] px-4 pb-8 sm:px-6 md:px-10 lg:px-8 lg:pb-8 xl:px-24 xl:pb-12">
-            <span class="mb-5 inline-block rounded bg-[var(--cyan)] px-3.5 py-1.5 text-[0.72rem] font-bold uppercase tracking-[0.1em] text-white">
-                {{ ucfirst($post->category ?? 'Blog') }}
-            </span>
-            <h1 class="mb-6 font-[var(--font-display)] font-extrabold leading-tight tracking-[-0.02em] text-white"
-                style="font-size: clamp(1.6rem, 3.5vw, 2.8rem);">
-                {{ $post->title }}
-            </h1>
-            <div class="flex flex-wrap items-center gap-5">
-                <div class="flex items-center gap-1.5 text-[0.8rem] text-white/65">
-                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="opacity-70">
-                        <rect x="3" y="4" width="18" height="18" rx="2"/>
-                        <line x1="16" y1="2" x2="16" y2="6"/>
-                        <line x1="8" y1="2" x2="8" y2="6"/>
-                        <line x1="3" y1="10" x2="21" y2="10"/>
-                    </svg>
-                    {{ $post->published_at?->format('F d, Y') }}
-                </div>
-                <div class="flex items-center gap-1.5 text-[0.8rem] text-white/65">
-                    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="opacity-70">
-                        <circle cx="12" cy="12" r="10"/>
-                        <path d="M12 6v6l4 2"/>
-                    </svg>
-                    {{ $post->read_time_minutes }} min read
-                </div>
-            </div>
-        </div>
-    </section>
 
     {{-- ── MAIN LAYOUT ── --}}
     <div class="relative mx-auto max-w-[1440px] gap-8

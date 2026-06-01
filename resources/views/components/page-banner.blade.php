@@ -1,209 +1,147 @@
+{{--
+  page-banner.blade.php  — v5 inner-page banner component
+  Matches the design from "all-banners for inner pages.html"
+
+  Props:
+    tag         – pill badge text (string)
+    tagIcon     – Material Symbol name for badge icon (string)
+    title       – headline; wrap text in <span class="text-cyan"> for cyan highlights
+    subtitle    – paragraph below headline (string)
+    breadcrumbs – array of ['label','route'?,'url'?] — last item = current (no link)
+    ornament    – raw SVG string for the right decorative element (optional)
+    glowX       – CSS % for radial glow horizontal position, default '70%'
+    glowX2      – CSS % for secondary glow, default '15%'
+    chips       – array of ['icon','text','accent'?] — accent=true gives cyan tint
+    stats       – array of ['value','label'] shown below subtitle
+--}}
+
 @props([
     'tag'         => null,
+    'tagIcon'     => null,
     'title'       => '',
     'subtitle'    => null,
-    'breadcrumbs' => [],   // [['label'=>'Home','route'=>'home'], ['label'=>'Current']]
-    'theme'       => 'cyan',  // cyan | green | violet
-    'height'      => 'md',    // sm | md | lg
-    'glowPosition' => '75% 50%',
-    'stats'       => [],   // optional [{label, value}]
-    'badgeText'   => null,
+    'breadcrumbs' => [],
+    'ornament'    => null,
+    'glowX'       => '70%',
+    'glowX2'      => '15%',
+    'chips'       => [],
+    'stats'       => [],
 ])
 
-@php
-    $minH = match($height) {
-        'sm'  => '300px',
-        'lg'  => '520px',
-        default => '400px',
-    };
-    $accentColor = match($theme) {
-        'green'  => 'rgba(76,175,130,0.14)',
-        'violet' => 'rgba(139,92,246,0.14)',
-        default  => 'rgba(0,184,219,0.14)',
-    };
-    $glowColor = match($theme) {
-        'green'  => 'rgba(76,175,130,0.12)',
-        'violet' => 'rgba(139,92,246,0.12)',
-        default  => 'rgba(0,184,219,0.1)',
-    };
-    $tagBg     = match($theme) {
-        'green'  => 'rgba(76,175,130,0.12)',
-        'violet' => 'rgba(139,92,246,0.12)',
-        default  => 'rgba(0,184,219,0.1)',
-    };
-    $tagBorder = match($theme) {
-        'green'  => 'rgba(76,175,130,0.25)',
-        'violet' => 'rgba(139,92,246,0.25)',
-        default  => 'rgba(0,184,219,0.22)',
-    };
-    $tagColor  = match($theme) {
-        'green'  => '#4caf82',
-        'violet' => '#a78bfa',
-        default  => 'var(--sky)',
-    };
-    $titleAccentColor = match($theme) {
-        'green'  => '#4caf82',
-        'violet' => '#a78bfa',
-        default  => 'var(--cyan)',
-    };
-    // Parse **text** → <em> in title
-    $parsedTitle = preg_replace('/\*\*(.+?)\*\*/', '<em style="color:'.$titleAccentColor.';font-style:normal;">$1</em>', e($title));
-@endphp
+<div class="relative overflow-hidden banner-glow py-20"
+     style="background:#08121d;border-bottom:1px solid rgba(0,184,219,.1);--gx:{{ $glowX }};--gx2:{{ $glowX2 }};">
 
-<style>
-.pb-banner {
-  background: var(--navy);
-  position: relative; overflow: hidden;
-  display: flex; align-items: center;
-  min-height: {{ $minH }};
-}
-.pb-dots {
-  position: absolute; inset: 0;
-  background-image: radial-gradient(circle, {{ $accentColor }} 1px, transparent 1px);
-  background-size: 32px 32px; pointer-events: none;
-}
-.pb-accent-line {
-  position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
-  background: linear-gradient(180deg, transparent 0%, {{ $tagColor }} 40%, {{ $tagColor }} 60%, transparent 100%);
-  opacity: 0.35;
-}
-.pb-glow {
-  position: absolute; inset: 0;
-  background-image:
-    radial-gradient(circle at {{ $glowPosition }}, {{ $glowColor }} 0%, transparent 58%),
-    radial-gradient(circle at 20% 80%, rgba(255,255,255,0.02) 0%, transparent 50%);
-  pointer-events: none;
-}
-.pb-content {
-  position: relative; z-index: 2;
-  padding: 4rem 6rem 4rem;
-  max-width: 780px;
-}
-.pb-crumb {
-  display: flex; align-items: center; gap: 0.5rem;
-  margin-bottom: 2rem;
-}
-.pb-crumb a {
-  font-size: 0.78rem; color: rgba(255,255,255,0.38);
-  text-decoration: none; transition: color 0.2s;
-}
-.pb-crumb a:hover { color: {{ $tagColor }}; }
-.pb-crumb .pb-sep { color: rgba(255,255,255,0.18); font-size: 0.75rem; }
-.pb-crumb .pb-cur {
-  font-size: 0.78rem; color: {{ $tagColor }}; font-weight: 600;
-}
-.pb-crumb .pb-dot {
-  width: 4px; height: 4px; border-radius: 50%;
-  background: {{ $tagColor }}; display: inline-block;
-  margin: 0 1px; opacity: 0.7;
-}
-.pb-tag {
-  display: inline-flex; align-items: center; gap: 0.45rem;
-  background: {{ $tagBg }}; border: 1px solid {{ $tagBorder }};
-  color: {{ $tagColor }};
-  padding: 0.28rem 0.9rem; border-radius: 100px;
-  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.07em;
-  margin-bottom: 1.25rem; text-transform: uppercase; width: fit-content;
-}
-.pb-tag-dot {
-  width: 5px; height: 5px; border-radius: 50%; background: {{ $tagColor }};
-  animation: pb-pulse 2s ease-in-out infinite;
-}
-@keyframes pb-pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(0.8); }
-}
-.pb-h1 {
-  font-family: var(--font-display);
-  font-size: clamp(2rem, 3.8vw, 3.2rem);
-  font-weight: 800; color: var(--white);
-  line-height: 1.1; letter-spacing: -0.03em;
-  margin-bottom: 1.1rem;
-}
-.pb-subtitle {
-  font-size: 1rem; color: rgba(255,255,255,0.52);
-  max-width: 560px; line-height: 1.8; font-weight: 300;
-}
-.pb-stats {
-  display: flex; gap: 2.5rem; margin-top: 2rem;
-  flex-wrap: wrap;
-}
-.pb-stat-val {
-  font-family: var(--font-display); font-size: 1.5rem;
-  font-weight: 800; color: {{ $tagColor }}; line-height: 1;
-}
-.pb-stat-lbl {
-  font-size: 0.75rem; color: rgba(255,255,255,0.4);
-  margin-top: 0.2rem;
-}
-.pb-right {
-  position: absolute; right: 5rem; top: 50%; transform: translateY(-50%);
-  z-index: 3;
-}
-@media (max-width: 1024px) {
-  .pb-content { padding: 3rem 2rem; }
-  .pb-right { display: none; }
-}
-</style>
+  {{-- Grid lines --}}
+  <div class="absolute inset-0 opacity-[.03] pointer-events-none"
+       style="background-image:linear-gradient(#00b8db 1px,transparent 1px),linear-gradient(90deg,#00b8db 1px,transparent 1px);background-size:60px 60px;"></div>
 
-<div class="pb-banner">
-  <div class="pb-dots"></div>
-  <div class="pb-accent-line"></div>
-  <div class="pb-glow"></div>
-  <div class="pb-content">
+  {{-- Top accent line --}}
+  <div class="absolute top-0 inset-x-0 h-0.5"
+       style="background:linear-gradient(90deg,transparent,rgba(0,184,219,.6) 30%,rgba(76,217,253,.8) 50%,rgba(0,184,219,.6) 70%,transparent);"></div>
+
+  {{-- Right ornament (optional) --}}
+  @if($ornament)
+  <div class="absolute right-[7%] top-1/2 -translate-y-1/2 w-44 h-44 opacity-[.06] pointer-events-none">
+    {!! $ornament !!}
+  </div>
+  @endif
+
+  {{-- Content --}}
+  <div class="relative z-10 max-w-6xl mx-auto px-6 md:px-10">
+
     {{-- Breadcrumbs --}}
     @if(count($breadcrumbs) > 0)
-    <div class="pb-crumb">
+    <nav class="d1 animate-[fadeUp_.55s_ease_both] flex items-center gap-1.5 text-[11px] font-medium tracking-widest uppercase mb-5"
+         style="color:rgba(255,255,255,.4);animation:fadeUp .55s ease .05s both;">
       @foreach($breadcrumbs as $idx => $crumb)
         @if($idx < count($breadcrumbs) - 1)
           @if(isset($crumb['route']))
-            <a href="{{ route($crumb['route']) }}" wire:navigate>{{ $crumb['label'] }}</a>
+            <a href="{{ route($crumb['route']) }}" wire:navigate
+               class="hover:text-cyan transition-colors" style="color:rgba(255,255,255,.4);">{{ $crumb['label'] }}</a>
           @else
-            <a href="{{ $crumb['url'] ?? '#' }}" wire:navigate>{{ $crumb['label'] }}</a>
+            <a href="{{ $crumb['url'] ?? '#' }}" wire:navigate
+               class="hover:text-cyan transition-colors" style="color:rgba(255,255,255,.4);">{{ $crumb['label'] }}</a>
           @endif
-          <span class="pb-sep">/</span>
+          <span style="color:rgba(0,184,219,.3);">›</span>
         @else
-          <span class="pb-dot"></span>
-          <span class="pb-cur">{{ $crumb['label'] }}</span>
+          <span class="font-semibold" style="color:#00b8db;">{{ $crumb['label'] }}</span>
         @endif
       @endforeach
-    </div>
+    </nav>
     @endif
 
-    {{-- Tag --}}
+    {{-- Tag pill --}}
     @if($tag)
-    <div class="pb-tag">
-      <span class="pb-tag-dot"></span>
+    <div class="d2 animate-[fadeUp_.55s_ease_both] inline-flex items-center gap-1.5 mb-4 rounded-full px-3.5 py-1 text-[11px] font-semibold tracking-widest uppercase"
+         style="background:rgba(0,184,219,.08);border:1px solid rgba(0,184,219,.2);color:#00b8db;animation:fadeUp .55s ease .14s both;">
+      @if($tagIcon)
+        <span class="material-symbols-outlined text-[13px]" style="font-variation-settings:'FILL' 1">{{ $tagIcon }}</span>
+      @endif
       {{ $tag }}
     </div>
     @endif
 
     {{-- Title --}}
-    <h1 class="pb-h1">{!! $parsedTitle !!}</h1>
+    <h1 class="d3 font-syne text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-[1.1] mb-3"
+        style="font-family:'Syne',sans-serif;animation:fadeUp .55s ease .23s both;">
+      {!! $title !!}
+    </h1>
 
     {{-- Subtitle --}}
     @if($subtitle)
-    <p class="pb-subtitle">{{ $subtitle }}</p>
+    <p class="d4 text-base leading-relaxed max-w-xl"
+       style="color:rgba(255,255,255,.5);animation:fadeUp .55s ease .33s both;">
+      {{ $subtitle }}
+    </p>
     @endif
 
-    {{-- Slot (extra content below) --}}
+    {{-- Extra slot --}}
     {{ $slot }}
+
+    {{-- Chips --}}
+    @if(count($chips) > 0)
+    <div class="d4 flex flex-wrap items-center gap-3 mt-4"
+         style="animation:fadeUp .55s ease .33s both;">
+      @foreach($chips as $chip)
+      <span class="inline-flex items-center gap-1.5 text-[11px] font-medium px-3 py-1 rounded-md"
+            style="{{ ($chip['accent'] ?? false)
+                ? 'background:rgba(0,184,219,.07);border:1px solid rgba(0,184,219,.25);color:#00b8db;'
+                : 'background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.55);' }}">
+        @if(!empty($chip['icon']))
+          <span class="material-symbols-outlined text-[13px]">{{ $chip['icon'] }}</span>
+        @endif
+        {{ $chip['text'] }}
+      </span>
+      @endforeach
+    </div>
+    @endif
 
     {{-- Stats --}}
     @if(count($stats) > 0)
-    <div class="pb-stats">
+    <div class="d5 flex flex-wrap gap-8 mt-6" style="animation:fadeUp .55s ease .42s both;">
       @foreach($stats as $stat)
       <div>
-        <div class="pb-stat-val">{{ $stat['value'] }}</div>
-        <div class="pb-stat-lbl">{{ $stat['label'] }}</div>
+        <div class="font-syne font-extrabold text-2xl" style="color:#00b8db;font-family:'Syne',sans-serif;">{{ $stat['value'] }}</div>
+        <div class="text-[12px] mt-0.5" style="color:rgba(255,255,255,.4);">{{ $stat['label'] }}</div>
       </div>
       @endforeach
     </div>
     @endif
-  </div>
 
-  {{-- Right slot if provided --}}
-  @isset($right)
-  <div class="pb-right">{{ $right }}</div>
-  @endisset
+  </div>
 </div>
+
+@once
+<style>
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(14px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  .banner-glow::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 55% 80% at var(--gx,70%) 50%, rgba(0,184,219,.11) 0%, transparent 70%),
+      radial-gradient(ellipse 28% 45% at var(--gx2,15%) 85%, rgba(122,207,232,.05) 0%, transparent 60%);
+  }
+</style>
+@endonce

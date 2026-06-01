@@ -62,47 +62,21 @@ new #[Layout('layouts.site')] #[Title('Tech Blog — Exchosoft Consult')] class 
 {{-- ═══════════════════════════════════════════════
      HERO
 ═══════════════════════════════════════════════ --}}
-<section class="relative overflow-hidden bg-[var(--navy)] px-6 pb-20 pt-28 md:px-24 border-b border-[rgba(0,184,219,0.1)]">
+<x-page-banner
+    tag="Insights"
+    tagIcon="article"
+    title='Thinking Out Loud About <span style="color:#00b8db;">African Tech</span>'
+    subtitle="Perspectives on software, infrastructure, and digital transformation from a team building in the context that others write think-pieces about."
+    :breadcrumbs="[['label'=>'Home','route'=>'home'],['label'=>'Blog']]"
+    glowX="22%"
+    glowX2="78%"
+>
+  <svg slot="ornament" class="absolute right-[7%] top-1/2 -translate-y-1/2 w-44 h-44 opacity-[.06] pointer-events-none" viewBox="0 0 180 180" fill="none">
+    <rect x="20" y="30" width="140" height="18" rx="4" stroke="#00b8db" stroke-width="1"/><rect x="20" y="58" width="100" height="18" rx="4" stroke="#00b8db" stroke-width="1"/><rect x="20" y="86" width="120" height="18" rx="4" stroke="#00b8db" stroke-width="1"/><rect x="20" y="114" width="80" height="18" rx="4" stroke="#00b8db" stroke-width="1"/>
+    <circle cx="9" cy="39" r="4" fill="#00b8db"/><circle cx="9" cy="67" r="4" fill="#00b8db"/><circle cx="9" cy="95" r="4" fill="#00b8db"/><circle cx="9" cy="123" r="4" fill="#00b8db"/>
+  </svg>
+</x-page-banner>
 
-  {{-- radar sweep --}}
-  <div class="pointer-events-none absolute left-1/2 top-1/2 h-[200%] w-[200%] -translate-x-1/2 -translate-y-1/2"
-       style="background:conic-gradient(from 0deg at 50% 50%,rgba(76,217,253,0.08) 0deg,transparent 90deg);animation:blog-rotate 8s linear infinite;"></div>
-
-  {{-- dot grid --}}
-  <div class="pointer-events-none absolute inset-0"
-       style="background-image:radial-gradient(circle,rgba(0,184,219,0.12) 1px,transparent 1px);background-size:32px 32px;"></div>
-
-  {{-- particles --}}
-  <div id="blog-particles-container" class="pointer-events-none absolute inset-0"></div>
-
-  <div class="relative z-10 max-w-3xl">
-    {{-- badge --}}
-    <div class="mb-6 inline-flex items-center gap-2 rounded-full border border-[rgba(0,184,219,0.2)] bg-[rgba(0,184,219,0.1)] px-4 py-1.5">
-      <span class="h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--cyan)]"></span>
-      <span class="text-[0.68rem] font-bold uppercase tracking-[0.2em] text-[var(--cyan)]">System Operational</span>
-    </div>
-
-    <h1 class="mb-6 font-[var(--font-display)] text-4xl font-extrabold leading-[1.1] tracking-tight text-white md:text-6xl">
-      Insights <em class="text-[var(--cyan)] not-italic">Built From Here.</em>
-    </h1>
-
-    <p class="mb-8 max-w-xl text-[1.05rem] font-light leading-[1.8] text-white/55">
-      Explorations into industrial-grade digital architecture, cross-continental connectivity, and the future of resilient technical systems.
-    </p>
-
-    <div class="flex flex-wrap gap-4">
-      <a href="#blog-featured"
-         class="inline-flex items-center gap-2 rounded-lg bg-[var(--cyan)] px-8 py-3.5 font-[var(--font-display)] text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-[var(--cyan-dark)]">
-        Read Featured
-        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
-      </a>
-      <a href="#blog-grid"
-         class="rounded-lg border border-white/20 px-8 py-3.5 font-[var(--font-display)] text-sm font-bold text-white/80 transition hover:border-[var(--cyan)] hover:text-white">
-        View All Posts
-      </a>
-    </div>
-  </div>
-</section>
 
 {{-- ═══════════════════════════════════════════════
      CATEGORY FILTER BAR

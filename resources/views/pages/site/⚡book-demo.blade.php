@@ -19,17 +19,15 @@ new #[Layout('layouts.site')] class extends Component
 }; ?>
 
 <div>
-<header class="page-banner">
-  <div class="page-banner-dots"></div>
-  <div class="page-banner-glow"></div>
-  <div class="page-banner-accent"></div>
-  <div class="page-banner-content">
-    <nav class="page-breadcrumb"><a href="{{ route('home') }}" wire:navigate>Home</a><span class="sep">/</span><span class="current">Book a Demo</span></nav>
-    <div class="page-banner-tag"><span style="width:5px;height:5px;border-radius:50%;background:rgba(122,207,232,0.7);display:inline-block;"></span> Free Demo</div>
-    <h1>{{ $pageBannerHeading ?: 'See Our Software in Action' }}</h1>
-    <p class="page-banner-sub">{{ $pageBannerSubheading ?: 'Book a live demonstration and see how our platforms handle your specific industry's challenges.' }}</p>
-  </div>
-</header>
+<x-page-banner
+    tag="Free Demo"
+    tagIcon="play_circle"
+    title='See Our Software <span style="color:#00b8db;">in Action</span>'
+    subtitle="{{ $pageBannerSubheading ?: 'Book a live demonstration and see how our platforms handle your specific industry challenges.' }}"
+    :breadcrumbs="[['label'=>'Home','route'=>'home'],['label'=>'Book a Demo']]"
+    glowX="65%"
+    glowX2="20%"
+></x-page-banner>
 
 <section class="site-section" style="background:var(--white);">
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;">

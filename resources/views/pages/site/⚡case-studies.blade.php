@@ -36,46 +36,22 @@ new #[Layout('layouts.site')] #[Title('Case Studies — Exchosoft Consult')] cla
 {{-- ═══════════════════════════════════════════════
      HERO
 ═══════════════════════════════════════════════ --}}
-<section class="relative flex min-h-[70vh] items-center overflow-hidden bg-[var(--navy)] px-6 pb-20 pt-28 md:px-24">
+<x-page-banner
+    tag="Impact Stories"
+    tagIcon="bar_chart_4_bars"
+    title='Real Projects,<br><span style="color:#00b8db;">Measurable Results</span>'
+    subtitle="See how we've helped organisations across Africa, the Caribbean, and the diaspora solve real technology challenges."
+    :breadcrumbs="[['label'=>'Home','route'=>'home'],['label'=>'Case Studies']]"
+    glowX="30%"
+    glowX2="80%"
+>
+  <svg slot="ornament" class="absolute right-[7%] top-1/2 -translate-y-1/2 w-44 h-44 opacity-[.06] pointer-events-none" viewBox="0 0 180 180" fill="none">
+    <circle cx="90" cy="90" r="88" stroke="#00b8db" stroke-width="1"/><circle cx="90" cy="90" r="62" stroke="#00b8db" stroke-width="1"/><circle cx="90" cy="90" r="36" stroke="#00b8db" stroke-width="1"/><circle cx="90" cy="90" r="12" stroke="#00b8db" stroke-width="1"/>
+    <line x1="2" y1="90" x2="178" y2="90" stroke="#00b8db" stroke-width=".5"/><line x1="90" y1="2" x2="90" y2="178" stroke="#00b8db" stroke-width=".5"/>
+    <circle cx="90" cy="90" r="4" fill="#00b8db"/>
+  </svg>
+</x-page-banner>
 
-  {{-- dot grid --}}
-  <div class="pointer-events-none absolute inset-0 opacity-50"
-       style="background-image:radial-gradient(circle,rgba(0,184,219,0.12) 1px,transparent 1px);background-size:32px 32px;"></div>
-
-  {{-- radar sweep --}}
-  <div class="pointer-events-none absolute inset-0"
-       style="background:linear-gradient(90deg,transparent,rgba(0,184,219,0.08),transparent);animation:cs-radar-sweep 4s infinite linear;"></div>
-
-  {{-- ping dots --}}
-  <div class="pointer-events-none absolute inset-0 overflow-hidden">
-    <div class="absolute h-2 w-2 rounded-full bg-[rgba(0,184,219,0.3)]"
-         style="top:25%;left:25%;animation:cs-ping 2s ease-in-out infinite;animation-delay:0s;"></div>
-    <div class="absolute h-2 w-2 rounded-full bg-[rgba(0,184,219,0.3)]"
-         style="top:50%;left:75%;animation:cs-ping 2s ease-in-out infinite;animation-delay:1s;"></div>
-    <div class="absolute h-2 w-2 rounded-full bg-[rgba(0,184,219,0.3)]"
-         style="bottom:33%;left:50%;animation:cs-ping 2s ease-in-out infinite;animation-delay:2s;"></div>
-  </div>
-
-  {{-- right ornament --}}
-  <div class="pointer-events-none absolute right-0 top-1/2 h-full w-1/3 -translate-y-1/2 border-l border-white/10 opacity-25"></div>
-
-  <div class="relative z-10 max-w-3xl">
-    <span class="mb-6 inline-block rounded-md bg-[rgba(0,184,219,0.15)] px-4 py-1.5 text-[0.72rem] font-bold uppercase tracking-[0.1em] text-[var(--cyan)]">
-      Global Portfolio
-    </span>
-    <h1 class="mb-5 font-[var(--font-display)] text-4xl font-extrabold leading-[1.05] tracking-[-0.04em] text-white md:text-[4rem]">
-      Impact Built<br>From Here
-    </h1>
-    <p class="mb-8 max-w-[560px] text-[1.05rem] font-light leading-[1.8] text-white/55">
-      Transforming the backbone of critical industries across the continent. From digital spirituality to surgical precision, we build the systems that sustain growth.
-    </p>
-    <div class="mt-4 flex items-center gap-3">
-      <div class="h-1 w-24 rounded-sm bg-[var(--cyan)]"></div>
-      <div class="h-1 w-12 rounded-sm bg-white/20"></div>
-      <div class="h-1 w-6 rounded-sm bg-white/10"></div>
-    </div>
-  </div>
-</section>
 
 {{-- ═══════════════════════════════════════════════
      FILTER BAR

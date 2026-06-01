@@ -19,17 +19,15 @@ new #[Layout('layouts.site')] class extends Component
 }; ?>
 
 <div>
-<header class="page-banner">
-  <div class="page-banner-dots"></div>
-  <div class="page-banner-glow"></div>
-  <div class="page-banner-accent"></div>
-  <div class="page-banner-content">
-    <nav class="page-breadcrumb"><a href="{{ route('home') }}" wire:navigate>Home</a><span class="sep">/</span><span class="current">White Papers</span></nav>
-    <div class="page-banner-tag"><span style="width:5px;height:5px;border-radius:50%;background:rgba(122,207,232,0.7);display:inline-block;"></span> Research</div>
-    <h1>{{ $pageBannerHeading ?: 'Research & Technical Thinking' }}</h1>
-    <p class="page-banner-sub">{{ $pageBannerSubheading ?: 'Our published thinking on technology, architecture, and building software for emerging markets.' }}</p>
-  </div>
-</header>
+<x-page-banner
+    tag="Research"
+    tagIcon="menu_book"
+    title='Research &amp; <span style="color:#00b8db;">Technical Thinking</span>'
+    subtitle="{{ $pageBannerSubheading ?: 'Our published thinking on technology, architecture, and building software for emerging markets.' }}"
+    :breadcrumbs="[['label'=>'Home','route'=>'home'],['label'=>'White Papers']]"
+    glowX="30%"
+    glowX2="75%"
+></x-page-banner>
 
 <section class="site-section" style="background:var(--white);">
   <p class="section-tag-label">Research & Thinking</p>

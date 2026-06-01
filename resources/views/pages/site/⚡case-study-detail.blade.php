@@ -37,49 +37,39 @@ new #[Layout('layouts.site')] class extends Component
 {{-- ═══════════════════════════════════════════════
      HERO BANNER
 ═══════════════════════════════════════════════ --}}
-<section class="relative flex min-h-[440px] max-h-[680px] items-end overflow-hidden bg-[var(--navy)]" style="height:70vh;">
-
-  @if($study->cover_image ?? false)
-    <img src="{{ asset('storage/'.$study->cover_image) }}" alt="{{ $study->title }}"
-         class="absolute inset-0 h-full w-full object-cover">
-  @elseif($study->client_logo ?? false)
-    <img src="{{ asset('storage/'.$study->client_logo) }}" alt="{{ $study->client_name }}"
-         class="absolute inset-0 h-full w-full object-cover">
-  @endif
-
-  {{-- gradient overlay --}}
-  <div class="absolute inset-0"
-       style="background:linear-gradient(to top,rgba(13,33,55,0.92) 0%,rgba(13,33,55,0.35) 55%,transparent 100%);"></div>
-
-  <div class="relative z-10 w-full max-w-[1200px] px-6 pb-14 md:px-24">
-    <span class="mb-5 inline-block rounded-full border border-[rgba(0,184,219,0.25)] bg-[rgba(0,184,219,0.15)] px-4 py-1.5 text-[0.7rem] font-bold uppercase tracking-[0.1em] text-[var(--cyan)]">
-      Case Study Detail
+<x-page-banner
+    tag="Case Study"
+    tagIcon="bar_chart_4_bars"
+    :title='"<span style='color:#00b8db;'>".e($study->client_name ?? 'Case Study')."</span><br>".e($study->title ?? '')'
+    :subtitle="$study->excerpt ?? $study->summary ?? null"
+    :breadcrumbs="[['label'=>'Home','route'=>'home'],['label'=>'Case Studies','route'=>'site.case-studies'],['label'=>$study->client_name ?? $study->title ?? 'Detail']]"
+    glowX="55%"
+    glowX2="10%"
+>
+  @if(!empty($study->chips))
+  <div slot="chips" class="d4 flex flex-wrap items-center gap-3 mt-4" style="animation:fadeUp .55s ease .33s both;">
+    @if($study->client_name)
+    <span class="inline-flex items-center gap-1.5 text-[11px] font-medium px-3 py-1 rounded-md"
+          style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.55);">
+      <span class="material-symbols-outlined text-[13px]">business</span>{{ $study->client_name }}
     </span>
-    <h1 class="mb-6 font-[var(--font-display)] text-3xl font-extrabold leading-[1.15] tracking-[-0.03em] text-white md:text-[3rem]">
-      {{ $study->title }}
-    </h1>
-    <div class="flex flex-wrap items-center gap-5">
-      @if($study->client_name)
-        <div class="flex items-center gap-1.5 text-[0.8rem] text-white/65">
-          <span class="material-symbols-outlined text-[0.95rem]">business</span>
-          {{ $study->client_name }}
-        </div>
-      @endif
-      @if($study->client_industry)
-        <div class="flex items-center gap-1.5 text-[0.8rem] text-white/65">
-          <span class="material-symbols-outlined text-[0.95rem]">category</span>
-          {{ $study->client_industry }}
-        </div>
-      @endif
-      @if(!empty($study->client_location))
-        <div class="flex items-center gap-1.5 text-[0.8rem] text-white/65">
-          <span class="material-symbols-outlined text-[0.95rem]">location_on</span>
-          {{ $study->client_location }}
-        </div>
-      @endif
-    </div>
+    @endif
+    @if($study->client_industry)
+    <span class="inline-flex items-center gap-1.5 text-[11px] font-medium px-3 py-1 rounded-md"
+          style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.55);">
+      <span class="material-symbols-outlined text-[13px]">category</span>{{ $study->client_industry }}
+    </span>
+    @endif
   </div>
-</section>
+  @endif
+  <svg slot="ornament" class="absolute right-[7%] top-1/2 -translate-y-1/2 w-44 h-44 opacity-[.06] pointer-events-none" viewBox="0 0 180 180" fill="none">
+    <circle cx="90" cy="90" r="88" stroke="#00b8db" stroke-width="1"/><circle cx="90" cy="90" r="60" stroke="#00b8db" stroke-width="1"/>
+    <circle cx="90" cy="54" r="10" fill="rgba(0,184,219,.1)" stroke="#00b8db" stroke-width="1"/><circle cx="90" cy="126" r="10" fill="rgba(0,184,219,.1)" stroke="#00b8db" stroke-width="1"/>
+    <circle cx="54" cy="90" r="10" fill="rgba(0,184,219,.1)" stroke="#00b8db" stroke-width="1"/><circle cx="126" cy="90" r="10" fill="rgba(0,184,219,.1)" stroke="#00b8db" stroke-width="1"/>
+    <circle cx="90" cy="90" r="5" fill="#00b8db"/>
+  </svg>
+</x-page-banner>
+
 
 {{-- ═══════════════════════════════════════════════
      MAIN CONTENT GRID

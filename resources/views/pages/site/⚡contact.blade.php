@@ -56,17 +56,20 @@ new #[Layout('layouts.site')] class extends Component
   @media (max-width: 1024px) { .contact-layout { grid-template-columns: 1fr; gap: 3rem; } }
 </style>
 
-<header class="contact-hero">
-  <div class="page-banner-dots"></div>
-  <div class="page-banner-glow"></div>
-  <div class="page-banner-accent"></div>
-  <div class="page-banner-content">
-    <nav class="page-breadcrumb"><a href="{{ route('home') }}" wire:navigate>Home</a><span class="sep">/</span><span class="current">Contact</span></nav>
-    <div class="page-banner-tag"><span style="width:5px;height:5px;border-radius:50%;background:rgba(122,207,232,0.7);display:inline-block;"></span> Get In Touch</div>
-    <h1>{{ $pageBannerHeading ?: "Let's Talk" }}</h1>
-    <p class="page-banner-sub">{{ $pageBannerSubheading ?: "Tell us what you need. We'll tell you honestly if we can build it." }}</p>
-  </div>
-</header>
+<x-page-banner
+    tag="Get In Touch"
+    tagIcon="mail"
+    title='Let&rsquo;s Build<br><span style="color:#00b8db;">Something Real</span>'
+    subtitle="{{ $pageBannerSubheading ?: 'Tell us what you\'re working on. We\'ll tell you honestly whether we\'re the right team for it.' }}"
+    :breadcrumbs="[['label'=>'Home','route'=>'home'],['label'=>'Contact']]"
+    glowX="60%"
+    glowX2="18%"
+>
+  <svg slot="ornament" class="absolute right-[10%] top-1/2 -translate-y-1/2 w-36 h-36 opacity-[.05] pointer-events-none" viewBox="0 0 150 150" fill="none">
+    <polygon points="75,4 144,40 144,110 75,146 6,110 6,40" stroke="#00b8db" stroke-width="1"/><polygon points="75,28 122,54 122,96 75,122 28,96 28,54" stroke="#00b8db" stroke-width="1"/><polygon points="75,52 100,68 100,82 75,98 50,82 50,68" stroke="#00b8db" stroke-width="1"/>
+    <circle cx="75" cy="75" r="5" fill="#00b8db"/>
+  </svg>
+</x-page-banner>
 
 <section class="site-section" style="background:var(--white);">
   <div class="contact-layout">
