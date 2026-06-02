@@ -3,397 +3,746 @@
 use App\Models\Product;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Illuminate\Support\Str;
-use Livewire\Attributes\Computed;
 
-new #[Layout('layouts.admin')] #[Title('Products — ExchoLicense')] class extends Component {
+new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends Component {
     use WithPagination;
 
     public string $search = '';
-    public string $platform = '';
-    public bool $showModal = false;
-    public bool $editing = false;
-    public ?int $editingId = null;
+    public string $filterPlatform = '';
+    public string $filterCategory = '';
+    public string $filterStatus = '';
 
+    public bool $showForm = false;
+    public bool $editMode = false;
+    public ?string $editId = null;
+
+    // Core Fields
     public string $name = '';
     public string $slug = '';
     public string $product_code = '';
-    public string $selectedPlatform = 'desktop';
-    public string $current_version = '1.0.0';
-    public string $pricing_type = 'lifetime';
+    public string $platform = '';
+    public string $current_version = '';
+    public string $pricing_type = 'freemium';
     public string $description = '';
-    public bool $is_active = true;
+    public string $logo = '';
 
-    public function updatingSearch(): void
+    // Licensing Fields
+    public string $app_identifier = '';
+    public string $secret_key = '';
+    public string $support_email = '';
+    public string $webhook_url = '';
+    public int $max_devices = 0;
+    public int $default_duration_days = 365;
+    public string $min_app_version = '';
+    public string $max_app_version = '';
+    public int $offline_ttl_hours = 24;
+    public int $grace_period_days = 7;
+
+    // Shop Fields
+    public string $tagline = '';
+    public string $full_description = '';
+    public string $category = '';
+    public string $product_type = '';
+    public string $price = '0.00';
+    public string $sale_price = '';
+    public string $currency = 'USD';
+    public string $cover_image = '';
+    public string $gallery_text = ''; // JSON or line-separated
+    public string $features_text = '';
+    public string $tech_stack_text = '';
+    public string $demo_url = '';
+    public string $documentation_url = '';
+    public string $download_url = '';
+    public int $sort_order = 0;
+    public bool $is_active = true;
+    public bool $is_published = false;
+    public bool $is_featured = false;
+    public string $metadata_text = '';
+
+    public function updatedName(): void
     {
-        $this->resetPage();
+        if (!$this->editMode) {
+            $this->slug = str($this->name)->slug()->toString();
+        }
     }
 
     public function openCreate(): void
     {
-        $this->reset(['name', 'slug', 'product_code', 'description', 'current_version']);
-        $this->selectedPlatform = 'desktop';
-        $this->pricing_type = 'lifetime';
-        $this->is_active = true;
-        $this->editing = false;
-        $this->editingId = null;
-        $this->showModal = true;
+        $this->resetForm();
+        $this->showForm = true;
+        $this->editMode = false;
     }
 
-    public function openEdit(int $id): void
+    public function openEdit(string $id): void
     {
         $product = Product::findOrFail($id);
-        $this->editingId = $id;
+        $this->editId = $id;
         $this->name = $product->name;
         $this->slug = $product->slug;
-        $this->product_code = $product->product_code;
-        $this->selectedPlatform = $product->platform;
-        $this->current_version = $product->current_version;
-        $this->pricing_type = $product->pricing_type;
+        $this->product_code = $product->product_code ?? '';
+        $this->platform = $product->platform ?? '';
+        $this->current_version = $product->current_version ?? '';
+        $this->pricing_type = $product->pricing_type ?? 'freemium';
         $this->description = $product->description ?? '';
-        $this->is_active = $product->is_active;
-        $this->editing = true;
-        $this->showModal = true;
-    }
+        $this->logo = $product->logo ?? '';
 
-    public function updatedName(): void
-    {
-        if (!$this->editing) {
-            $this->slug = Str::slug($this->name);
-            $this->product_code = strtoupper(substr(preg_replace('/[^A-Z0-9]/i', '', $this->name), 0, 6));
-        }
+        $this->app_identifier = $product->app_identifier ?? '';
+        $this->secret_key = $product->secret_key ?? '';
+        $this->support_email = $product->support_email ?? '';
+        $this->webhook_url = $product->webhook_url ?? '';
+        $this->max_devices = $product->max_devices ?? 0;
+        $this->default_duration_days = $product->default_duration_days ?? 365;
+        $this->min_app_version = $product->min_app_version ?? '';
+        $this->max_app_version = $product->max_app_version ?? '';
+        $this->offline_ttl_hours = $product->offline_ttl_hours ?? 24;
+        $this->grace_period_days = $product->grace_period_days ?? 7;
+
+        $this->tagline = $product->tagline ?? '';
+        $this->full_description = $product->full_description ?? '';
+        $this->category = $product->category ?? '';
+        $this->product_type = $product->product_type ?? '';
+        $this->price = $product->price ?? '0.00';
+        $this->sale_price = $product->sale_price ?? '';
+        $this->currency = $product->currency ?? 'USD';
+        $this->cover_image = $product->cover_image ?? '';
+        $this->gallery_text = json_encode($product->gallery ?? []);
+        $this->features_text = implode("\n", $product->features ?? []);
+        $this->tech_stack_text = implode("\n", $product->tech_stack ?? []);
+        $this->demo_url = $product->demo_url ?? '';
+        $this->documentation_url = $product->documentation_url ?? '';
+        $this->download_url = $product->download_url ?? '';
+        $this->sort_order = $product->sort_order ?? 0;
+        $this->is_active = $product->is_active;
+        $this->is_published = $product->is_published;
+        $this->is_featured = $product->is_featured;
+        $this->metadata_text = json_encode($product->metadata ?? []);
+
+        $this->showForm = true;
+        $this->editMode = true;
     }
 
     public function save(): void
     {
         $this->validate([
-            'name'             => 'required|string|max:255',
-            'slug'             => 'required|string|max:255|alpha_dash|unique:products,slug,' . ($this->editingId ?? 'NULL'),
-            'product_code'     => 'required|string|max:10|unique:products,product_code,' . ($this->editingId ?? 'NULL'),
-            'selectedPlatform' => 'required|in:desktop,saas,hybrid,offline-first',
-            'current_version'  => 'required|string|max:20',
-            'pricing_type'     => 'required|in:lifetime,subscription,trial,free',
+            'name' => 'required|string|max:100',
+            'slug' => 'required|string|max:100|unique:products,slug' . ($this->editMode ? ',' . $this->editId . ',id' : ''),
+            'product_code' => 'nullable|string|max:50',
+            'platform' => 'nullable|string|max:50',
+            'current_version' => 'nullable|string|max:50',
+            'pricing_type' => 'nullable|string|max:50',
+            'description' => 'nullable|string|max:500',
+            'logo' => 'nullable|string|max:255',
+            'app_identifier' => 'nullable|string|max:100',
+            'support_email' => 'nullable|email|max:100',
+            'max_devices' => 'nullable|integer|min:0',
+            'default_duration_days' => 'nullable|integer|min:1',
+            'offline_ttl_hours' => 'nullable|integer|min:0',
+            'grace_period_days' => 'nullable|integer|min:0',
+            'tagline' => 'nullable|string|max:200',
+            'full_description' => 'nullable|string',
+            'category' => 'nullable|string|max:50',
+            'product_type' => 'nullable|string|max:50',
+            'price' => 'nullable|numeric|min:0',
+            'sale_price' => 'nullable|numeric|min:0',
+            'currency' => 'nullable|string|max:3',
+            'cover_image' => 'nullable|string|max:255',
+            'demo_url' => 'nullable|url|max:255',
+            'documentation_url' => 'nullable|url|max:255',
+            'download_url' => 'nullable|url|max:255',
+            'sort_order' => 'nullable|integer|min:0',
         ]);
 
         $data = [
-            'name'            => $this->name,
-            'slug'            => $this->slug,
-            'product_code'    => strtoupper($this->product_code),
-            'platform'        => $this->selectedPlatform,
-            'current_version' => $this->current_version,
-            'pricing_type'    => $this->pricing_type,
-            'description'     => $this->description ?: null,
-            'is_active'       => $this->is_active,
+            'name' => $this->name,
+            'slug' => $this->slug,
+            'product_code' => $this->product_code ?: null,
+            'platform' => $this->platform ?: null,
+            'current_version' => $this->current_version ?: null,
+            'pricing_type' => $this->pricing_type ?: null,
+            'description' => $this->description ?: null,
+            'logo' => $this->logo ?: null,
+            'app_identifier' => $this->app_identifier ?: null,
+            'secret_key' => $this->secret_key ?: null,
+            'support_email' => $this->support_email ?: null,
+            'webhook_url' => $this->webhook_url ?: null,
+            'max_devices' => $this->max_devices,
+            'default_duration_days' => $this->default_duration_days,
+            'min_app_version' => $this->min_app_version ?: null,
+            'max_app_version' => $this->max_app_version ?: null,
+            'offline_ttl_hours' => $this->offline_ttl_hours,
+            'grace_period_days' => $this->grace_period_days,
+            'tagline' => $this->tagline ?: null,
+            'full_description' => $this->full_description ?: null,
+            'category' => $this->category ?: null,
+            'product_type' => $this->product_type ?: null,
+            'price' => $this->price ?: null,
+            'sale_price' => $this->sale_price ?: null,
+            'currency' => $this->currency ?: 'USD',
+            'cover_image' => $this->cover_image ?: null,
+            'gallery' => $this->parseJson($this->gallery_text),
+            'features' => $this->parseArray($this->features_text),
+            'tech_stack' => $this->parseArray($this->tech_stack_text),
+            'demo_url' => $this->demo_url ?: null,
+            'documentation_url' => $this->documentation_url ?: null,
+            'download_url' => $this->download_url ?: null,
+            'sort_order' => $this->sort_order,
+            'is_active' => $this->is_active,
+            'is_published' => $this->is_published,
+            'is_featured' => $this->is_featured,
+            'metadata' => $this->parseJson($this->metadata_text),
         ];
 
-        if ($this->editing && $this->editingId) {
-            Product::findOrFail($this->editingId)->update($data);
-            session()->flash('success', 'Product updated successfully.');
+        if ($this->editMode) {
+            Product::findOrFail($this->editId)->update($data);
+            session()->flash('success', 'Product updated.');
         } else {
             Product::create($data);
-            session()->flash('success', 'Product created successfully.');
+            session()->flash('success', 'Product created.');
         }
 
-        $this->showModal = false;
-        $this->reset(['name', 'slug', 'product_code', 'description']);
-        unset($this->products);
+        $this->showForm = false;
+        $this->resetForm();
     }
 
-    public function toggleActive(int $id): void
-    {
-        $product = Product::findOrFail($id);
-        $product->update(['is_active' => !$product->is_active]);
-        unset($this->products);
-    }
-
-    public function deleteProduct(int $id): void
+    public function delete(string $id): void
     {
         Product::findOrFail($id)->delete();
         session()->flash('success', 'Product deleted.');
-        unset($this->products);
+    }
+
+    public function toggleStatus(string $id): void
+    {
+        $product = Product::findOrFail($id);
+        $product->update(['is_active' => !$product->is_active]);
+    }
+
+    public function togglePublished(string $id): void
+    {
+        $product = Product::findOrFail($id);
+        $product->update(['is_published' => !$product->is_published]);
+    }
+
+    private function parseArray(string $text): array
+    {
+        if (empty($text)) {
+            return [];
+        }
+        $items = preg_split('/[\r\n,]+/', $text);
+        return array_filter(array_map('trim', $items));
+    }
+
+    private function parseJson(string $text): array
+    {
+        if (empty($text)) {
+            return [];
+        }
+        try {
+            $decoded = json_decode($text, true);
+            return is_array($decoded) ? $decoded : [];
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+
+    public function resetForm(): void
+    {
+        $this->name = '';
+        $this->slug = '';
+        $this->product_code = '';
+        $this->platform = '';
+        $this->current_version = '';
+        $this->pricing_type = 'freemium';
+        $this->description = '';
+        $this->logo = '';
+        $this->app_identifier = '';
+        $this->secret_key = '';
+        $this->support_email = '';
+        $this->webhook_url = '';
+        $this->max_devices = 0;
+        $this->default_duration_days = 365;
+        $this->min_app_version = '';
+        $this->max_app_version = '';
+        $this->offline_ttl_hours = 24;
+        $this->grace_period_days = 7;
+        $this->tagline = '';
+        $this->full_description = '';
+        $this->category = '';
+        $this->product_type = '';
+        $this->price = '0.00';
+        $this->sale_price = '';
+        $this->currency = 'USD';
+        $this->cover_image = '';
+        $this->gallery_text = '';
+        $this->features_text = '';
+        $this->tech_stack_text = '';
+        $this->demo_url = '';
+        $this->documentation_url = '';
+        $this->download_url = '';
+        $this->sort_order = 0;
+        $this->is_active = true;
+        $this->is_published = false;
+        $this->is_featured = false;
+        $this->metadata_text = '';
+        $this->editId = null;
+        $this->resetValidation();
     }
 
     #[Computed]
     public function products()
     {
-        return Product::query()
-            ->when($this->search, fn($q) => $q->where('name', 'like', "%{$this->search}%")
-                ->orWhere('product_code', 'like', "%{$this->search}%"))
-            ->when($this->platform, fn($q) => $q->where('platform', $this->platform))
-            ->withCount('licenses')
-            ->latest()
-            ->paginate(10);
+        return Product::when($this->search, fn($q) => $q->where('name', 'like', '%' . $this->search . '%')->orWhere('product_code', 'like', '%' . $this->search . '%'))->when($this->filterPlatform, fn($q) => $q->where('platform', $this->filterPlatform))->when($this->filterCategory, fn($q) => $q->where('category', $this->filterCategory))->when($this->filterStatus, fn($q) => $q->where('is_active', $this->filterStatus === 'active'))->latest()->paginate(15);
     }
 }; ?>
 
-{{-- Single root element required by Livewire --}}
 <div>
-    <x-slot:heading>Products</x-slot:heading>
+    <x-slot:heading>Site Notifications</x-slot:heading>
 
-    <div class="space-y-6">
-
-        {{-- Flash --}}
+    {{-- Main content --}}
+    <div class="space-y-5">
         @if (session('success'))
             <div class="rounded-xl bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-700">
                 {{ session('success') }}
             </div>
         @endif
 
-        {{-- Toolbar --}}
-        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <div class="flex items-center gap-3 flex-1">
-                <input type="text" wire:model.live="search" placeholder="Search products…"
-                    class="w-full sm:w-72 rounded-lg border border-slate-300 px-4 py-2 text-sm focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500">
-                <select wire:model.live="platform"
-                    class="rounded-lg border border-slate-300 px-4 py-2 text-sm focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+        {{-- Header --}}
+        <div class="flex flex-wrap items-center justify-between gap-3">
+            <div class="flex flex-wrap items-center gap-2">
+                <div class="relative">
+                    <svg class="absolute left-3 top-2.5 h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search products..."
+                        class="pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-cyan-400 w-52">
+                </div>
+                <select wire:model.live="filterPlatform"
+                    class="rounded-xl border border-slate-200 text-sm px-3 py-2 focus:outline-none focus:border-cyan-400">
                     <option value="">All Platforms</option>
+                    <option value="web">Web</option>
                     <option value="desktop">Desktop</option>
-                    <option value="saas">SaaS</option>
-                    <option value="hybrid">Hybrid</option>
-                    <option value="offline-first">Offline-first</option>
+                    <option value="mobile">Mobile</option>
+                </select>
+                <select wire:model.live="filterCategory"
+                    class="rounded-xl border border-slate-200 text-sm px-3 py-2 focus:outline-none focus:border-cyan-400">
+                    <option value="">All Categories</option>
+                    <option value="erp">ERP</option>
+                    <option value="hrms">HRMS</option>
+                    <option value="software">Software</option>
+                </select>
+                <select wire:model.live="filterStatus"
+                    class="rounded-xl border border-slate-200 text-sm px-3 py-2 focus:outline-none focus:border-cyan-400">
+                    <option value="">All Status</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
                 </select>
             </div>
             <button wire:click="openCreate"
-                class="flex items-center gap-2 rounded-lg bg-cyan-600 px-4 py-2 text-sm font-semibold text-white hover:bg-cyan-700 transition-colors">
+                class="inline-flex items-center gap-2 rounded-xl bg-cyan-600 px-4 py-2 text-sm font-semibold text-white hover:bg-cyan-700 transition-colors shadow-sm">
                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                 </svg>
-                Add Product
+                New Product
             </button>
         </div>
 
         {{-- Table --}}
         <div class="rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead class="border-b border-slate-200 bg-slate-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Name</th>
-                            <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Code</th>
-                            <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Platform</th>
-                            <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Version</th>
-                            <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Licenses</th>
-                            <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Status</th>
-                            <th class="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">Actions</th>
+                <table class="min-w-full text-sm">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-100">
+                            <th
+                                class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                Name</th>
+                            <th
+                                class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                Platform</th>
+                            <th
+                                class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                Category</th>
+                            <th
+                                class="px-5 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                Price</th>
+                            <th
+                                class="px-5 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                Published</th>
+                            <th
+                                class="px-5 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                Status</th>
+                            <th
+                                class="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                Actions</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                         @forelse($this->products as $product)
-                            <tr class="hover:bg-slate-50 transition-colors">
-                                <td class="px-6 py-3">
+                            <tr class="hover:bg-slate-50/50 transition-colors">
+                                <td class="px-5 py-3">
                                     <div>
-                                        <p class="text-sm font-semibold text-slate-900">{{ $product->name }}</p>
-                                        @if ($product->description)
-                                            <p class="text-xs text-slate-400 truncate max-w-xs">{{ $product->description }}</p>
-                                        @endif
+                                        <p class="font-semibold text-slate-900">{{ $product->name }}</p>
+                                        <p class="text-xs text-slate-500">{{ $product->product_code ?? 'N/A' }}</p>
                                     </div>
                                 </td>
-                                <td class="px-6 py-3 text-sm font-mono text-slate-700">{{ $product->product_code }}</td>
-                                <td class="px-6 py-3">
-                                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium
-                                        {{ match ($product->platform) {
-                                            'desktop'       => 'bg-blue-50 text-blue-700',
-                                            'saas'          => 'bg-green-50 text-green-700',
-                                            'hybrid'        => 'bg-violet-50 text-violet-700',
-                                            'offline-first' => 'bg-orange-50 text-orange-700',
-                                            default         => 'bg-slate-100 text-slate-600',
-                                        } }}">
-                                        {{ ucfirst($product->platform) }}
-                                    </span>
+                                <td class="px-5 py-3">
+                                    <span class="text-slate-600">{{ $product->platform ?? '—' }}</span>
                                 </td>
-                                <td class="px-6 py-3 text-sm text-slate-600">{{ $product->current_version }}</td>
-                                <td class="px-6 py-3 text-sm text-slate-900 font-medium">{{ $product->licenses_count }}</td>
-                                <td class="px-6 py-3">
-                                    <button wire:click="toggleActive({{ $product->id }})"
-                                        class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors
-                                            {{ $product->is_active ? 'bg-green-50 text-green-700 hover:bg-green-100' : 'bg-slate-100 text-slate-500 hover:bg-slate-200' }}">
+                                <td class="px-5 py-3">
+                                    <span class="text-slate-600">{{ $product->category ?? '—' }}</span>
+                                </td>
+                                <td class="px-5 py-3 text-center">
+                                    @if ($product->price)
+                                        <span class="text-slate-900 font-semibold">{{ $product->currency ?? 'USD' }}
+                                            {{ number_format($product->effective_price, 2) }}</span>
+                                        @if ($product->is_on_sale)
+                                            <p class="text-xs text-red-600 line-through">
+                                                {{ number_format($product->price, 2) }}</p>
+                                        @endif
+                                    @else
+                                        <span class="text-slate-400">—</span>
+                                    @endif
+                                </td>
+                                <td class="px-5 py-3 text-center">
+                                    <button wire:click="togglePublished('{{ $product->id }}')"
+                                        class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors
+                                               {{ $product->is_published ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' : 'bg-slate-100 text-slate-500 hover:bg-slate-200' }}">
+                                        {{ $product->is_published ? 'Published' : 'Draft' }}
+                                    </button>
+                                </td>
+                                <td class="px-5 py-3 text-center">
+                                    <button wire:click="toggleStatus('{{ $product->id }}')"
+                                        class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors
+                                               {{ $product->is_active ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-slate-100 text-slate-500 hover:bg-slate-200' }}">
                                         {{ $product->is_active ? 'Active' : 'Inactive' }}
                                     </button>
                                 </td>
-                                <td class="px-6 py-3 text-right">
-                                    <div class="flex items-center justify-end gap-3">
-                                        <button wire:click="openEdit({{ $product->id }})"
-                                            class="text-sm font-medium text-cyan-600 hover:text-cyan-700">Edit</button>
-                                        <button wire:click="deleteProduct({{ $product->id }})"
-                                            wire:confirm="Are you sure you want to delete this product?"
-                                            class="text-sm font-medium text-red-600 hover:text-red-700">Delete</button>
+                                <td class="px-5 py-3 text-right">
+                                    <div class="flex items-center justify-end gap-1">
+                                        <button wire:click="openEdit('{{ $product->id }}')"
+                                            class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors">
+                                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                                                stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                            </svg>
+                                        </button>
+                                        <button wire:click="delete('{{ $product->id }}')"
+                                            wire:confirm="Delete this product?"
+                                            class="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600 transition-colors">
+                                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                                                stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="px-6 py-12 text-center text-sm text-slate-400">
-                                    No products found. <button wire:click="openCreate"
-                                        class="text-cyan-600 hover:underline">Add your first product</button>.
-                                </td>
+                                <td colspan="7" class="px-5 py-12 text-center text-sm text-slate-400">No products
+                                    yet. Create your first one!</td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
+            @if ($this->products->hasPages())
+                <div class="border-t border-slate-100 px-5 py-4">{{ $this->products->links() }}</div>
+            @endif
         </div>
-
-        {{-- Pagination --}}
-        <div class="flex justify-center">
-            {{ $this->products->links() }}
-        </div>
-
     </div>
 
-    {{-- Modal — kept inside the single root div, shown/hidden via x-show to avoid @if root-element issues --}}
-    <div
-        x-data
-        x-show="$wire.showModal"
-        x-on:keydown.escape.window="$wire.set('showModal', false)"
-        style="display: none; position: fixed; inset: 0; z-index: 200; overflow-y: auto;"
-        aria-modal="true"
-        role="dialog"
-    >
-        <div class="flex min-h-full items-end justify-center p-4 sm:items-center">
-
-            {{-- Backdrop --}}
-            <div
-                style="position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(2px);"
-                x-on:click="$wire.set('showModal', false)"
-            ></div>
-
-            {{-- Panel --}}
-            <div class="relative w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl">
-
-                <div class="mb-5 flex items-center justify-between">
-                    <h2 class="text-lg font-semibold text-slate-900">
-                        {{ $editing ? 'Edit Product' : 'New Product' }}
+    {{-- Slide-over Form --}}
+    @if ($showForm)
+        <div class="fixed inset-0 z-50 flex">
+            <div class="fixed inset-0 bg-slate-900/50" wire:click="$set('showForm', false)"></div>
+            <div class="relative ml-auto w-full max-w-3xl bg-white shadow-2xl flex flex-col h-full overflow-y-auto">
+                <div
+                    class="flex items-center justify-between border-b border-slate-100 px-6 py-4 sticky top-0 bg-white z-10">
+                    <h2 class="text-base font-semibold text-slate-900">
+                        {{ $editMode ? 'Edit Product' : 'New Product' }}
                     </h2>
-                    <button wire:click="$set('showModal', false)"
-                        class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors">
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <button wire:click="$set('showForm', false)"
+                        class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                            stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
                 </div>
-
-                <form wire:submit="save" class="space-y-4">
-
-                    {{-- Product Name --}}
+                <form wire:submit="save" class="flex-1 px-6 py-5 space-y-6">
+                    {{-- Core Fields --}}
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">
-                            Product Name <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" wire:model.live="name"
-                            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500"
-                            placeholder="My Awesome App">
-                        @error('name')
-                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    {{-- Slug + Product Code --}}
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">
-                                Slug <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" wire:model="slug"
-                                class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500"
-                                placeholder="my-awesome-app">
-                            @error('slug')
-                                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">
-                                Product Code <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" wire:model="product_code"
-                                class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-mono uppercase focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500"
-                                placeholder="MYAPP">
-                            @error('product_code')
-                                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-                    </div>
-
-                    {{-- Platform + Version --}}
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">
-                                Platform <span class="text-red-500">*</span>
-                            </label>
-                            <select wire:model="selectedPlatform"
-                                class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500">
-                                <option value="desktop">Desktop</option>
-                                <option value="saas">SaaS</option>
-                                <option value="hybrid">Hybrid</option>
-                                <option value="offline-first">Offline-first</option>
-                            </select>
-                            @error('selectedPlatform')
-                                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">
-                                Version <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" wire:model="current_version"
-                                class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500"
-                                placeholder="1.0.0">
-                            @error('current_version')
-                                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-                            @enderror
+                        <p class="text-xs font-semibold uppercase text-slate-500 mb-3">Core Information</p>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Name *</label>
+                                <input wire:model="name" type="text"
+                                    class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                @error('name')
+                                    <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Slug *</label>
+                                <input wire:model="slug" type="text"
+                                    class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                @error('slug')
+                                    <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            <div class="grid grid-cols-3 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Product Code</label>
+                                    <input wire:model="product_code" type="text"
+                                        class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Platform</label>
+                                    <input wire:model="platform" type="text" placeholder="web, desktop, mobile"
+                                        class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Version</label>
+                                    <input wire:model="current_version" type="text" placeholder="1.0.0"
+                                        class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Pricing Type</label>
+                                    <select wire:model="pricing_type"
+                                        class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                        <option value="freemium">Freemium</option>
+                                        <option value="paid">Paid</option>
+                                        <option value="free">Free</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Logo URL</label>
+                                    <input wire:model="logo" type="text"
+                                        class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Description</label>
+                                <livewire:markdown-editor wire:model="description"
+                                    placeholder="Write your blog post content with markdown..." :rows="8"
+                                    :show-toolbar="true" :show-upload="true" />
+                            </div>
                         </div>
                     </div>
 
-                    {{-- Pricing Type --}}
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">
-                            Pricing Type <span class="text-red-500">*</span>
-                        </label>
-                        <select wire:model="pricing_type"
-                            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500">
-                            <option value="lifetime">Lifetime</option>
-                            <option value="subscription">Subscription</option>
-                            <option value="trial">Trial</option>
-                            <option value="free">Free</option>
-                        </select>
-                        @error('pricing_type')
-                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-                        @enderror
+                    {{-- Shop Fields --}}
+                    <div class="border-t border-slate-100 pt-3">
+                        <p class="text-xs font-semibold uppercase text-slate-500 mb-3">Shop Information</p>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Tagline</label>
+                                <input wire:model="tagline" type="text"
+                                    class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Full Description</label>
+                                <textarea wire:model="full_description" rows="3"
+                                    class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 resize-none"></textarea>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Category</label>
+                                    <input wire:model="category" type="text" placeholder="erp, hrms, software"
+                                        class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Product Type</label>
+                                    <input wire:model="product_type" type="text" placeholder="digital, physical"
+                                        class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-3 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Price</label>
+                                    <input wire:model="price" type="number" step="0.01" min="0"
+                                        class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Sale Price</label>
+                                    <input wire:model="sale_price" type="number" step="0.01" min="0"
+                                        class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Currency</label>
+                                    <input wire:model="currency" type="text" placeholder="USD" maxlength="3"
+                                        class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Cover Image URL</label>
+                                <input wire:model="cover_image" type="text"
+                                    class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Gallery Images (JSON
+                                    array or one URL per line)</label>
+                                <textarea wire:model="gallery_text" rows="2" placeholder='["url1", "url2"]'
+                                    class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 resize-none font-mono text-xs"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Features (one per
+                                    line)</label>
+                                <textarea wire:model="features_text" rows="2" placeholder="Feature 1&#10;Feature 2"
+                                    class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 resize-none"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Tech Stack (one per
+                                    line)</label>
+                                <textarea wire:model="tech_stack_text" rows="2" placeholder="Tech 1&#10;Tech 2"
+                                    class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 resize-none"></textarea>
+                            </div>
+                            <div class="grid grid-cols-3 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Demo URL</label>
+                                    <input wire:model="demo_url" type="url"
+                                        class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Documentation
+                                        URL</label>
+                                    <input wire:model="documentation_url" type="url"
+                                        class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Download URL</label>
+                                    <input wire:model="download_url" type="url"
+                                        class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Sort Order</label>
+                                <input wire:model="sort_order" type="number" min="0"
+                                    class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                            </div>
+                        </div>
                     </div>
 
-                    {{-- Description --}}
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Description</label>
-                        <textarea wire:model="description" rows="2"
-                            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500"
-                            placeholder="Optional product description…"></textarea>
+                    {{-- Licensing Fields --}}
+                    <div class="border-t border-slate-100 pt-3">
+                        <p class="text-xs font-semibold uppercase text-slate-500 mb-3">Licensing</p>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">App Identifier</label>
+                                <input wire:model="app_identifier" type="text"
+                                    class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                <p class="mt-1 text-xs text-slate-500">Leave empty if not licensable</p>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Secret Key</label>
+                                <div class="flex items-center gap-2">
+                                    <input wire:model="secret_key" type="text" readonly
+                                        class="flex-1 rounded-xl border border-slate-200 px-3 py-2 text-sm bg-slate-50">
+                                    <p class="text-xs text-slate-500">(Auto-generated)</p>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Support
+                                        Email</label>
+                                    <input wire:model="support_email" type="email"
+                                        class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Webhook URL</label>
+                                    <input wire:model="webhook_url" type="url"
+                                        class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-4 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Max Devices</label>
+                                    <input wire:model="max_devices" type="number" min="0"
+                                        class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Default Duration
+                                        (days)</label>
+                                    <input wire:model="default_duration_days" type="number" min="1"
+                                        class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Offline TTL
+                                        (hours)</label>
+                                    <input wire:model="offline_ttl_hours" type="number" min="0"
+                                        class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Grace Period
+                                        (days)</label>
+                                    <input wire:model="grace_period_days" type="number" min="0"
+                                        class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Min App
+                                        Version</label>
+                                    <input wire:model="min_app_version" type="text" placeholder="1.0.0"
+                                        class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Max App
+                                        Version</label>
+                                    <input wire:model="max_app_version" type="text" placeholder="2.0.0"
+                                        class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    {{-- Active toggle --}}
-                    <div class="flex items-center gap-3">
-                        <input type="checkbox" id="is_active" wire:model="is_active"
-                            class="h-4 w-4 rounded border-slate-300 text-cyan-600 focus:ring-cyan-500">
-                        <label for="is_active" class="text-sm text-slate-700">
-                            Active (visible for license assignment)
-                        </label>
+                    {{-- Metadata & Status --}}
+                    <div class="border-t border-slate-100 pt-3">
+                        <p class="text-xs font-semibold uppercase text-slate-500 mb-3">Metadata & Status</p>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Metadata (JSON)</label>
+                                <textarea wire:model="metadata_text" rows="2" placeholder='{"key": "value"}'
+                                    class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 resize-none font-mono text-xs"></textarea>
+                            </div>
+                            <div class="flex flex-wrap gap-3">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input wire:model="is_active" type="checkbox"
+                                        class="rounded border-slate-300 text-cyan-600">
+                                    <span class="text-sm text-slate-700">Active</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input wire:model="is_published" type="checkbox"
+                                        class="rounded border-slate-300 text-cyan-600">
+                                    <span class="text-sm text-slate-700">Published</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input wire:model="is_featured" type="checkbox"
+                                        class="rounded border-slate-300 text-cyan-600">
+                                    <span class="text-sm text-slate-700">Featured</span>
+                                </label>
+                            </div>
+                        </div>
                     </div>
 
-                    {{-- Actions --}}
-                    <div class="flex justify-end gap-3 pt-2">
-                        <button type="button" wire:click="$set('showModal', false)"
-                            class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors">
-                            Cancel
-                        </button>
+                    {{-- Action Buttons --}}
+                    <div class="flex gap-3 pt-2 border-t border-slate-100 sticky bottom-0 bg-white pb-2">
                         <button type="submit"
-                            class="rounded-lg bg-cyan-600 px-4 py-2 text-sm font-semibold text-white hover:bg-cyan-700 transition-colors">
-                            {{ $editing ? 'Save Changes' : 'Create Product' }}
+                            class="flex-1 rounded-xl bg-cyan-600 py-2.5 text-sm font-semibold text-white hover:bg-cyan-700 transition-colors">
+                            {{ $editMode ? 'Update Product' : 'Create Product' }}
                         </button>
+                        <button type="button" wire:click="$set('showForm', false)"
+                            class="flex-1 rounded-xl bg-slate-100 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-200 transition-colors">Cancel</button>
                     </div>
-
                 </form>
             </div>
         </div>
-    </div>
-
+    @endif
 </div>

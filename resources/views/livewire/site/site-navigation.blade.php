@@ -1,481 +1,619 @@
-{{--
-  site-navigation.blade.php
-  Livewire 4 component — notification bar + sticky mega-menu header + mobile drawer
-  No render() view needed — this IS the view.
---}}
-
-{{-- ── Sticky shell ───────────────────────────────────────────── --}}
 <div class="sticky top-0 z-50 flex flex-col" id="sticky-shell" x-data="siteNav()">
 
-  {{-- Notification Bar --}}
-  @if($notificationVisible)
-  <div
-    class="border-b border-cyan/20 transition-all duration-300"
-    id="notification-bar"
-    style="background:linear-gradient(90deg,#08121d 0%,#0d2137 40%,#0a1e30 60%,#08121d 100%);box-shadow:0 1px 0 rgba(0,184,219,.12),inset 0 1px 0 rgba(0,184,219,.06);"
-    x-show="notifOpen"
-    x-transition:leave="transition duration-200"
-    x-transition:leave-start="opacity-100 max-h-12"
-    x-transition:leave-end="opacity-0 max-h-0 overflow-hidden"
-  >
-    <div class="relative flex items-center justify-center py-2 px-10">
-      <span class="absolute left-4 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-cyan opacity-70 hidden md:block"
-            style="box-shadow:0 0 6px rgba(0,184,219,.8)"></span>
-      <p class="text-[12px] text-white/85 tracking-wide text-center">
-        <span class="text-cyan font-semibold mr-1">{{ $notificationText }}</span> —
-        <a class="text-secondary-fixed hover:text-white underline-offset-2 hover:underline transition-colors"
-           href="{{ $notificationLink }}"
-           wire:navigate>{{ $notificationLabel }}</a>
-      </p>
-      <button
-        @click="closeNotif()"
-        class="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-all"
-        aria-label="Dismiss notification"
-      >
-        <span class="material-symbols-outlined text-base leading-none">close</span>
-      </button>
-    </div>
-  </div>
-  @endif
+    {{-- Notification Carousel --}}
+    @if (count($notifications) > 0)
+        <div class="border-b border-[rgba(0,184,219,0.2)] transition-all duration-300"
+            x-data="{
+                autoRotateInterval: null,
+                autoRotate() {
+                    this.autoRotateInterval = setInterval(() => {
+                        $wire.nextNotification();
+                    }, 5000);
+                },
+                resetAutoRotate() {
+                    clearInterval(this.autoRotateInterval);
+                    this.autoRotate();
+                }
+            }"
+            x-init="autoRotate()"
+            @mouseenter="clearInterval(autoRotateInterval)"
+            @mouseleave="resetAutoRotate()"
+            x-show="notifOpen"
+            x-transition:leave="transition duration-300 ease-in" x-transition:leave-start="opacity-100 max-h-10"
+            x-transition:leave-end="opacity-0 max-h-0 overflow-hidden py-0"
+            style="background:linear-gradient(90deg,#08121d 0%,#0d2137 40%,#0a1e30 60%,#08121d 100%);box-shadow:0 1px 0 rgba(0,184,219,.12),inset 0 1px 0 rgba(0,184,219,.06);">
 
-  {{-- Header --}}
-  <header
-    class="border-b border-white/10 shadow-sm transition-all duration-500"
-    id="main-header"
-    style="background:rgba(0,9,23,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);"
-    :class="scrolled ? 'border-cyan/15' : 'border-white/10'"
-  >
-    <nav class="flex justify-between items-center w-full px-4 md:px-10 lg:px-16 py-3">
+            {{-- Carousel Container --}}
+            <div class="relative flex items-center justify-center py-2 px-10">
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-[#00b8db] opacity-70 hidden md:block"
+                    style="box-shadow:0 0 6px rgba(0,184,219,.8)"></span>
 
-      {{-- ── Brand ──────────────────────────────────────────── --}}
-      <div class="flex items-center gap-2">
-        @php
-          $logoPng = public_path('assets/images/logo cyan.png');
-          $hasLogo  = file_exists($logoPng) && filesize($logoPng) > 0;
-        @endphp
-        @if($hasLogo)
-          <a href="{{ route('home') }}" wire:navigate class="flex items-center gap-2">
-            <img src="{{ asset('assets/images/logo cyan.png') }}" alt="Exchosoft Consult" class="h-10 w-auto">
-          </a>
-        @else
-          <span class="material-symbols-outlined text-secondary-container text-3xl" style="font-variation-settings:'FILL' 1;">hub</span>
-          <a class="font-syne text-2xl font-bold tracking-tight text-white" href="{{ route('home') }}" wire:navigate>
-            Exchosoft Consult
-          </a>
-        @endif
-      </div>
-
-      {{-- ── Desktop Nav Links ──────────────────────────────── --}}
-      <ul class="hidden md:flex items-center gap-6 lg:gap-8">
-
-        {{-- Home --}}
-        <li>
-          <a href="{{ route('home') }}" wire:navigate
-             class="text-sm font-medium tracking-widest uppercase transition-colors {{ request()->routeIs('home') ? 'text-cyan' : 'text-white/70 hover:text-secondary-fixed' }}">
-            Home
-          </a>
-        </li>
-
-        {{-- About --}}
-        <li>
-          <a href="{{ route('site.about') }}" wire:navigate
-             class="text-sm font-medium tracking-widest uppercase transition-colors {{ request()->routeIs('site.about') ? 'text-cyan' : 'text-white/70 hover:text-secondary-fixed' }}">
-            About
-          </a>
-        </li>
-
-        {{-- Products mega menu --}}
-        <li class="relative" @mouseenter="openMenu('products')" @mouseleave="closeMenu('products')">
-          <button class="mega-trigger relative flex items-center gap-1 text-sm font-medium tracking-widest uppercase transition-colors
-            {{ request()->routeIs('site.products*') ? 'text-cyan' : 'text-white/70 hover:text-secondary-fixed' }}">
-            Products <span class="material-symbols-outlined text-sm transition-transform duration-200" :class="activeMenu==='products' ? 'rotate-180' : ''">keyboard_arrow_down</span>
-          </button>
-          {{-- Mega panel --}}
-          <div
-            x-show="activeMenu==='products'"
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 translate-y-[-8px]"
-            x-transition:enter-end="opacity-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-150"
-            x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 translate-y-[-8px]"
-            class="absolute top-full -left-64 w-[900px] mt-4 bg-primary-container border border-outline-variant/10 rounded-xl shadow-2xl overflow-hidden z-50"
-            @mouseenter="openMenu('products')" @mouseleave="closeMenu('products')"
-            style="display:none;"
-          >
-            <div class="flex min-h-[380px]">
-              {{-- Left banner --}}
-              <div class="w-2/5 relative overflow-hidden group/banner">
-                <div class="w-full h-full bg-gradient-to-br from-navy via-navy-mid to-primary-container flex items-end">
-                  <div class="absolute inset-0" style="background-image:radial-gradient(#c4c6cd .5px,transparent .5px);background-size:24px 24px;opacity:.06;"></div>
-                  <div class="absolute inset-0 bg-gradient-to-l from-primary/80 to-transparent"></div>
-                </div>
-                <div class="absolute bottom-8 left-8 right-8">
-                  <div class="h-px w-12 bg-secondary-container mb-4"></div>
-                  <h5 class="text-white font-bold text-lg font-syne">Operational Excellence</h5>
-                  <p class="text-secondary-fixed text-sm">Reliability at every scale.</p>
-                </div>
-              </div>
-              {{-- Right items --}}
-              <div class="w-3/5 p-8">
-                <div class="mb-6 flex items-center justify-between border-b border-white/10 pb-4">
-                  <span class="text-xs font-bold text-secondary-fixed uppercase tracking-widest">Solutions Portfolio</span>
-                  <a class="text-xs font-bold text-white hover:text-secondary-container transition-colors flex items-center gap-1"
-                     href="{{ route('site.products') }}" wire:navigate>
-                    Explore All Products <span class="material-symbols-outlined text-xs">arrow_forward</span>
-                  </a>
-                </div>
-                <div class="grid grid-cols-2 gap-x-8 gap-y-5">
-                  @if(count($products) > 0)
-                    @foreach($products as $prod)
-                    <a class="group/item flex items-start gap-3 hover:bg-white/5 p-2 -m-2 rounded-lg transition-colors"
-                       href="{{ route('site.products.show', $prod['slug']) }}" wire:navigate>
-                      <span class="material-symbols-outlined text-secondary-container text-xl mt-0.5 shrink-0"
-                            style="font-variation-settings:'FILL' 1;">deployed_code</span>
-                      <div>
-                        <p class="text-sm font-bold text-white group-hover/item:text-secondary-fixed transition-colors">{{ $prod['name'] }}</p>
-                        @if($prod['tagline'])<p class="text-[11px] text-on-primary-container mt-0.5">{{ Str::limit($prod['tagline'], 45) }}</p>@endif
-                      </div>
-                    </a>
-                    @endforeach
-                  @else
-                    {{-- Fallback static items --}}
-                    @foreach([
-                      ['WashOps','local_laundry_service','Laundry management','products'],
-                      ['ChurchOps','church','Faith community management','products'],
-                      ['ClinicOps','monitor_heart','Healthcare management','products'],
-                      ['LabOps','biotech','Laboratory systems','products'],
-                    ] as [$n,$icon,$sub,$route])
-                    <a class="group/item flex items-start gap-3 hover:bg-white/5 p-2 -m-2 rounded-lg transition-colors"
-                       href="{{ route('site.'.$route) }}" wire:navigate>
-                      <span class="material-symbols-outlined text-secondary-container text-xl mt-0.5 shrink-0"
-                            style="font-variation-settings:'FILL' 1;">{{ $icon }}</span>
-                      <div>
-                        <p class="text-sm font-bold text-white group-hover/item:text-secondary-fixed transition-colors">{{ $n }}</p>
-                        <p class="text-[11px] text-on-primary-container mt-0.5">{{ $sub }}</p>
-                      </div>
-                    </a>
-                    @endforeach
-                  @endif
-                </div>
-              </div>
-            </div>
-          </div>
-        </li>
-
-        {{-- Services mega menu --}}
-        <li class="relative" @mouseenter="openMenu('services')" @mouseleave="closeMenu('services')">
-          <button class="mega-trigger relative flex items-center gap-1 text-sm font-medium tracking-widest uppercase transition-colors
-            {{ request()->routeIs('site.services') ? 'text-cyan' : 'text-white/70 hover:text-secondary-fixed' }}">
-            Services <span class="material-symbols-outlined text-sm transition-transform duration-200" :class="activeMenu==='services' ? 'rotate-180' : ''">keyboard_arrow_down</span>
-          </button>
-          <div
-            x-show="activeMenu==='services'"
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 translate-y-[-8px]"
-            x-transition:enter-end="opacity-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-150"
-            x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 translate-y-[-8px]"
-            class="absolute top-full -left-32 w-[620px] mt-4 bg-primary-container border border-outline-variant/10 rounded-xl shadow-2xl overflow-hidden z-50"
-            @mouseenter="openMenu('services')" @mouseleave="closeMenu('services')"
-            style="display:none;"
-          >
-            <div class="p-8">
-              <div class="mb-6 flex items-center justify-between border-b border-white/10 pb-4">
-                <span class="text-xs font-bold text-secondary-fixed uppercase tracking-widest">Our Expertise</span>
-                <a class="text-xs font-bold text-white hover:text-secondary-container transition-colors flex items-center gap-1"
-                   href="{{ route('site.services') }}" wire:navigate>
-                  All Services <span class="material-symbols-outlined text-xs">arrow_forward</span>
-                </a>
-              </div>
-              <div class="grid grid-cols-2 gap-x-8 gap-y-5">
-                @foreach([
-                  ['code','Custom Development','Built for your exact workflows'],
-                  ['psychology','Technology Consulting','Strategic guidance, real-world lens'],
-                  ['architecture','System Architecture','Offline-first, cloud-ready designs'],
-                  ['transform','Digital Transformation','Modernization on your terms'],
-                  ['analytics','Business Process Analysis','Identify bottlenecks, unlock growth'],
-                  ['support_agent','Ongoing Support','We stay involved as you grow'],
-                ] as [$icon, $title, $sub])
-                <a class="group/item flex items-start gap-3 hover:bg-white/5 p-2 -m-2 rounded-lg transition-colors"
-                   href="{{ route('site.services') }}" wire:navigate>
-                  <span class="material-symbols-outlined text-secondary-container text-xl mt-0.5 shrink-0"
-                        style="font-variation-settings:'FILL' 1;">{{ $icon }}</span>
-                  <div>
-                    <p class="text-sm font-bold text-white group-hover/item:text-secondary-fixed transition-colors">{{ $title }}</p>
-                    <p class="text-[11px] text-on-primary-container mt-0.5">{{ $sub }}</p>
-                  </div>
-                </a>
+                {{-- Notification Content (Auto-transitions) --}}
+                @foreach($notifications as $index => $notification)
+                    <div @if($index === $currentNotificationIndex)
+                            x-transition:enter="transition duration-500 ease-in-out"
+                            x-transition:enter-start="opacity-0 translate-x-4"
+                            x-transition:enter-end="opacity-100 translate-x-0"
+                         @endif
+                         class="{{ $index === $currentNotificationIndex ? 'block' : 'hidden' }} flex-1">
+                        <p class="text-[12px] text-white/85 tracking-wide text-center">
+                            <span class="text-[#00b8db] font-semibold mr-1">{{ $notification['message'] }}</span>
+                            @if($notification['button_label'] && $notification['button_url'])
+                                <a class="text-[#b1ecff] hover:text-white underline-offset-2 hover:underline transition-colors"
+                                    href="{{ $notification['button_url'] }}" wire:navigate>{{ $notification['button_label'] }}</a>
+                            @endif
+                        </p>
+                    </div>
                 @endforeach
-              </div>
+
+                {{-- Navigation Controls --}}
+                <div class="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                    {{-- Indicator Dots --}}
+                    @if(count($notifications) > 1)
+                        <div class="flex gap-1.5 mr-3">
+                            @foreach($notifications as $index => $notification)
+                                <button wire:click="goToNotification({{ $index }})"
+                                    @class([
+                                        'w-2 h-2 rounded-full transition-all',
+                                        'bg-[#00b8db]' => $index === $currentNotificationIndex,
+                                        'bg-white/30 hover:bg-white/50' => $index !== $currentNotificationIndex,
+                                    ])"
+                                    aria-label="Go to notification {{ $index + 1 }}">
+                                </button>
+                            @endforeach
+                        </div>
+                    @endif
+
+                    {{-- Dismiss Button --}}
+                    @if($notifications[$currentNotificationIndex]['is_dismissible'])
+                        <button wire:click="dismissNotification"
+                            class="w-6 h-6 flex items-center justify-center rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-all"
+                            aria-label="Dismiss">
+                            <span class="material-symbols-outlined text-base leading-none">close</span>
+                        </button>
+                    @endif
+                </div>
             </div>
-          </div>
-        </li>
-
-        {{-- Case Studies mega menu --}}
-        <li class="relative" @mouseenter="openMenu('cases')" @mouseleave="closeMenu('cases')">
-          <button class="mega-trigger relative flex items-center gap-1 text-sm font-medium tracking-widest uppercase transition-colors
-            {{ request()->routeIs('site.case-studies*') ? 'text-cyan' : 'text-white/70 hover:text-secondary-fixed' }}">
-            Case Studies <span class="material-symbols-outlined text-sm transition-transform duration-200" :class="activeMenu==='cases' ? 'rotate-180' : ''">keyboard_arrow_down</span>
-          </button>
-          <div
-            x-show="activeMenu==='cases'"
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 translate-y-[-8px]"
-            x-transition:enter-end="opacity-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-150"
-            x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 translate-y-[-8px]"
-            class="absolute top-full -left-48 w-[480px] mt-4 bg-primary-container border border-outline-variant/10 rounded-xl shadow-2xl overflow-hidden z-50"
-            @mouseenter="openMenu('cases')" @mouseleave="closeMenu('cases')"
-            style="display:none;"
-          >
-            <div class="p-8">
-              <div class="mb-5 flex items-center justify-between border-b border-white/10 pb-4">
-                <span class="text-[10px] font-bold text-secondary-fixed uppercase tracking-widest">Impact Stories</span>
-                <a class="text-[10px] font-bold text-white/60 hover:text-secondary-fixed flex items-center gap-1"
-                   href="{{ route('site.case-studies') }}" wire:navigate>
-                  View All <span class="material-symbols-outlined text-xs">arrow_forward</span>
-                </a>
-              </div>
-              <div class="space-y-3">
-                @foreach([
-                  ['monitor_heart','Healthcare Transformation','Optimizing clinical workflows in Accra.'],
-                  ['language','Global Supply Chain','End-to-end visibility for intercontinental trade.'],
-                  ['church','Faith Community Ops','Scaling religious institutions across West Africa.'],
-                ] as [$icon,$title,$sub])
-                <a class="flex items-start gap-3 p-3 rounded-xl bg-white/5 hover:bg-secondary-container/10 border border-white/5 hover:border-secondary-container/30 transition-all"
-                   href="{{ route('site.case-studies') }}" wire:navigate>
-                  <span class="material-symbols-outlined text-secondary-container text-xl mt-0.5">{{ $icon }}</span>
-                  <div>
-                    <p class="text-sm font-bold text-white">{{ $title }}</p>
-                    <p class="text-[10px] text-on-primary-container mt-0.5">{{ $sub }}</p>
-                  </div>
-                </a>
-                @endforeach
-              </div>
-            </div>
-          </div>
-        </li>
-
-        {{-- Insights --}}
-        <li>
-          <a href="{{ route('site.blog') }}" wire:navigate
-             class="text-sm font-medium tracking-widest uppercase transition-colors {{ request()->routeIs('site.blog*') ? 'text-cyan' : 'text-white/70 hover:text-secondary-fixed' }}">
-            Insights
-          </a>
-        </li>
-
-      </ul>
-
-      {{-- ── Right: CTA + Auth + Mobile hamburger ──────────────── --}}
-      <div class="flex items-center gap-3">
-
-        @auth
-          <div class="hidden md:block relative" x-data="{ uOpen: false }">
-            <button @click="uOpen=!uOpen"
-                    class="flex items-center gap-2 bg-white/8 border border-white/12 px-3 py-1.5 rounded-lg text-white/75 text-sm font-syne font-medium hover:bg-white/12 transition-colors">
-              <span class="w-5 h-5 rounded-full bg-cyan flex items-center justify-center text-[10px] font-extrabold text-white">
-                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-              </span>
-              {{ Str::words(auth()->user()->name, 1, '') }}
-              <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-            </button>
-            <div x-show="uOpen" @click.away="uOpen=false"
-                 class="absolute right-0 top-full mt-2 bg-white rounded-xl border border-cyan/15 shadow-xl min-w-[180px] overflow-hidden z-50">
-              <a href="{{ route('customer.dashboard') }}" wire:navigate @click="uOpen=false"
-                 class="block px-4 py-2.5 text-sm text-navy hover:bg-ice transition-colors">My Account</a>
-              <a href="{{ route('customer.orders') }}" wire:navigate @click="uOpen=false"
-                 class="block px-4 py-2.5 text-sm text-navy hover:bg-ice transition-colors">My Orders</a>
-              <a href="{{ route('customer.licenses') }}" wire:navigate @click="uOpen=false"
-                 class="block px-4 py-2.5 text-sm text-navy hover:bg-ice transition-colors">My Licenses</a>
-              <div class="h-px bg-cyan/10 my-1"></div>
-              <form method="POST" action="{{ route('customer.logout') }}">
-                @csrf
-                <button type="submit" class="w-full text-left px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors">Sign Out</button>
-              </form>
-            </div>
-          </div>
-        @else
-          <a href="{{ route('customer.login') }}" wire:navigate
-             class="hidden md:inline-flex items-center gap-1 text-sm font-medium text-white/65 hover:text-white border border-white/15 hover:border-white/30 px-4 py-2 rounded-lg transition-colors">
-            Sign In
-          </a>
-        @endauth
-
-        <a href="{{ route('site.consulting') }}" wire:navigate
-           class="hidden md:inline-flex items-center gap-2 bg-secondary-container text-primary font-bold text-sm px-5 py-2.5 rounded-full hover:bg-secondary-fixed-dim transition-colors">
-          Talk to Us
-        </a>
-
-        {{-- Mobile hamburger --}}
-        <button @click="mobileOpen=!mobileOpen"
-                class="md:hidden w-9 h-9 flex items-center justify-center rounded-full text-white hover:bg-white/10 transition-colors"
-                aria-label="Open menu">
-          <span class="material-symbols-outlined" x-text="mobileOpen ? 'close' : 'menu'">menu</span>
-        </button>
-      </div>
-
-    </nav>
-  </header>
-
-  {{-- ── Mobile drawer overlay ──────────────────────────────── --}}
-  <div
-    x-show="mobileOpen"
-    @click="mobileOpen=false"
-    x-transition:enter="transition duration-200"
-    x-transition:enter-start="opacity-0"
-    x-transition:enter-end="opacity-100"
-    x-transition:leave="transition duration-200"
-    x-transition:leave-start="opacity-100"
-    x-transition:leave-end="opacity-0"
-    class="fixed inset-0 bg-black/50 z-40 md:hidden"
-    style="display:none;"
-  ></div>
-
-  {{-- ── Mobile drawer panel ────────────────────────────────── --}}
-  <div
-    x-show="mobileOpen"
-    x-transition:enter="transition ease-out duration-300"
-    x-transition:enter-start="translate-x-full"
-    x-transition:enter-end="translate-x-0"
-    x-transition:leave="transition ease-in duration-200"
-    x-transition:leave-start="translate-x-0"
-    x-transition:leave-end="translate-x-full"
-    class="fixed top-0 right-0 h-full w-[85vw] max-w-sm z-50 overflow-y-auto md:hidden"
-    style="background:rgba(0,9,23,.98);backdrop-filter:blur(20px);display:none;"
-  >
-    {{-- Header --}}
-    <div class="flex items-center justify-between p-6 border-b border-white/10">
-      <span class="font-syne text-lg font-bold text-white">Exchosoft Consult</span>
-      <button @click="mobileOpen=false"
-              class="w-8 h-8 flex items-center justify-center rounded-full text-white/70 hover:text-white hover:bg-white/10 transition-all">
-        <span class="material-symbols-outlined text-lg">close</span>
-      </button>
-    </div>
-
-    {{-- Nav items --}}
-    <ul class="p-6 space-y-1">
-      <li>
-        <a href="{{ route('home') }}" wire:navigate @click="mobileOpen=false"
-           class="flex items-center gap-3 py-4 border-b border-white/8 text-white font-syne text-lg hover:text-secondary-fixed transition-colors">
-          <span class="material-symbols-outlined text-secondary-container text-xl" style="font-variation-settings:'FILL' 1;">home</span>Home
-        </a>
-      </li>
-      <li>
-        <a href="{{ route('site.about') }}" wire:navigate @click="mobileOpen=false"
-           class="flex items-center gap-3 py-4 border-b border-white/8 text-white font-syne text-lg hover:text-secondary-fixed transition-colors">
-          <span class="material-symbols-outlined text-secondary-container text-xl" style="font-variation-settings:'FILL' 1;">info</span>About
-        </a>
-      </li>
-      <li>
-        <button @click="toggleAcc('products')"
-                class="w-full flex items-center justify-between py-4 border-b border-white/8 text-white font-syne text-lg hover:text-secondary-fixed transition-colors">
-          <span class="flex items-center gap-3">
-            <span class="material-symbols-outlined text-secondary-container text-xl" style="font-variation-settings:'FILL' 1;">deployed_code</span>Products
-          </span>
-          <span class="material-symbols-outlined text-sm transition-transform duration-200" :class="mobileAcc==='products' ? 'rotate-180' : ''">expand_more</span>
-        </button>
-        <div x-show="mobileAcc==='products'" class="pl-10 pb-4 space-y-3" style="display:none;">
-          @if(count($products) > 0)
-            @foreach($products as $prod)
-            <a href="{{ route('site.products.show', $prod['slug']) }}" wire:navigate @click="mobileOpen=false"
-               class="block py-2 text-sm text-on-primary-container hover:text-white transition-colors">{{ $prod['name'] }}</a>
-            @endforeach
-          @else
-            @foreach(['WashOps','ChurchOps','ClinicOps','LabOps'] as $p)
-            <a href="{{ route('site.products') }}" wire:navigate @click="mobileOpen=false"
-               class="block py-2 text-sm text-on-primary-container hover:text-white transition-colors">{{ $p }}</a>
-            @endforeach
-          @endif
-          <a href="{{ route('site.products') }}" wire:navigate @click="mobileOpen=false"
-             class="block py-2 text-sm text-secondary-fixed font-semibold hover:text-white transition-colors">View All Products →</a>
         </div>
-      </li>
-      <li>
-        <a href="{{ route('site.services') }}" wire:navigate @click="mobileOpen=false"
-           class="flex items-center gap-3 py-4 border-b border-white/8 text-white font-syne text-lg hover:text-secondary-fixed transition-colors">
-          <span class="material-symbols-outlined text-secondary-container text-xl" style="font-variation-settings:'FILL' 1;">build</span>Services
-        </a>
-      </li>
-      <li>
-        <a href="{{ route('site.case-studies') }}" wire:navigate @click="mobileOpen=false"
-           class="flex items-center gap-3 py-4 border-b border-white/8 text-white font-syne text-lg hover:text-secondary-fixed transition-colors">
-          <span class="material-symbols-outlined text-secondary-container text-xl" style="font-variation-settings:'FILL' 1;">bar_chart_4_bars</span>Case Studies
-        </a>
-      </li>
-      <li>
-        <a href="{{ route('site.blog') }}" wire:navigate @click="mobileOpen=false"
-           class="flex items-center gap-3 py-4 border-b border-white/8 text-white font-syne text-lg hover:text-secondary-fixed transition-colors">
-          <span class="material-symbols-outlined text-secondary-container text-xl" style="font-variation-settings:'FILL' 1;">article</span>Insights
-        </a>
-      </li>
-      <li>
-        <a href="{{ route('site.contact') }}" wire:navigate @click="mobileOpen=false"
-           class="flex items-center gap-3 py-4 border-b border-white/8 text-white font-syne text-lg hover:text-secondary-fixed transition-colors">
-          <span class="material-symbols-outlined text-secondary-container text-xl" style="font-variation-settings:'FILL' 1;">mail</span>Contact
-        </a>
-      </li>
-    </ul>
+    @endif
 
-    {{-- Mobile bottom actions --}}
-    <div class="mt-4 px-6 space-y-4 pb-10">
-      <a href="{{ route('site.consulting') }}" wire:navigate @click="mobileOpen=false"
-         class="block w-full bg-secondary-container text-primary font-bold py-4 rounded-full text-base text-center shadow-lg hover:bg-secondary-fixed-dim transition-colors">
-        Talk to Us
-      </a>
-      @auth
-      <a href="{{ route('customer.dashboard') }}" wire:navigate @click="mobileOpen=false"
-         class="block w-full text-center py-3 text-sm text-white/60 border border-white/15 rounded-full hover:text-white hover:border-white/30 transition-colors">
-        My Account
-      </a>
-      @else
-      <a href="{{ route('customer.login') }}" wire:navigate @click="mobileOpen=false"
-         class="block w-full text-center py-3 text-sm text-white/60 border border-white/15 rounded-full hover:text-white hover:border-white/30 transition-colors">
-        Sign In
-      </a>
-      @endauth
+    {{-- Header --}}
+    <header class="transition-all duration-500 shadow-sm"
+        :class="scrolled ? 'border-b border-[rgba(0,184,219,0.15)]' : 'border-b border-white/10'"
+        style="background:rgba(0,9,23,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);">
+        <nav class="flex justify-between items-center w-full px-4 md:px-10 lg:px-16 py-3">
+
+            {{-- Brand --}}
+            <div class="flex items-center gap-2">
+                @php
+                    $logoPng = public_path('assets/images/logo cyan.png');
+                    $hasLogo = file_exists($logoPng) && filesize($logoPng) > 0;
+                @endphp
+                @if ($hasLogo)
+                    <a href="{{ route('home') }}" wire:navigate class="flex items-center gap-2">
+                        <img src="{{ asset('assets/images/logo cyan.png') }}" alt="Exchosoft Consult"
+                            class="h-10 w-auto">
+                    </a>
+                @else
+                    <a href="{{ route('home') }}" wire:navigate class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-[#4cd9fd] text-3xl"
+                            style="font-variation-settings:'FILL' 1;">hub</span>
+                        <span class="font-['Syne'] text-2xl font-bold tracking-tight text-white">Exchosoft
+                            Consult</span>
+                    </a>
+                @endif
+            </div>
+
+            {{-- Desktop Navigation --}}
+            <ul class="hidden md:flex items-center gap-6 lg:gap-8">
+
+                <li>
+                    <a href="{{ route('home') }}" wire:navigate
+                        class="text-sm font-medium tracking-widest uppercase transition-colors {{ request()->routeIs('home') ? 'text-[#00b8db]' : 'text-white/70 hover:text-[#b1ecff]' }}">
+                        Home
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ route('site.about') }}" wire:navigate
+                        class="text-sm font-medium tracking-widest uppercase transition-colors {{ request()->routeIs('site.about') ? 'text-[#00b8db]' : 'text-white/70 hover:text-[#b1ecff]' }}">
+                        About
+                    </a>
+                </li>
+
+                {{-- Products Mega Menu (900px, centered) --}}
+                <li class="relative group/products" @mouseenter="activeMenu = 'products'"
+                    @mouseleave="activeMenu = null">
+                    <button
+                        class="relative flex items-center gap-1 text-sm font-medium tracking-widest uppercase transition-colors
+      {{ request()->routeIs('site.products*') ? 'text-[#00b8db]' : 'text-white/70 group-hover/products:text-[#b1ecff]' }}">
+                        Products
+                        <span class="material-symbols-outlined text-sm transition-transform duration-200"
+                            :class="activeMenu === 'products' ? 'rotate-180' : ''">keyboard_arrow_down</span>
+                    </button>
+
+                    <div x-show="activeMenu==='products'" x-cloak x-transition:enter="transition ease-out duration-200"
+                        x-transition:enter-start="opacity-0 translate-y-2"
+                        x-transition:enter-end="opacity-100 translate-y-0"
+                        x-transition:leave="transition ease-in duration-150"
+                        x-transition:leave-start="opacity-100 translate-y-0"
+                        x-transition:leave-end="opacity-0 translate-y-2"
+                        class="absolute top-full left-1/2 -translate-x-1/2 pt-3 w-[900px] max-w-[calc(100vw-2rem)] z-50">
+                        <div class="bg-[#0d2137] border border-[#c4c6cd]/10 rounded-xl shadow-2xl overflow-hidden">
+                            <div class="flex flex-col md:flex-row min-h-[380px]">
+                                {{-- Left image banner (same pattern as case studies) --}}
+                                <div class="w-full md:w-2/5 relative overflow-hidden min-h-[200px] md:min-h-0">
+                                    {{-- Use a reliable image URL (replace with your own asset) --}}
+                                    <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=500&h=500&fit=crop"
+                                        alt="Products Showcase" class="absolute inset-0 w-full h-full object-cover">
+                                    <div
+                                        class="absolute inset-0 bg-gradient-to-br from-[#0d2137]/80 via-[#0d2137]/60 to-transparent">
+                                    </div>
+                                    <div class="absolute inset-0 dot-matrix opacity-20"></div>
+                                    <div class="absolute inset-0 bg-gradient-to-l from-[#000917]/70 to-transparent">
+                                    </div>
+                                    <div class="absolute bottom-8 left-8 right-8">
+                                        <div class="h-px w-12 bg-[#4cd9fd] mb-4"></div>
+                                        <h5 class="text-white font-bold text-lg font-['Syne']">Operational Excellence
+                                        </h5>
+                                        <p class="text-[#b1ecff] text-sm">Reliability at every scale.</p>
+                                    </div>
+                                </div>
+                                {{-- Right content --}}
+                                <div class="w-full md:w-3/5 p-6 md:p-8">
+                                    <div
+                                        class="mb-6 flex items-center justify-between border-b border-white/10 pb-4 flex-wrap gap-2">
+                                        <span
+                                            class="text-xs font-bold text-[#b1ecff] uppercase tracking-widest">Solutions
+                                            Portfolio</span>
+                                        <a class="text-xs font-bold text-white hover:text-[#4cd9fd] transition-colors flex items-center gap-1"
+                                            href="{{ route('site.products') }}" wire:navigate>
+                                            Explore All <span
+                                                class="material-symbols-outlined text-xs">arrow_forward</span>
+                                        </a>
+                                    </div>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
+                                        @forelse($products as $prod)
+                                            <a class="group/item flex items-start gap-3 hover:bg-white/5 p-2 -m-2 rounded-lg transition-colors"
+                                                href="{{ route('site.products.show', $prod['slug']) }}" wire:navigate>
+                                                <span
+                                                    class="material-symbols-outlined text-[#4cd9fd] text-xl mt-0.5 shrink-0"
+                                                    style="font-variation-settings:'FILL' 1;">{{ $prod['icon'] ?? 'deployed_code' }}</span>
+                                                <div>
+                                                    <p
+                                                        class="text-sm font-bold text-white group-hover/item:text-[#b1ecff] transition-colors">
+                                                        {{ $prod['name'] }}</p>
+                                                    @if (!empty($prod['tagline']))
+                                                        <p class="text-[11px] text-[#7689a4] mt-0.5">
+                                                            {{ Str::limit($prod['tagline'], 45) }}</p>
+                                                    @endif
+                                                </div>
+                                            </a>
+                                        @empty
+                                            <div class="col-span-full text-xs text-[#7689a4] text-center py-4">No products available yet.</div>
+                                        @endforelse
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+                {{-- Services Mega Menu (620px, centered) --}}
+                <li class="relative group/services" @mouseenter="activeMenu = 'services'"
+                    @mouseleave="activeMenu = null">
+                    <button
+                        class="relative flex items-center gap-1 text-sm font-medium tracking-widest uppercase transition-colors
+              {{ request()->routeIs('site.services') ? 'text-[#00b8db]' : 'text-white/70 group-hover/services:text-[#b1ecff]' }}">
+                        Services
+                        <span class="material-symbols-outlined text-sm transition-transform duration-200"
+                            :class="activeMenu === 'services' ? 'rotate-180' : ''">keyboard_arrow_down</span>
+                    </button>
+
+                    <div x-show="activeMenu==='services'" x-cloak x-transition:enter="transition ease-out duration-200"
+                        x-transition:enter-start="opacity-0 translate-y-2"
+                        x-transition:enter-end="opacity-100 translate-y-0"
+                        x-transition:leave="transition ease-in duration-150"
+                        x-transition:leave-start="opacity-100 translate-y-0"
+                        x-transition:leave-end="opacity-0 translate-y-2"
+                        class="absolute top-full left-1/2 -translate-x-1/2 pt-3 w-[620px] max-w-[calc(100vw-2rem)] z-50">
+                        <div
+                            class="bg-[#0d2137] border border-[#c4c6cd]/10 rounded-xl shadow-2xl overflow-hidden p-6 md:p-8">
+                            <div class="mb-6 flex items-center justify-between border-b border-white/10 pb-4">
+                                <span class="text-xs font-bold text-[#b1ecff] uppercase tracking-widest">Our
+                                    Expertise</span>
+                                <a class="text-xs font-bold text-white hover:text-[#4cd9fd] transition-colors flex items-center gap-1"
+                                    href="{{ route('site.services') }}" wire:navigate>
+                                    All Services <span class="material-symbols-outlined text-xs">arrow_forward</span>
+                                </a>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
+                                @foreach ([['code', 'Custom Software Development', 'Built from the ground up for your operations'], ['psychology', 'Technology Consulting', 'Strategic guidance based on real-world experience'], ['architecture', 'System Architecture', 'Offline-first, cloud, or LAN collaboration'], ['transform', 'Digital Transformation', 'Modernization that respects your reality'], ['analytics', 'Business Process Analysis', 'Identify bottlenecks and opportunities'], ['support_agent', 'Ongoing Support & Evolution', 'We stay involved as you grow']] as [$icon, $title, $sub])
+                                    <a class="group/item flex items-start gap-3 hover:bg-white/5 p-2 -m-2 rounded-lg transition-colors"
+                                        href="{{ route('site.services') }}" wire:navigate>
+                                        <span class="material-symbols-outlined text-[#4cd9fd] text-xl mt-0.5 shrink-0"
+                                            style="font-variation-settings:'FILL' 1;">{{ $icon }}</span>
+                                        <div>
+                                            <p
+                                                class="text-sm font-bold text-white group-hover/item:text-[#b1ecff] transition-colors">
+                                                {{ $title }}</p>
+                                            <p class="text-[11px] text-[#7689a4] mt-0.5">{{ $sub }}</p>
+                                        </div>
+                                    </a>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+                {{-- Case Studies Mega Menu (800px, centered) --}}
+                <li class="relative group/cases" @mouseenter="activeMenu = 'cases'" @mouseleave="activeMenu = null">
+                    <button
+                        class="relative flex items-center gap-1 text-sm font-medium tracking-widest uppercase transition-colors
+              {{ request()->routeIs('site.case-studies*') ? 'text-[#00b8db]' : 'text-white/70 group-hover/cases:text-[#b1ecff]' }}">
+                        Case Studies
+                        <span class="material-symbols-outlined text-sm transition-transform duration-200"
+                            :class="activeMenu === 'cases' ? 'rotate-180' : ''">keyboard_arrow_down</span>
+                    </button>
+
+                    <div x-show="activeMenu==='cases'" x-cloak x-transition:enter="transition ease-out duration-200"
+                        x-transition:enter-start="opacity-0 translate-y-2"
+                        x-transition:enter-end="opacity-100 translate-y-0"
+                        x-transition:leave="transition ease-in duration-150"
+                        x-transition:leave-start="opacity-100 translate-y-0"
+                        x-transition:leave-end="opacity-0 translate-y-2"
+                        class="absolute top-full left-1/2 -translate-x-1/2 pt-3 w-[800px] max-w-[calc(100vw-2rem)] z-50">
+                        <div class="bg-[#0d2137] border border-[#c4c6cd]/10 rounded-xl shadow-2xl overflow-hidden">
+                            <div class="flex flex-col md:flex-row min-h-[420px]">
+                                <div class="w-full md:w-2/5 relative overflow-hidden min-h-[200px] md:min-h-0">
+                                    <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=500&h=500&fit=crop"
+                                        alt="Global Impact" class="absolute inset-0 w-full h-full object-cover">
+                                    <div
+                                        class="absolute inset-0 bg-gradient-to-br from-[#0d2137]/80 via-[#0d2137]/60 to-transparent">
+                                    </div>
+                                    <div class="absolute inset-0 dot-matrix opacity-20"></div>
+                                    <div class="absolute inset-0 bg-gradient-to-l from-[#000917]/70 to-transparent">
+                                    </div>
+                                    <div class="absolute bottom-8 left-8 right-8">
+                                        <div class="h-px w-12 bg-[#4cd9fd] mb-4"></div>
+                                        <h5 class="text-white font-bold text-lg font-['Syne']">Real Impact</h5>
+                                        <p class="text-[#b1ecff] text-sm">Measurable results across industries</p>
+                                    </div>
+                                </div>
+                                <div class="w-full md:w-3/5 p-6 md:p-8">
+                                    <div class="mb-6 flex items-center justify-between border-b border-white/10 pb-4">
+                                        <span class="text-xs font-bold text-[#b1ecff] uppercase tracking-widest">Impact
+                                            Stories</span>
+                                        <a class="text-xs font-bold text-white hover:text-[#4cd9fd] transition-colors flex items-center gap-1"
+                                            href="{{ route('site.case-studies') }}" wire:navigate>
+                                            View All <span
+                                                class="material-symbols-outlined text-xs">arrow_forward</span>
+                                        </a>
+                                    </div>
+                                    <div class="space-y-4">
+                                        @forelse($caseStudies as $study)
+                                            <a class="group/case flex flex-col sm:flex-row items-start gap-4 p-4 rounded-xl bg-white/5 hover:bg-[#4cd9fd]/10 border border-white/5 hover:border-[#4cd9fd]/30 transition-all"
+                                                href="{{ route('site.case-studies.show', $study['slug']) }}" wire:navigate>
+                                                <span
+                                                    class="material-symbols-outlined text-[#4cd9fd] text-2xl mt-0.5 shrink-0">{{ $study['icon'] }}</span>
+                                                <div class="flex-1">
+                                                    <p
+                                                        class="text-base font-bold text-white group-hover/case:text-[#b1ecff] transition-colors">
+                                                        {{ $study['title'] }}</p>
+
+
+                                                </div>
+                                                <span
+                                                    class="material-symbols-outlined text-white/30 group-hover/case:text-[#4cd9fd] transition-colors text-base">arrow_forward</span>
+                                            </a>
+                                        @empty
+                                            <div class="text-xs text-[#7689a4] text-center py-4">No case studies available yet.</div>
+                                        @endforelse
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+                <li>
+                    <a href="{{ route('site.blog') }}" wire:navigate
+                        class="text-sm font-medium tracking-widest uppercase transition-colors {{ request()->routeIs('site.blog*') ? 'text-[#00b8db]' : 'text-white/70 hover:text-[#b1ecff]' }}">
+                        Insights
+                    </a>
+                </li>
+            </ul>
+
+            {{-- Right Side Actions --}}
+            <div class="flex items-center gap-3">
+                @auth
+                    <div class="hidden md:block relative" x-data="{ uOpen: false }">
+                        <button @click="uOpen=!uOpen"
+                            class="flex items-center gap-2 bg-white/8 border border-white/12 px-3 py-1.5 rounded-lg text-white/75 text-sm font-['Syne'] font-medium hover:bg-white/12 transition-colors">
+                            <span
+                                class="w-5 h-5 rounded-full bg-[#00b8db] flex items-center justify-center text-[10px] font-extrabold text-[#0d2137]">
+                                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                            </span>
+                            {{ Str::words(auth()->user()->name, 1, '') }}
+                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <div x-show="uOpen" @click.away="uOpen=false"
+                            class="absolute right-0 top-full mt-2 bg-white rounded-xl border border-[#00b8db]/15 shadow-xl min-w-[180px] overflow-hidden z-50"
+                            style="display:none;">
+                            <a href="{{ route('customer.dashboard') }}" wire:navigate @click="uOpen=false"
+                                class="block px-4 py-2.5 text-sm text-[#0d2137] hover:bg-[#f4f8fb] transition-colors">My
+                                Account</a>
+                            <a href="{{ route('customer.orders') }}" wire:navigate @click="uOpen=false"
+                                class="block px-4 py-2.5 text-sm text-[#0d2137] hover:bg-[#f4f8fb] transition-colors">My
+                                Orders</a>
+                            <a href="{{ route('customer.licenses') }}" wire:navigate @click="uOpen=false"
+                                class="block px-4 py-2.5 text-sm text-[#0d2137] hover:bg-[#f4f8fb] transition-colors">My
+                                Licenses</a>
+                            <div class="h-px bg-[#00b8db]/10 my-1"></div>
+                            <form method="POST" action="{{ route('customer.logout') }}">
+                                @csrf
+                                <button type="submit"
+                                    class="w-full text-left px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors">
+                                    Sign Out
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                @else
+                    <a href="{{ route('customer.login') }}" wire:navigate
+                        class="hidden md:inline-flex items-center gap-1 text-sm font-medium text-white/65 hover:text-white border border-white/15 hover:border-white/30 px-4 py-2 rounded-lg transition-colors">
+                        Sign In
+                    </a>
+                @endauth
+
+                <a href="{{ route('site.consulting') }}" wire:navigate
+                    class="hidden md:inline-flex items-center gap-2 bg-[#4cd9fd] text-[#000917] font-bold text-sm px-5 py-2.5 rounded-full hover:bg-[#48d7fb] transition-colors shadow-lg shadow-[#4cd9fd]/20">
+                    Talk to Us
+                </a>
+
+                <button @click="mobileOpen = !mobileOpen"
+                    class="md:hidden w-9 h-9 flex items-center justify-center rounded-full text-white hover:bg-white/10 transition-colors"
+                    aria-label="Open menu">
+                    <span class="material-symbols-outlined text-2xl"
+                        x-text="mobileOpen ? 'close' : 'menu'">menu</span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    {{-- Mobile Overlay --}}
+    <div x-show="mobileOpen" x-cloak @click="mobileOpen = false"
+        x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+        class="fixed inset-0 z-40 bg-[#000917]/80 backdrop-blur-sm md:hidden"></div>
+
+    {{-- Mobile Drawer --}}
+    <div x-show="mobileOpen" x-cloak x-transition:enter="transition ease-out duration-300 transform"
+        x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
+        x-transition:leave="transition ease-in duration-200 transform" x-transition:leave-start="translate-x-0"
+        x-transition:leave-end="translate-x-full"
+        class="fixed top-0 right-0 bottom-0 w-[85vw] max-w-sm z-50 md:hidden" style="background:#08121d;">
+        <div class="absolute inset-0 dot-matrix opacity-100 pointer-events-none"></div>
+        <div
+            class="absolute inset-0 bg-gradient-to-br from-[#000917] via-[#000917]/97 to-[#0d2137]/80 pointer-events-none">
+        </div>
+        <div class="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-[#4cd9fd]/10 blur-3xl pointer-events-none">
+        </div>
+
+        <div class="relative z-10 flex flex-col h-full overflow-y-auto px-6 pt-20 pb-10">
+            <div class="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
+                @if ($hasLogo)
+                    <img src="{{ asset('assets/images/logo cyan.png') }}" alt="Exchosoft Consult"
+                        class="h-8 w-auto">
+                @else
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-[#4cd9fd] text-2xl"
+                            style="font-variation-settings:'FILL' 1;">hub</span>
+                        <span class="font-['Syne'] text-lg font-bold text-white">Exchosoft Consult</span>
+                    </div>
+                @endif
+                <button @click="mobileOpen = false"
+                    class="w-8 h-8 flex items-center justify-center rounded-full text-white/70 hover:text-white hover:bg-white/10 transition-all">
+                    <span class="material-symbols-outlined text-xl">close</span>
+                </button>
+            </div>
+
+            <ul class="space-y-1">
+                <li><a href="{{ route('home') }}" wire:navigate @click="mobileOpen = false"
+                        class="flex items-center gap-3 py-4 border-b border-white/8 text-white font-['Syne'] text-2xl font-bold hover:text-[#b1ecff] transition-colors {{ request()->routeIs('home') ? 'text-[#00b8db]' : '' }}"><span
+                            class="material-symbols-outlined text-[#4cd9fd] text-2xl"
+                            style="font-variation-settings:'FILL' 1;">home</span>Home</a></li>
+                <li><a href="{{ route('site.about') }}" wire:navigate @click="mobileOpen = false"
+                        class="flex items-center gap-3 py-4 border-b border-white/8 text-white font-['Syne'] text-2xl font-bold hover:text-[#b1ecff] transition-colors {{ request()->routeIs('site.about') ? 'text-[#00b8db]' : '' }}"><span
+                            class="material-symbols-outlined text-[#4cd9fd] text-2xl"
+                            style="font-variation-settings:'FILL' 1;">info</span>About</a></li>
+
+                <li class="border-b border-white/8">
+                    <button @click="toggleAcc('products')"
+                        class="flex items-center justify-between w-full py-4 text-white font-['Syne'] text-2xl font-bold hover:text-[#b1ecff] transition-colors">
+                        <span class="flex items-center gap-3"><span
+                                class="material-symbols-outlined text-[#4cd9fd] text-2xl"
+                                style="font-variation-settings:'FILL' 1;">widgets</span>Products</span>
+                        <span
+                            class="material-symbols-outlined text-[#4cd9fd] transition-transform duration-300 text-2xl"
+                            :class="mobileAcc === 'products' ? 'rotate-180' : ''">expand_more</span>
+                    </button>
+                    <div x-show="mobileAcc==='products'" x-collapse class="overflow-hidden" style="display:none;">
+                        <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/10 mt-2">
+                            <span class="text-[10px] font-bold text-[#b1ecff] uppercase tracking-widest">Solutions
+                                Portfolio</span>
+                            <a class="text-[10px] font-bold text-white/60 hover:text-[#b1ecff] flex items-center gap-1"
+                                href="{{ route('site.products') }}" wire:navigate @click="mobileOpen = false">All
+                                Products <span class="material-symbols-outlined text-xs">arrow_forward</span></a>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 mb-5">
+                            @forelse($products as $prod)
+                                <a href="{{ route('site.products.show', $prod['slug']) }}" wire:navigate
+                                    @click="mobileOpen = false"
+                                    class="flex flex-col gap-1 p-3 rounded-xl bg-white/5 hover:bg-[#4cd9fd]/10 border border-white/5 hover:border-[#4cd9fd]/30 transition-all">
+                                    <span class="material-symbols-outlined text-[#4cd9fd] text-lg"
+                                        style="font-variation-settings:'FILL' 1;">{{ $prod['icon'] ?? 'deployed_code' }}</span>
+                                    <span class="text-sm font-bold text-white">{{ $prod['name'] }}</span>
+                                    @if (!empty($prod['tagline']))
+                                        <span
+                                            class="text-[10px] text-[#7689a4] leading-snug">{{ Str::limit($prod['tagline'], 40) }}</span>
+                                    @endif
+                                </a>
+                            @empty
+                                @foreach ([['WashOps', 'local_laundry_service', 'Industrial laundry management system'], ['ChurchOps', 'church', 'Administrative backbone for scaling institutions']] as [$n, $icon, $sub])
+                                    <a href="{{ route('site.products') }}" wire:navigate @click="mobileOpen = false"
+                                        class="flex flex-col gap-1 p-3 rounded-xl bg-white/5 hover:bg-[#4cd9fd]/10 border border-white/5 hover:border-[#4cd9fd]/30 transition-all">
+                                        <span class="material-symbols-outlined text-[#4cd9fd] text-lg"
+                                            style="font-variation-settings:'FILL' 1;">{{ $icon }}</span>
+                                        <span class="text-sm font-bold text-white">{{ $n }}</span>
+                                        <span
+                                            class="text-[10px] text-[#7689a4] leading-snug">{{ $sub }}</span>
+                                    </a>
+                                @endforeach
+                            @endforelse
+                        </div>
+                        <p class="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-3">Coming Soon</p>
+                        <div class="grid grid-cols-2 gap-3 mb-6">
+                            @foreach ([['ClinicOps', 'medical_services', 'HIPAA-ready workflow engine'], ['LabOps', 'science', 'Automated laboratory pipelines']] as [$n, $icon, $sub])
+                                <div
+                                    class="flex flex-col gap-1 p-3 rounded-xl bg-white/3 border border-white/5 opacity-50">
+                                    <span class="material-symbols-outlined text-[#48d7fb] text-lg"
+                                        style="font-variation-settings:'FILL' 1;">{{ $icon }}</span>
+                                    <span class="text-sm font-bold text-white">{{ $n }}</span>
+                                    <span
+                                        class="text-[10px] text-[#7689a4] leading-snug italic">{{ $sub }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </li>
+
+                <li><a href="{{ route('site.services') }}" wire:navigate @click="mobileOpen = false"
+                        class="flex items-center gap-3 py-4 border-b border-white/8 text-white font-['Syne'] text-2xl font-bold hover:text-[#b1ecff] transition-colors"><span
+                            class="material-symbols-outlined text-[#4cd9fd] text-2xl"
+                            style="font-variation-settings:'FILL' 1;">build</span>Services</a></li>
+
+                <li class="border-b border-white/8">
+                    <button @click="toggleAcc('cases')"
+                        class="flex items-center justify-between w-full py-4 text-white font-['Syne'] text-2xl font-bold hover:text-[#b1ecff] transition-colors">
+                        <span class="flex items-center gap-3"><span
+                                class="material-symbols-outlined text-[#4cd9fd] text-2xl"
+                                style="font-variation-settings:'FILL' 1;">bar_chart_4_bars</span>Case Studies</span>
+                        <span
+                            class="material-symbols-outlined text-[#4cd9fd] transition-transform duration-300 text-2xl"
+                            :class="mobileAcc === 'cases' ? 'rotate-180' : ''">expand_more</span>
+                    </button>
+                    <div x-show="mobileAcc==='cases'" x-collapse class="overflow-hidden" style="display:none;">
+                        <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/10 mt-2">
+                            <span class="text-[10px] font-bold text-[#b1ecff] uppercase tracking-widest">Case
+                                Studies</span>
+                            <a class="text-[10px] font-bold text-white/60 hover:text-[#b1ecff] flex items-center gap-1"
+                                href="{{ route('site.case-studies') }}" wire:navigate
+                                @click="mobileOpen = false">View All <span
+                                    class="material-symbols-outlined text-xs">arrow_forward</span></a>
+                        </div>
+                        <div class="space-y-3 mb-6">
+                            @foreach ([['monitor_heart', 'Healthcare Transformation', 'Optimizing clinical workflows in Accra'], ['language', 'Global Supply Chain', 'End-to-end visibility for intercontinental trade'], ['church', 'Faith Community Ops', 'Scaling religious institutions across West Africa']] as [$icon, $title, $sub])
+                                <a href="{{ route('site.case-studies') }}" wire:navigate @click="mobileOpen = false"
+                                    class="flex items-start gap-3 p-3 rounded-xl bg-white/5 hover:bg-[#4cd9fd]/10 border border-white/5 hover:border-[#4cd9fd]/30 transition-all">
+                                    <span
+                                        class="material-symbols-outlined text-[#4cd9fd] text-xl mt-0.5">{{ $icon }}</span>
+                                    <div>
+                                        <p class="text-sm font-bold text-white">{{ $title }}</p>
+                                        <p class="text-[10px] text-[#7689a4] mt-0.5">{{ $sub }}</p>
+                                    </div>
+                                </a>
+                            @endforeach
+                        </div>
+                    </div>
+                </li>
+
+                <li><a href="{{ route('site.blog') }}" wire:navigate @click="mobileOpen = false"
+                        class="flex items-center gap-3 py-4 border-b border-white/8 text-white font-['Syne'] text-2xl font-bold hover:text-[#b1ecff] transition-colors {{ request()->routeIs('site.blog*') ? 'text-[#00b8db]' : '' }}"><span
+                            class="material-symbols-outlined text-[#4cd9fd] text-2xl"
+                            style="font-variation-settings:'FILL' 1;">article</span>Insights</a></li>
+                <li><a href="{{ route('site.contact') }}" wire:navigate @click="mobileOpen = false"
+                        class="flex items-center gap-3 py-4 border-b border-white/8 text-white font-['Syne'] text-2xl font-bold hover:text-[#b1ecff] transition-colors"><span
+                            class="material-symbols-outlined text-[#4cd9fd] text-2xl"
+                            style="font-variation-settings:'FILL' 1;">mail</span>Contact</a></li>
+            </ul>
+
+            <div class="mt-8 space-y-4">
+                <a href="{{ route('site.consulting') }}" wire:navigate @click="mobileOpen = false"
+                    class="block w-full bg-[#4cd9fd] text-[#000917] font-bold py-4 rounded-full text-base text-center shadow-lg shadow-[#4cd9fd]/20 hover:bg-[#48d7fb] transition-colors">Talk
+                    to Us</a>
+                @auth
+                    <a href="{{ route('customer.dashboard') }}" wire:navigate @click="mobileOpen = false"
+                        class="block w-full text-center py-4 text-sm text-white/60 border border-white/15 rounded-full hover:text-white hover:border-white/30 transition-colors">My
+                        Account</a>
+                @else
+                    <a href="{{ route('customer.login') }}" wire:navigate @click="mobileOpen = false"
+                        class="block w-full text-center py-4 text-sm text-white/60 border border-white/15 rounded-full hover:text-white hover:border-white/30 transition-colors">Sign
+                        In</a>
+                @endauth
+                <div class="flex items-center justify-center gap-4 pt-2">
+                    <a href="#"
+                        class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#4cd9fd] hover:text-[#000917] transition-all text-white/60"><span
+                            class="material-symbols-outlined text-base">public</span></a>
+                    <a href="#"
+                        class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#4cd9fd] hover:text-[#000917] transition-all text-white/60"><span
+                            class="material-symbols-outlined text-base">alternate_email</span></a>
+                    <a href="#"
+                        class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#4cd9fd] hover:text-[#000917] transition-all text-white/60"><span
+                            class="material-symbols-outlined text-base">chat</span></a>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 
 </div>
 
-{{-- Alpine.js controller for this nav --}}
+<style>
+    [x-cloak] {
+        display: none !important;
+    }
+</style>
+
 <script>
-function siteNav() {
-  return {
-    notifOpen:  true,
-    mobileOpen: false,
-    activeMenu: null,
-    mobileAcc:  null,
-    scrolled:   false,
-    _timers:    {},
+    function siteNav() {
+        return {
+            notifOpen: true,
+            mobileOpen: false,
+            activeMenu: null,
+            mobileAcc: null,
+            scrolled: false,
 
-    init() {
-      window.addEventListener('scroll', () => {
-        this.scrolled = window.scrollY > 20;
-      }, { passive: true });
-    },
+            init() {
+                window.addEventListener('scroll', () => {
+                    this.scrolled = window.scrollY > 20;
+                }, {
+                    passive: true
+                });
 
-    closeNotif() {
-      this.notifOpen = false;
-      @this.dismissNotification();
-    },
+                window.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        this.activeMenu = null;
+                        this.mobileOpen = false;
+                    }
+                });
 
-    openMenu(name) {
-      clearTimeout(this._timers[name]);
-      this.activeMenu = name;
-    },
-    closeMenu(name) {
-      this._timers[name] = setTimeout(() => {
-        if (this.activeMenu === name) this.activeMenu = null;
-      }, 120);
-    },
+                this.$watch('mobileOpen', val => {
+                    document.body.style.overflow = val ? 'hidden' : '';
+                });
+            },
 
-    toggleAcc(name) {
-      this.mobileAcc = this.mobileAcc === name ? null : name;
-    },
-  }
-}
+            closeNotif() {
+                this.notifOpen = false;
+                @this.dismissNotification();
+            },
+
+            toggleAcc(name) {
+                this.mobileAcc = this.mobileAcc === name ? null : name;
+            },
+        }
+    }
 </script>

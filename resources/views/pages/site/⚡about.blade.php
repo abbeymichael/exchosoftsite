@@ -10,6 +10,7 @@ new #[Layout('layouts.site')] class extends Component
 
     public function mount(): void
     {
+        
         $this->loadPageSeo(
             'about',
             'About Us — Exchosoft Consult',

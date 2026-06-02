@@ -1,7 +1,6 @@
 <?php
 
-use App\Models\ProductPageSection;
-use App\Models\ShopProduct;
+use App\Models\Product;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -23,10 +22,8 @@ new #[Layout('layouts.site')] #[Title('Products — Exchosoft Consult')] class e
 
     public function mount(): void
     {
-        $this->featuredGroups  = ShopProduct::published()->whereNotNull('linked_product_code')->orderBy('sort_order')->get()->groupBy('linked_product_code');
-        $this->allPublished    = ShopProduct::published()->orderBy('sort_order')->get();
-        $this->washSections    = ProductPageSection::getForProduct('washops');
-        $this->churchSections  = ProductPageSection::getForProduct('churchops');
+        $this->featuredGroups  = Product::published()->whereNotNull('linked_product_code')->orderBy('sort_order')->get()->groupBy('linked_product_code');
+        $this->allPublished    = Product::published()->orderBy('sort_order')->get();
         $this->linkedCodes     = $this->featuredGroups->keys()->toArray();
     }
 
@@ -1230,145 +1227,6 @@ new #[Layout('layouts.site')] #[Title('Products — Exchosoft Consult')] class e
         }
     </style>
 
-    @php
-        // Helper: render markdown headings/paragraphs simply
-        function renderProductHero(string $md): string
-        {
-            $lines = explode("\n", $md);
-            $html = '';
-            foreach ($lines as $line) {
-                $line = trim($line);
-                if (str_starts_with($line, '## ')) {
-                    $text = substr($line, 3);
-                    $text = preg_replace('/\*\*(.+?)\*\*/', '<span class="dyn-accent">$1</span>', e($text));
-                    $html .= "<h2>{$text}</h2>";
-                } elseif ($line) {
-                    $html .= '<p>' . e($line) . '</p>';
-                }
-            }
-            return $html;
-        }
-
-        $washHero = $washSections->get('hero');
-        $washFeatures = $washSections->get('features');
-        $washRoi = $washSections->get('roi');
-        $churchHero = $churchSections->get('hero');
-        $churchFeatures = $churchSections->get('features');
-        $churchRoi = $churchSections->get('roi');
-
-        $defaultWashFeatures = [
-            [
-                'icon' => '📊',
-                'title' => 'Analytics Dashboard',
-                'items' => [
-                    'Revenue tracking and forecasting',
-                    'Order volume analytics',
-                    'Daily bottleneck identification',
-                    'Staff performance metrics',
-                    'Customer behavior insights',
-                    'Custom date range reporting',
-                ],
-            ],
-            [
-                'icon' => '🖥️',
-                'title' => 'Advanced Point of Sale',
-                'items' => [
-                    'Quick order booking interface',
-                    'Multiple payment methods support',
-                    'Partial and full payment processing',
-                    'Customer creation and retrieval',
-                    'Thermal printer integration',
-                    'Receipt customization',
-                ],
-            ],
-            [
-                'icon' => '📋',
-                'title' => 'Kanban Orders Board',
-                'items' => [
-                    'Drag-and-drop status updates',
-                    'Color-coded priority system',
-                    'Real-time order tracking',
-                    'Team collaboration features',
-                    'Automated status notifications',
-                    'Custom workflow stages',
-                ],
-            ],
-            [
-                'icon' => '☁️',
-                'title' => 'Enterprise Database Management',
-                'items' => [
-                    'Automatic cloud backup',
-                    'Manual backup and restore',
-                    'Push to cloud / Pull from cloud',
-                    'Conflict resolution strategies',
-                    'Disaster recovery protocols',
-                    'Data encryption and security',
-                ],
-            ],
-        ];
-        $defaultChurchFeatures = [
-            [
-                'icon' => '📡',
-                'title' => '100% Offline Operation',
-                'items' => [
-                    'Full functionality during power cuts',
-                    'Automatic cloud sync when online',
-                    'Zero data loss guarantee',
-                    'Local network (LAN) collaboration',
-                ],
-            ],
-            [
-                'icon' => '💰',
-                'title' => 'Complete Financial Management',
-                'items' => [
-                    'MTN, Vodafone, AirtelTigo Mobile Money',
-                    'Tithe and offering tracking',
-                    'Member contribution statements',
-                    'Full financial reporting and audit trail',
-                ],
-            ],
-            [
-                'icon' => '👥',
-                'title' => 'Member Management',
-                'items' => [
-                    'Complete member profiles',
-                    'Attendance tracking and trends',
-                    'Visitor follow-up workflows',
-                    'Ministry assignments and family links',
-                ],
-            ],
-            [
-                'icon' => '📣',
-                'title' => 'Automated Communication',
-                'items' => [
-                    'Bulk SMS via local gateways',
-                    'Automated birthday greetings',
-                    'Service reminders and event notifications',
-                    'Email campaigns to members',
-                ],
-            ],
-            [
-                'icon' => '🏛️',
-                'title' => 'Multi-Branch Ready',
-                'items' => [
-                    'Manage all locations from HQ',
-                    'Consolidated cross-branch reporting',
-                    'Branch autonomy with HQ visibility',
-                    'Easy member transfers between branches',
-                ],
-            ],
-            [
-                'icon' => '📈',
-                'title' => 'Powerful Analytics',
-                'items' => [
-                    'Financial dashboards and trends',
-                    'Attendance pattern analysis',
-                    'Member engagement scoring',
-                    'Custom report builder',
-                ],
-            ],
-        ];
-    @endphp
 
     <style>
         .dyn-accent {
@@ -1398,101 +1256,6 @@ new #[Layout('layouts.site')] #[Title('Products — Exchosoft Consult')] class e
 </x-page-banner>
 
 
-    {{-- ── CATALOG CARDS ── --}}
-    <section class="products-catalog">
-        <div class="catalog-header">
-            <span class="cat-label">Our Catalog</span>
-            <h2 class="cat-h2">Platforms That Perform</h2>
-            <p class="cat-sub">Deeply researched systems built from the ground up to solve the unique operational
-                challenges of your industry.</p>
-        </div>
-        <div class="pcard-grid">
-            {{-- WashOps --}}
-            <a class="pcard" href="#washops"
-                onclick="document.getElementById('washops').scrollIntoView({behavior:'smooth'}); return false;">
-                <div class="pcard-img-wrap">
-                    <div class="pcard-img"
-                        style="background-image: url('https://lh3.googleusercontent.com/aida/ADBb0ugtz39yv0t16Pl6Vya-RxfPdyUjRqkm53GqVVxKtcF3risQzAlZ7ErADLIGl1zyDVwjL1HyjhCBHYGk7u49RDIW5nmSD0eDqMUeuaht5ZbTDrF8SGVoA_FDNraLCFr5A7Rr1sU0U4WPC7yrhMRe71lIEthpa410OkVv2EAvY_7eER0WSNV-8Ei1FxfWFqZdgvfuEwDUe-RYCWYOLhUEfZpArVG0GoJMQjisY4nGdWmBbnIlUp6wfRL2bg');">
-                    </div>
-                </div>
-                <div class="pcard-overlay"></div>
-                <div class="pcard-content">
-                    <div class="pcard-top">
-                        <div class="pcard-sector">🫧 Laundry</div>
-                    </div>
-                    <div class="pcard-body">
-                        <h3 class="pcard-title">WashOps</h3>
-                        <p class="pcard-text">Enterprise-grade desktop application with POS, real-time analytics, Kanban
-                            order board, and cloud sync — everything to run and scale a laundry business.</p>
-                        <span class="pcard-btn pcard-btn-cyan">Explore WashOps →</span>
-                    </div>
-                </div>
-            </a>
-            {{-- ChurchOps --}}
-            <a class="pcard" href="#churchops"
-                onclick="document.getElementById('churchops').scrollIntoView({behavior:'smooth'}); return false;">
-                <div class="pcard-img-wrap">
-                    <div class="pcard-img"
-                        style="background-image: url('https://lh3.googleusercontent.com/aida/ADBb0ujWVD-GHTi2ed6MYa1LIML9wljjzhfs5eam1YUNmftFYazmsBX7bXDlEKa04mcQZnHroewUMqJYH4rQchmQWJ3hTcT0WyvhIhXrcEAmvbOzjvQvZ6Bbm8-lN_1M3tYHbpLsC6MR8vweDJznQfhdcLbHMWNKERPsobPiVMPj5eJwDlC-KCGvUzVdoE1VHMh_r-PPIkK9bRUMdQW9hgP5x0GQnXpypkA2N5yWsZSH-tsBMLGmvm0TEtd7kHc');">
-                    </div>
-                </div>
-                <div class="pcard-overlay"></div>
-                <div class="pcard-content">
-                    <div class="pcard-top">
-                        <div class="pcard-sector">⛪ Faith &amp; Community</div>
-                    </div>
-                    <div class="pcard-body">
-                        <h3 class="pcard-title">ChurchOps</h3>
-                        <p class="pcard-text">The first offline-first church management system built for Ghanaian
-                            churches — members, finances, Mobile Money, multi-branch, and 100% uptime.</p>
-                        <span class="pcard-btn pcard-btn-green">Explore ChurchOps →</span>
-                    </div>
-                </div>
-            </a>
-            {{-- ClinicOps --}}
-            <div class="pcard coming">
-                <div class="pcard-img-wrap">
-                    <div class="pcard-img"
-                        style="background-image: url('https://lh3.googleusercontent.com/aida/ADBb0ujOJI2svVFC8xxpkwg9aBk-puH0KPPlCth9XghjhCzQpi9SFL1-xtltLxyjF9F2g6FEBK4eSBpwe4P4EUDwlGDD7UmeqJY2LEyrVgUA820IrxIfqRD89qk2j_A66KIYgwnJCkjjhan9nBGRqGj5igzxT3lOJVzExBnmwjbf0hTW1MCjU7Qzu12Xw645TeCpNhjLjcriZCjMxnnbCOvjRRzVtqP-7XBjsUTm17id1n-eh96XKW4-14HglOw');">
-                    </div>
-                </div>
-                <div class="pcard-overlay"></div>
-                <div class="pcard-content">
-                    <div class="pcard-top">
-                        <div class="pcard-sector">🏥 Healthcare</div>
-                        <span class="pcard-coming-badge">Coming Soon</span>
-                    </div>
-                    <div class="pcard-body">
-                        <h3 class="pcard-title">ClinicOps</h3>
-                        <p class="pcard-text">Hospital and pharmacy management — patient records, prescriptions,
-                            inventory, and billing. Offline-first, built for clinical environments.</p>
-                        <span class="pcard-btn pcard-btn-disabled">In Development</span>
-                    </div>
-                </div>
-            </div>
-            {{-- LabOps --}}
-            <div class="pcard coming">
-                <div class="pcard-img-wrap">
-                    <div class="pcard-img"
-                        style="background-image: url('https://lh3.googleusercontent.com/aida/ADBb0ug8jVmvIaOPGwcXVKC2W11VjxCK88veulcLTIBM14Wd2Qhtc_cQn8hjIS-kE476dXseUR-MKFTbYKxnhAZCQUuDexOLno2G-g6iep4kEZi3eOUF2U-Bk-qZQaO3x_Hj2K0Gxf0YysUjcNMcyQurxyRv-pVg5n2bB2GDVfwL8B2Q2bso0yHzyTPedHECoTHRLVQgUjCbDgny98116lIRhKRYaoE33L0h41V1azekYhD66J_6wBBL05dUDCw');">
-                    </div>
-                </div>
-                <div class="pcard-overlay"></div>
-                <div class="pcard-content">
-                    <div class="pcard-top">
-                        <div class="pcard-sector">🔬 Laboratory</div>
-                        <span class="pcard-coming-badge">Coming Soon</span>
-                    </div>
-                    <div class="pcard-body">
-                        <h3 class="pcard-title">LabOps</h3>
-                        <p class="pcard-text">Laboratory information management — sample tracking, test workflows,
-                            results reporting, compliance, and full audit trails.</p>
-                        <span class="pcard-btn pcard-btn-disabled">In Development</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
 
 

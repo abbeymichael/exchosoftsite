@@ -272,6 +272,24 @@
 {{-- ─── FOOTER (Livewire) ─────────────────────────────────────────── --}}
 <livewire:site.site-footer />
 
+
+<!-- Cookie Banner -->
+<div class="fixed bottom-6 left-6 right-6 md:left-auto md:right-8 md:max-w-md z-[100] transform transition-all duration-500" id="cookie-banner">
+  <div class="border border-secondary-container/30 p-6 rounded-xl shadow-2xl backdrop-blur-xl" style="background:rgba(0,9,23,.95);">
+    <div class="flex items-start gap-4">
+      <div class="w-10 h-10 rounded-full bg-secondary-container/20 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-secondary-container">cookie</span></div>
+      <div>
+        <p class="text-sm text-white mb-4 leading-relaxed">We use essential cookies to ensure our high-fidelity platforms function as intended. View our <a class="text-secondary-fixed underline" href="#">Cookie Policy</a> for more info.</p>
+        <div class="flex gap-3">
+          <button class="flex-grow bg-secondary-container hover:bg-secondary-fixed-dim text-primary font-bold py-2 px-4 rounded-lg text-xs transition-colors" onclick="dismissCookieBanner()">Accept All</button>
+          <button class="px-4 py-2 rounded-lg text-xs font-bold text-white hover:bg-white/5 transition-colors" onclick="dismissCookieBanner()">Preferences</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 {{-- ─── REVEAL SCROLL OBSERVER ────────────────────────────────────── --}}
 <script>
 (function() {
@@ -287,6 +305,128 @@
     document.querySelectorAll('.reveal, .value-card, .tl-track').forEach(el => obs.observe(el));
 })();
 </script>
+
+<script>
+  (function () {
+    const PERIOD_MS = 4000, HIT_DEG = 22, LIT_MS = 900;
+    const wrap = document.getElementById('orbitWrap');
+    const icons = Array.from(document.querySelectorAll('.orbit-icon'));
+    const litUntil = new Array(icons.length).fill(0);
+    const angles = icons.map(ic => parseFloat(ic.dataset.angle) || 0);
+    function layout() {
+      if (!wrap) return;
+      const R = wrap.offsetWidth * 0.42;
+      icons.forEach((ic, i) => {
+        const rad = (angles[i] - 90) * Math.PI / 180;
+        ic.style.transform = `translate(${R * Math.cos(rad)}px,${R * Math.sin(rad)}px)`;
+      });
+    }
+    layout();
+    window.addEventListener('resize', layout);
+    function tick(ts) {
+      const beamDeg = ((ts % PERIOD_MS) / PERIOD_MS) * 360;
+      angles.forEach((iconDeg, i) => {
+        let diff = Math.abs(beamDeg - iconDeg) % 360;
+        if (diff > 180) diff = 360 - diff;
+        if (diff < HIT_DEG) litUntil[i] = ts + LIT_MS;
+        icons[i].classList.toggle('lit', ts < litUntil[i]);
+      });
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  })();
+</script>
+
+<script>
+  function closeNotificationBar() {
+    const bar = document.getElementById('notification-bar');
+    bar.style.maxHeight = bar.offsetHeight + 'px';
+    bar.style.overflow = 'hidden';
+    requestAnimationFrame(() => {
+      bar.style.transition = 'max-height .35s ease, opacity .25s ease';
+      bar.style.maxHeight = '0';
+      bar.style.opacity = '0';
+    });
+    setTimeout(() => bar.remove(), 380);
+  }
+
+  (function () {
+    let hoverTimers = {};
+    function openMenu(item) {
+      document.querySelectorAll('.mega-menu-item').forEach(el => { if (el !== item) closeMenu(el, true); });
+      const menu = item.querySelector('.mega-menu-content');
+      if (!menu) return;
+      if (hoverTimers[item.dataset.menuId]) clearTimeout(hoverTimers[item.dataset.menuId]);
+      menu.style.display = 'grid';
+      requestAnimationFrame(() => requestAnimationFrame(() => menu.classList.add('is-visible')));
+      item.dataset.open = 'true';
+      const chevron = item.querySelector('.mega-trigger .material-symbols-outlined');
+      if (chevron) chevron.style.transform = 'rotate(180deg)';
+    }
+    function closeMenu(item, immediate) {
+      const menu = item.querySelector('.mega-menu-content');
+      if (!menu) return;
+      if (hoverTimers[item.dataset.menuId]) clearTimeout(hoverTimers[item.dataset.menuId]);
+      hoverTimers[item.dataset.menuId] = setTimeout(() => {
+        menu.classList.remove('is-visible');
+        setTimeout(() => { if (!menu.classList.contains('is-visible')) menu.style.display = 'none'; }, 260);
+        item.dataset.open = 'false';
+        const chevron = item.querySelector('.mega-trigger .material-symbols-outlined');
+        if (chevron) chevron.style.transform = 'rotate(0deg)';
+      }, immediate ? 0 : 120);
+    }
+    function toggleMenu(item) { item.dataset.open === 'true' ? closeMenu(item, true) : openMenu(item); }
+    document.querySelectorAll('.mega-menu-item').forEach((item, i) => {
+      item.dataset.menuId = 'menu-' + i;
+      item.dataset.open = 'false';
+      const trigger = item.querySelector('.mega-trigger');
+      if (!trigger) return;
+      trigger.querySelector('.material-symbols-outlined').style.transition = 'transform .25s ease';
+      trigger.addEventListener('click', e => { e.stopPropagation(); toggleMenu(item); });
+      item.addEventListener('mouseenter', () => { if (hoverTimers[item.dataset.menuId]) clearTimeout(hoverTimers[item.dataset.menuId]); openMenu(item); });
+      item.addEventListener('mouseleave', () => closeMenu(item, false));
+    });
+    document.addEventListener('click', () => document.querySelectorAll('.mega-menu-item').forEach(item => closeMenu(item, true)));
+  })();
+
+  function toggleMobileMenu() {
+    const menu = document.getElementById('mobile-menu');
+    const overlay = document.getElementById('mobile-overlay');
+    const icon = document.getElementById('menu-icon');
+    const isClosed = menu.classList.contains('translate-x-full');
+    menu.classList.toggle('translate-x-full', !isClosed);
+    overlay.classList.toggle('hidden', !isClosed);
+    icon.textContent = isClosed ? 'close' : 'menu';
+    document.body.style.overflow = isClosed ? 'hidden' : 'auto';
+  }
+
+  function toggleAccordion(id) {
+    const acc = document.getElementById(id);
+    const isHidden = acc.classList.toggle('hidden');
+    const chevron = document.getElementById(id.replace('-acc', '-chevron'));
+    if (chevron) chevron.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(180deg)';
+  }
+
+  function dismissCookieBanner() {
+    const banner = document.getElementById('cookie-banner');
+    banner.style.opacity = '0';
+    banner.style.transform = 'translateY(20px)';
+    setTimeout(() => banner.remove(), 500);
+  }
+
+  window.addEventListener('scroll', () => {
+    const header = document.getElementById('main-header');
+    if (!header) return;
+    if (window.scrollY > 20) {
+      header.classList.add('py-1'); header.classList.remove('py-4');
+      header.style.backgroundColor = 'rgba(0,9,23,.98)';
+    } else {
+      header.classList.add('py-4'); header.classList.remove('py-1');
+      header.style.backgroundColor = 'rgba(0,9,23,.95)';
+    }
+  });
+</script>
+
 
 @livewireScripts
 </body>

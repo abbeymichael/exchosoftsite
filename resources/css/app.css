@@ -10,104 +10,505 @@
 
 @theme {
 
-    /* =========================
+    /* ═══════════════════════════════════════════
        FONTS
-    ========================= */
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+    ═══════════════════════════════════════════ */
+    --font-sans:    'DM Sans', ui-sans-serif, system-ui, sans-serif;
     --font-display: 'Syne', sans-serif;
-    --font-body: 'DM Sans', sans-serif;
+    --font-body:    'DM Sans', sans-serif;
 
-    /* =========================
-       COLORS
-    ========================= */
-    --color-primary: #000917;
-    --color-primary-container: #0d2137;
-    --color-primary-fixed: #d2e4ff;
-    --color-primary-fixed-dim: #b5c8e5;
+    /* ═══════════════════════════════════════════
+       COLORS — Material You palette
+    ═══════════════════════════════════════════ */
 
-    --color-secondary: #00677c;
-    --color-secondary-container: #4cd9fd;
-    --color-secondary-fixed: #b1ecff;
-    --color-secondary-fixed-dim: #48d7fb;
+    /* Primary */
+    --color-primary:               #000917;
+    --color-on-primary:            #ffffff;
+    --color-primary-container:     #0d2137;
+    --color-on-primary-container:  #7689a4;
+    --color-primary-fixed:         #d2e4ff;
+    --color-primary-fixed-dim:     #b5c8e5;
+    --color-on-primary-fixed:      #081c32;
+    --color-inverse-primary:       #b5c8e5;
 
-    --color-tertiary: #000a0e;
-    --color-tertiary-container: #00242d;
-    --color-tertiary-fixed: #b0ecff;
-    --color-tertiary-fixed-dim: #7dd2eb;
+    /* Secondary */
+    --color-secondary:             #00677c;
+    --color-on-secondary:          #ffffff;
+    --color-secondary-container:   #4cd9fd;
+    --color-on-secondary-container:#005d6f;
+    --color-secondary-fixed:       #b1ecff;
+    --color-secondary-fixed-dim:   #48d7fb;
 
-    --color-background: #f6fafd;
-    --color-surface: #f6fafd;
-    --color-surface-variant: #dfe3e6;
+    /* Tertiary */
+    --color-tertiary:              #000a0e;
+    --color-on-tertiary:           #ffffff;
+    --color-tertiary-container:    #00242d;
+    --color-on-tertiary-container: #3792aa;
+    --color-tertiary-fixed:        #b0ecff;
+    --color-tertiary-fixed-dim:    #7dd2eb;
 
-    --color-surface-container: #eaeef1;
-    --color-surface-container-low: #f0f4f7;
-    --color-surface-container-high: #e5e9ec;
+    /* Error */
+    --color-error:                 #ba1a1a;
+    --color-on-error:              #ffffff;
+    --color-error-container:       #ffdad6;
+    --color-on-error-container:    #93000a;
+
+    /* Surface */
+    --color-background:                #f6fafd;
+    --color-on-background:             #171c1f;
+    --color-surface:                   #f6fafd;
+    --color-on-surface:                #171c1f;
+    --color-surface-variant:           #dfe3e6;
+    --color-on-surface-variant:        #44474d;
+    --color-surface-dim:               #d6dbdd;
+    --color-surface-bright:            #f6fafd;
+    --color-surface-container-lowest:  #ffffff;
+    --color-surface-container-low:     #f0f4f7;
+    --color-surface-container:         #eaeef1;
+    --color-surface-container-high:    #e5e9ec;
     --color-surface-container-highest: #dfe3e6;
+    --color-surface-tint:              #4d6079;
+    --color-inverse-surface:           #2c3134;
+    --color-inverse-on-surface:        #edf1f4;
 
-    --color-outline: #74777d;
+    /* Outline */
+    --color-outline:         #74777d;
     --color-outline-variant: #c4c6cd;
 
-    --color-error: #ba1a1a;
-    --color-error-container: #ffdad6;
+    /* Brand / extended palette */
+    --color-cyan:       #00b8db;
+    --color-cyan-dark:  #0091ad;
+    --color-cyan-deep:  #006d82;
+    --color-navy:       #0d2137;
+    --color-navy-deepest: #08121d;
+    --color-navy-mid:   #162d47;
+    --color-sky:        #7acfe8;
+    --color-sky-light:  #e5f7fb;
+    --color-ice:        #f4f8fb;
 
-    --color-on-primary: #ffffff;
-    --color-on-secondary: #ffffff;
-    --color-on-tertiary: #ffffff;
-
-    --color-on-surface: #171c1f;
-    --color-on-surface-variant: #44474d;
-
-    --color-on-background: #171c1f;
-
-    /* =========================
+    /* ═══════════════════════════════════════════
        SPACING
-    ========================= */
-    --spacing-base: 8px;
-    --spacing-gutter: 24px;
-    --spacing-margin-mobile: 16px;
-    --spacing-margin-desktop: 64px;
-    --spacing-container-max: 1440px;
+    ═══════════════════════════════════════════ */
+    --spacing-base:             8px;
+    --spacing-gutter:           24px;
+    --spacing-margin-mobile:    16px;
+    --spacing-margin-desktop:   64px;
+    --spacing-container-max:    1440px;
 
-    /* =========================
+    /* ═══════════════════════════════════════════
        BORDER RADIUS
-    ========================= */
+    ═══════════════════════════════════════════ */
     --radius-default: 0.25rem;
-    --radius-lg: 0.5rem;
-    --radius-xl: 0.75rem;
-    --radius-full: 9999px;
+    --radius-lg:      0.5rem;
+    --radius-xl:      0.75rem;
+    --radius-2xl:     1rem;
+    --radius-full:    9999px;
 
-    /* =========================
-       TYPOGRAPHY
-    ========================= */
+    /* ═══════════════════════════════════════════
+       TYPOGRAPHY SCALE
+       Each text-* token wires up size + leading
+       + tracking + weight automatically in v4
+    ═══════════════════════════════════════════ */
 
-    --text-label-md: 14px;
-    --text-label-md--line-height: 1.2;
-    --text-label-md--letter-spacing: 0.05em;
-    --text-label-md--font-weight: 500;
+    /* Label */
+    --text-label-sm:                   12px;
+    --text-label-sm--line-height:      1.2;
+    --text-label-sm--letter-spacing:   0.06em;
+    --text-label-sm--font-weight:      600;
 
-    --text-body-md: 16px;
-    --text-body-md--line-height: 1.5;
-    --text-body-md--font-weight: 400;
+    --text-label-md:                   14px;
+    --text-label-md--line-height:      1.2;
+    --text-label-md--letter-spacing:   0.05em;
+    --text-label-md--font-weight:      500;
 
-    --text-body-lg: 18px;
-    --text-body-lg--line-height: 1.6;
-    --text-body-lg--font-weight: 400;
+    /* Body */
+    --text-body-sm:                    14px;
+    --text-body-sm--line-height:       1.5;
+    --text-body-sm--font-weight:       400;
 
-    --text-headline-md: 24px;
-    --text-headline-md--line-height: 1.4;
-    --text-headline-md--font-weight: 600;
+    --text-body-md:                    16px;
+    --text-body-md--line-height:       1.5;
+    --text-body-md--font-weight:       400;
 
-    --text-headline-lg: 32px;
-    --text-headline-lg--line-height: 1.3;
-    --text-headline-lg--font-weight: 700;
+    --text-body-lg:                    18px;
+    --text-body-lg--line-height:       1.65;
+    --text-body-lg--font-weight:       400;
 
-    --text-headline-xl: 48px;
-    --text-headline-xl--line-height: 1.2;
-    --text-headline-xl--font-weight: 700;
+    /* Headline */
+    --text-headline-sm:                20px;
+    --text-headline-sm--line-height:   1.4;
+    --text-headline-sm--font-weight:   600;
 
-    --text-display-lg: 64px;
-    --text-display-lg--line-height: 1.1;
+    --text-headline-md:                24px;
+    --text-headline-md--line-height:   1.4;
+    --text-headline-md--font-weight:   600;
+
+    --text-headline-lg:                32px;
+    --text-headline-lg--line-height:   1.3;
+    --text-headline-lg--font-weight:   700;
+
+    --text-headline-xl:                48px;
+    --text-headline-xl--line-height:   1.2;
+    --text-headline-xl--font-weight:   700;
+
+    /* Display */
+    --text-display-sm:                 48px;
+    --text-display-sm--line-height:    1.15;
+    --text-display-sm--letter-spacing: -0.01em;
+    --text-display-sm--font-weight:    800;
+
+    --text-display-md:                 56px;
+    --text-display-md--line-height:    1.1;
+    --text-display-md--letter-spacing: -0.02em;
+    --text-display-md--font-weight:    800;
+
+    --text-display-lg:                 64px;
+    --text-display-lg--line-height:    1.1;
     --text-display-lg--letter-spacing: -0.02em;
-    --text-display-lg--font-weight: 800;
+    --text-display-lg--font-weight:    800;
+
+    /* ═══════════════════════════════════════════
+       SHADOWS
+    ═══════════════════════════════════════════ */
+    --shadow-sm:   0 1px 2px rgba(0,0,0,.06);
+    --shadow-md:   0 4px 12px rgba(0,0,0,.08);
+    --shadow-lg:   0 8px 30px rgba(0,0,0,.1);
+    --shadow-cyan: 0 0 24px rgba(0,184,219,.3);
+    --shadow-navy: 0 8px 40px rgba(0,9,23,.4);
+
+    /* ═══════════════════════════════════════════
+       ANIMATIONS
+    ═══════════════════════════════════════════ */
+    --animate-fade-up:    fadeUp .6s ease both;
+    --animate-fade-in:    fadeIn .4s ease both;
+    --animate-slide-down: slideDown .3s ease both;
+
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(18px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+    }
+
+    @keyframes slideDown {
+        from { opacity: 0; transform: translateY(-8px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes radarRotate {
+        from { transform: rotate(0deg); }
+        to   { transform: rotate(360deg); }
+    }
+
+    @keyframes radarPulse {
+        0%   { transform: scale(0); opacity: 0.7; }
+        60%  { opacity: 0.25; }
+        100% { transform: scale(1); opacity: 0; }
+    }
+
+}
+
+/* ═══════════════════════════════════════════════════
+   BASE LAYER — resets & root defaults
+═══════════════════════════════════════════════════ */
+@layer base {
+
+    *, *::before, *::after {
+        box-sizing: border-box;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+        font-family: var(--font-body);
+        color: var(--color-on-surface);
+        background-color: var(--color-background);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    main { flex: 1; }
+
+    /* Focus ring — consistent across interactive elements */
+    :focus-visible {
+        outline: 2px solid var(--color-cyan);
+        outline-offset: 2px;
+        border-radius: var(--radius-default);
+    }
+
+    /* Remove default list styles when inside nav */
+    nav ul, nav ol {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Images — prevent overflow */
+    img, video, svg {
+        max-width: 100%;
+        display: block;
+    }
+
+}
+
+/* ═══════════════════════════════════════════════════
+   COMPONENTS — only things that can't be Tailwind inline
+═══════════════════════════════════════════════════ */
+@layer components {
+
+    /* ── Glassmorphism panel (header, banners) ── */
+    .glass-panel {
+        background: rgba(0, 9, 23, 0.95);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+    }
+
+    /* ── Animation delay utilities ───────────────── */
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+    .delay-4 { animation-delay: 0.4s; }
+    .delay-5 { animation-delay: 0.5s; }
+
+    /* ── Dot-matrix background (footer, banners) ── */
+    .dot-matrix {
+        background-image: radial-gradient(var(--color-outline-variant) 0.5px, transparent 0.5px);
+        background-size: 24px 24px;
+    }
+
+    /* ── Grid lines (hero, banners) ─────────────── */
+    .grid-lines {
+        background-image:
+            linear-gradient(var(--color-cyan) 1px, transparent 1px),
+            linear-gradient(90deg, var(--color-cyan) 1px, transparent 1px);
+        background-size: 60px 60px;
+    }
+
+    /* ── Mega menu ───────────────────────────────── */
+    /* JS toggles .is-visible — needs display:grid which
+       can't be toggled by a Tailwind class alone       */
+    .mega-menu-content {
+        display: none;
+        opacity: 0;
+        transform: translateY(-8px);
+        transition: opacity 0.25s ease-out, transform 0.25s ease-out;
+        pointer-events: none;
+    }
+    .mega-menu-content.is-visible {
+        display: grid;
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: all;
+    }
+
+    /* Hover bridge — stops menu closing when cursor
+       moves from trigger button down into the panel  */
+    .mega-trigger::after {
+        content: '';
+        position: absolute;
+        bottom: -16px;
+        left: -20px;
+        right: -20px;
+        height: 16px;
+    }
+
+    /* ── Radar visual elements (hero) ───────────── */
+    .radar-disc {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .radar-beam {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        animation: radarRotate 4s linear infinite;
+        background: conic-gradient(
+            from 0deg at 50% 50%,
+            rgba(76, 217, 253, 0.55) 0deg,
+            rgba(0, 184, 219, 0.18) 40deg,
+            transparent 90deg
+        );
+    }
+
+    /* Leading edge glow line — rotates with the beam */
+    .radar-disc::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 50%;
+        height: 1.5px;
+        background: linear-gradient(to right, rgba(76,217,253,0.9), rgba(76,217,253,0));
+        transform-origin: left center;
+        animation: radarRotate 4s linear infinite;
+        margin-top: -0.75px;
+    }
+
+    .radar-ring {
+        position: absolute;
+        border-radius: 50%;
+        border: 1px solid rgba(76, 217, 253, 0.12);
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    /* Orbit core (center hub) */
+    .orbit-core {
+        width: 160px;
+        height: 160px;
+        background: rgba(8, 18, 29, 0.95);
+        border: 1px solid rgba(0, 184, 219, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        z-index: 20;
+        box-shadow: 0 0 50px rgba(0, 184, 219, 0.1);
+    }
+
+    /* Orbit icon container */
+    .orbit-icon {
+        position: absolute;
+        width: 52px;
+        height: 52px;
+        background: rgba(8, 18, 29, 0.88);
+        border: 1px solid rgba(76, 217, 253, 0.18);
+        border-radius: 14px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        top: 50%;
+        left: 50%;
+        margin-left: -26px;
+        margin-top: -26px;
+        z-index: 30;
+        backdrop-filter: blur(8px);
+        transition: box-shadow 0.4s ease, border-color 0.4s ease, background 0.4s ease;
+        cursor: default;
+    }
+
+    .orbit-icon .material-symbols-outlined {
+        font-size: 22px;
+        color: #4cd9fd;
+        opacity: 0.6;
+        transition: opacity 0.3s, filter 0.3s;
+        font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+    }
+
+    .orbit-icon svg {
+        width: 22px;
+        height: 22px;
+        fill: none;
+        stroke: #4cd9fd;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        opacity: 0.6;
+        transition: opacity 0.3s, filter 0.3s;
+    }
+
+    /* ── Orbit icon tooltips ─────────────────────── */
+    .orbit-icon::after {
+        content: attr(data-label);
+        position: absolute;
+        bottom: -26px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 184, 219, 0.15);
+        border: 1px solid rgba(76, 217, 253, 0.25);
+        color: var(--color-cyan);
+        font-size: 0.62rem;
+        font-family: var(--font-display);
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        padding: 2px 8px;
+        border-radius: 4px;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s;
+    }
+    .orbit-icon:hover::after,
+    .orbit-icon.lit::after {
+        opacity: 1;
+    }
+
+    /* JS-toggled glow when radar sweep hits the icon */
+    .orbit-icon.lit {
+        background: rgba(8, 18, 29, 0.95) !important;
+        border-color: rgba(76, 217, 253, 0.85) !important;
+        box-shadow:
+            0 0 18px rgba(76, 217, 253, 0.45),
+            0 0 6px  rgba(76, 217, 253, 0.2),
+            inset 0 0 8px rgba(76, 217, 253, 0.07) !important;
+    }
+    .orbit-icon.lit .material-symbols-outlined,
+    .orbit-icon.lit svg {
+        opacity: 1 !important;
+        filter: drop-shadow(0 0 5px rgba(76, 217, 253, 0.9)) !important;
+    }
+
+    /* ── Page banner glow (breadcrumb banners) ───── */
+    /* Pseudo-element — can't be expressed inline     */
+    .banner-glow::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(ellipse 55% 80% at var(--gx, 70%) 50%, rgba(0,184,219,0.11) 0%, transparent 70%),
+            radial-gradient(ellipse 28% 45% at var(--gx2, 15%) 85%, rgba(122,207,232,0.05) 0%, transparent 60%);
+        pointer-events: none;
+    }
+
+    /* ── Home hero specific gradient overlays ───── */
+    /* These are used for illustration, but kept in components */
+    .hero-bg-pattern {
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(circle at 70% 50%, rgba(0, 184, 219, 0.12) 0%, transparent 60%),
+            radial-gradient(circle at 20% 80%, rgba(122, 207, 232, 0.08) 0%, transparent 50%);
+        pointer-events: none;
+    }
+
+    .hero-grid-lines {
+        position: absolute;
+        inset: 0;
+        background-image:
+            linear-gradient(rgba(0, 184, 219, 0.04) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 184, 219, 0.04) 1px, transparent 1px);
+        background-size: 60px 60px;
+        pointer-events: none;
+    }
+
+    /* ── Custom form styles (newsletter, etc) ───── */
+    .newsletter-input {
+        background: transparent;
+        border: none;
+        font-size: 0.75rem;
+        flex-grow: 1;
+        padding: 0 1rem;
+        color: white;
+        placeholder-color: rgba(255,255,255,0.3);
+    }
+    .newsletter-input:focus {
+        outline: none;
+        ring: 0;
+    }
 
 }

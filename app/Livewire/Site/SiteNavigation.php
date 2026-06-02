@@ -3,39 +3,112 @@
 namespace App\Livewire\Site;
 
 use App\Models\Product;
-use App\Models\SiteSetting;
+use App\Models\CaseStudy;
+use App\Models\SiteNotification;
 use Livewire\Component;
 
 class SiteNavigation extends Component
 {
-    public bool $notificationVisible = true;
-    public string $notificationText  = '';
-    public string $notificationLink  = '#';
-    public string $notificationLabel = 'Read Now';
+    public int $currentNotificationIndex = 0;
+    public array $notifications = [];
 
     // Products mega-menu data (dynamic)
     public array $products = [];
+    
+    // Case studies data (dynamic)
+    public array $caseStudies = [];
 
     public function mount(): void
     {
-        // Load notification bar from settings or fallback
-        $s = SiteSetting::getGroup('site');
-        $this->notificationVisible = (bool) ($s['nav_notification_visible'] ?? true);
-        $this->notificationText    = $s['nav_notification_text']  ?? 'New ↗ Case Study: Healthcare Digital Transformation in Ghana';
-        $this->notificationLink    = $s['nav_notification_link']  ?? '#';
-        $this->notificationLabel   = $s['nav_notification_label'] ?? 'Read Now';
+        // Load up to 3 active notifications ordered by priority (for carousel)
+        $this->notifications = SiteNotification::current()
+            ->orderByDesc('priority')
+            ->limit(3)
+            ->get(['id', 'title', 'message', 'button_label', 'button_url', 'is_dismissible'])
+            ->map(fn($n) => [
+                'id' => $n->id,
+                'title' => $n->title,
+                'message' => $n->message,
+                'button_label' => $n->button_label,
+                'button_url' => $n->button_url,
+                'is_dismissible' => $n->is_dismissible,
+                'dismissed' => session()->get('dismissed_notification_' . $n->id, false),
+            ])
+            ->toArray();
 
-        // Dynamic products for mega-menu — published, up to 8
+        // Load products for mega-menu (up to 8, published, ordered by sort_order)
         $this->products = Product::published()
             ->orderBy('sort_order')
             ->limit(8)
-            ->get(['name', 'slug', 'tagline', 'category', 'icon'])
+            ->get(['id', 'name', 'slug', 'tagline', 'icon', 'category'])
+            ->map(fn($p) => [
+                'name' => $p->name,
+                'slug' => $p->slug,
+                'tagline' => $p->tagline,
+                'icon' => $p->icon ?? 'deployed_code',
+                'category' => $p->category,
+            ])
             ->toArray();
+
+        // Load case studies for mega-menu (up to 3, published, featured first)
+        $this->caseStudies = CaseStudy::published()
+            ->orderByRaw('is_featured DESC')
+            ->limit(3)
+            ->get(['id', 'title', 'slug', 'client_name', 'client_industry', 'challenge', 'icon', 'tags'])
+            ->map(fn($cs) => [
+                'title' => $cs->title,
+                'slug' => $cs->slug,
+                'client_name' => $cs->client_name,
+                'client_industry' => $cs->client_industry,
+                'challenge' => $cs->challenge,
+                'icon' => $cs->icon ?? 'monitor_heart',
+                'tags' => $cs->tags ?? [],
+            ])
+            ->toArray();
+    }
+
+    public function nextNotification(): void
+    {
+        if (count($this->notifications) === 0) {
+            return;
+        }
+
+        $this->currentNotificationIndex = ($this->currentNotificationIndex + 1) % count($this->notifications);
+    }
+
+    public function previousNotification(): void
+    {
+        if (count($this->notifications) === 0) {
+            return;
+        }
+
+        $this->currentNotificationIndex = ($this->currentNotificationIndex - 1 + count($this->notifications)) % count($this->notifications);
+    }
+
+    public function goToNotification(int $index): void
+    {
+        if ($index >= 0 && $index < count($this->notifications)) {
+            $this->currentNotificationIndex = $index;
+        }
     }
 
     public function dismissNotification(): void
     {
-        $this->notificationVisible = false;
+        if (count($this->notifications) === 0) {
+            return;
+        }
+
+        $notification = $this->notifications[$this->currentNotificationIndex];
+
+        if ($notification['is_dismissible']) {
+            session()->put('dismissed_notification_' . $notification['id'], true);
+            $this->notifications[$this->currentNotificationIndex]['dismissed'] = true;
+        }
+
+        // Auto-advance to next notification if available
+        if (count($this->notifications) > 1) {
+            $this->nextNotification();
+        }
     }
 
     public function render(): \Illuminate\Contracts\View\View

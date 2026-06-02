@@ -1,0 +1,1714 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Exchosoft Consult — Software Development &amp; Technology Consultancy</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&amp;family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+
+                        "surface-tint": "#4d6079",
+                        "secondary-fixed": "#b1ecff",
+                        "primary": "#000917",
+                        "on-primary-container": "#7689a4",
+                        "surface-container-high": "#e5e9ec",
+                        "on-error-container": "#93000a",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed": "#001f27",
+                        "on-surface": "#171c1f",
+                        "on-secondary-fixed": "#001f27",
+                        "surface-dim": "#d6dbdd",
+                        "secondary": "#00677c",
+                        "outline-variant": "#c4c6cd",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error": "#ffffff",
+                        "inverse-on-surface": "#edf1f4",
+                        "secondary-container": "#4cd9fd",
+                        "on-tertiary-fixed-variant": "#004e5e",
+                        "inverse-primary": "#b5c8e5",
+                        "surface": "#f6fafd",
+                        "on-tertiary": "#ffffff",
+                        "primary-container": "#0d2137",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed-dim": "#b5c8e5",
+                        "on-tertiary-container": "#3792aa",
+                        "tertiary": "#000a0e",
+                        "secondary-fixed-dim": "#48d7fb",
+                        "inverse-surface": "#2c3134",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed-dim": "#7dd2eb",
+                        "background": "#f6fafd",
+                        "outline": "#74777d",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed": "#081c32",
+                        "tertiary-fixed": "#b0ecff",
+                        "on-secondary-fixed-variant": "#004e5e",
+                        "tertiary-container": "#00242d",
+                        "surface-container-low": "#f0f4f7",
+                        "surface-container-highest": "#dfe3e6",
+                        "on-background": "#171c1f",
+                        "surface-container": "#eaeef1",
+                        "surface-bright": "#f6fafd",
+                        "on-surface-variant": "#44474d",
+                        "on-secondary-container": "#005d6f",
+                        "surface-variant": "#dfe3e6",
+                        "primary-fixed": "#d2e4ff",
+                        "on-primary-fixed-variant": "#364860",
+                        "cyan": "#00b8db",
+                        "cyan-dark": "#0091ad",
+                        "cyan-deep": "#006d82",
+                        "sky": "#7acfe8",
+                        "sky-light": "#e5f7fb",
+                        "navy": "#0d2137",
+                        "navy-deepest": "#08121d",
+                        "navy-mid": "#162d47",
+                        "ice": "#f4f8fb",
+                        "white": "#ffffff",
+                        "text-primary": "#0d2137",
+                        "text-secondary": "#3a5a72",
+                        "text-muted": "#7a9ab0",
+                        "border": "rgba(0,184,219,0.15)",
+
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "margin-desktop": "64px",
+                        "base": "8px",
+                        "gutter": "24px",
+                        "container-max": "1440px"
+                    },
+                    "fontFamily": {
+                        "code-snippet": ["DM Sans"],
+                        "body-md": ["DM Sans"],
+                        "display-lg-mobile": ["Syne"],
+                        "headline-xl": ["Syne"],
+                        "display-lg": ["Syne"],
+                        "headline-lg": ["Syne"],
+                        "body-lg": ["DM Sans"],
+                        "headline-md": ["Syne"],
+                        "label-md": ["DM Sans"]
+                    },
+                    "fontSize": {
+                        "code-snippet": ["13px", {
+                            "lineHeight": "1.5",
+                            "fontWeight": "500"
+                        }],
+                        "body-md": ["16px", {
+                            "lineHeight": "1.5",
+                            "fontWeight": "400"
+                        }],
+                        "display-lg-mobile": ["40px", {
+                            "lineHeight": "1.2",
+                            "letterSpacing": "-0.01em",
+                            "fontWeight": "800"
+                        }],
+                        "headline-xl": ["48px", {
+                            "lineHeight": "1.2",
+                            "fontWeight": "700"
+                        }],
+                        "display-lg": ["64px", {
+                            "lineHeight": "1.1",
+                            "letterSpacing": "-0.02em",
+                            "fontWeight": "800"
+                        }],
+                        "headline-lg": ["32px", {
+                            "lineHeight": "1.3",
+                            "fontWeight": "700"
+                        }],
+                        "body-lg": ["18px", {
+                            "lineHeight": "1.6",
+                            "fontWeight": "400"
+                        }],
+                        "headline-md": ["24px", {
+                            "lineHeight": "1.4",
+                            "fontWeight": "600"
+                        }],
+                        "label-md": ["14px", {
+                            "lineHeight": "1.2",
+                            "letterSpacing": "0.05em",
+                            "fontWeight": "500"
+                        }]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .radar-scan {
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(18px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-up { animation: fadeUp 0.6s ease both; }
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+        .delay-400 { animation-delay: 0.4s; }
+
+
+
+        .glass-panel {
+            background: rgba(0, 9, 23, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .mega-menu-content {
+            display: none;
+            opacity: 0;
+            transform: translateY(-8px);
+            transition: opacity 0.25s ease-out, transform 0.25s ease-out;
+            pointer-events: none;
+        }
+
+        .mega-menu-content.is-visible {
+            display: grid;
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: all;
+        }
+
+        /* Safe hover bridge — prevents menu closing when mouse moves from trigger to menu */
+        .mega-trigger::after {
+            content: '';
+            position: absolute;
+            bottom: -16px;
+            left: -20px;
+            right: -20px;
+            height: 16px;
+        }
+
+        .dot-matrix {
+            background-image: radial-gradient(#c4c6cd 0.5px, transparent 0.5px);
+            background-size: 24px 24px;
+        }
+
+
+
+        /* ── HOME PAGE STYLES ── */
+        .home-hero {
+            min-height: 100vh;
+            background: #08121d;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-bg-pattern {
+            position: absolute;
+            inset: 0;
+            background-image:
+                radial-gradient(circle at 70% 50%, rgba(0, 184, 219, 0.12) 0%, transparent 60%),
+                radial-gradient(circle at 20% 80%, rgba(122, 207, 232, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .hero-grid-lines {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0, 184, 219, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 184, 219, 0.04) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+        }
+
+        .hero-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 8rem 4rem 6rem 6rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(0, 184, 219, 0.12);
+            border: 1px solid rgba(0, 184, 219, 0.25);
+            color: var(--cyan);
+            padding: 0.35rem 0.9rem;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            margin-bottom: 2rem;
+            width: fit-content;
+        }
+
+        .hero-tag span {
+            width: 6px;
+            height: 6px;
+            background: var(--cyan);
+            border-radius: 50%;
+            display: block;
+        }
+
+        .hero-h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2.4rem, 4.5vw, 3.8rem);
+            font-weight: 800;
+            color: var(--white);
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-h1 em {
+            color: var(--cyan);
+            font-style: normal;
+        }
+
+        .hero-sub {
+            font-size: 1.05rem;
+            color: rgba(255, 255, 255, 0.65);
+            max-width: 480px;
+            margin-bottom: 2.5rem;
+            line-height: 1.7;
+            font-weight: 300;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary-cyan {
+            background: var(--cyan);
+            color: var(--white);
+            padding: 0.85rem 2rem;
+            border-radius: 8px;
+            font-family: var(--font-display);
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.2s, transform 0.15s;
+            display: inline-block;
+        }
+
+        .btn-primary-cyan:hover {
+            background: var(--cyan-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary-outline {
+            background: transparent;
+            color: var(--white);
+            padding: 0.85rem 2rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            font-family: var(--font-display);
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: border-color 0.2s, background 0.2s;
+            display: inline-block;
+        }
+
+        .btn-secondary-outline:hover {
+            border-color: var(--cyan);
+            background: rgba(0, 184, 219, 0.08);
+        }
+
+        .hero-visual {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-logo-wrap {
+            width: 560px;
+            height: 560px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Core logo */
+        .orbit-core {
+            width: 160px;
+            height: 160px;
+            background: rgba(8, 18, 29, 0.95);
+            border: 1px solid rgba(0, 184, 219, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 20;
+            box-shadow: 0 0 50px rgba(0, 184, 219, 0.1);
+        }
+
+        .orbit-core img {
+            width: 88px;
+            height: auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .orbit-core-fallback {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--cyan);
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ── Services-style CSS radar ── */
+        .radar-disc {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Rotating sweep beam — conic gradient exactly like services.html */
+        .radar-beam {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            animation: radarRotate 4s linear infinite;
+            background: conic-gradient(
+                from 0deg at 50% 50%,
+                rgba(76, 217, 253, 0.55) 0deg,
+                rgba(0, 184, 219, 0.18) 40deg,
+                transparent 90deg
+            );
+        }
+
+        @keyframes radarRotate {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
+        }
+
+        /* Concentric rings */
+        .radar-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(76, 217, 253, 0.12);
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Leading edge glow line */
+        .radar-disc::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 50%; height: 1.5px;
+            background: linear-gradient(to right, rgba(76,217,253,0.9), rgba(76,217,253,0));
+            transform-origin: left center;
+            animation: radarRotate 4s linear infinite;
+            margin-top: -0.75px;
+        }
+
+        /* Icon nodes on ring */
+        .orbit-icon {
+            position: absolute;
+            width: 52px;
+            height: 52px;
+            background: rgba(8, 18, 29, 0.88);
+            border: 1px solid rgba(76, 217, 253, 0.18);
+            border-radius: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            top: 50%;
+            left: 50%;
+            margin-left: -26px;
+            margin-top: -26px;
+            z-index: 30;
+            backdrop-filter: blur(8px);
+            transition: box-shadow 0.4s ease, border-color 0.4s ease, background 0.4s ease;
+            cursor: default;
+        }
+
+        /* Material icon inside orbit-icon */
+        .orbit-icon .material-symbols-outlined {
+            font-size: 22px;
+            color: #4cd9fd;
+            opacity: 0.6;
+            transition: opacity 0.3s, filter 0.3s;
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+
+        /* SVG fallback still supported */
+        .orbit-icon svg {
+            width: 22px;
+            height: 22px;
+            fill: none;
+            stroke: #4cd9fd;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            opacity: 0.6;
+            transition: opacity 0.3s, filter 0.3s;
+        }
+
+        /* Tooltip label */
+        .orbit-icon::after {
+            content: attr(data-label);
+            position: absolute;
+            bottom: -26px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 184, 219, 0.15);
+            border: 1px solid rgba(76, 217, 253, 0.25);
+            color: #4cd9fd;
+            font-size: 0.62rem;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            padding: 2px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .orbit-icon:hover::after,
+        .orbit-icon.lit::after {
+            opacity: 1;
+        }
+
+        /* Glow state on sweep hit */
+        .orbit-icon.lit {
+            background: rgba(8, 18, 29, 0.95);
+            border-color: rgba(76, 217, 253, 0.85);
+            box-shadow:
+                0 0 18px rgba(76, 217, 253, 0.45),
+                0 0 6px  rgba(76, 217, 253, 0.2),
+                inset 0 0 8px rgba(76, 217, 253, 0.07);
+        }
+
+        .orbit-icon.lit .material-symbols-outlined,
+        .orbit-icon.lit svg {
+            opacity: 1;
+            filter: drop-shadow(0 0 5px rgba(76, 217, 253, 0.9));
+        }
+
+    </style>
+</head>
+
+<body class="bg-surface font-body-md text-on-surface antialiased min-h-screen flex flex-col">
+    <!-- Sticky shell: notification bar + header are siblings inside one sticky container so no gap ever appears between them -->
+    <div class="sticky top-0 z-50 flex flex-col" id="sticky-shell">
+        <!-- Notification Bar -->
+        <div class="border-b border-cyan/20 transition-all duration-300" id="notification-bar" style="background: linear-gradient(90deg, #08121d 0%, #0d2137 40%, #0a1e30 60%, #08121d 100%); box-shadow: 0 1px 0 rgba(0,184,219,0.12), inset 0 1px 0 rgba(0,184,219,0.06);">
+            <div class="relative flex items-center justify-center py-2 px-10">
+                <!-- subtle left accent dot -->
+                <span class="absolute left-4 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-cyan opacity-70 hidden md:block" style="box-shadow:0 0 6px rgba(0,184,219,0.8)"></span>
+                <p class="font-label-md text-[12px] text-white/85 tracking-wide text-center">
+                    <span class="text-cyan font-semibold mr-1">New ↗</span>Case Study: Healthcare Digital Transformation in Ghana — <a
+                        class="text-secondary-fixed hover:text-white underline-offset-2 hover:underline decoration-secondary-fixed/50 transition-colors" href="#">Read Now</a>
+                </p>
+                <button onclick="closeNotificationBar()"
+                    class="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-all duration-200"
+                    aria-label="Dismiss notification">
+                    <span class="material-symbols-outlined text-base leading-none">close</span>
+                </button>
+            </div>
+        </div>
+        <!-- Header Navigation -->
+        <header class="glass-panel border-b border-outline-variant/20 shadow-sm transition-all duration-500"
+            id="main-header">
+            <nav class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-3">
+
+                <!-- Brand Logo -->
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-secondary-container text-3xl"
+                        style="font-variation-settings: 'FILL' 1;">hub</span>
+                    <a class="font-headline-md text-headline-md font-bold tracking-tight text-white" href="#">Exchosoft
+                        Consult</a>
+                </div>
+                <!-- Desktop Navigation -->
+                <ul class="hidden md:flex items-center gap-8">
+                    <li><a class="font-label-md text-label-md text-white/70 hover:text-secondary-fixed transition-colors duration-300"
+                            href="#">Home</a></li>
+
+                    <li><a class="font-label-md text-label-md text-white/70 hover:text-secondary-fixed transition-colors duration-300"
+                            href="#">About</a></li>
+
+
+                    <!-- Products Mega Menu -->
+                    <li class="mega-menu-item group relative">
+                        <button
+                            class="mega-trigger relative flex items-center gap-1 font-label-md text-label-md text-white/70 group-hover:text-secondary-fixed transition-colors duration-300">
+                            Products <span class="material-symbols-outlined text-sm">keyboard_arrow_down</span>
+                        </button>
+                        <div
+                            class="mega-menu-content absolute top-full -left-64 w-[900px] mt-4 bg-primary-container border border-outline-variant/10 rounded-xl shadow-2xl overflow-hidden">
+                            <div class="flex min-h-[380px]">
+                                <!-- Visual Banner (LEFT) -->
+                                <div class="w-2/5 relative overflow-hidden group/banner">
+                                    <img alt="Industrial Tech"
+                                        class="w-full h-full object-cover transition-transform duration-700 group-hover/banner:scale-110"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzMn91WgaDgGY6P8lfrr9NxZ5nBjQ8KXq4oLbcklS5SFeQRa1vkh6me5r-jZdSTNvH7mXykISAlWHG0ur08fNly3CA9zJIGi3J_r2GzwbVpc8hSZPhrGPkEzWm1b5cYab4O6kxje6kko3TQlGse9JP1m1I55HFhrdYxXRFSkhJNR8KqPoB1e2qio7v7nLlQokrzjKBbFd0L_WGtsm9MO_USmIhspJFCyUvbZEDIK6LpjV5nb07D_yqCxusJ1RCAnwVkQi9mqjdQlM" />
+                                    <div class="absolute inset-0 bg-primary/40 dot-matrix"></div>
+                                    <div class="absolute inset-0 bg-gradient-to-l from-primary/80 to-transparent"></div>
+                                    <div class="absolute bottom-8 left-8 right-8">
+                                        <div class="h-px w-12 bg-secondary-container mb-4"></div>
+                                        <h5 class="text-white font-bold text-lg">Operational Excellence</h5>
+                                        <p class="text-secondary-fixed text-sm">Reliability at every scale.</p>
+                                    </div>
+                                </div>
+                                <!-- Navigation Links (RIGHT) -->
+                                <div class="w-3/5 p-8">
+                                    <div class="mb-6 flex items-center justify-between border-b border-white/10 pb-4">
+                                        <span
+                                            class="text-xs font-bold text-secondary-fixed uppercase tracking-widest">Solutions
+                                            Portfolio</span>
+                                        <a class="text-xs font-bold text-white hover:text-secondary-container transition-colors flex items-center gap-1"
+                                            href="#">Explore All Products <span
+                                                class="material-symbols-outlined text-xs">arrow_forward</span></a>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-x-8 gap-y-6">
+                                        <div class="group/link cursor-pointer">
+                                            <div class="flex items-center gap-3 mb-1">
+                                                <span class="material-symbols-outlined text-secondary-container"
+                                                    style="font-variation-settings: 'FILL' 1;">local_laundry_service</span>
+                                                <h4
+                                                    class="font-headline-md text-sm text-white group-hover/link:text-secondary-fixed transition-colors">
+                                                    WashOps</h4>
+                                            </div>
+                                            <p class="font-body-md text-[11px] text-on-primary-container ml-9">
+                                                Industrial
+                                                laundry management system.</p>
+                                        </div>
+                                        <div class="group/link cursor-pointer">
+                                            <div class="flex items-center gap-3 mb-1">
+                                                <span class="material-symbols-outlined text-secondary-container"
+                                                    style="font-variation-settings: 'FILL' 1;">church</span>
+                                                <h4
+                                                    class="font-headline-md text-sm text-white group-hover/link:text-secondary-fixed transition-colors">
+                                                    ChurchOps</h4>
+                                            </div>
+                                            <p class="font-body-md text-[11px] text-on-primary-container ml-9">
+                                                Administrative backbone for scaling institutions.</p>
+                                        </div>
+                                        <div class="group/link opacity-40 cursor-not-allowed">
+                                            <div class="flex items-center gap-3 mb-1">
+                                                <span class="material-symbols-outlined text-secondary-fixed-dim"
+                                                    style="font-variation-settings: 'FILL' 1;">medical_services</span>
+                                                <h4 class="font-headline-md text-sm text-white">ClinicOps</h4>
+                                            </div>
+                                            <p class="font-body-md text-[11px] text-on-primary-container ml-9 italic">
+                                                Soon:
+                                                HIPAA-ready workflow engine.</p>
+                                        </div>
+                                        <div class="group/link opacity-40 cursor-not-allowed">
+                                            <div class="flex items-center gap-3 mb-1">
+                                                <span class="material-symbols-outlined text-secondary-fixed-dim"
+                                                    style="font-variation-settings: 'FILL' 1;">science</span>
+                                                <h4 class="font-headline-md text-sm text-white">LabOps</h4>
+                                            </div>
+                                            <p class="font-body-md text-[11px] text-on-primary-container ml-9 italic">
+                                                Soon:
+                                                Automated laboratory pipelines.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li><a class="font-label-md text-label-md text-white/70 hover:text-secondary-fixed transition-colors duration-300"
+                            href="#">Services</a></li>
+                    <!-- Impact Mega Menu -->
+                    <li class="mega-menu-item group relative">
+                        <button
+                            class="mega-trigger relative flex items-center gap-1 font-label-md text-label-md text-white/70 group-hover:text-secondary-fixed transition-colors duration-300">
+                            Impact <span class="material-symbols-outlined text-sm">keyboard_arrow_down</span>
+                        </button>
+                        <div
+                            class="mega-menu-content absolute top-full -left-96 w-[800px] mt-4 bg-primary-container border border-outline-variant/10 rounded-xl shadow-2xl overflow-hidden">
+                            <div class="flex min-h-[360px]">
+                                <!-- Visual Banner (LEFT) -->
+                                <div class="w-2/5 relative overflow-hidden group/banner">
+                                    <img alt="Global Impact"
+                                        class="w-full h-full object-cover transition-transform duration-700 group-hover/banner:scale-110"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDwmO1DVLQD_mHAoyEZMzf6AkYdQkF6HgAlAbVhT7rGxSEkXGb7d8gAJ0eu184Ow9LlJNgP_6BEfxo2MVak59BAATkLnPSLQoV3FztxK36ZxU98k7FbCyKoL0MGBoWhZJGck0MtJ-GdzwbfwezroTORCDML59cBaGkO1wGaXR0JeJp2OiSDCYCeuP6aGFSKDdc_U3Ueoz8L8gNku_zGrp8AL8fu6UxMNAboHZZW-h1XVLJi6OMkSZ_rlucADGV8q71q8qBonZu4EJQ" />
+                                    <div class="absolute inset-0 bg-primary/40 dot-matrix"></div>
+                                    <div class="absolute inset-0 bg-gradient-to-l from-primary/80 to-transparent"></div>
+                                    <div class="absolute bottom-8 left-8 right-8">
+                                        <div class="h-px w-12 bg-secondary-container mb-4"></div>
+                                        <h5 class="text-white font-bold text-lg">Regional Hubs</h5>
+                                        <p class="text-secondary-fixed text-sm">West African Logistics Optimization.</p>
+                                    </div>
+                                </div>
+                                <!-- Navigation Links (RIGHT) -->
+                                <div class="w-3/5 p-8">
+                                    <div class="mb-6 flex items-center justify-between border-b border-white/10 pb-4">
+                                        <span
+                                            class="text-xs font-bold text-secondary-fixed uppercase tracking-widest">Case
+                                            Studies</span>
+                                        <a class="text-xs font-bold text-white hover:text-secondary-container transition-colors flex items-center gap-1"
+                                            href="#">View All Case Studies <span
+                                                class="material-symbols-outlined text-xs">arrow_forward</span></a>
+                                    </div>
+                                    <div class="grid grid-cols-1 gap-6">
+                                        <a class="group/link flex flex-col" href="#">
+                                            <div class="flex items-center gap-3">
+                                                <span
+                                                    class="material-symbols-outlined text-white text-xl">monitor_heart</span>
+                                                <span
+                                                    class="font-headline-md text-sm text-white group-hover/link:text-secondary-fixed transition-colors">Healthcare
+                                                    Transformation</span>
+                                            </div>
+                                            <p class="text-[11px] text-on-primary-container ml-9">Optimizing
+                                                high-traffic
+                                                clinical workflows in Accra.</p>
+                                        </a>
+                                        <a class="group/link flex flex-col" href="#">
+                                            <div class="flex items-center gap-3">
+                                                <span
+                                                    class="material-symbols-outlined text-white text-xl">language</span>
+                                                <span
+                                                    class="font-headline-md text-sm text-white group-hover/link:text-secondary-fixed transition-colors">Global
+                                                    Supply Chain</span>
+                                            </div>
+                                            <p class="text-[11px] text-on-primary-container ml-9">End-to-end visibility
+                                                for
+                                                intercontinental trade.</p>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li><a class="font-label-md text-label-md text-white/70 hover:text-secondary-fixed transition-colors duration-300"
+                            href="#">Insights</a></li>
+                </ul>
+                <!-- Actions -->
+                <div class="flex items-center gap-6">
+                    <button class="text-white/70 hover:text-secondary-container transition-colors">
+                        <span class="material-symbols-outlined text-2xl">search</span>
+                    </button>
+                    <button
+                        class="hidden md:block bg-secondary-container hover:bg-secondary-fixed-dim text-primary font-bold px-6 py-2 rounded-full transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg shadow-secondary-container/20">
+                        Talk to Us
+                    </button>
+                    <button class="md:hidden text-white/70 hover:text-white" onclick="toggleMobileMenu()">
+                        <span class="material-symbols-outlined text-3xl" id="menu-icon">menu</span>
+                    </button>
+                </div>
+            </nav>
+        </header>
+    </div><!-- end sticky-shell -->
+    <!-- Mobile Menu Overlay Background (subtle pattern dimmer) -->
+    <div class="fixed inset-0 z-[39] bg-primary/70 backdrop-blur-sm hidden" id="mobile-overlay"
+        onclick="toggleMobileMenu()"></div>
+    <!-- Mobile Navigation Drawer -->
+    <div class="fixed inset-0 z-40 translate-x-full transition-transform duration-500 md:hidden flex flex-col overflow-hidden"
+        id="mobile-menu">
+        <!-- Bg: solid deep-blue over subtle pattern, overlay dims pattern further -->
+        <div class="absolute inset-0 bg-primary dot-matrix opacity-100 pointer-events-none"></div>
+        <div
+            class="absolute inset-0 bg-gradient-to-br from-primary via-primary/97 to-primary-container/80 pointer-events-none">
+        </div>
+        <!-- Cyan accent glow top-right -->
+        <div
+            class="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-secondary-container/10 blur-3xl pointer-events-none">
+        </div>
+
+        <!-- Scrollable content -->
+        <div class="relative z-10 flex flex-col h-full overflow-y-auto px-6 pt-24 pb-10">
+            <ul class="space-y-1">
+                <!-- Home -->
+                <li>
+                    <a class="flex items-center gap-3 py-4 border-b border-white/8 text-white font-headline-md text-headline-md hover:text-secondary-fixed transition-colors"
+                        href="#">
+                        <span class="material-symbols-outlined text-secondary-container text-xl"
+                            style="font-variation-settings:'FILL' 1;">home</span>
+                        Home
+                    </a>
+
+                    <a class="flex items-center gap-3 py-4 border-b border-white/8 text-white font-headline-md text-headline-md hover:text-secondary-fixed transition-colors"
+                        href="#">
+                        <span class="material-symbols-outlined text-secondary-container text-xl"
+                            style="font-variation-settings:'FILL' 1;">home</span>
+                        About
+                    </a>
+                </li>
+
+                <!-- Products Accordion -->
+                <li class="border-b border-white/8">
+                    <button
+                        class="flex items-center justify-between w-full py-4 text-white font-headline-md text-headline-md"
+                        onclick="toggleAccordion('products-acc')">
+                        <span class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-secondary-container text-xl"
+                                style="font-variation-settings:'FILL' 1;">widgets</span>
+                            Products
+                        </span>
+                        <span
+                            class="material-symbols-outlined text-secondary-container transition-transform duration-300"
+                            id="products-chevron">expand_more</span>
+                    </button>
+                    <div class="hidden" id="products-acc">
+                        <!-- Section header -->
+                        <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/10">
+                            <span class="text-[10px] font-bold text-secondary-fixed uppercase tracking-widest">Solutions
+                                Portfolio</span>
+                            <a class="text-[10px] font-bold text-white/60 hover:text-secondary-fixed flex items-center gap-1"
+                                href="#">
+                                All Products <span class="material-symbols-outlined text-xs">arrow_forward</span>
+                            </a>
+                        </div>
+                        <!-- Live products -->
+                        <div class="grid grid-cols-2 gap-3 mb-5">
+                            <a href="#"
+                                class="flex flex-col gap-1 p-3 rounded-xl bg-white/5 hover:bg-secondary-container/10 border border-white/5 hover:border-secondary-container/30 transition-all">
+                                <span class="material-symbols-outlined text-secondary-container text-lg"
+                                    style="font-variation-settings:'FILL' 1;">local_laundry_service</span>
+                                <span class="text-sm font-bold text-white">WashOps</span>
+                                <span class="text-[10px] text-on-primary-container leading-snug">Industrial laundry
+                                    management system.</span>
+                            </a>
+                            <a href="#"
+                                class="flex flex-col gap-1 p-3 rounded-xl bg-white/5 hover:bg-secondary-container/10 border border-white/5 hover:border-secondary-container/30 transition-all">
+                                <span class="material-symbols-outlined text-secondary-container text-lg"
+                                    style="font-variation-settings:'FILL' 1;">church</span>
+                                <span class="text-sm font-bold text-white">ChurchOps</span>
+                                <span class="text-[10px] text-on-primary-container leading-snug">Admin backbone for
+                                    scaling institutions.</span>
+                            </a>
+                        </div>
+                        <!-- Coming soon -->
+                        <p class="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-3">Coming Soon</p>
+                        <div class="grid grid-cols-2 gap-3 mb-6">
+                            <div class="flex flex-col gap-1 p-3 rounded-xl bg-white/3 border border-white/5 opacity-50">
+                                <span class="material-symbols-outlined text-secondary-fixed-dim text-lg"
+                                    style="font-variation-settings:'FILL' 1;">medical_services</span>
+                                <span class="text-sm font-bold text-white">ClinicOps</span>
+                                <span class="text-[10px] text-on-primary-container leading-snug italic">HIPAA-ready
+                                    workflow engine.</span>
+                            </div>
+                            <div class="flex flex-col gap-1 p-3 rounded-xl bg-white/3 border border-white/5 opacity-50">
+                                <span class="material-symbols-outlined text-secondary-fixed-dim text-lg"
+                                    style="font-variation-settings:'FILL' 1;">science</span>
+                                <span class="text-sm font-bold text-white">LabOps</span>
+                                <span class="text-[10px] text-on-primary-container leading-snug italic">Automated lab
+                                    pipelines.</span>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+                <!-- Services -->
+                <li>
+                    <a class="flex items-center gap-3 py-4 border-b border-white/8 text-white font-headline-md text-headline-md hover:text-secondary-fixed transition-colors"
+                        href="#">
+                        <span class="material-symbols-outlined text-secondary-container text-xl"
+                            style="font-variation-settings:'FILL' 1;">build</span>
+                        Services
+                    </a>
+                </li>
+
+                <!-- Impact Accordion -->
+                <li class="border-b border-white/8">
+                    <button
+                        class="flex items-center justify-between w-full py-4 text-white font-headline-md text-headline-md"
+                        onclick="toggleAccordion('impact-acc')">
+                        <span class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-secondary-container text-xl"
+                                style="font-variation-settings:'FILL' 1;">public</span>
+                            Impact
+                        </span>
+                        <span
+                            class="material-symbols-outlined text-secondary-container transition-transform duration-300"
+                            id="impact-chevron">expand_more</span>
+                    </button>
+                    <div class="hidden" id="impact-acc">
+                        <!-- Section header -->
+                        <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/10">
+                            <span class="text-[10px] font-bold text-secondary-fixed uppercase tracking-widest">Case
+                                Studies</span>
+                            <a class="text-[10px] font-bold text-white/60 hover:text-secondary-fixed flex items-center gap-1"
+                                href="#">
+                                View All <span class="material-symbols-outlined text-xs">arrow_forward</span>
+                            </a>
+                        </div>
+                        <div class="space-y-3 mb-6">
+                            <a href="#"
+                                class="flex items-start gap-3 p-3 rounded-xl bg-white/5 hover:bg-secondary-container/10 border border-white/5 hover:border-secondary-container/30 transition-all">
+                                <span
+                                    class="material-symbols-outlined text-secondary-container text-xl mt-0.5">monitor_heart</span>
+                                <div>
+                                    <p class="text-sm font-bold text-white">Healthcare Transformation</p>
+                                    <p class="text-[10px] text-on-primary-container mt-0.5">Optimizing clinical
+                                        workflows in Accra.</p>
+                                </div>
+                            </a>
+                            <a href="#"
+                                class="flex items-start gap-3 p-3 rounded-xl bg-white/5 hover:bg-secondary-container/10 border border-white/5 hover:border-secondary-container/30 transition-all">
+                                <span
+                                    class="material-symbols-outlined text-secondary-container text-xl mt-0.5">language</span>
+                                <div>
+                                    <p class="text-sm font-bold text-white">Global Supply Chain</p>
+                                    <p class="text-[10px] text-on-primary-container mt-0.5">End-to-end visibility for
+                                        intercontinental trade.</p>
+                                </div>
+                            </a>
+                            <a href="#"
+                                class="flex items-start gap-3 p-3 rounded-xl bg-white/5 hover:bg-secondary-container/10 border border-white/5 hover:border-secondary-container/30 transition-all">
+                                <span
+                                    class="material-symbols-outlined text-secondary-container text-xl mt-0.5">church</span>
+                                <div>
+                                    <p class="text-sm font-bold text-white">Faith Community Ops</p>
+                                    <p class="text-[10px] text-on-primary-container mt-0.5">Scaling religious
+                                        institutions across West Africa.</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </li>
+
+                <!-- Insights -->
+                <li>
+                    <a class="flex items-center gap-3 py-4 border-b border-white/8 text-white font-headline-md text-headline-md hover:text-secondary-fixed transition-colors"
+                        href="#">
+                        <span class="material-symbols-outlined text-secondary-container text-xl"
+                            style="font-variation-settings:'FILL' 1;">lightbulb</span>
+                        Insights
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Contact + Social -->
+            <div class="mt-8 space-y-4">
+                <button
+                    class="w-full bg-secondary-container text-primary font-bold py-4 rounded-full text-base shadow-lg shadow-secondary-container/20 radar-scan hover:bg-secondary-fixed-dim transition-colors">
+                    Talk to Us
+                </button>
+                <div class="flex items-center justify-center gap-4 pt-2">
+                    <a class="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center hover:bg-secondary-container hover:text-primary transition-all text-white/60"
+                        href="#">
+                        <span class="material-symbols-outlined text-sm">public</span>
+                    </a>
+                    <a class="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center hover:bg-secondary-container hover:text-primary transition-all text-white/60"
+                        href="#">
+                        <span class="material-symbols-outlined text-sm">alternate_email</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <main class="flex-grow">
+
+        <!-- ═══════════════════════════════════════════════════
+         HERO
+    ═══════════════════════════════════════════════════ -->
+        <section class="relative min-h-screen bg-navy-deepest grid grid-cols-1 lg:grid-cols-2 overflow-hidden pt-20">
+            <!-- BG -->
+            <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_70%_50%,rgba(0,184,219,0.06)_0%,transparent_60%),radial-gradient(circle_at_20%_80%,rgba(122,207,232,0.03)_0%,transparent_50%)]"></div>
+            <div class="absolute inset-0 pointer-events-none opacity-[0.03]" style="background-image:linear-gradient(#00b8db 1px,transparent 1px),linear-gradient(90deg,#00b8db 1px,transparent 1px);background-size:60px 60px;"></div>
+            <!-- Text -->
+            <div class="relative z-10 flex flex-col justify-center px-8 md:px-16 lg:pl-24 py-16">
+                <div class="animate-fade-up delay-100 flex items-center gap-2 bg-cyan/10 border border-cyan/25 text-cyan px-4 py-1.5 rounded-full text-xs font-medium tracking-widest mb-8 w-fit uppercase">
+                    <span class="w-1.5 h-1.5 bg-cyan rounded-full"></span> Ghana-Based · Africa · Caribbean · Diaspora
+                </div>
+                <h1 class="animate-fade-up delay-200 font-headline-xl text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-[1.1] tracking-tighter mb-6">
+                    Technology Consultancy Built on <em class="text-cyan not-italic">Real-World</em> Experience
+                </h1>
+                <p class="animate-fade-up delay-300 text-lg text-white/60 max-w-lg mb-10 font-light leading-relaxed">
+                    We're a software development and consultancy firm serving Black businesses across Africa, the Caribbean, and the diaspora—building custom solutions that work in your reality, not just in theory.
+                </p>
+                <div class="animate-fade-up delay-400 flex flex-wrap gap-4">
+                    <a class="bg-cyan text-white px-8 py-3.5 rounded-lg font-headline-md text-base font-semibold hover:bg-cyan-dark hover:-translate-y-0.5 transition-all" href="#cta">Talk to Us</a>
+                    <a class="bg-transparent text-white border border-white/20 px-8 py-3.5 rounded-lg font-headline-md text-base font-semibold hover:border-cyan hover:bg-cyan/10 transition-all" href="#services">Our Expertise</a>
+                </div>
+            </div>
+            <!-- Radar visual — hidden on mobile, shown lg+ -->
+            <div class="hidden lg:flex relative z-5 items-center justify-center p-16 animate-fade-up delay-300">
+                <div class="relative w-[560px] h-[560px] flex items-center justify-center" id="orbitWrap">
+                    <!-- CSS radar -->
+                    <div class="radar-disc">
+                        <div class="radar-ring" style="width:100%;height:100%;"></div>
+                        <div class="radar-ring" style="width:72%;height:72%;"></div>
+                        <div class="radar-ring" style="width:46%;height:46%;"></div>
+                        <div class="radar-ring" style="width:22%;height:22%;"></div>
+                        <div class="radar-beam"></div>
+                    </div>
+                    <!-- Core — orbit-core with hub icon, same as v2 -->
+                    <div class="orbit-core" style="z-index:20;">
+                        <span class="material-symbols-outlined text-secondary-container" style="font-size:3rem;font-variation-settings:'FILL' 1;">hub</span>
+                    </div>
+                    <!-- Orbit icons — SVG, positioned via JS tick() -->
+                    <div class="orbit-icon" data-angle="0"   data-label="Web Dev"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3c0 0-4 3.5-4 9s4 9 4 9 4-3.5 4-9-4-9-4-9z"/><line x1="3" x2="21" y1="12" y2="12"/></svg></div>
+                    <div class="orbit-icon" data-angle="45"  data-label="Mobile Apps"><svg viewBox="0 0 24 24"><rect height="20" rx="2" width="10" x="7" y="2"/><line x1="12" x2="12" y1="18" y2="18"/></svg></div>
+                    <div class="orbit-icon" data-angle="90"  data-label="Databases"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/></svg></div>
+                    <div class="orbit-icon" data-angle="135" data-label="Cloud"><svg viewBox="0 0 24 24"><path d="M18 10a6 6 0 0 0-12 0 4 4 0 0 0 0 8h12a4 4 0 0 0 0-8z"/></svg></div>
+                    <div class="orbit-icon" data-angle="180" data-label="Custom Software"><svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+                    <div class="orbit-icon" data-angle="225" data-label="Security"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+                    <div class="orbit-icon" data-angle="270" data-label="Analytics"><svg viewBox="0 0 24 24"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg></div>
+                    <div class="orbit-icon" data-angle="315" data-label="API &amp; Integration"><svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3m8 0h3a2 2 0 0 0 2-2v-3"/><circle cx="12" cy="12" r="3"/></svg></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════
+         STATS BAR
+    ═══════════════════════════════════════════════════ -->
+        <div
+            class="bg-surface-container-low border-b border-outline-variant/20 px-8 md:px-24 py-10 grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div class="text-center">
+                <div class="font-headline-lg text-3xl font-extrabold text-secondary tracking-tight">10+</div>
+                <div class="text-xs text-on-surface-variant mt-1 uppercase tracking-wider font-semibold">Industries
+                    served</div>
+            </div>
+            <div class="text-center">
+                <div class="font-headline-lg text-3xl font-extrabold text-secondary tracking-tight">3</div>
+                <div class="text-xs text-on-surface-variant mt-1 uppercase tracking-wider font-semibold">Continents
+                    reached</div>
+            </div>
+            <div class="text-center">
+                <div class="font-headline-lg text-3xl font-extrabold text-secondary tracking-tight">100%</div>
+                <div class="text-xs text-on-surface-variant mt-1 uppercase tracking-wider font-semibold">Custom
+                    solutions</div>
+            </div>
+            <div class="text-center">
+                <div class="font-headline-lg text-3xl font-extrabold text-secondary tracking-tight">Offline</div>
+                <div class="text-xs text-on-surface-variant mt-1 uppercase tracking-wider font-semibold">First
+                    architecture</div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════
+         WHO WE ARE
+    ═══════════════════════════════════════════════════ -->
+        <section class="bg-surface py-24 px-8 md:px-24 grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center"
+            id="about">
+            <div class="space-y-6">
+                <p class="text-xs font-bold tracking-[0.2em] text-secondary uppercase">Who We Are</p>
+                <h2 class="font-headline-xl text-3xl md:text-4xl font-extrabold tracking-tight text-primary leading-[1.15]"
+                    style="font-family:'Syne',sans-serif">Built for the Conditions You Actually Operate In</h2>
+                <p class="font-body-md text-on-surface-variant leading-relaxed">Exchosoft Consult is a Ghana-based
+                    technology consultancy and software development company. We've built systems for churches,
+                    hospitals, pharmacies, laboratories, laundries, heritage organizations — each one custom-designed
+                    for that specific business.</p>
+                <p class="font-body-md text-on-surface-variant leading-relaxed">We understand the conditions our clients
+                    operate in because we're here too.</p>
+            </div>
+            <div class="flex flex-col gap-4">
+                <div class="bg-surface-container-low border-l-[3px] border-secondary-container p-5 rounded-r-lg">
+                    <strong class="block text-primary font-bold text-sm mb-1 uppercase tracking-wide"
+                        style="font-family:'Syne',sans-serif">Intermittent connectivity</strong>
+                    <span class="text-sm text-on-surface-variant">We build systems that keep working when the internet
+                        drops.</span>
+                </div>
+                <div class="bg-surface-container-low border-l-[3px] border-secondary-container p-5 rounded-r-lg">
+                    <strong class="block text-primary font-bold text-sm mb-1 uppercase tracking-wide"
+                        style="font-family:'Syne',sans-serif">Power challenges</strong>
+                    <span class="text-sm text-on-surface-variant">Offline-first architecture means no data is lost
+                        during outages.</span>
+                </div>
+                <div class="bg-surface-container-low border-l-[3px] border-secondary-container p-5 rounded-r-lg">
+                    <strong class="block text-primary font-bold text-sm mb-1 uppercase tracking-wide"
+                        style="font-family:'Syne',sans-serif">Mobile-first users</strong>
+                    <span class="text-sm text-on-surface-variant">Designed from the ground up for how your customers
+                        actually access technology.</span>
+                </div>
+                <div class="bg-surface-container-low border-l-[3px] border-secondary-container p-5 rounded-r-lg">
+                    <strong class="block text-primary font-bold text-sm mb-1 uppercase tracking-wide"
+                        style="font-family:'Syne',sans-serif">Local payment systems</strong>
+                    <span class="text-sm text-on-surface-variant">Integrated with the payment infrastructure your market
+                        already uses.</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════
+         APPROACH
+    ═══════════════════════════════════════════════════ -->
+        <section class="bg-primary py-24 px-8 md:px-24" id="approach">
+            <p class="text-xs font-bold tracking-[0.2em] text-secondary-fixed uppercase mb-4">Our Approach</p>
+            <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight text-white leading-[1.15]"
+                style="font-family:'Syne',sans-serif">What We've Learned Building Software Across Industries</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-14">
+                <div
+                    class="bg-white/5 border border-secondary-container/15 rounded-xl p-8 hover:border-secondary-container/40 hover:bg-secondary-container/5 transition-all group">
+                    <div
+                        class="w-11 h-11 rounded-lg bg-secondary-container/15 flex items-center justify-center mb-5 group-hover:bg-secondary-container/25 transition-colors">
+                        <svg class="w-5 h-5 fill-none stroke-secondary-container stroke-[1.75]" viewBox="0 0 24 24">
+                            <rect x="3" y="3" width="7" height="7" rx="1" />
+                            <rect x="14" y="3" width="7" height="7" rx="1" />
+                            <rect x="3" y="14" width="7" height="7" rx="1" />
+                            <rect x="14" y="14" width="7" height="7" rx="1" />
+                        </svg>
+                    </div>
+                    <h3 class="text-white font-bold text-lg mb-3" style="font-family:'Syne',sans-serif">Every Business
+                        Needs Its Own Solution</h3>
+                    <p class="text-sm text-white/50 leading-relaxed">Off-the-shelf software forces unacceptable
+                        compromises. Each business has unique workflows deserving technology built specifically for how
+                        they operate.</p>
+                </div>
+                <div
+                    class="bg-white/5 border border-secondary-container/15 rounded-xl p-8 hover:border-secondary-container/40 hover:bg-secondary-container/5 transition-all group">
+                    <div
+                        class="w-11 h-11 rounded-lg bg-secondary-container/15 flex items-center justify-center mb-5 group-hover:bg-secondary-container/25 transition-colors">
+                        <svg class="w-5 h-5 fill-none stroke-secondary-container stroke-[1.75]" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" />
+                            <path d="M8 12h8M12 8v8" />
+                        </svg>
+                    </div>
+                    <h3 class="text-white font-bold text-lg mb-3" style="font-family:'Syne',sans-serif">Offline-First
+                        When It Matters</h3>
+                    <p class="text-sm text-white/50 leading-relaxed">We pioneered offline-first architecture for clients
+                        who can't afford downtime — hospitals, pharmacies, churches — with automatic cloud sync when
+                        online.</p>
+                </div>
+                <div
+                    class="bg-white/5 border border-secondary-container/15 rounded-xl p-8 hover:border-secondary-container/40 hover:bg-secondary-container/5 transition-all group">
+                    <div
+                        class="w-11 h-11 rounded-lg bg-secondary-container/15 flex items-center justify-center mb-5 group-hover:bg-secondary-container/25 transition-colors">
+                        <svg class="w-5 h-5 fill-none stroke-secondary-container stroke-[1.75]" viewBox="0 0 24 24">
+                            <path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z" />
+                            <path d="M10 6.5h4M6.5 10v4M17.5 10v4M10 17.5h4" />
+                        </svg>
+                    </div>
+                    <h3 class="text-white font-bold text-lg mb-3" style="font-family:'Syne',sans-serif">Unified Systems,
+                        Clear Insights</h3>
+                    <p class="text-sm text-white/50 leading-relaxed">We unify business workflows into cohesive systems
+                        that give management complete visibility and analytics that clearly identify where improvements
+                        are needed.</p>
+                </div>
+                <div
+                    class="bg-white/5 border border-secondary-container/15 rounded-xl p-8 hover:border-secondary-container/40 hover:bg-secondary-container/5 transition-all group">
+                    <div
+                        class="w-11 h-11 rounded-lg bg-secondary-container/15 flex items-center justify-center mb-5 group-hover:bg-secondary-container/25 transition-colors">
+                        <svg class="w-5 h-5 fill-none stroke-secondary-container stroke-[1.75]" viewBox="0 0 24 24">
+                            <ellipse cx="12" cy="5" rx="9" ry="3" />
+                            <path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5" />
+                            <path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3" />
+                        </svg>
+                    </div>
+                    <h3 class="text-white font-bold text-lg mb-3" style="font-family:'Syne',sans-serif">LAN
+                        Collaboration</h3>
+                    <p class="text-sm text-white/50 leading-relaxed">For businesses with multiple locations or devices,
+                        we implement local network capabilities — real-time collaboration even when external
+                        connectivity fails.</p>
+                </div>
+                <div
+                    class="bg-white/5 border border-secondary-container/15 rounded-xl p-8 hover:border-secondary-container/40 hover:bg-secondary-container/5 transition-all group">
+                    <div
+                        class="w-11 h-11 rounded-lg bg-secondary-container/15 flex items-center justify-center mb-5 group-hover:bg-secondary-container/25 transition-colors">
+                        <svg class="w-5 h-5 fill-none stroke-secondary-container stroke-[1.75]" viewBox="0 0 24 24">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-white font-bold text-lg mb-3" style="font-family:'Syne',sans-serif">Security &amp;
+                        Reliability</h3>
+                    <p class="text-sm text-white/50 leading-relaxed">From financial institutions to healthcare
+                        providers, we build with security baked in — not bolted on — because your data deserves that
+                        standard.</p>
+                </div>
+                <div
+                    class="bg-white/5 border border-secondary-container/15 rounded-xl p-8 hover:border-secondary-container/40 hover:bg-secondary-container/5 transition-all group">
+                    <div
+                        class="w-11 h-11 rounded-lg bg-secondary-container/15 flex items-center justify-center mb-5 group-hover:bg-secondary-container/25 transition-colors">
+                        <svg class="w-5 h-5 fill-none stroke-secondary-container stroke-[1.75]" viewBox="0 0 24 24">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                        </svg>
+                    </div>
+                    <h3 class="text-white font-bold text-lg mb-3" style="font-family:'Syne',sans-serif">Long-Term
+                        Partnership</h3>
+                    <p class="text-sm text-white/50 leading-relaxed">We're not just building software — we're building
+                        systems that grow with your business and adapt as your needs change. We stay involved.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════
+         INDUSTRIES
+    ═══════════════════════════════════════════════════ -->
+        <section class="bg-surface-container-low py-24 px-8 md:px-24" id="industries">
+            <p class="text-xs font-bold tracking-[0.2em] text-secondary uppercase mb-4">Experience</p>
+            <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight text-primary leading-[1.15]"
+                style="font-family:'Syne',sans-serif">Industries We've Served</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-14">
+                <div
+                    class="bg-surface border border-outline-variant/30 rounded-xl p-7 hover:border-secondary-container hover:shadow-xl hover:shadow-secondary-container/10 transition-all">
+                    <div class="w-2 h-2 bg-secondary-container rounded-full mb-4"></div>
+                    <h3 class="text-primary font-bold text-base mb-2" style="font-family:'Syne',sans-serif">Healthcare
+                        &amp; Medical</h3>
+                    <p class="text-sm text-on-surface-variant leading-relaxed">Hospital management systems, pharmacy
+                        solutions, and laboratory platforms — offline-first, designed to work when connectivity doesn't.
+                    </p>
+                </div>
+                <div
+                    class="bg-surface border border-outline-variant/30 rounded-xl p-7 hover:border-secondary-container hover:shadow-xl hover:shadow-secondary-container/10 transition-all">
+                    <div class="w-2 h-2 bg-secondary-container rounded-full mb-4"></div>
+                    <h3 class="text-primary font-bold text-base mb-2" style="font-family:'Syne',sans-serif">Faith-Based
+                        Organizations</h3>
+                    <p class="text-sm text-on-surface-variant leading-relaxed">Comprehensive management systems for
+                        churches covering membership, events, donations, and complete financial transparency.</p>
+                </div>
+                <div
+                    class="bg-surface border border-outline-variant/30 rounded-xl p-7 hover:border-secondary-container hover:shadow-xl hover:shadow-secondary-container/10 transition-all">
+                    <div class="w-2 h-2 bg-secondary-container rounded-full mb-4"></div>
+                    <h3 class="text-primary font-bold text-base mb-2" style="font-family:'Syne',sans-serif">Service
+                        Industries</h3>
+                    <p class="text-sm text-on-surface-variant leading-relaxed">From laundry management to operational
+                        platforms — tracking orders, managing workflows, and handling billing seamlessly.</p>
+                </div>
+                <div
+                    class="bg-surface border border-outline-variant/30 rounded-xl p-7 hover:border-secondary-container hover:shadow-xl hover:shadow-secondary-container/10 transition-all">
+                    <div class="w-2 h-2 bg-secondary-container rounded-full mb-4"></div>
+                    <h3 class="text-primary font-bold text-base mb-2" style="font-family:'Syne',sans-serif">Heritage
+                        &amp; Cultural</h3>
+                    <p class="text-sm text-on-surface-variant leading-relaxed">Partnering with Black History Walks and
+                        African Odysseys, building platforms for cultural preservation and diaspora engagement.</p>
+                </div>
+                <div
+                    class="bg-surface border border-outline-variant/30 rounded-xl p-7 hover:border-secondary-container hover:shadow-xl hover:shadow-secondary-container/10 transition-all">
+                    <div class="w-2 h-2 bg-secondary-container rounded-full mb-4"></div>
+                    <h3 class="text-primary font-bold text-base mb-2" style="font-family:'Syne',sans-serif">Financial
+                        Services</h3>
+                    <p class="text-sm text-on-surface-variant leading-relaxed">Working with institutions like Ghana
+                        Union Assurance, building secure, reliable financial systems that meet institutional standards.
+                    </p>
+                </div>
+                <div
+                    class="bg-surface border border-outline-variant/30 rounded-xl p-7 hover:border-secondary-container hover:shadow-xl hover:shadow-secondary-container/10 transition-all">
+                    <div class="w-2 h-2 bg-secondary-container rounded-full mb-4"></div>
+                    <h3 class="text-primary font-bold text-base mb-2" style="font-family:'Syne',sans-serif">
+                        Cross-Continental Initiatives</h3>
+                    <p class="text-sm text-on-surface-variant leading-relaxed">Supporting the African Caribbean Summit
+                        and ACIS — technology that bridges communities across continents.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════
+         SERVICES
+    ═══════════════════════════════════════════════════ -->
+        <section class="bg-surface py-24 px-8 md:px-24" id="services">
+            <p class="text-xs font-bold tracking-[0.2em] text-secondary uppercase mb-4">What We Offer</p>
+            <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight text-primary leading-[1.15]"
+                style="font-family:'Syne',sans-serif">Our Services</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mt-14">
+                <div
+                    class="p-8 border border-outline-variant/30 rounded-xl flex gap-6 items-start hover:border-secondary-container transition-colors">
+                    <div class="font-bold text-2xl text-secondary-container leading-none"
+                        style="font-family:'Syne',sans-serif">01</div>
+                    <div>
+                        <h3 class="text-primary font-bold text-lg mb-2" style="font-family:'Syne',sans-serif">Custom
+                            Software Development</h3>
+                        <p class="text-sm text-on-surface-variant leading-relaxed">Built from the ground up for your
+                            specific operations, workflows, and challenges. No templates. No forcing your business into
+                            pre-made molds.</p>
+                    </div>
+                </div>
+                <div
+                    class="p-8 border border-outline-variant/30 rounded-xl flex gap-6 items-start hover:border-secondary-container transition-colors">
+                    <div class="font-bold text-2xl text-secondary-container leading-none"
+                        style="font-family:'Syne',sans-serif">02</div>
+                    <div>
+                        <h3 class="text-primary font-bold text-lg mb-2" style="font-family:'Syne',sans-serif">Technology
+                            Consulting</h3>
+                        <p class="text-sm text-on-surface-variant leading-relaxed">Strategic guidance on technology
+                            investments, system architecture, and digital transformation based on real-world experience.
+                        </p>
+                    </div>
+                </div>
+                <div
+                    class="p-8 border border-outline-variant/30 rounded-xl flex gap-6 items-start hover:border-secondary-container transition-colors">
+                    <div class="font-bold text-2xl text-secondary-container leading-none"
+                        style="font-family:'Syne',sans-serif">03</div>
+                    <div>
+                        <h3 class="text-primary font-bold text-lg mb-2" style="font-family:'Syne',sans-serif">System
+                            Architecture &amp; Design</h3>
+                        <p class="text-sm text-on-surface-variant leading-relaxed">Offline-first capabilities, cloud
+                            integration, or LAN collaboration — we design architectures that match your realities.</p>
+                    </div>
+                </div>
+                <div
+                    class="p-8 border border-outline-variant/30 rounded-xl flex gap-6 items-start hover:border-secondary-container transition-colors">
+                    <div class="font-bold text-2xl text-secondary-container leading-none"
+                        style="font-family:'Syne',sans-serif">04</div>
+                    <div>
+                        <h3 class="text-primary font-bold text-lg mb-2" style="font-family:'Syne',sans-serif">Business
+                            Process Analysis</h3>
+                        <p class="text-sm text-on-surface-variant leading-relaxed">We analyze your workflows to identify
+                            bottlenecks and opportunities for improvement through better technology integration.</p>
+                    </div>
+                </div>
+                <div
+                    class="p-8 border border-outline-variant/30 rounded-xl flex gap-6 items-start hover:border-secondary-container transition-colors">
+                    <div class="font-bold text-2xl text-secondary-container leading-none"
+                        style="font-family:'Syne',sans-serif">05</div>
+                    <div>
+                        <h3 class="text-primary font-bold text-lg mb-2" style="font-family:'Syne',sans-serif">Digital
+                            Transformation</h3>
+                        <p class="text-sm text-on-surface-variant leading-relaxed">Complete operational modernization
+                            that respects how your business actually works, rather than forcing you into someone else's
+                            model.</p>
+                    </div>
+                </div>
+                <div
+                    class="p-8 border border-outline-variant/30 rounded-xl flex gap-6 items-start hover:border-secondary-container transition-colors">
+                    <div class="font-bold text-2xl text-secondary-container leading-none"
+                        style="font-family:'Syne',sans-serif">06</div>
+                    <div>
+                        <h3 class="text-primary font-bold text-lg mb-2" style="font-family:'Syne',sans-serif">Ongoing
+                            Support &amp; Evolution</h3>
+                        <p class="text-sm text-on-surface-variant leading-relaxed">Technology needs change as businesses
+                            grow. We provide continued consultation and development as your needs evolve over time.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════
+         WHY US
+    ═══════════════════════════════════════════════════ -->
+        <section class="bg-primary-container py-24 px-8 md:px-24">
+            <p class="text-xs font-bold tracking-[0.2em] text-secondary-fixed uppercase mb-4">Why Exchosoft</p>
+            <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight text-white leading-[1.15]"
+                style="font-family:'Syne',sans-serif">Why Work With Us</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mt-14">
+                <div class="flex gap-5">
+                    <div class="w-[3px] bg-secondary-container rounded-full shrink-0"></div>
+                    <div>
+                        <h3 class="text-white font-bold text-lg mb-2" style="font-family:'Syne',sans-serif">We Build
+                            What You Actually Need</h3>
+                        <p class="text-sm text-white/50 leading-relaxed">Not what we think you should need. Not what
+                            worked for someone else. We listen, understand your operations, and build specifically for
+                            you.</p>
+                    </div>
+                </div>
+                <div class="flex gap-5">
+                    <div class="w-[3px] bg-secondary-container rounded-full shrink-0"></div>
+                    <div>
+                        <h3 class="text-white font-bold text-lg mb-2" style="font-family:'Syne',sans-serif">We
+                            Understand Your Context</h3>
+                        <p class="text-sm text-white/50 leading-relaxed">From Lagos to London, Accra to Atlanta — we
+                            understand the infrastructure challenges and operational conditions of doing business across
+                            our markets.</p>
+                    </div>
+                </div>
+                <div class="flex gap-5">
+                    <div class="w-[3px] bg-secondary-container rounded-full shrink-0"></div>
+                    <div>
+                        <h3 class="text-white font-bold text-lg mb-2" style="font-family:'Syne',sans-serif">We've Done
+                            This Before</h3>
+                        <p class="text-sm text-white/50 leading-relaxed">Our experience across healthcare, faith
+                            organizations, service industries, and financial services means proven expertise with full
+                            customization.</p>
+                    </div>
+                </div>
+                <div class="flex gap-5">
+                    <div class="w-[3px] bg-secondary-container rounded-full shrink-0"></div>
+                    <div>
+                        <h3 class="text-white font-bold text-lg mb-2" style="font-family:'Syne',sans-serif">We Think
+                            Long-Term</h3>
+                        <p class="text-sm text-white/50 leading-relaxed">We're not just building software — we're
+                            building systems that will grow with your business and adapt as your needs change over time.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════
+         TRUST / CLIENTS
+    ═══════════════════════════════════════════════════ -->
+        <section class="bg-surface-container-low py-24 px-8 md:px-24 text-center">
+            <p class="text-xs font-bold tracking-[0.2em] text-secondary uppercase mb-4">Organizations We've Worked With
+            </p>
+            <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight text-primary mb-3"
+                style="font-family:'Syne',sans-serif">Trusted Across Industries</h2>
+            <p class="text-on-surface-variant mb-12 max-w-xl mx-auto">Proud to have partnered with organizations across
+                Africa, the Caribbean, and the diaspora.</p>
+            <div class="flex flex-wrap justify-center gap-3">
+                <div
+                    class="bg-surface border border-outline-variant/30 px-6 py-2.5 rounded-full text-sm font-medium text-on-surface-variant hover:border-secondary-container hover:text-secondary transition-all cursor-default">
+                    Black History Walks</div>
+                <div
+                    class="bg-surface border border-outline-variant/30 px-6 py-2.5 rounded-full text-sm font-medium text-on-surface-variant hover:border-secondary-container hover:text-secondary transition-all cursor-default">
+                    African Odysseys</div>
+                <div
+                    class="bg-surface border border-outline-variant/30 px-6 py-2.5 rounded-full text-sm font-medium text-on-surface-variant hover:border-secondary-container hover:text-secondary transition-all cursor-default">
+                    African Caribbean Summit</div>
+                <div
+                    class="bg-surface border border-outline-variant/30 px-6 py-2.5 rounded-full text-sm font-medium text-on-surface-variant hover:border-secondary-container hover:text-secondary transition-all cursor-default">
+                    Ghana Union Assurance</div>
+                <div
+                    class="bg-surface border border-outline-variant/30 px-6 py-2.5 rounded-full text-sm font-medium text-on-surface-variant hover:border-secondary-container hover:text-secondary transition-all cursor-default">
+                    ACIS</div>
+                <div
+                    class="bg-surface border border-outline-variant/30 px-6 py-2.5 rounded-full text-sm font-medium text-on-surface-variant hover:border-secondary-container hover:text-secondary transition-all cursor-default">
+                    Churches across West Africa</div>
+                <div
+                    class="bg-surface border border-outline-variant/30 px-6 py-2.5 rounded-full text-sm font-medium text-on-surface-variant hover:border-secondary-container hover:text-secondary transition-all cursor-default">
+                    Hospitals &amp; Pharmacies</div>
+                <div
+                    class="bg-surface border border-outline-variant/30 px-6 py-2.5 rounded-full text-sm font-medium text-on-surface-variant hover:border-secondary-container hover:text-secondary transition-all cursor-default">
+                    Laboratories</div>
+                <div
+                    class="bg-surface border border-outline-variant/30 px-6 py-2.5 rounded-full text-sm font-medium text-on-surface-variant hover:border-secondary-container hover:text-secondary transition-all cursor-default">
+                    SMEs</div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════
+         CTA
+    ═══════════════════════════════════════════════════ -->
+        <section class="bg-secondary-container py-24 px-8 md:px-24 text-center" id="cta">
+            <h2 class="text-4xl md:text-5xl font-extrabold text-primary tracking-tight mb-4"
+                style="font-family:'Syne',sans-serif">Let's Talk About Your Business</h2>
+            <p class="text-primary/70 max-w-lg mx-auto mb-12 text-lg">Every business is different. Every challenge is
+                unique. Let's discuss what you're trying to achieve and explore how we can build technology that
+                actually fits your operations.</p>
+            <a class="bg-primary text-white px-10 py-4 rounded-full font-bold text-lg inline-block hover:-translate-y-0.5 hover:shadow-2xl transition-all"
+                href="mailto:contact@exchosoft.com" style="font-family:'Syne',sans-serif">Schedule a Consultation</a>
+            <span class="block mt-6 text-sm text-primary/60">Or email us directly at <a
+                    class="text-primary font-medium underline underline-offset-4"
+                    href="mailto:contact@exchosoft.com">contact@exchosoft.com</a></span>
+        </section>
+
+    </main>
+    <!-- Wholesome Footer -->
+    <footer class="relative bg-primary pt-20 pb-10 px-margin-mobile md:px-margin-desktop text-white overflow-hidden">
+        <!-- Dot matrix pattern layer — subtle via opacity -->
+        <div class="absolute inset-0 dot-matrix opacity-20 pointer-events-none"></div>
+        <!-- Gradient overlay to fade the pattern and improve content readability -->
+        <div class="absolute inset-0 bg-gradient-to-b from-primary/60 via-primary/80 to-primary/95 pointer-events-none">
+        </div>
+        <!-- Subtle radial glow in the center -->
+        <div
+            class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-secondary/5 blur-[120px] rounded-full pointer-events-none">
+        </div>
+        <div class="relative z-10 max-w-container-max mx-auto">
+            <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-x-8 gap-y-10 mb-16">
+                <!-- Col 1: Brand -->
+                <div class="col-span-2 lg:col-span-1">
+                    <div class="flex items-center gap-2 mb-6">
+                        <span class="material-symbols-outlined text-secondary-container text-3xl"
+                            style="font-variation-settings: 'FILL' 1;">hub</span>
+                        <span class="font-headline-md text-xl font-bold">Exchosoft Consult</span>
+                    </div>
+                    <p class="text-on-primary-container text-sm leading-relaxed mb-6">
+                        Built From Here. <br />
+                        Industrial Reliability meets Cutting-Edge Innovation.
+                    </p>
+                    <div class="flex gap-4">
+                        <a class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-secondary-container hover:text-primary transition-all"
+                            href="#">
+                            <span class="material-symbols-outlined text-sm">public</span>
+                        </a>
+                        <a class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-secondary-container hover:text-primary transition-all"
+                            href="#">
+                            <span class="material-symbols-outlined text-sm">alternate_email</span>
+                        </a>
+                    </div>
+                </div>
+                <!-- Col 2: Solutions -->
+                <div>
+                    <h6 class="font-bold text-secondary-fixed text-xs uppercase tracking-widest mb-6">Solutions</h6>
+                    <ul class="space-y-4 text-sm text-on-primary-container">
+                        <li><a class="hover:text-white transition-colors" href="#">WashOps</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">ChurchOps</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">ClinicOps</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">LabOps</a></li>
+                    </ul>
+                </div>
+                <!-- Col 3: Expertise -->
+                <div>
+                    <h6 class="font-bold text-secondary-fixed text-xs uppercase tracking-widest mb-6">Expertise</h6>
+                    <ul class="space-y-4 text-sm text-on-primary-container">
+                        <li><a class="hover:text-white transition-colors" href="#">Custom Development</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">Consulting</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">Architecture</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">Digital Transformation</a></li>
+                    </ul>
+                </div>
+                <!-- Col 4: Resources -->
+                <div>
+                    <h6 class="font-bold text-secondary-fixed text-xs uppercase tracking-widest mb-6">Resources</h6>
+                    <ul class="space-y-4 text-sm text-on-primary-container">
+                        <li><a class="hover:text-white transition-colors" href="#">About Us</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">Insights</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">Case Studies</a></li>
+                        <li><a class="hover:text-white transition-colors" href="#">Global Support</a></li>
+                    </ul>
+                </div>
+                <!-- Col 5: Newsletter/Contact -->
+                <div class="col-span-2 lg:col-span-1">
+                    <h6 class="font-bold text-secondary-fixed text-xs uppercase tracking-widest mb-6">Talk to Us</h6>
+                    <p class="text-xs text-on-primary-container mb-4">Subscribe to our industrial insights.</p>
+                    <div class="flex bg-white/5 rounded-full p-1 border border-white/10">
+                        <input
+                            class="bg-transparent border-none text-xs flex-grow px-4 focus:ring-0 text-white placeholder-white/30"
+                            placeholder="Email" type="email" />
+                        <button
+                            class="bg-secondary-container text-primary px-4 py-2 rounded-full text-[10px] font-bold uppercase">Join</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Bottom Row -->
+            <div
+                class="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] text-on-primary-container">
+                <p>© 2024 Exchosoft Consult. All rights reserved.</p>
+                <div class="flex flex-wrap justify-center gap-6">
+                    <a class="hover:text-white transition-colors" href="#">Privacy Policy</a>
+                    <a class="hover:text-white transition-colors" href="#">Terms of Service</a>
+                    <a class="hover:text-white transition-colors" href="#">Security Architecture</a>
+                    <a class="hover:text-white transition-colors" href="#">Cookie Policy</a>
+                </div>
+            </div>
+        </div><!-- end z-10 -->
+    </footer>
+    <!-- Cookie Consent Banner -->
+    <div class="fixed bottom-6 left-6 right-6 md:left-auto md:right-8 md:max-w-md z-[100] transform transition-all duration-500"
+        id="cookie-banner">
+        <div class="glass-panel border border-secondary-container/30 p-6 rounded-xl shadow-2xl backdrop-blur-xl">
+            <div class="flex items-start gap-4">
+                <div class="w-10 h-10 rounded-full bg-secondary-container/20 flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-secondary-container">cookie</span>
+                </div>
+                <div>
+                    <p class="text-sm text-white mb-4 leading-relaxed">
+                        We use essential cookies to ensure our high-fidelity platforms function as intended. View our <a
+                            class="text-secondary-fixed underline" href="#">Cookie Policy</a> for more info.
+                    </p>
+                    <div class="flex gap-3">
+                        <button
+                            class="flex-grow bg-secondary-container hover:bg-secondary-fixed-dim text-primary font-bold py-2 px-4 rounded-lg text-xs transition-colors"
+                            onclick="dismissCookieBanner()">Accept All</button>
+                        <button
+                            class="px-4 py-2 rounded-lg text-xs font-bold text-white hover:bg-white/5 transition-colors"
+                            onclick="dismissCookieBanner()">Preferences</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // ── Notification Bar ─────────────────────────────────
+        function closeNotificationBar() {
+            const bar = document.getElementById('notification-bar');
+            bar.style.maxHeight = bar.offsetHeight + 'px';
+            bar.style.overflow = 'hidden';
+            requestAnimationFrame(() => {
+                bar.style.transition = 'max-height 0.35s ease, opacity 0.25s ease';
+                bar.style.maxHeight = '0';
+                bar.style.opacity = '0';
+            });
+            setTimeout(() => bar.remove(), 380);
+        }
+
+        // ── Mega Menu (hover + click, safe bridge) ────────────
+        (function () {
+            let hoverTimers = {};
+
+            function openMenu(item) {
+                // Close any other open menus first
+                document.querySelectorAll('.mega-menu-item').forEach(el => {
+                    if (el !== item) closeMenu(el, true);
+                });
+                const menu = item.querySelector('.mega-menu-content');
+                if (!menu) return;
+                if (hoverTimers[item.dataset.menuId]) clearTimeout(hoverTimers[item.dataset.menuId]);
+                menu.style.display = 'grid';
+                // Trigger transition on next frame
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => menu.classList.add('is-visible'));
+                });
+                item.dataset.open = 'true';
+                // Rotate chevron
+                const chevron = item.querySelector('.material-symbols-outlined');
+                if (chevron) chevron.style.transform = 'rotate(180deg)';
+            }
+
+            function closeMenu(item, immediate) {
+                const menu = item.querySelector('.mega-menu-content');
+                if (!menu) return;
+                if (hoverTimers[item.dataset.menuId]) clearTimeout(hoverTimers[item.dataset.menuId]);
+                const delay = immediate ? 0 : 120;
+                hoverTimers[item.dataset.menuId] = setTimeout(() => {
+                    menu.classList.remove('is-visible');
+                    // Hide after transition
+                    setTimeout(() => {
+                        if (!menu.classList.contains('is-visible')) menu.style.display = 'none';
+                    }, 260);
+                    item.dataset.open = 'false';
+                    const chevron = item.querySelector('.material-symbols-outlined');
+                    if (chevron) chevron.style.transform = 'rotate(0deg)';
+                }, delay);
+            }
+
+            function toggleMenu(item) {
+                if (item.dataset.open === 'true') {
+                    closeMenu(item, true);
+                } else {
+                    openMenu(item);
+                }
+            }
+
+            document.querySelectorAll('.mega-menu-item').forEach((item, i) => {
+                item.dataset.menuId = 'menu-' + i;
+                item.dataset.open = 'false';
+
+                const trigger = item.querySelector('.mega-trigger');
+                const menu = item.querySelector('.mega-menu-content');
+
+                if (!trigger || !menu) return;
+
+                // Chevron transition
+                const chevron = trigger.querySelector('.material-symbols-outlined');
+                if (chevron) chevron.style.transition = 'transform 0.25s ease';
+
+                // Click toggles
+                trigger.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleMenu(item);
+                });
+
+                // Hover opens
+                item.addEventListener('mouseenter', () => {
+                    if (hoverTimers[item.dataset.menuId]) clearTimeout(hoverTimers[item.dataset
+                        .menuId]);
+                    openMenu(item);
+                });
+
+                item.addEventListener('mouseleave', () => {
+                    closeMenu(item, false);
+                });
+            });
+
+            // Close menus when clicking outside
+            document.addEventListener('click', () => {
+                document.querySelectorAll('.mega-menu-item').forEach(item => closeMenu(item, true));
+            });
+        })();
+
+        // ── Mobile Menu ───────────────────────────────────────
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const overlay = document.getElementById('mobile-overlay');
+            const icon = document.getElementById('menu-icon');
+            const isClosed = menu.classList.contains('translate-x-full');
+
+            if (isClosed) {
+                menu.classList.remove('translate-x-full');
+                overlay.classList.remove('hidden');
+                icon.textContent = 'close';
+                document.body.style.overflow = 'hidden';
+            } else {
+                menu.classList.add('translate-x-full');
+                overlay.classList.add('hidden');
+                icon.textContent = 'menu';
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        function toggleAccordion(id) {
+            const acc = document.getElementById(id);
+            const isHidden = acc.classList.toggle('hidden');
+            // Rotate the corresponding chevron
+            const chevronId = id.replace('-acc', '-chevron');
+            const chevron = document.getElementById(chevronId);
+            if (chevron) chevron.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(180deg)';
+        }
+
+        // ── Cookie Banner ─────────────────────────────────────
+        function dismissCookieBanner() {
+            const banner = document.getElementById('cookie-banner');
+            banner.style.opacity = '0';
+            banner.style.transform = 'translateY(20px)';
+            setTimeout(() => banner.remove(), 500);
+        }
+
+        // ── Scroll shrink header ──────────────────────────────
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('main-header');
+            if (!header) return;
+            if (window.scrollY > 20) {
+                header.classList.add('py-1');
+                header.classList.remove('py-4');
+                header.style.backgroundColor = 'rgba(0, 9, 23, 0.98)';
+            } else {
+                header.classList.add('py-4');
+                header.classList.remove('py-1');
+                header.style.backgroundColor = 'rgba(0, 9, 23, 0.95)';
+            }
+        });
+    </script>
+
+    <!-- Radar icon glow sync — matches CSS beam rotation (4s = 360°/4000ms) -->
+    <script>
+        (function () {
+            const PERIOD_MS = 4000;
+            const HIT_DEG   = 22;
+            const LIT_MS    = 900;
+
+            const wrap  = document.getElementById('orbitWrap');
+            const icons = Array.from(document.querySelectorAll('.orbit-icon'));
+            const litUntil = new Array(icons.length).fill(0);
+            const angles   = icons.map(ic => parseFloat(ic.dataset.angle) || 0);
+
+            // Position icons on the orbit ring, responsive to wrap size
+            function layout() {
+                if (!wrap) return;
+                const R = wrap.offsetWidth * 0.42; // ~176px for a 420px wrap
+                icons.forEach((ic, i) => {
+                    const rad = (angles[i] - 90) * Math.PI / 180;
+                    ic.style.transform = `translate(${R * Math.cos(rad)}px, ${R * Math.sin(rad)}px)`;
+                });
+            }
+
+            layout();
+            window.addEventListener('resize', layout);
+
+            function tick(ts) {
+                const beamDeg = ((ts % PERIOD_MS) / PERIOD_MS) * 360;
+                angles.forEach((iconDeg, i) => {
+                    let diff = Math.abs(beamDeg - iconDeg) % 360;
+                    if (diff > 180) diff = 360 - diff;
+                    if (diff < HIT_DEG) litUntil[i] = ts + LIT_MS;
+                    icons[i].classList.toggle('lit', ts < litUntil[i]);
+                });
+                requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
+        })();
+    </script>
+
+</body>
+</html>

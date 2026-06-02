@@ -148,4 +148,6 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::livewire('/admins', 'pages::admin.admins')->name('admins');
     Route::livewire('/subscriptions', 'pages::admin.subscriptions')->name('subscriptions');
     Route::livewire('/pricing', 'pages::admin.pricing')->name('pricing');
+    Route::livewire('/site-notifications', 'pages::admin.site-notifications')->name('site-notifications');
+    Route::livewire('/services', 'pages::admin.services')->name('services');
 });
