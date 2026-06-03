@@ -6,6 +6,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -19,6 +20,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        // Admin fields
         'role',
         'is_main_admin',
         'avatar',
@@ -26,6 +28,12 @@ class User extends Authenticatable
         'last_login_ip',
         'is_active',
         'created_by',
+        // Customer profile fields
+        'account_type',
+        'phone',
+        'company',
+        'country',
+        'is_customer',
     ];
 
     protected $hidden = [
@@ -40,13 +48,12 @@ class User extends Authenticatable
             'password'          => 'hashed',
             'is_main_admin'     => 'boolean',
             'is_active'         => 'boolean',
+            'is_customer'       => 'boolean',
             'last_login_at'     => 'datetime',
         ];
     }
 
-    // ──────────────────────────────────────────────────────────────────────────
-    // Relationships
-    // ──────────────────────────────────────────────────────────────────────────
+    // ── Relationships ─────────────────────────────────────────────────────────
 
     public function creator(): BelongsTo
     {
@@ -58,9 +65,22 @@ class User extends Authenticatable
         return $this->hasMany(User::class, 'created_by');
     }
 
-    // ──────────────────────────────────────────────────────────────────────────
-    // Helpers
-    // ──────────────────────────────────────────────────────────────────────────
+    public function reseller(): HasOne
+    {
+        return $this->hasOne(Reseller::class);
+    }
+
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class, 'customer_user_id');
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
 
     public function isSuperAdmin(): bool
     {
@@ -72,9 +92,11 @@ class User extends Authenticatable
         return (bool) $this->is_main_admin;
     }
 
-    /**
-     * Record a successful login.
-     */
+    public function isReseller(): bool
+    {
+        return $this->reseller !== null && $this->reseller->status === 'active';
+    }
+
     public function recordLogin(string $ip): void
     {
         $this->updateQuietly([
@@ -83,9 +105,6 @@ class User extends Authenticatable
         ]);
     }
 
-    /**
-     * Initials for avatar fallback.
-     */
     public function initials(): string
     {
         $parts = explode(' ', trim($this->name));

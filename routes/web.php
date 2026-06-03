@@ -134,10 +134,15 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 
     // ── License Management ─────────────────────────────────────────────────
     Route::livewire('/products', 'pages::admin.products')->name('products');
+    Route::livewire('/product-plans', 'pages::admin.product-plans')->name('product-plans');
     Route::livewire('/licenses', 'pages::admin.licenses')->name('licenses');
     Route::livewire('/customers', 'pages::admin.customers')->name('customers');
     Route::livewire('/activations', 'pages::admin.activations')->name('activations');
     Route::livewire('/batches', 'pages::admin.batches')->name('batches');
+
+    // ── Resellers & Payments ───────────────────────────────────────────────
+    Route::livewire('/resellers', 'pages::admin.resellers')->name('resellers');
+    Route::livewire('/payments', 'pages::admin.payments')->name('payments');
 
     // ── Developer ──────────────────────────────────────────────────────────
     Route::livewire('/api-tokens', 'pages::admin.api-tokens')->name('api-tokens');

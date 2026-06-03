@@ -10,11 +10,13 @@ return new class extends Migration
     {
         Schema::create('license_batches', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid')->nullable()->unique()->comment('Stable internal UUID');
 
             // Ownership
             $table->foreignUuid('product_id')->constrained()->cascadeOnDelete();
-            $table->foreignUuid('reseller_id')->constrained('resellers')->cascadeOnDelete();
-            $table->foreignUuid('created_by')->constrained('users')->cascadeOnDelete();
+            $table->foreignUuid('reseller_id')->nullable()->constrained('resellers')->nullOnDelete();
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->foreign('created_by')->references('id')->on('users')->nullOnDelete();
 
             // Batch identity
             $table->string('label')->comment('Human-readable batch name');
@@ -26,16 +28,16 @@ return new class extends Migration
             $table->unsignedInteger('quantity');
             $table->string('reseller_tag')->nullable();
 
-            //what the reseller paid for this batch (for wholesale resellers) — used to calculate margins and commissions
+            // What the reseller paid for this batch (wholesale resellers only)
             $table->decimal('wholesale_price', 10, 2)->nullable();
-            // License template params
 
+            // License template params
             $table->enum('license_type', ['lifetime', 'monthly', 'annual', 'yearly', 'trial', 'custom'])
                 ->default('lifetime');
             $table->enum('edition', ['standard', 'professional', 'enterprise', 'trial'])
                 ->default('standard');
             $table->unsignedSmallInteger('max_activations')->default(1);
-            $table->timestamp('expires_at')->nullable()->comment('Common expiry for all keys in batch; null = lifetime');
+            $table->timestamp('expires_at')->nullable()->comment('Common expiry for all keys; null = lifetime');
             $table->unsignedSmallInteger('duration_days')->nullable()
                 ->comment('Used when expires_at is null and type is not lifetime');
 
@@ -51,15 +53,25 @@ return new class extends Migration
 
             $table->timestamps();
 
-            // Indexes
             $table->index('product_id');
             $table->index('status');
             $table->index('created_by');
+        });
+
+        // Now that license_batches exists, add the batch_id FK to licenses
+        Schema::table('licenses', function (Blueprint $table) {
+            $table->foreign('batch_id')
+                ->references('id')
+                ->on('license_batches')
+                ->nullOnDelete();
         });
     }
 
     public function down(): void
     {
+        Schema::table('licenses', function (Blueprint $table) {
+            $table->dropForeign(['batch_id']);
+        });
         Schema::dropIfExists('license_batches');
     }
 };

@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Order extends Model
@@ -11,7 +14,11 @@ class Order extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'order_number', 'customer_user_id',
+        'order_number',
+        'customer_user_id',
+        'reseller_id',
+        'reseller_code_used',
+        'commission_rate_snapshot',
         'guest_name', 'guest_email', 'guest_phone', 'guest_company',
         'subtotal', 'discount', 'tax', 'total', 'currency',
         'status', 'payment_status', 'payment_method',
@@ -22,34 +29,59 @@ class Order extends Model
     ];
 
     protected $casts = [
-        'payment_meta' => 'array',
-        'paid_at'      => 'datetime',
-        'fulfilled_at' => 'datetime',
-        'subtotal'     => 'decimal:2',
-        'discount'     => 'decimal:2',
-        'tax'          => 'decimal:2',
-        'total'        => 'decimal:2',
-        'coupon_discount' => 'decimal:2',
+        'payment_meta'             => 'array',
+        'paid_at'                  => 'datetime',
+        'fulfilled_at'             => 'datetime',
+        'subtotal'                 => 'decimal:2',
+        'discount'                 => 'decimal:2',
+        'tax'                      => 'decimal:2',
+        'total'                    => 'decimal:2',
+        'coupon_discount'          => 'decimal:2',
+        'commission_rate_snapshot' => 'decimal:2',
     ];
 
     protected static function booted(): void
     {
         static::creating(function (Order $order) {
             if (!$order->order_number) {
-                $order->order_number = 'ORD-' . strtoupper(uniqid());
+                $order->order_number = 'ORD-' . strtoupper(substr(uniqid(), -8));
             }
         });
     }
 
-    public function customerUser(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    // ── Relationships ─────────────────────────────────────────────────────────
+
+    public function customerUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'customer_user_id');
     }
 
-    public function items(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function reseller(): BelongsTo
+    {
+        return $this->belongsTo(Reseller::class);
+    }
+
+    public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class);
     }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    public function latestPayment(): HasOne
+    {
+        return $this->hasOne(Payment::class)->latestOfMany();
+    }
+
+    public function commissions(): HasMany
+    {
+        return $this->hasMany(ResellerCommission::class);
+    }
+
+    // ── Accessors ─────────────────────────────────────────────────────────────
 
     public function getCustomerNameAttribute(): string
     {
@@ -61,15 +93,16 @@ class Order extends Model
         return $this->customerUser?->email ?? $this->guest_email ?? '';
     }
 
-    public function scopePaid($query)
+    public function getIsPaidAttribute(): bool
     {
-        return $query->where('payment_status', 'paid');
+        return $this->payment_status === 'paid';
     }
 
-    public function scopePending($query)
-    {
-        return $query->where('status', 'pending');
-    }
+    // ── Scopes ────────────────────────────────────────────────────────────────
+
+    public function scopePaid($q)     { return $q->where('payment_status', 'paid'); }
+    public function scopePending($q)  { return $q->where('status', 'pending'); }
+    public function scopeCompleted($q){ return $q->where('status', 'completed'); }
 
     public static function statusColors(): array
     {

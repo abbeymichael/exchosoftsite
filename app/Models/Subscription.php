@@ -12,6 +12,7 @@ class Subscription extends Model
 
     protected $fillable = [
         'license_id',
+        'plan_id',
         'billing_cycle',
         'amount',
         'currency',
@@ -28,27 +29,21 @@ class Subscription extends Model
         'cancelled_at'      => 'datetime',
     ];
 
+    // ── Relationships ─────────────────────────────────────────────────────────
+
     public function license(): BelongsTo
     {
         return $this->belongsTo(License::class);
     }
 
-    public function isExpiringSoon(): bool
+    public function plan(): BelongsTo
     {
-        return $this->next_billing_date
-            && $this->next_billing_date->isFuture()
-            && $this->next_billing_date->diffInDays(now()) <= 7;
+        return $this->belongsTo(ProductPlan::class, 'plan_id');
     }
 
-    public function getStatusBadgeColorAttribute(): string
-    {
-        return match ($this->status) {
-            'active'    => 'green',
-            'cancelled' => 'red',
-            'past_due'  => 'yellow',
-            'trialing'  => 'blue',
-            'paused'    => 'gray',
-            default     => 'gray',
-        };
-    }
+    // ── Scopes ────────────────────────────────────────────────────────────────
+
+    public function scopeActive($q)    { return $q->where('status', 'active'); }
+    public function scopeCancelled($q) { return $q->where('status', 'cancelled'); }
+    public function scopePastDue($q)   { return $q->where('status', 'past_due'); }
 }
