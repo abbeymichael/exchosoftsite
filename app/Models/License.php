@@ -2,26 +2,26 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class License extends Model
 {
-    use HasFactory, hasUuids;
+    use HasFactory, HasUuids;
 
     protected $fillable = [
         'product_id',
-        'shop_product_id',
-        'shop_order_id',
-        'buyer_email',
-        'buyer_name',
         'customer_id',
+        'plan_id',
+        'reseller_id',
         'batch_id',
+        'order_id',
+        'issued_by',
         'license_key',
         'key_prefix',
         'edition',
@@ -30,61 +30,50 @@ class License extends Model
         'current_activations',
         'issued_at',
         'activated_at',
+        'first_activated_at',
         'last_seen_at',
-        'status',
-        'expires_at',
-        'notes',
-        // Customer / order fields
-        'order_id',
-        'transaction_id',
-        'reseller_id',
-        'support_tier',
-        'grace_period_days',
-        'is_renewable',
-        'metadata',
         'suspended_at',
         'revoked_at',
-        'first_activated_at',
-        // Enterprise licensing fields (Phase 2)
+        'expires_at',
+        'status',
         'features',
         'revocation_checksum',
         'min_app_version',
         'max_app_version',
+        'grace_period_days',
+        'is_renewable',
+        'support_tier',
+        'notes',
+        'metadata',
+        'uuid',
     ];
 
     protected $casts = [
         'issued_at'          => 'datetime',
         'activated_at'       => 'datetime',
+        'first_activated_at' => 'datetime',
         'last_seen_at'       => 'datetime',
-        'expires_at'          => 'datetime',
-        'suspended_at'        => 'datetime',
-        'revoked_at'          => 'datetime',
-        'first_activated_at'  => 'datetime',
-        'metadata'            => 'array',
-        'features'            => 'array',
-        'is_renewable'        => 'boolean',
-        'grace_period_days'   => 'integer',
-        'max_activations'     => 'integer',
-        'current_activations' => 'integer',
+        'expires_at'         => 'datetime',
+        'suspended_at'       => 'datetime',
+        'revoked_at'         => 'datetime',
+        'metadata'           => 'array',
+        'features'           => 'array',
+        'is_renewable'       => 'boolean',
+        'grace_period_days'  => 'integer',
+        'max_activations'    => 'integer',
+        'current_activations'=> 'integer',
     ];
 
-    // ──────────────────────────────────────────────────────────────────────────
-    // Relationships
-    // ──────────────────────────────────────────────────────────────────────────
+    // ── Relationships ─────────────────────────────────────────────────────────
 
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }
 
-    public function shopProduct(): BelongsTo
+    public function plan(): BelongsTo
     {
-        return $this->belongsTo(ShopProduct::class);
-    }
-
-    public function shopOrder(): BelongsTo
-    {
-        return $this->belongsTo(Order::class, 'shop_order_id');
+        return $this->belongsTo(ProductPlan::class, 'plan_id');
     }
 
     public function customer(): BelongsTo
@@ -92,9 +81,24 @@ class License extends Model
         return $this->belongsTo(Customer::class);
     }
 
+    public function reseller(): BelongsTo
+    {
+        return $this->belongsTo(Reseller::class);
+    }
+
     public function batch(): BelongsTo
     {
-        return $this->belongsTo(LicenseBatch::class);
+        return $this->belongsTo(LicenseBatch::class, 'batch_id');
+    }
+
+    public function order(): BelongsTo
+    {
+        return $this->belongsTo(Order::class, 'order_id');
+    }
+
+    public function issuedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'issued_by');
     }
 
     public function activations(): HasMany
@@ -117,9 +121,7 @@ class License extends Model
         return $this->hasMany(ValidationLog::class);
     }
 
-    // ──────────────────────────────────────────────────────────────────────────
-    // Status helpers
-    // ──────────────────────────────────────────────────────────────────────────
+    // ── Status helpers ────────────────────────────────────────────────────────
 
     public function isExpired(): bool
     {
@@ -127,8 +129,11 @@ class License extends Model
             return false; // lifetime
         }
 
-        // Respect grace period
-        $graceCutoff = $this->expires_at->copy()->addDays($this->grace_period_days ?? 0);
+        $graceDays   = $this->grace_period_days
+            ?? $this->plan?->grace_period_days
+            ?? $this->product?->grace_period_days
+            ?? 0;
+        $graceCutoff = $this->expires_at->copy()->addDays($graceDays);
 
         return $graceCutoff->isPast();
     }
@@ -137,7 +142,7 @@ class License extends Model
     {
         return $this->expires_at
             && $this->expires_at->isPast()
-            && ! $this->isExpired(); // within grace
+            && ! $this->isExpired();
     }
 
     public function isExpiringSoon(int $days = 30): bool
@@ -153,18 +158,12 @@ class License extends Model
             && ! $this->isExpired();
     }
 
-    // ──────────────────────────────────────────────────────────────────────────
-    // Version-gating helper
-    // ──────────────────────────────────────────────────────────────────────────
+    // ── Version-gating ────────────────────────────────────────────────────────
 
-    /**
-     * Check whether a given app version falls within this license's allowed range.
-     * Falls back to product-level constraints when the license has no overrides.
-     */
     public function isAppVersionAllowed(?string $appVersion): bool
     {
         if (! $appVersion) {
-            return true; // no version submitted – pass-through
+            return true;
         }
 
         $min = $this->min_app_version ?? $this->product?->min_app_version;
@@ -181,18 +180,12 @@ class License extends Model
         return true;
     }
 
-    // ──────────────────────────────────────────────────────────────────────────
-    // Revocation checksum
-    // ──────────────────────────────────────────────────────────────────────────
+    // ── Revocation checksum ───────────────────────────────────────────────────
 
-    /**
-     * Re-compute and persist the revocation checksum.
-     * Called whenever status, revoked_at, or suspended_at changes.
-     */
     public function refreshRevocationChecksum(): void
     {
         $raw = implode('|', [
-            $this->uuid,
+            $this->uuid ?? $this->id,
             $this->status,
             $this->revoked_at?->toISOString() ?? 'null',
             $this->suspended_at?->toISOString() ?? 'null',
@@ -202,9 +195,7 @@ class License extends Model
         $this->saveQuietly();
     }
 
-    // ──────────────────────────────────────────────────────────────────────────
-    // Computed badge color
-    // ──────────────────────────────────────────────────────────────────────────
+    // ── Badge color ───────────────────────────────────────────────────────────
 
     public function getStatusBadgeColorAttribute(): string
     {
@@ -218,21 +209,14 @@ class License extends Model
         };
     }
 
-    // ──────────────────────────────────────────────────────────────────────────
-    // Key generation
-    // ──────────────────────────────────────────────────────────────────────────
+    // ── Key generation ────────────────────────────────────────────────────────
 
-    /**
-     * Generate a cryptographically secure license key.
-     * Format: {PREFIX}-XXXX-XXXX-XXXX (all uppercase hex-like chars)
-     */
     public static function generateKey(string $prefix = 'EXCL'): string
     {
         $prefix   = strtoupper(substr(preg_replace('/[^A-Z0-9]/', '', $prefix), 0, 8));
         $segments = [];
 
         for ($i = 0; $i < 3; $i++) {
-            // 4 uppercase alphanumeric chars from random bytes
             $raw        = random_bytes(4);
             $segments[] = strtoupper(substr(base_convert(bin2hex($raw), 16, 36), 0, 4));
         }
@@ -240,9 +224,6 @@ class License extends Model
         return $prefix . '-' . implode('-', $segments);
     }
 
-    /**
-     * Generate a unique key that doesn't collide with existing keys.
-     */
     public static function generateUniqueKey(string $prefix = 'EXCL', int $maxAttempts = 10): string
     {
         for ($i = 0; $i < $maxAttempts; $i++) {
@@ -255,13 +236,10 @@ class License extends Model
         throw new \RuntimeException('Unable to generate a unique license key after ' . $maxAttempts . ' attempts.');
     }
 
-    // ──────────────────────────────────────────────────────────────────────────
-    // Lifecycle
-    // ──────────────────────────────────────────────────────────────────────────
+    // ── Lifecycle ─────────────────────────────────────────────────────────────
 
     protected static function booted(): void
     {
-        // Auto-assign UUID on creation
         static::creating(function (License $license) {
             if (empty($license->uuid)) {
                 $license->uuid = (string) Str::uuid();
@@ -275,12 +253,10 @@ class License extends Model
             }
         });
 
-        // Compute initial revocation checksum after creation
         static::created(function (License $license) {
             $license->refreshRevocationChecksum();
         });
 
-        // Refresh revocation checksum whenever status, revoked_at or suspended_at changes
         static::updated(function (License $license) {
             if ($license->wasChanged(['status', 'revoked_at', 'suspended_at'])) {
                 $license->refreshRevocationChecksum();

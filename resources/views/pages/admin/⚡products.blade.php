@@ -451,15 +451,14 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
                                     <span class="text-slate-600">{{ $product->category ?? '—' }}</span>
                                 </td>
                                 <td class="px-5 py-3 text-center">
-                                    @if ($product->price)
-                                        <span class="text-slate-900 font-semibold">{{ $product->currency ?? 'USD' }}
-                                            {{ number_format($product->effective_price, 2) }}</span>
-                                        @if ($product->is_on_sale)
-                                            <p class="text-xs text-red-600 line-through">
-                                                {{ number_format($product->price, 2) }}</p>
-                                        @endif
+                                    @php $startingPrice = $product->starting_price; @endphp
+                                    @if ($startingPrice !== null)
+                                        <div>
+                                            <p class="text-xs text-slate-500">from</p>
+                                            <span class="text-slate-900 font-semibold">{{ $product->currency ?? 'USD' }} {{ number_format($startingPrice, 2) }}</span>
+                                        </div>
                                     @else
-                                        <span class="text-slate-400">—</span>
+                                        <span class="text-slate-400 text-xs">No plans</span>
                                     @endif
                                 </td>
                                 <td class="px-5 py-3 text-center">
@@ -478,8 +477,21 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
                                 </td>
                                 <td class="px-5 py-3 text-right">
                                     <div class="flex items-center justify-end gap-1">
+                                        {{-- Plans button with count badge --}}
+                                        <a href="{{ route('admin.product-plans') }}?filterProduct={{ $product->id }}"
+                                            wire:navigate
+                                            class="relative rounded-lg p-1.5 text-slate-400 hover:bg-purple-50 hover:text-purple-600 transition-colors"
+                                            title="Manage Plans">
+                                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                                            </svg>
+                                            @php $planCount = $product->plans()->count(); @endphp
+                                            @if ($planCount > 0)
+                                                <span class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-purple-600 text-white text-[10px] font-bold">{{ $planCount }}</span>
+                                            @endif
+                                        </a>
                                         <button wire:click="openEdit('{{ $product->id }}')"
-                                            class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors">
+                                            class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors" title="Edit">
                                             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                                                 stroke="currentColor" stroke-width="2">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -488,7 +500,7 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
                                         </button>
                                         <button wire:click="delete('{{ $product->id }}')"
                                             wire:confirm="Delete this product?"
-                                            class="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600 transition-colors">
+                                            class="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600 transition-colors" title="Delete">
                                             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                                                 stroke="currentColor" stroke-width="2">
                                                 <path stroke-linecap="round" stroke-linejoin="round"

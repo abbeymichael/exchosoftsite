@@ -2,17 +2,18 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 class Customer extends Model
 {
-    use HasFactory;
+    use HasFactory, HasUuids;
 
     protected $fillable = [
-        'uuid',
         'name',
         'email',
         'company',
@@ -34,9 +35,7 @@ class Customer extends Model
         'archived_at' => 'datetime',
     ];
 
-    // ──────────────────────────────────────────────────────────────────────────
-    // Relationships
-    // ──────────────────────────────────────────────────────────────────────────
+    // ── Relationships ─────────────────────────────────────────────────────────
 
     public function licenses(): HasMany
     {
@@ -48,9 +47,7 @@ class Customer extends Model
         return $this->hasMany(License::class)->where('status', 'active');
     }
 
-    // ──────────────────────────────────────────────────────────────────────────
-    // Accessors
-    // ──────────────────────────────────────────────────────────────────────────
+    // ── Accessors ─────────────────────────────────────────────────────────────
 
     public function getDisplayNameAttribute(): string
     {
@@ -62,9 +59,13 @@ class Customer extends Model
         return $this->archived_at !== null;
     }
 
-    // ──────────────────────────────────────────────────────────────────────────
-    // Lifecycle
-    // ──────────────────────────────────────────────────────────────────────────
+    // ── Note: customers table uses id() (bigint) + uuid column ─────────────
+    // HasUuids is used only if id is uuid. Since our customers table uses $table->id()
+    // plus a separate uuid column, we override the trait behaviour below.
+    public function uniqueIds(): array
+    {
+        return []; // uuid is populated via booted(), id() remains auto-increment
+    }
 
     protected static function booted(): void
     {

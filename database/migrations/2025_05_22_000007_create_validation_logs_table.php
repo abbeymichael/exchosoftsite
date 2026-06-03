@@ -34,8 +34,16 @@ return new class extends Migration
             // Replay-attack prevention
             $table->string('request_nonce', 64)->nullable()->index()
                 ->comment('SHA-256 of timestamp+license+device; reject duplicates within TTL');
+            $table->string('response_nonce', 64)->nullable()
+                ->comment('Server-emitted nonce returned in the validation response');
             $table->timestamp('request_timestamp')->nullable()
                 ->comment('Timestamp claimed by the client; reject if skew > 5 min');
+
+            // Offline / cached validation
+            $table->string('validation_source', 32)->default('online')
+                ->comment('online|offline|cached|grace_period');
+            $table->timestamp('offline_valid_until')->nullable()
+                ->comment('Timestamp until which the cached response remains valid offline');
 
             $table->timestamp('created_at')->useCurrent();
 

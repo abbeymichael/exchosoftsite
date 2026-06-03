@@ -15,8 +15,8 @@ return new class extends Migration
             $table->decimal('amount', 10, 2);
             $table->string('currency', 3)->default('USD');
 
-            $table->string('method');                             // bank | paypal | crypto | manual
-            $table->string('reference')->nullable();              // your bank ref, PayPal tx ID, etc.
+            $table->string('method');                               // bank | paypal | crypto | manual
+            $table->string('reference')->nullable();                // bank ref, PayPal tx ID, etc.
 
             $table->enum('status', ['pending', 'processing', 'completed', 'failed'])->default('pending');
 
@@ -25,7 +25,8 @@ return new class extends Migration
             $table->date('period_to')->nullable();
 
             // Admin who triggered the payout
-            $table->foreignUuid('processed_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->unsignedBigInteger('processed_by')->nullable();
+            $table->foreign('processed_by')->references('id')->on('users')->nullOnDelete();
 
             $table->timestamp('paid_at')->nullable();
             $table->text('notes')->nullable();
@@ -35,10 +36,6 @@ return new class extends Migration
 
             $table->index(['reseller_id', 'status']);
         });
-
-        // Now that reseller_payouts exists, we can add the FK on reseller_commissions
-        // (defined here because commissions references payouts but was created first)
-        // — handled in the commissions migration via deferred FK; nothing to do here.
     }
 
     public function down(): void

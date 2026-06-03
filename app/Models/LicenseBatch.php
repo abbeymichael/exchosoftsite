@@ -13,14 +13,15 @@ class LicenseBatch extends Model
     use HasFactory;
 
     protected $fillable = [
-        'uuid',
         'product_id',
+        'reseller_id',
         'created_by',
         'label',
         'batch_code',
         'key_prefix',
         'quantity',
         'reseller_tag',
+        'wholesale_price',
         'license_type',
         'edition',
         'max_activations',
@@ -35,23 +36,35 @@ class LicenseBatch extends Model
     ];
 
     protected $casts = [
-        'expires_at'      => 'datetime',
-        'metadata'        => 'array',
-        'quantity'        => 'integer',
-        'total_generated' => 'integer',
-        'total_used'      => 'integer',
-        'total_revoked'   => 'integer',
-        'max_activations' => 'integer',
-        'duration_days'   => 'integer',
+        'wholesale_price'   => 'decimal:2',
+        'max_activations'   => 'integer',
+        'duration_days'     => 'integer',
+        'total_generated'   => 'integer',
+        'total_used'        => 'integer',
+        'total_revoked'     => 'integer',
+        'expires_at'        => 'datetime',
+        'metadata'          => 'array',
     ];
 
-    // ──────────────────────────────────────────────────────────────────────────
-    // Relationships
-    // ──────────────────────────────────────────────────────────────────────────
+    protected static function booted(): void
+    {
+        static::creating(function (LicenseBatch $batch) {
+            if (empty($batch->uuid)) {
+                $batch->uuid = (string) Str::uuid();
+            }
+        });
+    }
+
+    // ── Relationships ─────────────────────────────────────────────────────────
 
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function reseller(): BelongsTo
+    {
+        return $this->belongsTo(Reseller::class);
     }
 
     public function createdBy(): BelongsTo
@@ -69,46 +82,13 @@ class LicenseBatch extends Model
         return $this->hasMany(BatchExport::class, 'batch_id');
     }
 
-    // ──────────────────────────────────────────────────────────────────────────
-    // Stats helpers
-    // ──────────────────────────────────────────────────────────────────────────
-
-    public function getUsagePercentAttribute(): float
+    public function commissions(): HasMany
     {
-        if ($this->total_generated === 0) {
-            return 0;
-        }
-
-        return round(($this->total_used / $this->total_generated) * 100, 1);
+        return $this->hasMany(ResellerCommission::class, 'batch_id');
     }
 
-    public function syncCounts(): void
-    {
-        $this->update([
-            'total_generated' => $this->licenses()->count(),
-            'total_used'      => $this->licenses()->whereNotNull('customer_id')->count(),
-            'total_revoked'   => $this->licenses()->where('status', 'revoked')->count(),
-        ]);
-    }
+    // ── Scopes ────────────────────────────────────────────────────────────────
 
-    // ──────────────────────────────────────────────────────────────────────────
-    // Boot
-    // ──────────────────────────────────────────────────────────────────────────
-
-    protected static function booted(): void
-    {
-        static::creating(function (LicenseBatch $batch) {
-            if (empty($batch->uuid)) {
-                $batch->uuid = (string) Str::uuid();
-            }
-            if (empty($batch->batch_code)) {
-                $batch->batch_code = self::generateBatchCode();
-            }
-        });
-    }
-
-    public static function generateBatchCode(): string
-    {
-        return 'BATCH-' . strtoupper(date('Ymd')) . '-' . strtoupper(substr(bin2hex(random_bytes(3)), 0, 6));
-    }
+    public function scopeActive($q)  { return $q->where('status', 'active'); }
+    public function scopeArchived($q){ return $q->where('status', 'archived'); }
 }

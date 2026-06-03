@@ -13,14 +13,13 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug')->unique();
             $table->string('product_code')->nullable()->unique();
-            $table->string('platform')->nullable(); // desktop|saas|hybrid|offline-first
+            $table->string('platform')->nullable();       // desktop|saas|hybrid|offline-first|web|mobile
             $table->string('current_version')->nullable();
-            $table->string('pricing_type')->nullable(); // one-time|subscription|free
             $table->text('description')->nullable();
             $table->string('logo')->nullable();
             $table->boolean('is_active')->default(true);
 
-            // --- Licensing ---
+            // ── Licensing ───────────────────────────────────────────────────────
             $table->string('app_identifier')->nullable()->unique();
             $table->string('secret_key', 64)->nullable();
             $table->string('support_email')->nullable();
@@ -34,13 +33,11 @@ return new class extends Migration
             $table->json('metadata')->nullable();
             $table->timestamp('archived_at')->nullable();
 
-            // --- Shop ---
+            // ── Shop / Storefront ───────────────────────────────────────────────
             $table->string('tagline')->nullable();
             $table->longText('full_description')->nullable();
             $table->string('category')->nullable();
             $table->string('product_type')->nullable()->default('software');
-            $table->decimal('price', 10, 2)->nullable();
-            $table->decimal('sale_price', 10, 2)->nullable();
             $table->string('currency', 3)->default('USD');
             $table->string('cover_image')->nullable();
             $table->json('gallery')->nullable();
@@ -54,8 +51,9 @@ return new class extends Migration
             $table->unsignedInteger('sort_order')->default(0);
             $table->unsignedBigInteger('sales_count')->default(0);
 
-            // --- Ownership ---
-            $table->foreignUuid('created_by')->nullable()->constrained('users')->nullOnDelete();
+            // ── Ownership ───────────────────────────────────────────────────────
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->foreign('created_by')->references('id')->on('users')->nullOnDelete();
 
             $table->softDeletes();
             $table->timestamps();

@@ -12,8 +12,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
 
             // Linked to a user account — reseller logs in as a normal user
-            // but has a reseller record that unlocks the reseller portal
-            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
 
             $table->string('company_name')->nullable();
 
@@ -28,7 +27,7 @@ return new class extends Migration
             // Referral commission rate (percentage, e.g. 20.00 = 20%)
             $table->decimal('commission_rate', 5, 2)->default(0);
 
-            // Wholesale discount rate (percentage off the product price when buying batches)
+            // Wholesale discount rate (percentage off product price when buying batches)
             $table->decimal('discount_rate', 5, 2)->default(0);
 
             $table->enum('status', ['pending', 'active', 'suspended'])->default('pending');
@@ -36,18 +35,19 @@ return new class extends Migration
             // Running totals — updated on each commission record creation / payout
             $table->decimal('total_earned', 12, 2)->default(0);
             $table->decimal('total_paid', 12, 2)->default(0);
-            $table->decimal('balance', 12, 2)->default(0);       // total_earned - total_paid
+            $table->decimal('balance', 12, 2)->default(0);    // total_earned - total_paid
 
-            // Payout preferences — store encrypted in production
-            $table->string('payout_method')->nullable();         // bank | paypal | crypto | manual
-            $table->json('payout_details')->nullable();           // account details (encrypt at rest)
+            // Payout preferences
+            $table->string('payout_method')->nullable();      // bank | paypal | crypto | manual
+            $table->json('payout_details')->nullable();        // account details (encrypt at rest)
 
             $table->string('currency', 3)->default('USD');
-            $table->decimal('minimum_payout', 10, 2)->default(50.00); // don't pay out below this
+            $table->decimal('minimum_payout', 10, 2)->default(50.00);
 
             $table->text('notes')->nullable();
             $table->timestamp('approved_at')->nullable();
-            $table->foreignUuid('approved_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->unsignedBigInteger('approved_by')->nullable();
+            $table->foreign('approved_by')->references('id')->on('users')->nullOnDelete();
 
             $table->timestamps();
             $table->softDeletes();

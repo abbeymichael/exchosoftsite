@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid')->unique()->comment('Stable internal UUID; survives key regeneration');
             $table->string('name');
             $table->string('email')->unique();
             $table->string('company')->nullable();
@@ -17,7 +18,18 @@ return new class extends Migration
             $table->enum('type', ['individual', 'company'])->default('individual');
             $table->text('notes')->nullable();
             $table->boolean('is_active')->default(true);
+
+            // Extended CRM fields
+            $table->string('country', 2)->nullable()->comment('ISO 3166-1 alpha-2');
+            $table->string('reseller_id')->nullable()->comment('Reseller partner identifier');
+            $table->string('external_id')->nullable()->comment('ID from external e-commerce / CRM system');
+            $table->json('metadata')->nullable();
+            $table->timestamp('archived_at')->nullable();
+
             $table->timestamps();
+
+            $table->index('external_id');
+            $table->index('reseller_id');
         });
     }
 
