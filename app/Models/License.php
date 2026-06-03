@@ -8,13 +8,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class License extends Model
 {
-    use HasFactory;
+    use HasFactory, hasUuids;
 
     protected $fillable = [
-        'uuid',
         'product_id',
         'shop_product_id',
         'shop_order_id',

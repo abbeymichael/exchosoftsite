@@ -21,6 +21,8 @@ return new class extends Migration
             $table->timestamp('deactivated_at')->nullable();
             $table->text('metadata')->nullable();
             $table->timestamps();
+
+            $table->index('license_id');
         });
     }
 

@@ -14,6 +14,10 @@ return new class extends Migration
             $table->foreignUuid('customer_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignUuid('plan_id')->nullable()->constrained('product_plans')->nullOnDelete();
             $table->foreignUuid('reseller_id')->nullable()->constrained('resellers')->nullOnDelete();
+            $table->foreignUuid('batch_id')->nullable()->constrained('license_batches')->nullOnDelete();
+            $table->foreignUuid('order_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignUuid('issued_by')->nullable()->constrained('users')->nullOnDelete();
+
             $table->string('license_key')->unique();
             $table->enum('edition', ['standard', 'professional', 'enterprise', 'trial'])->default('standard');
             $table->enum('type', ['lifetime', 'monthly', 'annual', 'trial', 'floating', 'multi-device'])->default('lifetime');
@@ -22,17 +26,15 @@ return new class extends Migration
             $table->timestamp('issued_at')->nullable();
             $table->timestamp('activated_at')->nullable();
             $table->timestamp('last_seen_at')->nullable();
-            $table->enum('status', [
-                'inactive',
-                'active',
-                'expired',
-                'suspended',
-                'revoked',
-                'trial',
-            ])->default('active');
+            $table->enum('status', ['inactive','active','expired','suspended','revoked','trial'])->default('active');
             $table->timestamp('expires_at')->nullable();
             $table->string('notes')->nullable();
             $table->timestamps();
+
+            $table->index('product_id');
+            $table->index('customer_id');
+            $table->index('reseller_id');
+            $table->index('status');
         });
     }
 
