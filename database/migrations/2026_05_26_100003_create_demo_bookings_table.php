@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('demo_bookings', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('reference')->unique();
             $table->foreignUuid('customer_user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('name');

@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('product_page_sections', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('product_code'); // washops, churchops, etc.
             $table->string('section_key');  // hero, features, roi, etc.
             $table->string('label')->nullable();

@@ -13,7 +13,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('api_request_logs', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
 
             // Endpoint identity
             $table->string('endpoint', 100)

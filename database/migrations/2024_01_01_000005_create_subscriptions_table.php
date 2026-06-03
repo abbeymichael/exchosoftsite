@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('subscriptions', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->foreignUuid('license_id')->constrained()->cascadeOnDelete();
             $table->foreignUuid('plan_id')->nullable()->constrained('product_plans')->nullOnDelete();
             $table->enum('billing_cycle', ['monthly', 'annual'])->default('monthly');

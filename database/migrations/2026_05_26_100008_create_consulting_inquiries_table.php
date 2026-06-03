@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('consulting_inquiries', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('reference')->unique();
             $table->foreignUuid('customer_user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('name');
@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->string('company')->nullable();
             $table->string('inquiry_type')->default('consulting'); // consulting, gig, contract, partnership
+            $table->foreignUuid('product_id')->nullable()->constrained()->nullOnDelete();
             $table->string('subject');
             $table->text('description');
             $table->string('budget_range')->nullable(); // e.g. "GHS 5,000 - 10,000"

@@ -9,12 +9,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('orders', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('order_number')->unique();
 
             // Buyer — either a registered user or a guest
-            $table->unsignedBigInteger('customer_user_id')->nullable();
-            $table->foreign('customer_user_id')->references('id')->on('users')->nullOnDelete();
+            $table->foreignUuid('customer_user_id')->nullable()->constrained('users')->nullOnDelete();
 
             // Reseller attribution
             $table->foreignUuid('reseller_id')->nullable()->constrained('resellers')->nullOnDelete();
