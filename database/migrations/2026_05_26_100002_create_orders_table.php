@@ -56,8 +56,8 @@ return new class extends Migration
             $table->id();
             $table->foreignUuid('order_id')->constrained()->cascadeOnDelete();
             $table->foreignUuid('product_id')->nullable()->constrained('products')->nullOnDelete();
-            $table->foreignId('plan_id')->nullable()->constrained('product_plans')->nullOnDelete();
-            $table->foreignId('license_id')->nullable()->constrained('licenses')->nullOnDelete();
+            $table->foreignUuid('plan_id')->nullable()->constrained('product_plans')->nullOnDelete();
+            $table->foreignUuid('license_id')->nullable()->constrained('licenses')->nullOnDelete();
             $table->string('product_name');
             $table->string('product_version')->nullable();
             $table->decimal('unit_price', 12, 2);
