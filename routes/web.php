@@ -12,12 +12,13 @@ Route::get('/', fn () => redirect()->route('home'));
 Route::prefix('')->name('')->group(function () {
 
     // Home
-    Route::livewire('/home', 'pages::site.home')->name('home');
+    Route::livewire('/', 'pages::site.home')->name('home');
 
     // ── Site pages ──────────────────────────────────────────────────────────
     Route::prefix('')->name('site.')->group(function () {
 
         // About
+        Route::livewire('/checkout', 'pages::site.checkout')->name('checkout');
         Route::livewire('/about', 'pages::site.about')->name('about');
 
         // Services

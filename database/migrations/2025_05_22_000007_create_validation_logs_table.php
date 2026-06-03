@@ -17,7 +17,7 @@ return new class extends Migration
 
             $table->string('license_key', 60)->nullable()
                 ->comment('The key that was submitted (may not exist)');
-            $table->foreignId('license_id')->nullable()->constrained('licenses')->nullOnDelete();
+            $table->foreignUuid('license_id')->nullable()->constrained('licenses')->nullOnDelete();
             $table->string('product_slug')->nullable();
 
             $table->enum('action', ['validate', 'status', 'renew', 'deactivate'])->default('validate');

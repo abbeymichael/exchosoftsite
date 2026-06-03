@@ -1,14 +1,16 @@
 <?php
 
 use App\Models\Product;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\WithFileUploads;
 
 new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends Component {
-    use WithPagination;
+    use WithPagination, WithFileUploads;
 
     public string $search = '';
     public string $filterPlatform = '';
@@ -27,7 +29,8 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
     public string $current_version = '';
     public string $pricing_type = 'freemium';
     public string $description = '';
-    public string $logo = '';
+    public $logo = null; // TemporaryUploadedFile or existing path string
+    public ?string $existing_logo = null;
 
     // Licensing Fields
     public string $app_identifier = '';
@@ -49,10 +52,14 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
     public string $price = '0.00';
     public string $sale_price = '';
     public string $currency = 'USD';
-    public string $cover_image = '';
-    public string $gallery_text = ''; // JSON or line-separated
-    public string $features_text = '';
-    public string $tech_stack_text = '';
+    public $cover_image = null; // TemporaryUploadedFile or existing path string
+    public ?string $existing_cover_image = null;
+    public array $gallery_files = []; // TemporaryUploadedFile[]
+    public array $existing_gallery = []; // already-saved URLs
+    public string $gallery_text = ''; // kept for backward-compat / manual entry fallback
+    public array $features = []; // ['Feature 1', 'Feature 2']
+    public array $tech_stack = []; // ['Laravel', 'Vue']
+    public array $metadata = []; // [['key' => '', 'value' => '']]
     public string $demo_url = '';
     public string $documentation_url = '';
     public string $download_url = '';
@@ -60,7 +67,6 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
     public bool $is_active = true;
     public bool $is_published = false;
     public bool $is_featured = false;
-    public string $metadata_text = '';
 
     public function updatedName(): void
     {
@@ -87,7 +93,8 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
         $this->current_version = $product->current_version ?? '';
         $this->pricing_type = $product->pricing_type ?? 'freemium';
         $this->description = $product->description ?? '';
-        $this->logo = $product->logo ?? '';
+        $this->logo = null;
+        $this->existing_logo = $product->logo ?? null;
 
         $this->app_identifier = $product->app_identifier ?? '';
         $this->secret_key = $product->secret_key ?? '';
@@ -107,10 +114,18 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
         $this->price = $product->price ?? '0.00';
         $this->sale_price = $product->sale_price ?? '';
         $this->currency = $product->currency ?? 'USD';
-        $this->cover_image = $product->cover_image ?? '';
-        $this->gallery_text = json_encode($product->gallery ?? []);
-        $this->features_text = implode("\n", $product->features ?? []);
-        $this->tech_stack_text = implode("\n", $product->tech_stack ?? []);
+        $this->cover_image = null;
+        $this->existing_cover_image = $product->cover_image ?? null;
+        $this->gallery_files = [];
+        $this->existing_gallery = $product->gallery ?? [];
+        $this->gallery_text = '';
+        $this->features = array_values($product->features ?? []);
+        $this->tech_stack = array_values($product->tech_stack ?? []);
+        $rawMeta = $product->metadata ?? [];
+        $this->metadata = collect($rawMeta)->map(fn($v, $k) => ['key' => $k, 'value' => $v])->values()->toArray();
+        if (empty($this->metadata)) {
+            $this->metadata = [['key' => '', 'value' => '']];
+        }
         $this->demo_url = $product->demo_url ?? '';
         $this->documentation_url = $product->documentation_url ?? '';
         $this->download_url = $product->download_url ?? '';
@@ -118,7 +133,6 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
         $this->is_active = $product->is_active;
         $this->is_published = $product->is_published;
         $this->is_featured = $product->is_featured;
-        $this->metadata_text = json_encode($product->metadata ?? []);
 
         $this->showForm = true;
         $this->editMode = true;
@@ -134,7 +148,7 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
             'current_version' => 'nullable|string|max:50',
             'pricing_type' => 'nullable|string|max:50',
             'description' => 'nullable|string|max:500',
-            'logo' => 'nullable|string|max:255',
+            'logo' => 'nullable|image|max:2048',
             'app_identifier' => 'nullable|string|max:100',
             'support_email' => 'nullable|email|max:100',
             'max_devices' => 'nullable|integer|min:0',
@@ -148,7 +162,12 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
             'price' => 'nullable|numeric|min:0',
             'sale_price' => 'nullable|numeric|min:0',
             'currency' => 'nullable|string|max:3',
-            'cover_image' => 'nullable|string|max:255',
+            'cover_image' => 'nullable|image|max:4096',
+            'gallery_files.*' => 'nullable|image|max:4096',
+            'features.*' => 'nullable|string|max:200',
+            'tech_stack.*' => 'nullable|string|max:100',
+            'metadata.*.key' => 'nullable|string|max:100',
+            'metadata.*.value' => 'nullable|string|max:500',
             'demo_url' => 'nullable|url|max:255',
             'documentation_url' => 'nullable|url|max:255',
             'download_url' => 'nullable|url|max:255',
@@ -163,7 +182,7 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
             'current_version' => $this->current_version ?: null,
             'pricing_type' => $this->pricing_type ?: null,
             'description' => $this->description ?: null,
-            'logo' => $this->logo ?: null,
+            'logo' => $this->logo ? $this->logo->store('products/logos', 'public') : ($this->existing_logo ?: null),
             'app_identifier' => $this->app_identifier ?: null,
             'secret_key' => $this->secret_key ?: null,
             'support_email' => $this->support_email ?: null,
@@ -181,10 +200,10 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
             'price' => $this->price ?: null,
             'sale_price' => $this->sale_price ?: null,
             'currency' => $this->currency ?: 'USD',
-            'cover_image' => $this->cover_image ?: null,
-            'gallery' => $this->parseJson($this->gallery_text),
-            'features' => $this->parseArray($this->features_text),
-            'tech_stack' => $this->parseArray($this->tech_stack_text),
+            'cover_image' => $this->cover_image ? $this->cover_image->store('products/covers', 'public') : ($this->existing_cover_image ?: null),
+            'gallery' => array_merge($this->existing_gallery, collect($this->gallery_files)->map(fn($f) => $f->store('products/gallery', 'public'))->toArray()),
+            'features' => array_values(array_filter(array_map('trim', $this->features))),
+            'tech_stack' => array_values(array_filter(array_map('trim', $this->tech_stack))),
             'demo_url' => $this->demo_url ?: null,
             'documentation_url' => $this->documentation_url ?: null,
             'download_url' => $this->download_url ?: null,
@@ -192,7 +211,7 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
             'is_active' => $this->is_active,
             'is_published' => $this->is_published,
             'is_featured' => $this->is_featured,
-            'metadata' => $this->parseJson($this->metadata_text),
+            'metadata' => collect($this->metadata)->filter(fn($row) => !empty($row['key']))->mapWithKeys(fn($row) => [$row['key'] => $row['value']])->toArray(),
         ];
 
         if ($this->editMode) {
@@ -247,6 +266,38 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
         }
     }
 
+    public function addFeature(): void
+    {
+        $this->features[] = '';
+    }
+    public function removeFeature(int $i): void
+    {
+        array_splice($this->features, $i, 1);
+    }
+
+    public function addTechStack(): void
+    {
+        $this->tech_stack[] = '';
+    }
+    public function removeTechStack(int $i): void
+    {
+        array_splice($this->tech_stack, $i, 1);
+    }
+
+    public function addMetadata(): void
+    {
+        $this->metadata[] = ['key' => '', 'value' => ''];
+    }
+    public function removeMetadata(int $i): void
+    {
+        array_splice($this->metadata, $i, 1);
+    }
+
+    public function removeExistingGalleryImage(int $index): void
+    {
+        array_splice($this->existing_gallery, $index, 1);
+    }
+
     public function resetForm(): void
     {
         $this->name = '';
@@ -256,7 +307,8 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
         $this->current_version = '';
         $this->pricing_type = 'freemium';
         $this->description = '';
-        $this->logo = '';
+        $this->logo = null;
+        $this->existing_logo = null;
         $this->app_identifier = '';
         $this->secret_key = '';
         $this->support_email = '';
@@ -274,10 +326,14 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
         $this->price = '0.00';
         $this->sale_price = '';
         $this->currency = 'USD';
-        $this->cover_image = '';
+        $this->cover_image = null;
+        $this->existing_cover_image = null;
+        $this->gallery_files = [];
+        $this->existing_gallery = [];
         $this->gallery_text = '';
-        $this->features_text = '';
-        $this->tech_stack_text = '';
+        $this->features = [];
+        $this->tech_stack = [];
+        $this->metadata = [['key' => '', 'value' => '']];
         $this->demo_url = '';
         $this->documentation_url = '';
         $this->download_url = '';
@@ -524,16 +580,32 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Logo URL</label>
-                                    <input wire:model="logo" type="text"
-                                        class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Logo</label>
+                                    @if ($existing_logo)
+                                        <div class="mb-2 flex items-center gap-2">
+                                            <img src="{{ Storage::url($existing_logo) }}" alt="Logo"
+                                                class="h-10 w-10 rounded-lg object-cover border border-slate-200">
+                                            <button type="button" wire:click="$set('existing_logo', null)"
+                                                class="text-xs text-red-500 hover:underline">Remove</button>
+                                        </div>
+                                    @endif
+                                    @if ($logo)
+                                        <div class="mb-2">
+                                            <img src="{{ $logo->temporaryUrl() }}" alt="Preview"
+                                                class="h-10 w-10 rounded-lg object-cover border border-slate-200">
+                                        </div>
+                                    @endif
+                                    <input wire:model="logo" type="file" accept="image/*"
+                                        class="w-full text-sm text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-cyan-50 file:text-cyan-700 hover:file:bg-cyan-100">
+                                    @error('logo')
+                                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                    @enderror
                                 </div>
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-slate-600 mb-1">Description</label>
-                                <livewire:markdown-editor wire:model="description"
-                                    placeholder="Write your blog post content with markdown..." :rows="8"
-                                    :show-toolbar="true" :show-upload="true" />
+                                <textarea wire:model="description" rows="2"
+                                    class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 resize-none"></textarea>
                             </div>
                         </div>
                     </div>
@@ -549,8 +621,9 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-slate-600 mb-1">Full Description</label>
-                                <textarea wire:model="full_description" rows="3"
-                                    class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 resize-none"></textarea>
+                                <livewire:markdown-editor wire:model="full_description"
+                                    placeholder="Write your blog post content with markdown..." :rows="8"
+                                    :show-toolbar="true" :show-upload="true" />
                             </div>
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
@@ -582,15 +655,55 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">Cover Image URL</label>
-                                <input wire:model="cover_image" type="text"
-                                    class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Cover Image</label>
+                                @if ($existing_cover_image)
+                                    <div class="mb-2 flex items-center gap-2">
+                                        <img src="{{ Storage::url($existing_cover_image) }}" alt="Cover"
+                                            class="h-16 w-24 rounded-lg object-cover border border-slate-200">
+                                        <button type="button" wire:click="$set('existing_cover_image', null)"
+                                            class="text-xs text-red-500 hover:underline">Remove</button>
+                                    </div>
+                                @endif
+                                @if ($cover_image)
+                                    <div class="mb-2">
+                                        <img src="{{ $cover_image->temporaryUrl() }}" alt="Preview"
+                                            class="h-16 w-24 rounded-lg object-cover border border-slate-200">
+                                    </div>
+                                @endif
+                                <input wire:model="cover_image" type="file" accept="image/*"
+                                    class="w-full text-sm text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-cyan-50 file:text-cyan-700 hover:file:bg-cyan-100">
+                                @error('cover_image')
+                                    <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                @enderror
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">Gallery Images (JSON
-                                    array or one URL per line)</label>
-                                <textarea wire:model="gallery_text" rows="2" placeholder='["url1", "url2"]'
-                                    class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 resize-none font-mono text-xs"></textarea>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Gallery Images</label>
+                                @if (count($existing_gallery))
+                                    <div class="flex flex-wrap gap-2 mb-2">
+                                        @foreach ($existing_gallery as $i => $url)
+                                            <div class="relative group">
+                                                <img src="{{ Storage::url($url) }}"
+                                                    class="h-14 w-14 rounded-lg object-cover border border-slate-200">
+                                                <button type="button"
+                                                    wire:click="removeExistingGalleryImage({{ $i }})"
+                                                    class="absolute -top-1 -right-1 hidden group-hover:flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-white text-xs">✕</button>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @endif
+                                @if (count($gallery_files))
+                                    <div class="flex flex-wrap gap-2 mb-2">
+                                        @foreach ($gallery_files as $file)
+                                            <img src="{{ $file->temporaryUrl() }}"
+                                                class="h-14 w-14 rounded-lg object-cover border border-slate-200">
+                                        @endforeach
+                                    </div>
+                                @endif
+                                <input wire:model="gallery_files" type="file" accept="image/*" multiple
+                                    class="w-full text-sm text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-cyan-50 file:text-cyan-700 hover:file:bg-cyan-100">
+                                @error('gallery_files.*')
+                                    <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                @enderror
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-slate-600 mb-1">Features (one per

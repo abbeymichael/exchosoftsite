@@ -55,7 +55,7 @@ return new class extends Migration
             $table->unsignedBigInteger('sales_count')->default(0);
 
             // --- Ownership ---
-            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignUuid('created_by')->nullable()->constrained('users')->nullOnDelete();
 
             $table->softDeletes();
             $table->timestamps();

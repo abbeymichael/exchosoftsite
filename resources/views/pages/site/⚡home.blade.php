@@ -80,7 +80,7 @@ new #[Layout('layouts.site')] class extends Component {
         <div class="absolute inset-0 pointer-events-none opacity-[.03] grid-lines"></div>
 
         {{-- Text column --}}
-        <div class="relative z-10 flex flex-col justify-center px-8 md:px-16 lg:pl-24 py-32 pt-40">
+        <div class="relative z-10 flex flex-col justify-center px-8 md:px-16 lg:pl-24 py-32 pt-20">
 
             @php
     $heroTitle = preg_replace_callback(

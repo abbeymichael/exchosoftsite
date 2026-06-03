@@ -9,9 +9,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('licenses', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('customer_id')->nullable()->constrained()->nullOnDelete();
+            $table->uuid('id')->primary();
+            $table->foreignUuid('product_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('customer_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignUuid('plan_id')->nullable()->constrained('product_plans')->nullOnDelete();
+            $table->foreignUuid('reseller_id')->nullable()->constrained('resellers')->nullOnDelete();
             $table->string('license_key')->unique();
             $table->enum('edition', ['standard', 'professional', 'enterprise', 'trial'])->default('standard');
             $table->enum('type', ['lifetime', 'monthly', 'annual', 'trial', 'floating', 'multi-device'])->default('lifetime');

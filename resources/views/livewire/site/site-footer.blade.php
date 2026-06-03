@@ -12,7 +12,8 @@
     <div class="relative z-10 max-w-7xl mx-auto">
         <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-x-8 gap-y-10 mb-16">
             <div class="col-span-2 lg:col-span-1">
-                <div class="flex items-center gap-2 mb-6"><span
+                <div class="flex items-center gap-2 mb-6">
+                    <span
                         class="material-symbols-outlined text-secondary-container text-3xl"
                         style="font-variation-settings:'FILL' 1;">hub</span><span
                         class="font-syne text-xl font-bold">Exchosoft Consult</span></div>
@@ -70,12 +71,12 @@
         </div>
         <div
             class="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-[11px] text-on-primary-container">
-            <p>© 2024 Exchosoft Consult. All rights reserved.</p>
+            <p>Copyright © {{ date('Y') }} <a class="text-secondary hover:text-white transition-colors" href="{{ route('site.about') }}"> Exchosoft Consult </a>. All rights reserved.</p>
             <div class="flex flex-wrap justify-center gap-6">
-                <a class="hover:text-white transition-colors" href="#">Privacy Policy</a>
-                <a class="hover:text-white transition-colors" href="#">Terms of Service</a>
-                <a class="hover:text-white transition-colors" href="#">Security Architecture</a>
-                <a class="hover:text-white transition-colors" href="#">Cookie Policy</a>
+                <a class="hover:text-white transition-colors" href="{{ route('site.privacy-policy') }}">Privacy Policy</a>
+                <a class="hover:text-white transition-colors" href="{{ route('site.terms-of-service') }}">Terms of Service</a>
+                <a class="hover:text-white transition-colors" href="{{ route('site.security') }}">Security Architecture</a>
+                <a class="hover:text-white transition-colors" href="{{ route('site.cookie-policy') }}">Cookie Policy</a>
             </div>
         </div>
     </div>

@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('subscriptions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('license_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('license_id')->constrained()->cascadeOnDelete();
             $table->enum('billing_cycle', ['monthly', 'annual'])->default('monthly');
             $table->decimal('amount', 10, 2)->default(0);
             $table->string('currency', 3)->default('USD');

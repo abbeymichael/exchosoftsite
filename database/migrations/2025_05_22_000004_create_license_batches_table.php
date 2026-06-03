@@ -12,8 +12,9 @@ return new class extends Migration
             $table->id();
 
             // Ownership
-            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('created_by')->constrained('users')->cascadeOnDelete();
+            $table->foreignUuid('product_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('reseller_id')->constrained('resellers')->cascadeOnDelete();
+            $table->foreignUuid('created_by')->constrained('users')->cascadeOnDelete();
 
             // Batch identity
             $table->string('label')->comment('Human-readable batch name');
@@ -25,7 +26,10 @@ return new class extends Migration
             $table->unsignedInteger('quantity');
             $table->string('reseller_tag')->nullable();
 
+            //what the reseller paid for this batch (for wholesale resellers) — used to calculate margins and commissions
+            $table->decimal('wholesale_price', 10, 2)->nullable();
             // License template params
+
             $table->enum('license_type', ['lifetime', 'monthly', 'annual', 'yearly', 'trial', 'custom'])
                 ->default('lifetime');
             $table->enum('edition', ['standard', 'professional', 'enterprise', 'trial'])

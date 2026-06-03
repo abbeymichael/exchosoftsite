@@ -167,6 +167,25 @@
             Portfolio
         </a>
 
+        <a href="{{ route('admin.services') }}"
+           wire:navigate
+           class="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150
+                  {{ request()->routeIs('admin.services*') ? 'bg-cyan-600 text-white shadow-md shadow-cyan-500/30' : 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
+            <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            Services
+        </a>
+          <a href="{{ route('admin.site-notifications') }}"
+           wire:navigate
+           class="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150
+                  {{ request()->routeIs('admin.site-notifications*') ? 'bg-cyan-600 text-white shadow-md shadow-cyan-500/30' : 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
+            <svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+            </svg>
+            Site Notifications
+        </a>
+
         {{-- ── LICENSE MANAGEMENT SECTION ──────────────────────────────────── --}}
         <p class="px-3 pt-4 mb-2 text-xs font-semibold uppercase tracking-widest text-slate-500">Licensing</p>
 

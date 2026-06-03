@@ -13,7 +13,7 @@ class WhitePaper extends Model
     protected $fillable = [
         'author_id', 'title', 'slug', 'summary', 'content',
         'cover_image', 'file_path', 'category', 'tags',
-        'shop_product_id', 'status', 'is_gated',
+        'product_id', 'status', 'is_gated',
         'published_at', 'downloads', 'views',
         'meta_title', 'meta_description',
     ];
@@ -29,9 +29,9 @@ class WhitePaper extends Model
         return $this->belongsTo(User::class, 'author_id');
     }
 
-    public function shopProduct(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function product(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(ShopProduct::class);
+        return $this->belongsTo(Product::class, 'product_id');
     }
 
     public function scopePublished($query)

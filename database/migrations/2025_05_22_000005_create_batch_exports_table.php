@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('batch_exports', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('batch_id')->constrained('license_batches')->cascadeOnDelete();
-            $table->foreignId('exported_by')->constrained('users')->cascadeOnDelete();
+            $table->foreignUuid('batch_id')->constrained('license_batches')->cascadeOnDelete();
+            $table->foreignUuid('exported_by')->constrained('users')->cascadeOnDelete();
             $table->string('filename');
             $table->enum('format', ['csv', 'json', 'txt'])->default('csv');
             $table->unsignedInteger('record_count')->default(0);

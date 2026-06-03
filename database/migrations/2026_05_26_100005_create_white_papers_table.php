@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('white_papers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('author_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignUuid('author_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('title');
             $table->string('slug')->unique();
             $table->text('summary')->nullable();
@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('file_path')->nullable(); // PDF download
             $table->string('category')->default('general'); // product, technology, industry, research
             $table->json('tags')->nullable();
-            $table->foreignId('shop_product_id')->nullable()->constrained()->nullOnDelete(); // linked product
+            $table->foreignUuid('product_id')->nullable()->constrained()->nullOnDelete(); // linked product
             $table->string('status')->default('draft'); // draft, published, archived
             $table->boolean('is_gated')->default(true); // requires email/registration
             $table->timestamp('published_at')->nullable();

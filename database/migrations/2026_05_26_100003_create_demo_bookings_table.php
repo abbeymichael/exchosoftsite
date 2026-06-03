@@ -11,13 +11,13 @@ return new class extends Migration
         Schema::create('demo_bookings', function (Blueprint $table) {
             $table->id();
             $table->string('reference')->unique();
-            $table->foreignId('customer_user_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignUuid('customer_user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('name');
             $table->string('email');
             $table->string('phone')->nullable();
             $table->string('company')->nullable();
             $table->string('job_title')->nullable();
-            $table->foreignId('product_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignUuid('product_id')->nullable()->constrained()->nullOnDelete();
             $table->string('product_name')->nullable(); // for display
             $table->string('demo_type')->default('online'); // online, onsite
             $table->date('preferred_date');
@@ -33,7 +33,7 @@ return new class extends Migration
             $table->string('confirmed_time')->nullable();
             $table->string('meeting_link')->nullable();
             $table->text('admin_notes')->nullable();
-            $table->foreignId('assigned_to')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignUuid('assigned_to')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
             $table->softDeletes();
         });

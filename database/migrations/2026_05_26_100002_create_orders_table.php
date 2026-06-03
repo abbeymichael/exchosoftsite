@@ -11,7 +11,11 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->string('order_number')->unique();
-            $table->foreignId('customer_user_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignUuid('customer_user_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignUuid('reseller_id')->nullable()->constrained('resellers')->nullOnDelete();
+            $table->string('reseller_code_used', 32)->nullable(); // in case we want to track which code was used if reseller has multiple codes
+            $table->decimal('commission_rate_snapshot', 5, 2)->nullable();
+
             // Guest checkout
             $table->string('guest_name')->nullable();
             $table->string('guest_email')->nullable();
@@ -45,8 +49,8 @@ return new class extends Migration
 
         Schema::create('order_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('order_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('product_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignUuid('order_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('product_id')->nullable()->constrained()->nullOnDelete();
             $table->string('product_name');
             $table->string('product_version')->nullable();
             $table->decimal('unit_price', 12, 2);

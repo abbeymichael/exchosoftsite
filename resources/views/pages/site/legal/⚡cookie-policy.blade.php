@@ -19,18 +19,25 @@ new #[Layout('layouts.site')] class extends Component
 }; ?>
 
 <div>
-<header class="page-banner">
-  <div class="page-banner-dots"></div>
-  <div class="page-banner-glow"></div>
-  <div class="page-banner-accent"></div>
-  <div class="page-banner-content">
-    <nav class="page-breadcrumb"><a href="{{ route('home') }}" wire:navigate>Home</a><span class="sep">/</span><span class="current">Cookie Policy</span></nav>
-    <div class="page-banner-tag"><span style="width:5px;height:5px;border-radius:50%;background:rgba(122,207,232,0.7);display:inline-block;"></span> Legal</div>
-    <h1>{{ $pageBannerHeading ?: 'Cookie Policy' }}</h1>
-    <p class="page-banner-sub">{{ $pageBannerSubheading ?: 'How we use cookies and similar technologies on our website.' }}</p>
-  </div>
-</header>
-<section class="site-section" style="background:var(--white);max-width:800px;margin:0 auto;">
+
+
+<x-page-banner
+    tag="Cookie Policy"
+    tagIcon="info"
+    title='Cookie Policy'
+    subtitle="Read the Exchosoft cookie policy — what cookies we use, why we use them, and how you can manage your preferences."
+    :breadcrumbs="[['label'=>'Home','route'=>'home'],['label'=>'Cookie Policy','route'=>'site.cookie-policy']]"
+    glowX="72%"
+    glowX2="12%"
+>
+  <svg slot="ornament" class="absolute right-[7%] top-1/2 -translate-y-1/2 w-44 h-44 opacity-[.06] pointer-events-none" viewBox="0 0 180 180" fill="none">
+    <circle cx="90" cy="90" r="88" stroke="#00b8db" stroke-width="1"/><circle cx="90" cy="90" r="60" stroke="#00b8db" stroke-width="1"/><circle cx="90" cy="90" r="32" stroke="#00b8db" stroke-width="1"/>
+    <line x1="2" y1="90" x2="178" y2="90" stroke="#00b8db" stroke-width=".5"/><line x1="90" y1="2" x2="90" y2="178" stroke="#00b8db" stroke-width=".5"/>
+    <circle cx="90" cy="90" r="4" fill="#00b8db"/>
+  </svg>
+</x-page-banner>
+
+<section class="site-section" style="background:var(--white);max-width:800px;margin:0 auto; mt-12 mb-24; padding:2rem;">
   <p style="font-size:0.8rem;color:var(--text-muted);margin-bottom:2rem;">Last updated: {{ $pageSeo?->updated_at?->format('d F Y') ?? date('d F Y') }}</p>
 
     <div style="margin-bottom:2.5rem;">

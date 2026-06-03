@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
 
             // Who performed the action (null = API/system)
-            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignUuid('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('actor_type')->default('user')
                 ->comment('user|api_token|system');
             $table->string('actor_label')->nullable()

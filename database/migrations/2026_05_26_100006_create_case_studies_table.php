@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('case_studies', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('author_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignUuid('author_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('title');
             $table->string('slug')->unique();
             $table->string('client_name');
@@ -23,7 +23,7 @@ return new class extends Migration
             $table->json('metrics')->nullable(); // [{"label":"Revenue Increase","value":"45%"}]
             $table->longText('content')->nullable();
             $table->json('tags')->nullable();
-            $table->foreignId('product_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignUuid('product_id')->nullable()->constrained()->nullOnDelete();
             $table->string('status')->default('draft'); // draft, published, archived
             $table->timestamp('published_at')->nullable();
             $table->integer('views')->default(0);

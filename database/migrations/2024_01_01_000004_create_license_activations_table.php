@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('license_activations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('license_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('license_id')->constrained()->cascadeOnDelete();
             $table->string('device_id');
             $table->string('device_name')->nullable();
             $table->string('platform')->nullable();

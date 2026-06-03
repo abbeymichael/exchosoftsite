@@ -9,7 +9,6 @@ use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Livewire\Attributes\Computed;
 
 new #[Layout('layouts.admin')] #[Title('Orders — ExchoSoft')] class extends Component
 {

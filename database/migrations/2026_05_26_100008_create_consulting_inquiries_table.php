@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('consulting_inquiries', function (Blueprint $table) {
             $table->id();
             $table->string('reference')->unique();
-            $table->foreignId('customer_user_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignUuid('customer_user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('name');
             $table->string('email');
             $table->string('phone')->nullable();
@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('how_heard')->nullable(); // google, referral, social, event
             $table->string('status')->default('new'); // new, reviewing, quoted, accepted, declined, completed
             $table->text('admin_notes')->nullable();
-            $table->foreignId('assigned_to')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignUuid('assigned_to')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('responded_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
