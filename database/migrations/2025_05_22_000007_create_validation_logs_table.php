@@ -13,7 +13,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('validation_logs', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
 
             $table->string('license_key', 60)->nullable()
                 ->comment('The key that was submitted (may not exist)');

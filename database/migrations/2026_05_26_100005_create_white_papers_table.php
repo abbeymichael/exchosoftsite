@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('white_papers', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->foreignUuid('author_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('title');
             $table->string('slug')->unique();

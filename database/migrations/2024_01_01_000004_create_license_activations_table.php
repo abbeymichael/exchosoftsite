@@ -9,8 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('license_activations', function (Blueprint $table) {
-            $table->id();
-            $table->uuid('uuid')->nullable()->unique()->comment('Stable internal UUID');
+            $table->uuid('id')->primary();
             $table->foreignUuid('license_id')->constrained()->cascadeOnDelete();
 
             // Device identity

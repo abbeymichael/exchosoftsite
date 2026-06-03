@@ -10,8 +10,6 @@ return new class extends Migration
     {
         Schema::create('licenses', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('uuid')->nullable()->unique()->comment('Stable internal UUID; survives key regeneration');
-
             // Core relations
             $table->foreignUuid('product_id')->constrained()->cascadeOnDelete();
             $table->foreignUuid('customer_id')->nullable()->constrained()->nullOnDelete();

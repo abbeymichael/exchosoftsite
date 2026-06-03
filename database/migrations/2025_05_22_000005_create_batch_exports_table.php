@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('batch_exports', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->foreignUuid('batch_id')->constrained('license_batches')->cascadeOnDelete();
             $table->foreignUuid('exported_by')->constrained('users')->cascadeOnDelete();
             $table->string('filename');

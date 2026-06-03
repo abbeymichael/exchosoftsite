@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('audit_logs', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
 
             // Who performed the action (null = API/system)
             $table->foreignUuid('user_id')->nullable()->constrained('users')->nullOnDelete();

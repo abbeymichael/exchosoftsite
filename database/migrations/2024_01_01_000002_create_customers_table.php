@@ -9,8 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('customers', function (Blueprint $table) {
-            $table->id();
-            $table->uuid('uuid')->unique()->comment('Stable internal UUID; survives key regeneration');
+            $table->uuid('id')->primary();
             $table->string('name');
             $table->string('email')->unique();
             $table->string('company')->nullable();
