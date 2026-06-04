@@ -14,6 +14,7 @@ class LicenseBatch extends Model
 
     protected $fillable = [
         'product_id',
+        'plan_id',
         'reseller_id',
         'created_by',
         'label',
@@ -46,13 +47,16 @@ class LicenseBatch extends Model
         'metadata'          => 'array',
     ];
 
-
-
     // ── Relationships ─────────────────────────────────────────────────────────
 
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function plan(): BelongsTo
+    {
+        return $this->belongsTo(ProductPlan::class, 'plan_id');
     }
 
     public function reseller(): BelongsTo
@@ -84,4 +88,46 @@ class LicenseBatch extends Model
 
     public function scopeActive($q)  { return $q->where('status', 'active'); }
     public function scopeArchived($q){ return $q->where('status', 'archived'); }
+
+    // ── Accessors ─────────────────────────────────────────────────────────────
+
+    /**
+     * Usage percentage (keys assigned vs generated).
+     */
+    public function getUsagePercentAttribute(): int
+    {
+        if ($this->total_generated === 0) {
+            return 0;
+        }
+
+        return (int) round(($this->total_used / $this->total_generated) * 100);
+    }
+
+    /**
+     * Number of keys still available (not used or revoked).
+     */
+    public function getAvailableKeysAttribute(): int
+    {
+        return max(0, $this->total_generated - $this->total_used - $this->total_revoked);
+    }
+
+    /**
+     * Derive a human-readable billing label from the plan or the license_type field.
+     */
+    public function getBillingLabelAttribute(): string
+    {
+        if ($this->plan) {
+            return $this->plan->billing_label;
+        }
+
+        return match ($this->license_type) {
+            'lifetime' => 'Lifetime',
+            'monthly'  => 'Monthly',
+            'annual',
+            'yearly'   => 'Yearly',
+            'trial'    => 'Trial',
+            'custom'   => 'Custom',
+            default    => ucfirst($this->license_type ?? 'Unknown'),
+        };
+    }
 }
