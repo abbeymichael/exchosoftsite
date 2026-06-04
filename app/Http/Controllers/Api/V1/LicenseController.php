@@ -249,7 +249,7 @@ class LicenseController extends Controller
             ->where('status', 'active')
             ->count();
 
-        $offlineTtl = $license->product->offline_ttl_hours_effective ?? 168;
+        $offlineTtl = config('licensing.offline_ttl_hours', 168);
 
         // ─────────────────────────────────────────────
         // BUILD PAYLOAD
@@ -285,9 +285,7 @@ class LicenseController extends Controller
             'min_app_version' => $license->min_app_version ?? $license->product?->min_app_version,
             'max_app_version' => $license->max_app_version ?? $license->product?->max_app_version,
 
-            'grace_period_days' => $license->grace_period_days
-                ?? $license->product?->grace_period_days
-                ?? 0,
+            'grace_period_days' => config('licensing.grace_period_days', 7),
 
             'revocation_checksum' => $license->revocation_checksum,
             'validation_source' => $license->isInGracePeriod() ? 'grace_period' : 'online',
@@ -421,9 +419,7 @@ class LicenseController extends Controller
                     'max_activations' => $license->max_activations,
                     'current_activations' => $license->current_activations,
                     'in_grace_period' => $license->isInGracePeriod(),
-                    'grace_period_days' => $license->grace_period_days
-                        ?? $license->product?->grace_period_days
-                        ?? 0,
+                    'grace_period_days' => config('licensing.grace_period_days', 7),
                     'support_tier' => $license->support_tier,
                     'features' => $license->features ?? [],
                     'min_app_version' => $license->min_app_version ?? $license->product?->min_app_version,

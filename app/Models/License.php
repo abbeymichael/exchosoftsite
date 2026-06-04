@@ -129,10 +129,7 @@ class License extends Model
             return false; // lifetime
         }
 
-        $graceDays   = $this->grace_period_days
-            ?? $this->plan?->grace_period_days
-            ?? $this->product?->grace_period_days
-            ?? 0;
+        $graceDays = config('licensing.grace_period_days', 7);
         $graceCutoff = $this->expires_at->copy()->addDays($graceDays);
 
         return $graceCutoff->isPast();
