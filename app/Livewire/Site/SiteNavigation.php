@@ -14,7 +14,7 @@ class SiteNavigation extends Component
 
     // Products mega-menu data (dynamic)
     public array $products = [];
-    
+
     // Case studies data (dynamic)
     public array $caseStudies = [];
 
@@ -40,12 +40,12 @@ class SiteNavigation extends Component
         $this->products = Product::published()
             ->orderBy('sort_order')
             ->limit(8)
-            ->get(['id', 'name', 'slug', 'tagline', 'icon', 'category'])
+            ->get(['id', 'name', 'slug', 'tagline', 'logo', 'category'])
             ->map(fn($p) => [
                 'name' => $p->name,
                 'slug' => $p->slug,
                 'tagline' => $p->tagline,
-                'icon' => $p->icon ?? 'deployed_code',
+                'logo' => $p->logo ?? 'deployed_code',
                 'category' => $p->category,
             ])
             ->toArray();
@@ -54,14 +54,14 @@ class SiteNavigation extends Component
         $this->caseStudies = CaseStudy::published()
             ->orderByRaw('is_featured DESC')
             ->limit(3)
-            ->get(['id', 'title', 'slug', 'client_name', 'client_industry', 'challenge', 'icon', 'tags'])
+            ->get(['id', 'title', 'slug', 'client_name', 'client_industry', 'challenge', 'client_logo', 'tags'])
             ->map(fn($cs) => [
                 'title' => $cs->title,
                 'slug' => $cs->slug,
                 'client_name' => $cs->client_name,
                 'client_industry' => $cs->client_industry,
                 'challenge' => $cs->challenge,
-                'icon' => $cs->icon ?? 'monitor_heart',
+                'logo' => $cs->logo ?? 'deployed_code',
                 'tags' => $cs->tags ?? [],
             ])
             ->toArray();
