@@ -27,7 +27,6 @@ class License extends Model
         'edition',
         'type',
         'max_activations',
-        'current_activations',
         'issued_at',
         'activated_at',
         'first_activated_at',

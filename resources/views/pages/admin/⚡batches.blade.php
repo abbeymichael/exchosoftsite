@@ -21,7 +21,7 @@ new #[Layout('layouts.admin')] #[Title('License Batches — ExchoLicense')] clas
     public ?int   $detailId     = null;
 
     // Batch generation form
-    public int    $product_id      = 0;
+    public string   $product_id      = '';
     public string $label           = '';
     public int    $quantity        = 10;
     public string $key_prefix      = '';
@@ -49,7 +49,7 @@ new #[Layout('layouts.admin')] #[Title('License Batches — ExchoLicense')] clas
         $this->showModal       = true;
     }
 
-    public function openDetail(int $id): void
+    public function openDetail(string $id): void
     {
         $this->detailId    = $id;
         $this->showDetail  = true;
@@ -58,7 +58,7 @@ new #[Layout('layouts.admin')] #[Title('License Batches — ExchoLicense')] clas
     public function generate(): void
     {
         $this->validate([
-            'product_id'      => 'required|integer|exists:products,id',
+            'product_id'      => 'required|exists:products,id',
             'label'           => 'required|string|max:255',
             'quantity'        => 'required|integer|min:1|max:10000',
             'key_prefix'      => 'nullable|string|max:8|alpha_num',
@@ -90,14 +90,14 @@ new #[Layout('layouts.admin')] #[Title('License Batches — ExchoLicense')] clas
         session()->flash('success', "Batch \"{$batch->label}\" created with {$batch->total_generated} licenses.");
     }
 
-    public function exportCsv(int $batchId): void
+    public function exportCsv(string $batchId): void
     {
         $batch  = LicenseBatch::findOrFail($batchId);
         $export = app(BatchExportService::class)->exportCsv($batch, auth()->id());
         session()->flash('success', "CSV export ready: {$export->filename} ({$export->record_count} records).");
     }
 
-    public function revokeBatch(int $batchId): void
+    public function revokeBatch(string $batchId): void
     {
         $batch = LicenseBatch::findOrFail($batchId);
         $batch->update(['status' => 'revoked']);

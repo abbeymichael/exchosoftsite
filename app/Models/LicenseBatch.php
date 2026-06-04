@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class LicenseBatch extends Model
@@ -47,14 +46,7 @@ class LicenseBatch extends Model
         'metadata'          => 'array',
     ];
 
-    protected static function booted(): void
-    {
-        static::creating(function (LicenseBatch $batch) {
-            if (empty($batch->uuid)) {
-                $batch->uuid = (string) Str::uuid();
-            }
-        });
-    }
+
 
     // ── Relationships ─────────────────────────────────────────────────────────
 

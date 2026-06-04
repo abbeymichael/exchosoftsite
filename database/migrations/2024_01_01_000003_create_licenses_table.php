@@ -30,7 +30,6 @@ return new class extends Migration
 
             // Activation caps
             $table->integer('max_activations')->default(1);
-            $table->integer('current_activations')->default(0);
 
             // Timestamps
             $table->timestamp('issued_at')->nullable();

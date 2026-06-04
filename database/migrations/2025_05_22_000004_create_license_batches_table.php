@@ -10,7 +10,6 @@ return new class extends Migration
     {
         Schema::create('license_batches', function (Blueprint $table) {
             $table->uuid('id')->primary();
-
             // Ownership
             $table->foreignUuid('product_id')->constrained()->cascadeOnDelete();
             $table->foreignUuid('reseller_id')->nullable()->constrained('resellers')->nullOnDelete();

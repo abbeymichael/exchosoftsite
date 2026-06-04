@@ -30,7 +30,7 @@ class LicenseGeneratorService
      * } $params
      * @param  int  $createdBy  User ID
      */
-    public function generateBatch(array $params, int $createdBy): LicenseBatch
+    public function generateBatch(array $params, string $createdBy): LicenseBatch
     {
         $product = Product::query()
             ->when($params['product_id'] ?? null, fn ($q, $id) => $q->where('id', $id))
@@ -53,6 +53,7 @@ class LicenseGeneratorService
                 'created_by' => $createdBy,
                 'label' => $params['label'],
                 'key_prefix' => $prefix,
+                'batch_code' => strtoupper($prefix).'-'.strtoupper(substr(sha1(uniqid()), 0, 6)),
                 'quantity' => $quantity,
                 'reseller_tag' => $params['reseller_tag'] ?? null,
                 'license_type' => $params['license_type'] ?? 'lifetime',
@@ -61,6 +62,7 @@ class LicenseGeneratorService
                 'expires_at' => $expiresAt,
                 'duration_days' => $params['duration_days'] ?? null,
                 'notes' => $params['notes'] ?? null,
+                'reseller_id' => $params['reseller_id'] ?? null,
                 'metadata' => $params['metadata'] ?? null,
                 'total_generated' => 0,
             ]);
