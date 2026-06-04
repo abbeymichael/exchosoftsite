@@ -11,50 +11,59 @@ use Livewire\WithPagination;
 new #[Layout('layouts.admin')] #[Title('Product Plans — ExchoSoft')] class extends Component {
     use WithPagination;
 
-    public string $search        = '';
-    public string $filterProduct = '';
-    public string $filterStatus  = '';
+    // ── Filters ───────────────────────────────────────────────────────────────
+    public string  $search        = '';
+    public string  $filterProduct = '';
+    public string  $filterStatus  = '';
 
-    public bool   $showForm  = false;
-    public bool   $editMode  = false;
-    public ?string $editId   = null;
+    // ── UI State ──────────────────────────────────────────────────────────────
+    public bool    $showForm  = false;
+    public bool    $editMode  = false;
+    public ?string $editId    = null;
 
-    // Form fields
-    public string $product_id      = '';
-    public string $name            = '';
-    public string $slug            = '';
-    public string $description     = '';
-    public string $price           = '0.00';
-    public string $sale_price      = '';
-    public string $currency        = 'USD';
-    public int    $duration_days   = 0;      // 0 = lifetime
-    public int    $trial_days      = 0;
-    public bool   $is_trial_eligible = true;
-    public bool   $is_renewable    = true;
-    public bool   $is_active       = true;
-    public int    $sort_order      = 0;
-    public string $max_activations  = '';
-    public string $offline_ttl_hours = '';
-    public string $grace_period_days = '';
+    // ── Form Fields ───────────────────────────────────────────────────────────
+    public string  $product_id     = '';
+    public string  $name           = '';
+    public string  $slug           = '';
+    public string  $description    = '';
+    public string  $price          = '0.00';
+    public string  $sale_price     = '';
+    public string  $currency       = 'USD';
+    public int     $duration_days  = 30;
+    public int     $trial_days     = 0;
+    public bool    $is_trial_eligible = false;
+    public bool    $is_renewable   = true;
+    public bool    $is_active      = true;
+    public int     $sort_order     = 0;
 
-    // Duration type helper — drives duration_days
-    public string $duration_type = 'lifetime'; // lifetime | monthly | yearly | custom
+    // Duration type helper (drives duration_days)
+    public string  $duration_type  = 'Monthly'; // Monthly | Quarterly | Yearly | Lifetime | Custom
+
+    // ─────────────────────────────────────────────────────────────────────────
 
     public function updatedName(): void
     {
-        if (!$this->editMode) {
+        if (! $this->editMode) {
             $this->slug = str($this->name)->slug()->toString();
         }
     }
 
     public function updatedDurationType(): void
     {
-        $this->duration_days = match ($this->duration_type) {
-            'monthly'  => 30,
-            'yearly'   => 365,
-            'lifetime' => 0,
-            default    => $this->duration_days,
-        };
+        if ($this->duration_type !== 'Custom') {
+            $this->duration_days = match ($this->duration_type) {
+                'Monthly'   => 30,
+                'Quarterly' => 90,
+                'Yearly'    => 365,
+                'Lifetime'  => 0,
+                default     => $this->duration_days,
+            };
+            // Also auto-set name if it matches a preset
+            if (in_array($this->name, ['', 'Monthly', 'Quarterly', 'Yearly', 'Lifetime'])) {
+                $this->name = $this->duration_type;
+                $this->slug = str($this->name)->slug()->toString();
+            }
+        }
     }
 
     public function openCreate(?string $productId = null): void
@@ -75,8 +84,8 @@ new #[Layout('layouts.admin')] #[Title('Product Plans — ExchoSoft')] class ext
         $this->name            = $plan->name;
         $this->slug            = $plan->slug;
         $this->description     = $plan->description ?? '';
-        $this->price           = $plan->price;
-        $this->sale_price      = $plan->sale_price ?? '';
+        $this->price           = (string) $plan->price;
+        $this->sale_price      = (string) ($plan->sale_price ?? '');
         $this->currency        = $plan->currency;
         $this->duration_days   = $plan->duration_days;
         $this->trial_days      = $plan->trial_days;
@@ -84,16 +93,13 @@ new #[Layout('layouts.admin')] #[Title('Product Plans — ExchoSoft')] class ext
         $this->is_renewable    = $plan->is_renewable;
         $this->is_active       = $plan->is_active;
         $this->sort_order      = $plan->sort_order;
-        $this->max_activations  = $plan->max_activations ?? '';
-        $this->offline_ttl_hours = $plan->offline_ttl_hours ?? '';
-        $this->grace_period_days = $plan->grace_period_days ?? '';
 
-        // Determine duration type from duration_days
-        $this->duration_type = match (true) {
-            $plan->duration_days === 0              => 'lifetime',
-            $plan->duration_days <= 31              => 'monthly',
-            $plan->duration_days >= 365 && $plan->duration_days <= 366 => 'yearly',
-            default                                 => 'custom',
+        $this->duration_type   = match (true) {
+            $plan->duration_days === 0                                             => 'Lifetime',
+            $plan->duration_days <= 31                                             => 'Monthly',
+            $plan->duration_days <= 93                                             => 'Quarterly',
+            $plan->duration_days >= 365 && $plan->duration_days <= 366            => 'Yearly',
+            default                                                                => 'Custom',
         };
 
         $this->showForm = true;
@@ -103,18 +109,15 @@ new #[Layout('layouts.admin')] #[Title('Product Plans — ExchoSoft')] class ext
     public function save(): void
     {
         $this->validate([
-            'product_id'       => 'required|exists:products,id',
-            'name'             => 'required|string|max:100',
-            'slug'             => 'required|string|max:100',
-            'price'            => 'required|numeric|min:0',
-            'sale_price'       => 'nullable|numeric|min:0',
-            'currency'         => 'required|string|max:3',
-            'duration_days'    => 'required|integer|min:0',
-            'trial_days'       => 'nullable|integer|min:0',
-            'sort_order'       => 'nullable|integer|min:0',
-            'max_activations'  => 'nullable|integer|min:1',
-            'offline_ttl_hours'=> 'nullable|integer|min:0',
-            'grace_period_days'=> 'nullable|integer|min:0',
+            'product_id'    => 'required|exists:products,id',
+            'name'          => 'required|string|max:100',
+            'slug'          => 'required|string|max:100',
+            'price'         => 'required|numeric|min:0',
+            'sale_price'    => 'nullable|numeric|min:0',
+            'currency'      => 'required|string|max:3',
+            'duration_days' => 'required|integer|min:0',
+            'trial_days'    => 'nullable|integer|min:0',
+            'sort_order'    => 'nullable|integer|min:0',
         ]);
 
         // Unique slug per product
@@ -138,17 +141,14 @@ new #[Layout('layouts.admin')] #[Title('Product Plans — ExchoSoft')] class ext
             'is_renewable'     => $this->is_renewable,
             'is_active'        => $this->is_active,
             'sort_order'       => $this->sort_order,
-            'max_activations'  => $this->max_activations ?: null,
-            'offline_ttl_hours'=> $this->offline_ttl_hours ?: null,
-            'grace_period_days'=> $this->grace_period_days ?: null,
         ];
 
         if ($this->editMode) {
             ProductPlan::findOrFail($this->editId)->update($data);
-            session()->flash('success', 'Plan updated successfully.');
+            session()->flash('success', 'Plan updated.');
         } else {
             ProductPlan::create($data);
-            session()->flash('success', 'Plan created successfully.');
+            session()->flash('success', 'Plan created.');
         }
 
         $this->showForm = false;
@@ -159,7 +159,7 @@ new #[Layout('layouts.admin')] #[Title('Product Plans — ExchoSoft')] class ext
     {
         $plan = ProductPlan::findOrFail($id);
         if ($plan->licenses()->exists()) {
-            session()->flash('error', 'Cannot delete plan — it has active licenses attached.');
+            session()->flash('error', 'Cannot delete plan — it has licenses attached.');
             return;
         }
         $plan->delete();
@@ -169,29 +169,26 @@ new #[Layout('layouts.admin')] #[Title('Product Plans — ExchoSoft')] class ext
     public function toggleStatus(string $id): void
     {
         $plan = ProductPlan::findOrFail($id);
-        $plan->update(['is_active' => !$plan->is_active]);
+        $plan->update(['is_active' => ! $plan->is_active]);
     }
 
     public function resetForm(): void
     {
-        $this->product_id       = $this->filterProduct ?: '';
-        $this->name             = '';
-        $this->slug             = '';
-        $this->description      = '';
-        $this->price            = '0.00';
-        $this->sale_price       = '';
-        $this->currency         = 'USD';
-        $this->duration_days    = 0;
-        $this->duration_type    = 'lifetime';
-        $this->trial_days       = 0;
-        $this->is_trial_eligible = true;
-        $this->is_renewable     = true;
-        $this->is_active        = true;
-        $this->sort_order       = 0;
-        $this->max_activations  = '';
-        $this->offline_ttl_hours = '';
-        $this->grace_period_days = '';
-        $this->editId = null;
+        $this->product_id      = $this->filterProduct ?: '';
+        $this->name            = '';
+        $this->slug            = '';
+        $this->description     = '';
+        $this->price           = '0.00';
+        $this->sale_price      = '';
+        $this->currency        = 'USD';
+        $this->duration_days   = 30;
+        $this->duration_type   = 'Monthly';
+        $this->trial_days      = 0;
+        $this->is_trial_eligible = false;
+        $this->is_renewable    = true;
+        $this->is_active       = true;
+        $this->sort_order      = 0;
+        $this->editId          = null;
         $this->resetValidation();
     }
 
@@ -211,7 +208,7 @@ new #[Layout('layouts.admin')] #[Title('Product Plans — ExchoSoft')] class ext
     #[Computed]
     public function products()
     {
-        return Product::where('is_active', true)->orderBy('name')->get();
+        return Product::where('is_active', true)->orderBy('name')->get(['id', 'name']);
     }
 }; ?>
 
@@ -220,7 +217,12 @@ new #[Layout('layouts.admin')] #[Title('Product Plans — ExchoSoft')] class ext
 
     <div class="space-y-5">
         @if (session('success'))
-            <div class="rounded-xl bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-700">{{ session('success') }}</div>
+            <div class="rounded-xl bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-700 flex items-center gap-2">
+                <svg class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                </svg>
+                {{ session('success') }}
+            </div>
         @endif
         @if (session('error'))
             <div class="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">{{ session('error') }}</div>
@@ -233,7 +235,7 @@ new #[Layout('layouts.admin')] #[Title('Product Plans — ExchoSoft')] class ext
                     <svg class="absolute left-3 top-2.5 h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                     </svg>
-                    <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search plans..."
+                    <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search plans…"
                         class="pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-cyan-400 w-48">
                 </div>
                 <select wire:model.live="filterProduct" class="rounded-xl border border-slate-200 text-sm px-3 py-2 focus:outline-none focus:border-cyan-400">
@@ -265,7 +267,7 @@ new #[Layout('layouts.admin')] #[Title('Product Plans — ExchoSoft')] class ext
                         <tr class="bg-slate-50 border-b border-slate-100">
                             <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Plan</th>
                             <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Product</th>
-                            <th class="px-5 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-500">Type</th>
+                            <th class="px-5 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-500">Billing</th>
                             <th class="px-5 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-500">Price</th>
                             <th class="px-5 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-500">Licenses</th>
                             <th class="px-5 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-500">Status</th>
@@ -276,29 +278,25 @@ new #[Layout('layouts.admin')] #[Title('Product Plans — ExchoSoft')] class ext
                         @forelse ($this->plans as $plan)
                             <tr class="hover:bg-slate-50/50 transition-colors">
                                 <td class="px-5 py-3">
-                                    <div>
-                                        <p class="font-semibold text-slate-900">{{ $plan->name }}</p>
-                                        <p class="text-xs text-slate-500">{{ $plan->slug }}</p>
-                                    </div>
+                                    <p class="font-semibold text-slate-900">{{ $plan->name }}</p>
+                                    <p class="text-xs text-slate-400">{{ $plan->slug }}</p>
                                 </td>
-                                <td class="px-5 py-3">
-                                    <span class="text-slate-700">{{ $plan->product->name ?? '—' }}</span>
-                                </td>
+                                <td class="px-5 py-3 text-slate-700">{{ $plan->product->name ?? '—' }}</td>
                                 <td class="px-5 py-3 text-center">
                                     @php
                                         $typeLabel = match(true) {
-                                            $plan->duration_days === 0        => 'Lifetime',
-                                            $plan->duration_days <= 31        => 'Monthly',
-                                            $plan->duration_days <= 93        => 'Quarterly',
-                                            $plan->duration_days <= 366       => 'Yearly',
-                                            default                           => $plan->duration_days . 'd',
+                                            $plan->duration_days === 0  => 'Lifetime',
+                                            $plan->duration_days <= 31  => 'Monthly',
+                                            $plan->duration_days <= 93  => 'Quarterly',
+                                            $plan->duration_days <= 366 => 'Yearly',
+                                            default                     => $plan->duration_days . 'd',
                                         };
                                         $typeColor = match($typeLabel) {
-                                            'Lifetime' => 'purple',
-                                            'Monthly'  => 'blue',
-                                            'Quarterly'=> 'indigo',
-                                            'Yearly'   => 'teal',
-                                            default    => 'slate',
+                                            'Lifetime'  => 'purple',
+                                            'Monthly'   => 'blue',
+                                            'Quarterly' => 'indigo',
+                                            'Yearly'    => 'teal',
+                                            default     => 'slate',
                                         };
                                     @endphp
                                     <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold bg-{{ $typeColor }}-100 text-{{ $typeColor }}-700">
@@ -306,15 +304,13 @@ new #[Layout('layouts.admin')] #[Title('Product Plans — ExchoSoft')] class ext
                                     </span>
                                 </td>
                                 <td class="px-5 py-3 text-center">
-                                    <div>
-                                        <p class="font-semibold text-slate-900">{{ $plan->currency }} {{ number_format($plan->effective_price, 2) }}</p>
-                                        @if ($plan->is_on_sale)
-                                            <p class="text-xs text-red-500 line-through">{{ number_format($plan->price, 2) }}</p>
-                                        @endif
-                                    </div>
+                                    <p class="font-semibold text-slate-900">{{ $plan->currency }} {{ number_format($plan->effective_price, 2) }}</p>
+                                    @if ($plan->is_on_sale)
+                                        <p class="text-xs text-red-500 line-through">{{ number_format($plan->price, 2) }}</p>
+                                    @endif
                                 </td>
-                                <td class="px-5 py-3 text-center">
-                                    <span class="font-semibold text-slate-700">{{ $plan->licenses()->count() }}</span>
+                                <td class="px-5 py-3 text-center font-semibold text-slate-700">
+                                    {{ $plan->licenses()->count() }}
                                 </td>
                                 <td class="px-5 py-3 text-center">
                                     <button wire:click="toggleStatus('{{ $plan->id }}')"
@@ -332,7 +328,7 @@ new #[Layout('layouts.admin')] #[Title('Product Plans — ExchoSoft')] class ext
                                             </svg>
                                         </button>
                                         <button wire:click="delete('{{ $plan->id }}')"
-                                            wire:confirm="Delete this plan? This cannot be undone."
+                                            wire:confirm="Delete this plan?"
                                             class="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600 transition-colors" title="Delete">
                                             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
@@ -344,7 +340,7 @@ new #[Layout('layouts.admin')] #[Title('Product Plans — ExchoSoft')] class ext
                         @empty
                             <tr>
                                 <td colspan="7" class="px-5 py-10 text-center text-sm text-slate-400">
-                                    No plans found. Create one to get started.
+                                    No plans found.
                                 </td>
                             </tr>
                         @endforelse
@@ -352,22 +348,23 @@ new #[Layout('layouts.admin')] #[Title('Product Plans — ExchoSoft')] class ext
                 </table>
             </div>
             @if ($this->plans->hasPages())
-                <div class="border-t border-slate-100 px-5 py-3">
-                    {{ $this->plans->links() }}
-                </div>
+                <div class="border-t border-slate-100 px-5 py-3">{{ $this->plans->links() }}</div>
             @endif
         </div>
     </div>
 
-    {{-- Slide-over Form --}}
+    {{-- ── Slide-over Form ── --}}
     @if ($showForm)
         <div class="fixed inset-0 z-50 overflow-hidden" x-data>
             <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" wire:click="$set('showForm', false)"></div>
-            <div class="absolute right-0 top-0 h-full w-full max-w-2xl bg-white shadow-2xl overflow-y-auto">
-                <div class="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
-                    <h2 class="text-lg font-bold text-slate-900">
-                        {{ $editMode ? 'Edit Plan' : 'New Plan' }}
-                    </h2>
+            <div class="absolute right-0 top-0 h-full w-full max-w-lg bg-white shadow-2xl flex flex-col">
+
+                {{-- Header --}}
+                <div class="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4 flex-shrink-0">
+                    <div>
+                        <h2 class="text-base font-bold text-slate-900">{{ $editMode ? 'Edit Plan' : 'New Plan' }}</h2>
+                        <p class="text-xs text-slate-400 mt-0.5">Define a pricing plan for a product</p>
+                    </div>
                     <button wire:click="$set('showForm', false)" class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700">
                         <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
@@ -375,12 +372,13 @@ new #[Layout('layouts.admin')] #[Title('Product Plans — ExchoSoft')] class ext
                     </button>
                 </div>
 
-                <form wire:submit="save" class="px-6 py-5 space-y-5">
+                <form wire:submit="save" class="flex-1 overflow-y-auto px-6 py-5 space-y-5">
+
                     {{-- Product --}}
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Product <span class="text-red-500">*</span></label>
-                        <select wire:model="product_id" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
-                            <option value="">Select a product...</option>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">Product <span class="text-red-500">*</span></label>
+                        <select wire:model="product_id" class="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm focus:outline-none focus:border-cyan-400 bg-white">
+                            <option value="">Select a product…</option>
                             @foreach ($this->products as $product)
                                 <option value="{{ $product->id }}">{{ $product->name }}</option>
                             @endforeach
@@ -388,85 +386,89 @@ new #[Layout('layouts.admin')] #[Title('Product Plans — ExchoSoft')] class ext
                         @error('product_id') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                     </div>
 
-                    {{-- Name / Slug --}}
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Plan Name <span class="text-red-500">*</span></label>
-                            <input wire:model.live="name" type="text" placeholder="e.g. Monthly, Yearly, Lifetime"
-                                class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
-                            @error('name') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Slug <span class="text-red-500">*</span></label>
-                            <input wire:model="slug" type="text" placeholder="monthly"
-                                class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
-                            @error('slug') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
-                        </div>
-                    </div>
-
-                    {{-- Description --}}
+                    {{-- Billing Period --}}
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Description</label>
-                        <textarea wire:model="description" rows="2" placeholder="Optional plan description..."
-                            class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400"></textarea>
-                    </div>
-
-                    {{-- Duration Type --}}
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Billing Period <span class="text-red-500">*</span></label>
-                        <div class="grid grid-cols-4 gap-2">
-                            @foreach(['lifetime' => 'Lifetime', 'monthly' => 'Monthly', 'yearly' => 'Yearly', 'custom' => 'Custom'] as $val => $label)
-                                <label class="flex flex-col items-center rounded-xl border-2 cursor-pointer p-3 transition-colors
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Billing Period <span class="text-red-500">*</span></label>
+                        <div class="grid grid-cols-5 gap-2">
+                            @foreach(['Monthly' => '30d', 'Quarterly' => '90d', 'Yearly' => '365d', 'Lifetime' => '∞', 'Custom' => '?'] as $val => $hint)
+                                <label class="flex flex-col items-center rounded-xl border-2 cursor-pointer p-2.5 transition-colors
                                     {{ $duration_type === $val ? 'border-cyan-500 bg-cyan-50' : 'border-slate-200 hover:border-slate-300' }}">
                                     <input type="radio" wire:model.live="duration_type" value="{{ $val }}" class="sr-only">
-                                    <span class="text-sm font-semibold {{ $duration_type === $val ? 'text-cyan-700' : 'text-slate-600' }}">{{ $label }}</span>
-                                    <span class="text-xs text-slate-400 mt-0.5">
-                                        {{ $val === 'lifetime' ? '∞' : ($val === 'monthly' ? '30d' : ($val === 'yearly' ? '365d' : '—')) }}
-                                    </span>
+                                    <span class="text-xs font-semibold {{ $duration_type === $val ? 'text-cyan-700' : 'text-slate-600' }}">{{ $val }}</span>
+                                    <span class="text-[10px] text-slate-400 mt-0.5">{{ $hint }}</span>
                                 </label>
                             @endforeach
                         </div>
-                        @if ($duration_type === 'custom')
+                        @if ($duration_type === 'Custom')
                             <div class="mt-2">
                                 <label class="block text-xs font-medium text-slate-600 mb-1">Duration in days</label>
-                                <input wire:model="duration_days" type="number" min="1" placeholder="e.g. 90 for quarterly"
+                                <input wire:model="duration_days" type="number" min="1" placeholder="e.g. 180"
                                     class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
                             </div>
                         @endif
                         @error('duration_days') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                     </div>
 
+                    {{-- Name / Slug --}}
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">Plan Name <span class="text-red-500">*</span></label>
+                            <input wire:model.live="name" type="text" placeholder="Monthly Pro"
+                                class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                            @error('name') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">Slug</label>
+                            <input wire:model="slug" type="text" placeholder="monthly-pro"
+                                class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 font-mono text-xs">
+                            @error('slug') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                        </div>
+                    </div>
+
+                    {{-- Description --}}
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Description <span class="text-slate-400 font-normal text-xs">(optional)</span></label>
+                        <textarea wire:model="description" rows="2" placeholder="Brief plan description…"
+                            class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 resize-none"></textarea>
+                    </div>
+
                     {{-- Pricing --}}
-                    <div class="rounded-xl bg-slate-50 p-4 space-y-3">
-                        <p class="text-sm font-semibold text-slate-700">Pricing</p>
+                    <div class="rounded-xl bg-slate-50 border border-slate-100 p-4 space-y-3">
+                        <p class="text-xs font-bold uppercase tracking-wide text-slate-500">Pricing</p>
                         <div class="grid grid-cols-3 gap-3">
                             <div class="col-span-2">
-                                <label class="block text-xs font-medium text-slate-600 mb-1">Price <span class="text-red-500">*</span></label>
-                                <input wire:model="price" type="number" step="0.01" min="0" placeholder="0.00"
-                                    class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Price <span class="text-red-500">*</span></label>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-2 text-slate-400 text-sm">$</span>
+                                    <input wire:model="price" type="number" step="0.01" min="0" placeholder="0.00"
+                                        class="w-full rounded-xl border border-slate-200 pl-7 pr-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                </div>
                                 @error('price') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-slate-600 mb-1">Currency</label>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Currency</label>
                                 <input wire:model="currency" type="text" maxlength="3" placeholder="USD"
-                                    class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                    class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 font-mono uppercase">
                             </div>
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-600 mb-1">Sale Price <span class="text-slate-400">(optional)</span></label>
-                            <input wire:model="sale_price" type="number" step="0.01" min="0" placeholder="Leave blank if no sale"
-                                class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Sale Price <span class="text-slate-400 font-normal">(optional)</span></label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-2 text-slate-400 text-sm">$</span>
+                                <input wire:model="sale_price" type="number" step="0.01" min="0" placeholder="Leave blank if no sale"
+                                    class="w-full rounded-xl border border-slate-200 pl-7 pr-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                            </div>
                         </div>
                     </div>
 
                     {{-- Trial --}}
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Trial Days</label>
-                            <input wire:model="trial_days" type="number" min="0" placeholder="0 = no trial"
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Trial Days <span class="text-slate-400 text-xs font-normal">(0 = no trial)</span></label>
+                            <input wire:model="trial_days" type="number" min="0" placeholder="0"
                                 class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
                         </div>
-                        <div class="flex items-end pb-1">
+                        <div class="flex items-end pb-2">
                             <label class="flex items-center gap-2 cursor-pointer">
                                 <input type="checkbox" wire:model="is_trial_eligible" class="rounded text-cyan-600 focus:ring-cyan-500">
                                 <span class="text-sm text-slate-700">Trial Eligible</span>
@@ -474,58 +476,33 @@ new #[Layout('layouts.admin')] #[Title('Product Plans — ExchoSoft')] class ext
                         </div>
                     </div>
 
-                    {{-- Overrides --}}
-                    <div class="rounded-xl bg-slate-50 p-4 space-y-3">
-                        <p class="text-sm font-semibold text-slate-700">Override Defaults <span class="text-xs font-normal text-slate-500">(leave blank to use product defaults)</span></p>
-                        <div class="grid grid-cols-3 gap-3">
-                            <div>
-                                <label class="block text-xs font-medium text-slate-600 mb-1">Max Activations</label>
-                                <input wire:model="max_activations" type="number" min="1" placeholder="—"
-                                    class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-slate-600 mb-1">Offline TTL (hrs)</label>
-                                <input wire:model="offline_ttl_hours" type="number" min="0" placeholder="—"
-                                    class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-medium text-slate-600 mb-1">Grace Period (days)</label>
-                                <input wire:model="grace_period_days" type="number" min="0" placeholder="—"
-                                    class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
-                            </div>
-                        </div>
-                    </div>
-
                     {{-- Options --}}
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Sort Order</label>
+                    <div class="flex flex-wrap gap-4 items-center">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" wire:model="is_renewable" class="rounded text-cyan-600 focus:ring-cyan-500">
+                            <span class="text-sm text-slate-700">Renewable</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" wire:model="is_active" class="rounded text-cyan-600 focus:ring-cyan-500">
+                            <span class="text-sm text-slate-700">Active</span>
+                        </label>
+                        <div class="ml-auto">
+                            <label class="block text-xs font-medium text-slate-600 mb-1">Sort Order</label>
                             <input wire:model="sort_order" type="number" min="0"
-                                class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
-                        </div>
-                        <div class="flex flex-col gap-2 justify-end pb-2">
-                            <label class="flex items-center gap-2 cursor-pointer">
-                                <input type="checkbox" wire:model="is_renewable" class="rounded text-cyan-600 focus:ring-cyan-500">
-                                <span class="text-sm text-slate-700">Renewable</span>
-                            </label>
-                            <label class="flex items-center gap-2 cursor-pointer">
-                                <input type="checkbox" wire:model="is_active" class="rounded text-cyan-600 focus:ring-cyan-500">
-                                <span class="text-sm text-slate-700">Active</span>
-                            </label>
+                                class="w-20 rounded-lg border border-slate-200 px-3 py-1.5 text-sm focus:outline-none focus:border-cyan-400">
                         </div>
                     </div>
 
                     {{-- Actions --}}
                     <div class="flex items-center justify-end gap-3 pt-2 border-t border-slate-100">
                         <button type="button" wire:click="$set('showForm', false)"
-                            class="rounded-xl px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 transition-colors">
-                            Cancel
-                        </button>
+                            class="rounded-xl px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 transition-colors">Cancel</button>
                         <button type="submit"
-                            class="rounded-xl bg-cyan-600 px-5 py-2 text-sm font-semibold text-white hover:bg-cyan-700 transition-colors">
+                            class="rounded-xl bg-cyan-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-cyan-700 transition-colors shadow-sm">
                             {{ $editMode ? 'Update Plan' : 'Create Plan' }}
                         </button>
                     </div>
+
                 </form>
             </div>
         </div>
