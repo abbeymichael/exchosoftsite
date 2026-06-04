@@ -59,20 +59,7 @@ class Customer extends Model
         return $this->archived_at !== null;
     }
 
-    // ── Note: customers table uses id() (bigint) + uuid column ─────────────
-    // HasUuids is used only if id is uuid. Since our customers table uses $table->id()
-    // plus a separate uuid column, we override the trait behaviour below.
-    public function uniqueIds(): array
-    {
-        return []; // uuid is populated via booted(), id() remains auto-increment
-    }
 
-    protected static function booted(): void
-    {
-        static::creating(function (Customer $customer) {
-            if (empty($customer->uuid)) {
-                $customer->uuid = (string) Str::uuid();
-            }
-        });
-    }
+
+
 }

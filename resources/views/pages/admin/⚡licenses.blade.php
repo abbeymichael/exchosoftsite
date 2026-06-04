@@ -37,7 +37,9 @@ new #[Layout('layouts.admin')] #[Title('Licenses — ExchoLicense')] class exten
     public string $status          = 'active';
     public string $expires_at      = '';
     public string $edit_customer_display = '';
-    public string $license_key     = '';
+    public string $license_key          = '';
+    public int    $max_activations      = 1;
+    public string $plan_changed_preview = ''; // live expiry preview shown in blade
 
     // ─────────────────────────────────────────────────────────────────────────
 
@@ -47,6 +49,34 @@ new #[Layout('layouts.admin')] #[Title('Licenses — ExchoLicense')] class exten
     public function updatedProductId(): void
     {
         $this->plan_id = '';
+        $this->plan_changed_preview = '';
+    }
+
+    // ── When plan changes in EDIT mode, recalculate expiry from today ─────────
+    public function updatedPlanId(): void
+    {
+        if (! $this->editing || ! $this->plan_id) {
+            $this->plan_changed_preview = '';
+            return;
+        }
+
+        $plan = ProductPlan::find($this->plan_id);
+        if (! $plan) {
+            $this->plan_changed_preview = '';
+            return;
+        }
+
+        // Recalculate from today (plan change resets the clock)
+        $this->max_activations = $plan->max_activations ?? $this->max_activations;
+
+        if ($plan->is_lifetime) {
+            $this->expires_at           = '';
+            $this->plan_changed_preview = 'Lifetime (no expiry)';
+        } else {
+            $newExpiry                  = now()->addDays($plan->duration_days);
+            $this->expires_at           = $newExpiry->format('Y-m-d');
+            $this->plan_changed_preview = $newExpiry->format('M d, Y') . " ({$plan->duration_days} days from today)";
+        }
     }
 
     // ── Customer search ───────────────────────────────────────────────────────
@@ -103,6 +133,8 @@ new #[Layout('layouts.admin')] #[Title('Licenses — ExchoLicense')] class exten
         $this->expires_at            = $license->expires_at ? $license->expires_at->format('Y-m-d') : '';
         $this->notes                 = $license->notes ?? '';
         $this->edit_customer_display = $license->customer?->name ?? $license->customer?->email ?? '(no customer)';
+        $this->max_activations       = $license->max_activations ?? 1;
+        $this->plan_changed_preview  = '';
         $this->editing               = true;
         $this->showModal             = true;
     }
@@ -158,20 +190,42 @@ new #[Layout('layouts.admin')] #[Title('Licenses — ExchoLicense')] class exten
 
         } else {
             $this->validate([
-                'status'     => 'required|in:active,inactive,expired,suspended,revoked,trial',
-                'expires_at' => 'nullable|date',
-                'notes'      => 'nullable|string|max:1000',
+                'status'          => 'required|in:active,inactive,expired,suspended,revoked,trial',
+                'expires_at'      => 'nullable|date',
+                'max_activations' => 'required|integer|min:1|max:999',
+                'notes'           => 'nullable|string|max:1000',
             ]);
 
             $data = [
-                'status'     => $this->status,
-                'expires_at' => $this->expires_at ?: null,
-                'notes'      => $this->notes ?: null,
+                'status'          => $this->status,
+                'expires_at'      => $this->expires_at ?: null,
+                'max_activations' => $this->max_activations,
+                'notes'           => $this->notes ?: null,
             ];
 
-            // Allow changing plan on edit
+            // If plan changed, update plan + derive type/edition/expiry from it
             if ($this->plan_id) {
+                $plan            = ProductPlan::findOrFail($this->plan_id);
                 $data['plan_id'] = $this->plan_id;
+
+                // Recalculate expiry from today based on new plan
+                $data['expires_at'] = $plan->is_lifetime
+                    ? null
+                    : now()->addDays($plan->duration_days)->toDateTimeString();
+
+                // Sync max_activations from plan unless admin overrode it
+                if ($plan->max_activations && $this->max_activations === 1) {
+                    $data['max_activations'] = $plan->max_activations;
+                }
+
+                // Re-derive type
+                $data['type'] = match (true) {
+                    $plan->duration_days === 0  => 'lifetime',
+                    $plan->duration_days <= 31  => 'monthly',
+                    $plan->duration_days <= 93  => 'monthly',
+                    $plan->duration_days >= 365 => 'annual',
+                    default                     => 'lifetime',
+                };
             }
 
             License::findOrFail($this->editingId)->update($data);
@@ -207,6 +261,8 @@ new #[Layout('layouts.admin')] #[Title('Licenses — ExchoLicense')] class exten
         $this->expires_at             = '';
         $this->license_key            = '';
         $this->edit_customer_display  = '';
+        $this->max_activations        = 1;
+        $this->plan_changed_preview   = '';
         $this->editingId              = null;
         $this->resetValidation();
     }
@@ -334,8 +390,8 @@ new #[Layout('layouts.admin')] #[Title('Licenses — ExchoLicense')] class exten
                                     @endif
                                 </td>
                                 <td class="px-5 py-3">
-                                    <span class="{{ ($license->current_activations ?? 0) >= $license->max_activations ? 'text-red-600 font-semibold' : 'text-slate-600' }}">
-                                        {{ $license->current_activations ?? 0 }} / {{ $license->max_activations }}
+                                    <span class="{{ ($license->getCurrentActivationsCount() ?? 0) >= $license->max_activations ? 'text-red-600 font-semibold' : 'text-slate-600' }}">
+                                        {{ $license->getCurrentActivationsCount() ?? 0 }} / {{ $license->max_activations }}
                                     </span>
                                 </td>
                                 <td class="px-5 py-3 text-slate-600 text-xs">
@@ -598,12 +654,24 @@ new #[Layout('layouts.admin')] #[Title('Licenses — ExchoLicense')] class exten
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-1.5">Plan</label>
                         @if($product_id)
-                            <select wire:model="plan_id" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+                            <select wire:model.live="plan_id" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500">
                                 <option value="">— Keep current plan —</option>
                                 @foreach($this->plansForProduct as $plan)
                                     <option value="{{ $plan->id }}">{{ $plan->name }} · {{ $plan->billing_label }} · {{ $plan->currency }} {{ number_format($plan->effective_price, 2) }}</option>
                                 @endforeach
                             </select>
+                        @endif
+
+                        {{-- Live preview when plan changes --}}
+                        @if($plan_changed_preview)
+                            <div class="mt-2 flex items-center gap-2 rounded-lg border border-cyan-200 bg-cyan-50 px-3 py-2">
+                                <svg class="h-4 w-4 text-cyan-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                <p class="text-xs text-cyan-700">
+                                    New expiry set to <span class="font-semibold">{{ $plan_changed_preview }}</span>
+                                </p>
+                            </div>
                         @endif
                     </div>
 
@@ -621,6 +689,20 @@ new #[Layout('layouts.admin')] #[Title('Licenses — ExchoLicense')] class exten
                         @error('status') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                     </div>
 
+                    {{-- Max Activations --}}
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1.5">
+                            Max Activations (Seats)
+                        </label>
+                        <div class="flex items-center gap-3">
+                            <input type="number" wire:model="max_activations"
+                                   min="1" max="999"
+                                   class="w-28 rounded-xl border border-slate-200 px-3 py-2 text-sm text-center font-semibold focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+                            <p class="text-xs text-slate-400">Number of devices this license can be activated on simultaneously.</p>
+                        </div>
+                        @error('max_activations') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                    </div>
+
                     {{-- Expiry --}}
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-1.5">
@@ -628,6 +710,7 @@ new #[Layout('layouts.admin')] #[Title('Licenses — ExchoLicense')] class exten
                         </label>
                         <input type="date" wire:model="expires_at"
                                class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+                        <p class="mt-1 text-xs text-slate-400">Changing the plan above will auto-fill this field.</p>
                     </div>
 
                     {{-- Notes --}}

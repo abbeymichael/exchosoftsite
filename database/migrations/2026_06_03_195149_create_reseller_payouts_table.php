@@ -25,7 +25,7 @@ return new class extends Migration
             $table->date('period_to')->nullable();
 
             // Admin who triggered the payout
-            $table->unsignedBigInteger('processed_by')->nullable();
+            $table->foreignUuid('processed_by')->nullable();
             $table->foreign('processed_by')->references('id')->on('users')->nullOnDelete();
 
             $table->timestamp('paid_at')->nullable();

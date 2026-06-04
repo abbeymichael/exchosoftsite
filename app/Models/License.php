@@ -238,9 +238,6 @@ class License extends Model
     protected static function booted(): void
     {
         static::creating(function (License $license) {
-            if (empty($license->uuid)) {
-                $license->uuid = (string) Str::uuid();
-            }
 
             if (empty($license->license_key)) {
                 $prefix = $license->key_prefix ?? 'EXCL';
@@ -259,5 +256,10 @@ class License extends Model
                 $license->refreshRevocationChecksum();
             }
         });
+    }
+
+    public function getCurrentActivationsCount(): int
+    {
+        return $this->activations()->where('status', 'active')->count();
     }
 }

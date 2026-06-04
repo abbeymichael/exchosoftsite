@@ -19,7 +19,7 @@ return new class extends Migration
             // Batch & Order (added later but included here for clean schema)
             $table->string('batch_id')->nullable()->index(); // FK added after license_batches is created
             $table->string('order_id')->nullable()->index(); // FK added after orders is created
-            $table->unsignedBigInteger('issued_by')->nullable();
+            $table->foreignUuid('issued_by')->nullable();
             $table->foreign('issued_by')->references('id')->on('users')->nullOnDelete();
 
             // License identity

@@ -12,19 +12,14 @@ return new class extends Migration
             $table->uuid('id')->primary();
 
             $table->foreignUuid('reseller_id')->constrained()->cascadeOnDelete();
-
-            // Only one of these will be set depending on commission type:
-            // referral  → order_id + license_id
-            // wholesale → batch_id (the batch purchase is the sale)
-            $table->unsignedBigInteger('order_id')->nullable();
+            $table->foreignUuid('order_id')->nullable();
             $table->foreign('order_id')->references('id')->on('orders')->nullOnDelete();
 
             $table->foreignUuid('license_id')->nullable()->constrained()->nullOnDelete();
 
-            $table->unsignedBigInteger('batch_id')->nullable();
-            $table->foreign('batch_id')->references('id')->on('license_batches')->nullOnDelete();
+            $table->foreignUuid('batch_id')->nullable()->constrained('license_batches')->nullOnDelete();
 
-            $table->foreignUuid('payment_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignUuid('payment_id')->nullable()->constrained('payments')->nullOnDelete();
 
             // wholesale_margin       = reseller bought batch at discount, margin is implicit
             // referral_commission    = % of customer's payment owed to reseller

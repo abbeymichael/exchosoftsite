@@ -11,11 +11,11 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->uuid('id')->primary();
 
-            $table->unsignedBigInteger('order_id');
+            $table->foreignUuid('order_id');
             $table->foreign('order_id')->references('id')->on('orders')->cascadeOnDelete();
 
             // Who paid
-            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreignUuid('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->nullOnDelete();
             $table->string('guest_email')->nullable();
 

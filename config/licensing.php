@@ -36,5 +36,8 @@ return [
     'offline_ttl_hours' => (int) env('LICENSE_OFFLINE_TTL_HOURS', 168),
     'grace_period_days' => (int) env('LICENSE_GRACE_PERIOD_DAYS', 7),
     'max_activations'   => (int) env('LICENSE_MAX_ACTIVATIONS', 1),
+    'default_edition'   => env('LICENSE_DEFAULT_EDITION', 'standard'),
+    'support_url'      => env('APP_SUPPORT_URL', 'https://support.exchosoft.com'),
+    'renewal_url'      => env('APP_RENEWAL_URL', 'https://exchosoft.com/renew'),
 
 ];

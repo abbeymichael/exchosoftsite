@@ -65,7 +65,7 @@ return new class extends Migration
 
         Schema::create('order_items', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('order_id');
+            $table->foreignUuid('order_id');
             $table->foreign('order_id')->references('id')->on('orders')->cascadeOnDelete();
             $table->foreignUuid('product_id')->nullable()->constrained('products')->nullOnDelete();
             $table->foreignUuid('plan_id')->nullable()->constrained('product_plans')->nullOnDelete();

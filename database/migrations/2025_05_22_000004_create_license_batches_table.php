@@ -14,7 +14,7 @@ return new class extends Migration
             // Ownership
             $table->foreignUuid('product_id')->constrained()->cascadeOnDelete();
             $table->foreignUuid('reseller_id')->nullable()->constrained('resellers')->nullOnDelete();
-            $table->unsignedBigInteger('created_by')->nullable();
+            $table->foreignUuid('created_by')->nullable();
             $table->foreign('created_by')->references('id')->on('users')->nullOnDelete();
 
             // Batch identity

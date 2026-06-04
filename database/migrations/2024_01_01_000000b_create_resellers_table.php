@@ -12,7 +12,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
 
             // Linked to a user account — reseller logs in as a normal user
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
 
             $table->string('company_name')->nullable();
 
@@ -46,7 +46,7 @@ return new class extends Migration
 
             $table->text('notes')->nullable();
             $table->timestamp('approved_at')->nullable();
-            $table->unsignedBigInteger('approved_by')->nullable();
+            $table->foreignUuid('approved_by')->nullable();
             $table->foreign('approved_by')->references('id')->on('users')->nullOnDelete();
 
             $table->timestamps();

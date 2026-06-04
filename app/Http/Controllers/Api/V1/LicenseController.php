@@ -50,6 +50,25 @@ class LicenseController extends Controller
     // logic.  max_activations is always enforced.
     // ──────────────────────────────────────────────────────────────────────────
 
+    private function apiError(
+        string $message,
+        string $errorCode,
+        int $statusCode = 400,
+        array $details = []
+    ): JsonResponse {
+        return response()->json([
+            'valid' => false,
+            'message' => $message,
+            'error_code' => $errorCode,
+            'details' => $details,
+            'timestamp' => now()->toISOString(),
+        ], $statusCode);
+    }
+
+    // ═════════════════════════════════════════════════════════════════════════
+    // UPDATED ERROR RESPONSES IN validate() METHOD
+    // ═════════════════════════════════════════════════════════════════════════
+
     public function validate(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -67,7 +86,15 @@ class LicenseController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return $this->errorResponse('Validation failed.', 422, $validator->errors()->toArray());
+            return $this->apiError(
+                'Request validation failed. Please check the required fields: '.
+                implode(', ', array_keys($validator->errors()->toArray())).'.',
+                'validation_error',
+                422,
+                [
+                    'fields' => $validator->errors()->toArray(),
+                ]
+            );
         }
 
         $licenseKey = strtoupper(trim($request->license_key));
@@ -79,11 +106,15 @@ class LicenseController extends Controller
             $skew = abs(time() - (int) $request->timestamp);
 
             if ($skew > self::MAX_TIMESTAMP_SKEW) {
-                return $this->errorResponse(
-                    'Request timestamp is invalid.',
+                return $this->apiError(
+                    'Request rejected due to timestamp mismatch. Your system clock may be out of sync.',
+                    'timestamp_skew',
                     403,
-                    [],
-                    'timestamp_skew'
+                    [
+                        'max_skew_seconds' => self::MAX_TIMESTAMP_SKEW,
+                        'server_time' => now()->toISOString(),
+                        'help' => 'Ensure your device time is synchronized with NTP.',
+                    ]
                 );
             }
         }
@@ -95,11 +126,15 @@ class LicenseController extends Controller
             $nonceKey = 'nonce:'.hash('sha256', $request->nonce);
 
             if (Cache::has($nonceKey)) {
-                return $this->errorResponse(
-                    'Replay request detected.',
+                return $this->apiError(
+                    'This request was recently processed. Please generate a new nonce for a new request.',
+                    'replay_attack',
                     403,
-                    [],
-                    'replay_attack'
+                    [
+                        'nonce_hash' => $nonceKey,
+                        'retry_after_seconds' => 60,
+                        'help' => 'Each validation request must include a unique nonce parameter.',
+                    ]
                 );
             }
 
@@ -107,44 +142,92 @@ class LicenseController extends Controller
         }
 
         // ─────────────────────────────────────────────
-        // License lookup (no product filtering)
+        // License lookup
         // ─────────────────────────────────────────────
         $license = License::with(['product', 'customer'])
             ->whereRaw('UPPER(TRIM(license_key)) = ?', [$licenseKey])
             ->first();
 
         if (! $license) {
-            return $this->errorResponse('License not found.', 404, [], 'license_not_found');
+            return $this->apiError(
+                "The license key '{$licenseKey}' was not found or is invalid.",
+                'license_not_found',
+                404,
+                [
+                    'license_key' => $licenseKey,
+                    'help' => "Verify the license key is correct (it's case-insensitive). Double-check for typos, especially similar characters like 0/O, 1/I/L, and 2/Z.",
+                    'support_url' => config('licensing.support_url'),
+                ]
+            );
         }
 
         // ─────────────────────────────────────────────
         // Status checks
         // ─────────────────────────────────────────────
         if ($license->status === 'revoked') {
-            return $this->errorResponse('License revoked.', 403, [], 'license_revoked');
+            return $this->apiError(
+                'This license has been revoked and is no longer valid.',
+                'license_revoked',
+                403,
+                [
+                    'revoked_at' => $license->revoked_at?->toISOString(),
+                    'help' => 'Contact support if you believe this is an error.',
+                ]
+            );
         }
 
         if ($license->status === 'suspended') {
-            return $this->errorResponse('License suspended.', 403, [], 'license_suspended');
+            return $this->apiError(
+                'This license is currently suspended. Please contact support.',
+                'license_suspended',
+                403,
+                [
+                    'suspended_at' => $license->suspended_at?->toISOString(),
+                    'support_url' => config('licensing.support_url', 'https://support.exchosoft.com'),
+                    'help' => 'Your license may be suspended due to non-payment or a violation.',
+                ]
+            );
         }
 
         if ($license->isExpired()) {
-            return $this->errorResponse('License expired.', 403, [], 'license_expired');
+            $gracePeriodDays = config('licensing.grace_period_days', 7);
+            $daysExpired = now()->diffInDays($license->expires_at);
+            $graceRemaining = max(0, $gracePeriodDays - $daysExpired);
+
+            return $this->apiError(
+                "This license expired on {$license->expires_at->toDateString()}. Please renew your license to continue.",
+                'license_expired',
+                403,
+                [
+                    'expired_at' => $license->expires_at->toISOString(),
+                    'days_expired' => $daysExpired,
+                    'renewal_url' => config('licensing.renewal_url'),
+                    'grace_period_days' => $gracePeriodDays,
+                    'grace_period_remaining' => $graceRemaining,
+                    'support_url' => config('licensing.support_url', 'https://support.exchosoft.com'),
+                ]
+            );
         }
 
         // ─────────────────────────────────────────────
         // Version check
         // ─────────────────────────────────────────────
         if (! $license->isAppVersionAllowed($request->app_version)) {
-            return $this->errorResponse(
-                'App version not supported.',
+            $minVersion = $license->min_app_version ?? $license->product?->min_app_version;
+            $maxVersion = $license->max_app_version ?? $license->product?->max_app_version;
+
+            return $this->apiError(
+                "App version {$request->app_version} is not compatible with this license ".
+                "(min: {$minVersion}, max: {$maxVersion}).",
+                'version_not_allowed',
                 403,
                 [
-                    'app_version' => $request->app_version,
-                    'min' => $license->min_app_version ?? $license->product?->min_app_version,
-                    'max' => $license->max_app_version ?? $license->product?->max_app_version,
-                ],
-                'version_not_allowed'
+                    'current_version' => $request->app_version,
+                    'min_version' => $minVersion,
+                    'max_version' => $maxVersion,
+                    'help' => 'Please update your application to a supported version.',
+                    'support_url' => config('licensing.support_url', 'https://support.exchosoft.com'),
+                ]
             );
         }
 
@@ -185,7 +268,17 @@ class LicenseController extends Controller
 
                 // revoked device cannot return
                 if ($activation && $activation->status === 'revoked') {
-                    abort(403, 'Device permanently revoked');
+                    abort(403, json_encode([
+                        'valid' => false,
+                        'message' => 'This device has been permanently revoked and cannot be reactivated.',
+                        'error_code' => 'device_revoked',
+                        'details' => [
+                            'device_id' => $request->device_id,
+                            'revoked_at' => $activation->revoked_at?->toISOString(),
+                            'help' => 'Contact support if you believe this is an error.',
+                        ],
+                        'timestamp' => now()->toISOString(),
+                    ]));
                 }
 
                 $activeCount = LicenseActivation::where('license_id', $license->id)
@@ -193,7 +286,31 @@ class LicenseController extends Controller
                     ->count();
 
                 if ($activeCount >= $license->max_activations) {
-                    abort(403, 'Activation limit reached');
+
+                    $activeDevices = LicenseActivation::where('license_id', $license->id)
+                        ->where('status', 'active')
+                        ->select('device_id', 'device_name', 'last_seen_at')
+                        ->get()
+                        ->map(fn ($d) => [
+                            'device_id' => $d->device_id,
+                            'device_name' => $d->device_name,
+                            'last_seen_at' => $d->last_seen_at->toISOString(),
+                        ])
+                        ->toArray();
+
+                    abort(response()->json([
+                        'valid' => false,
+                        'message' => "This license has reached its activation limit ({$license->max_activations} devices).",
+                        'error_code' => 'activation_limit_reached',
+                        'details' => [
+                            'max_activations' => $license->max_activations,
+                            'current_activations' => $activeCount,
+                            'active_devices' => $activeDevices,
+                            'help' => 'Deactivate unused devices or upgrade your license for more device slots.',
+                            'support_url' => config('licensing.support_url', 'https://support.exchosoft.com'),
+                        ],
+                        'timestamp' => now()->toISOString(),
+                    ], 403));
                 }
 
                 if ($activation && $activation->status === 'deactivated') {
@@ -227,11 +344,8 @@ class LicenseController extends Controller
                         'status' => 'active',
                         'is_suspicious' => (bool) $suspiciousReason,
                         'suspicious_reason' => $suspiciousReason,
-
-                        // FIXED: stable issuance values
                         'activated_at' => now(),
-                        'issued_at' => now(),
-
+                        'created_at' => now(),
                         'last_seen_at' => now(),
                     ]);
 
@@ -255,44 +369,32 @@ class LicenseController extends Controller
         // BUILD PAYLOAD
         // ─────────────────────────────────────────────
         $payload = [
-            'license_id' => $license->uuid,
+            'license_id' => $license->id,
             'license_key' => $license->license_key,
             'product' => $license->product?->product_code,
-
             'edition' => $license->edition,
             'type' => $license->type,
             'status' => $license->status,
             'expires_at' => $license->expires_at?->toDateString(),
-
             'device_id' => $request->device_id,
             'app_type' => $activation->app_type ?? 'desktop',
-
-            // FIXED: stable issued_at from DB
-            'issued_at' => $activation->issued_at?->toISOString()
-                ?? $activation->created_at?->toISOString(),
-
+            'issued_at' => $license->created_at?->toISOString() ?? $activation->created_at?->toISOString(),
             'activated_at' => $activation->activated_at?->toISOString(),
-
             'max_devices' => $license->max_activations,
             'activations_used' => $activeCount,
             'is_new_activation' => $isNewActivation,
-
             'offline_valid_until' => now()->addHours($offlineTtl)->toISOString(),
             'offline_ttl_hours' => $offlineTtl,
-
             'response_nonce' => Str::random(32),
-
             'min_app_version' => $license->min_app_version ?? $license->product?->min_app_version,
             'max_app_version' => $license->max_app_version ?? $license->product?->max_app_version,
-
             'grace_period_days' => config('licensing.grace_period_days', 7),
-
             'revocation_checksum' => $license->revocation_checksum,
             'validation_source' => $license->isInGracePeriod() ? 'grace_period' : 'online',
         ];
 
         // ─────────────────────────────────────────────
-        // SIGN ONLY STABLE DATA (NO NONCE, NO DYNAMIC FIELDS)
+        // SIGN ONLY STABLE DATA
         // ─────────────────────────────────────────────
         $signablePayload = [
             'license_id' => $payload['license_id'],
@@ -329,9 +431,7 @@ class LicenseController extends Controller
             'message' => $isNewActivation
                 ? 'License activated successfully.'
                 : 'License validated successfully.',
-
             'timestamp' => now()->toISOString(),
-
             'license' => [
                 'payload' => $payload,
                 'signature' => $signature,

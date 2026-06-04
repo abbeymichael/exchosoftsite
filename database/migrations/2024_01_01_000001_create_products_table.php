@@ -52,7 +52,7 @@ return new class extends Migration
             $table->unsignedBigInteger('sales_count')->default(0);
 
             // ── Ownership ───────────────────────────────────────────────────────
-            $table->unsignedBigInteger('created_by')->nullable();
+            $table->foreignUuid('created_by')->nullable();
             $table->foreign('created_by')->references('id')->on('users')->nullOnDelete();
 
             $table->softDeletes();
