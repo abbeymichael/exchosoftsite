@@ -67,8 +67,6 @@ new #[Layout('layouts.admin')] #[Title('License Batches — ExchoLicense')] clas
             return;
         }
 
-        $this->max_activations = $plan->max_activations ?? 1;
-
         if ($plan->is_lifetime) {
             $this->expires_at   = '';
             $this->plan_preview = 'Lifetime — keys never expire';
@@ -191,25 +189,29 @@ new #[Layout('layouts.admin')] #[Title('License Batches — ExchoLicense')] clas
 
             // If plan changed, recalculate expiry
             $updateData = [
-                'label'          => $this->label,
-                'status'         => $this->status,
-                'expires_at'     => $this->expires_at ?: null,
-                'max_activations'=> $this->max_activations,
-                'reseller_id'    => $this->reseller_id ?: null,
-                'notes'          => $this->notes ?: null,
+                'label'       => $this->label,
+                'status'      => $this->status,
+                'expires_at'  => $this->expires_at ?: null,
+                'reseller_id' => $this->reseller_id ?: null,
+                'notes'       => $this->notes ?: null,
             ];
 
             if ($this->plan_id && $this->plan_id !== (string)($batch->plan_id ?? '')) {
                 $plan = ProductPlan::find($this->plan_id);
                 if ($plan) {
                     $updateData['plan_id']       = $this->plan_id;
-                    $updateData['max_activations'] = $plan->max_activations ?? $batch->max_activations;
                     $updateData['expires_at']    = $plan->is_lifetime ? null : now()->addDays($plan->duration_days)->format('Y-m-d');
                     $updateData['duration_days'] = $plan->is_lifetime ? null : $plan->duration_days;
                 }
             }
 
             $batch->update($updateData);
+
+            // max_activations lives on each license, not on the batch or the plan.
+            // Update all non-revoked licenses in this batch to the new value.
+            $batch->licenses()->where('status', '!=', 'revoked')->update([
+                'max_activations' => $this->max_activations,
+            ]);
 
             $this->showModal = false;
             $this->resetForm();
@@ -775,6 +777,7 @@ new #[Layout('layouts.admin')] #[Title('License Batches — ExchoLicense')] clas
                         <label class="block text-sm font-medium text-slate-700 mb-1.5">Max Activations per Key</label>
                         <input type="number" wire:model="max_activations" min="1" max="9999"
                                class="w-28 rounded-xl border border-slate-200 px-3 py-2 text-sm text-center font-semibold focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500">
+                        <p class="mt-1 text-xs text-slate-400">Applied to all active licenses in this batch. The plan informs price &amp; duration only.</p>
                         @error('max_activations') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                     </div>
 

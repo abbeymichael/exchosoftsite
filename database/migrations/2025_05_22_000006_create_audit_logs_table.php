@@ -21,7 +21,7 @@ return new class extends Migration
             // What was changed
             $table->string('event')->comment('license.created|license.revoked|batch.generated …');
             $table->string('auditable_type')->nullable()->comment('App\\Models\\License');
-            $table->unsignedBigInteger('auditable_id')->nullable();
+            $table->foreignUuid('auditable_id')->nullable();
 
             // Context
             $table->json('old_values')->nullable();

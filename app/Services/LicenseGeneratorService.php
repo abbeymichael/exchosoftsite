@@ -49,22 +49,22 @@ class LicenseGeneratorService
 
             // Create the batch record
             $batch = LicenseBatch::create([
-                'product_id'      => $product->id,
-                'plan_id'         => $params['plan_id'] ?? null,
-                'created_by'      => $createdBy,
-                'label'           => $params['label'],
-                'key_prefix'      => $prefix,
-                'batch_code'      => strtoupper($prefix).'-'.strtoupper(substr(sha1(uniqid()), 0, 6)),
-                'quantity'        => $quantity,
-                'reseller_tag'    => $params['reseller_tag'] ?? null,
-                'license_type'    => $params['license_type'] ?? 'lifetime',
-                'edition'         => $params['edition'] ?? 'standard',
+                'product_id' => $product->id,
+                'plan_id' => $params['plan_id'] ?? null,
+                'created_by' => $createdBy,
+                'label' => $params['label'],
+                'key_prefix' => $prefix,
+                'batch_code' => strtoupper($prefix).'-'.strtoupper(substr(sha1(uniqid()), 0, 6)),
+                'quantity' => $quantity,
+                'reseller_tag' => $params['reseller_tag'] ?? null,
+                'license_type' => $params['license_type'] ?? 'lifetime',
+                'edition' => $params['edition'] ?? 'standard',
                 'max_activations' => $params['max_activations'] ?? $product->max_devices ?? 1,
-                'expires_at'      => $expiresAt,
-                'duration_days'   => $params['duration_days'] ?? null,
-                'notes'           => $params['notes'] ?? null,
-                'reseller_id'     => $params['reseller_id'] ?? null,
-                'metadata'        => $params['metadata'] ?? null,
+                'expires_at' => $expiresAt,
+                'duration_days' => $params['duration_days'] ?? null,
+                'notes' => $params['notes'] ?? null,
+                'reseller_id' => $params['reseller_id'] ?? null,
+                'metadata' => $params['metadata'] ?? null,
                 'total_generated' => 0,
             ]);
 
@@ -86,28 +86,29 @@ class LicenseGeneratorService
                         $now = now();
 
                         $chunk[] = [
-                            'product_id'          => $product->id,
-                            'plan_id'             => $params['plan_id'] ?? null,
-                            'customer_id'         => null,
-                            'batch_id'            => $batch->id,
-                            'license_key'         => $key,
-                            'key_prefix'          => $prefix,
-                            'edition'             => $params['edition'] ?? 'standard',
-                            'type'                => $params['license_type'] ?? 'lifetime',
-                            'max_activations'     => $params['max_activations'] ?? $product->max_devices ?? 1,
-                            'current_activations' => 0,
-                            'status'              => ($params['license_type'] ?? '') === 'trial' ? 'trial' : 'active',
-                            'expires_at'          => $expiresAt,
-                            'is_renewable'        => in_array($params['license_type'] ?? '', ['monthly', 'annual', 'yearly']),
-                            'created_at'          => $now,
-                            'updated_at'          => $now,
+                            'product_id' => $product->id,
+                            'plan_id' => $params['plan_id'] ?? null,
+                            'customer_id' => null,
+                            'batch_id' => $batch->id,
+                            'license_key' => $key,
+                            'key_prefix' => $prefix,
+                            'edition' => $params['edition'] ?? 'standard',
+                            'type' => $params['license_type'] ?? 'lifetime',
+                            'max_activations' => $params['max_activations'] ?? $product->max_devices ?? 1,
+                            'status' => ($params['license_type'] ?? '') === 'trial' ? 'trial' : 'active',
+                            'expires_at' => $expiresAt,
+                            'is_renewable' => in_array($params['license_type'] ?? '', ['monthly', 'annual', 'yearly']),
+                            'created_at' => $now,
+                            'updated_at' => $now,
                         ];
                     }
 
                     $attempts++;
                 }
 
-                License::insert($chunk);
+                foreach ($chunk as $licenseData) {
+                    License::create($licenseData);
+                }
                 $generated += count($chunk);
             }
 

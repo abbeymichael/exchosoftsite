@@ -13,7 +13,7 @@ class BatchExportService
      * Export all licenses in a batch to a CSV file and store it.
      * Returns a BatchExport record with a downloadable storage path.
      */
-    public function exportCsv(LicenseBatch $batch, int $exportedBy): BatchExport
+    public function exportCsv(LicenseBatch $batch, string $exportedBy): BatchExport
     {
         $filename    = "batch-{$batch->batch_code}-export-" . now()->format('Ymd-His') . '.csv';
         $storagePath = "exports/{$filename}";
