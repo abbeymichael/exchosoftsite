@@ -59,10 +59,7 @@ new #[Layout('layouts.admin')] #[Title('Resellers — ExchoSoft')] class extends
         $this->editMode       = true;
     }
 
-    public function viewReseller(string $id): void
-    {
-        $this->viewId = $id;
-    }
+
 
     public function closeView(): void
     {

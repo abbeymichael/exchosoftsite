@@ -18,10 +18,10 @@ new #[Layout('layouts.admin')] #[Title('Licenses — ExchoLicense')] class exten
     public string $filterProduct = '';
     public bool   $showModal     = false;
     public bool   $editing       = false;
-    public ?int   $editingId     = null;
+    public   $editingId     = null;
 
     // Form fields — customer is fully optional
-    public int    $product_id        = 0;
+    public string    $product_id        = "";
     public string $customer_email    = '';   // type email → auto-create customer
     public string $customer_name     = '';
     public string $license_key       = '';

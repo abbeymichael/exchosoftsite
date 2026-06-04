@@ -17,9 +17,26 @@
 
 <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8 bg-slate-50">
 
+    {{-- Brand --}}
+    <div class="sm:mx-auto sm:w-full sm:max-w-sm text-center">
+        @php
+            $iconPath = public_path('assets/images/logo.svg');
+            $logoPath = public_path('assets/images/logo.png');
+            $hasIcon  = file_exists($iconPath) && filesize($iconPath) > 0;
+            $hasLogo  = file_exists($logoPath) && filesize($logoPath) > 0;
+        @endphp
+        @if($hasIcon)
+            <img src="{{ asset('assets/images/logo.svg') }}" alt="ExchoLicense" class="mx-auto h-14 w-14 rounded-2xl object-cover shadow-lg">
+        @else
+            <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-cyan-600 shadow-lg">
+                <svg class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+                </svg>
+            </div>
+        @endif
+    </div>
 
-
-    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-lg">
+    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-sm">
         {{ $slot }}
     </div>
 
