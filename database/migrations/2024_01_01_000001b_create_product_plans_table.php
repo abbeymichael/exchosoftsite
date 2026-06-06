@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('name');                         // "Monthly", "Yearly", "Lifetime", "Custom"
             $table->string('slug');                         // monthly | yearly | lifetime | custom
             $table->text('description')->nullable();
+            $table->string('form_factor')->default('standalone')->after('product_id');
 
             // Pricing — each plan has its own price
             $table->decimal('price', 10, 2);

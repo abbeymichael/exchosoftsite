@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "../../vendor/mckenziearts/livewire-markdown-editor/resources/css/markdown-editor.css";
+@import "../../vendor/abbeymichael/livewire-markdown-editor/resources/css/markdown-editor.css";
 @plugin "@tailwindcss/typography";
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';

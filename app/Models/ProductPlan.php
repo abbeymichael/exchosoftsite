@@ -16,7 +16,7 @@ class ProductPlan extends Model
     protected $fillable = [
         'product_id',
         'name', 'slug', 'description',
-        'price', 'sale_price', 'currency',
+        'price', 'sale_price', 'currency', 'form_factor',
         'duration_days',
         'trial_days', 'is_trial_eligible',
         'is_renewable', 'is_active', 'sort_order',

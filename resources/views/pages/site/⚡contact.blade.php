@@ -2,6 +2,7 @@
 
 use App\Livewire\Concerns\LoadsPageSeo;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 
 new #[Layout('layouts.site')] class extends Component
@@ -10,20 +11,33 @@ new #[Layout('layouts.site')] class extends Component
 
     public string $name    = '';
     public string $email   = '';
+
+    #[Url(keep: true)]
     public string $subject = '';
+
     public string $message = '';
+
+    #[Url(keep: true)]
+    public string $intent  = '';
+
+    #[Url(keep: true)]
+    public string $product_context = '';
+
     public bool   $sent    = false;
 
     public function send(): void
     {
         $this->validate([
-            'name'    => 'required|string|max:100',
-            'email'   => 'required|email|max:200',
-            'subject' => 'required|string|max:200',
-            'message' => 'required|string|min:20|max:5000',
+            'name'            => 'required|string|max:100',
+            'email'           => 'required|email|max:200',
+            'subject'         => 'required|string|max:200',
+            'intent'          => 'nullable|string|max:100',
+            'product_context' => 'nullable|string|max:150',
+            'message'         => 'required|string|min:20|max:5000',
         ]);
+
         $this->sent = true;
-        $this->reset(['name','email','subject','message']);
+        $this->reset(['name','email','subject','message','intent','product_context']);
     }
 
     public function mount(): void
@@ -33,6 +47,26 @@ new #[Layout('layouts.site')] class extends Component
             'Contact Us — Exchosoft Consult',
             "Get in touch with Exchosoft Consult. Tell us what you need and we'll be honest about what we can build."
         );
+
+        // Dynamic Prefill Handler
+        if ($this->product_context) {
+            // Cleans "pos-offline-system" to "Pos Offline System"
+            $cleanProduct = ucwords(str_replace('-', ' ', $this->product_context));
+
+            // 1. If an explicit subject was passed in the URL, use it. Otherwise, craft one.
+            if (empty($this->subject)) {
+                $this->subject = trim(($this->intent ? $this->intent . ': ' : 'Enquiry: ') . $cleanProduct);
+            }
+
+            // 2. Automatically draft a pristine custom message context for the user
+            if (empty($this->message)) {
+                $actionPhrase = $this->intent ? strtolower($this->intent) : 'enquire about deployment';
+
+                $this->message = "Hello Exchosoft Team,\n\n" .
+                                 "I am reaching out from your software catalog regarding the " . $cleanProduct . " architecture.\n\n" .
+                                 "I would like to " . $actionPhrase . " for our business operations setup. Please advise on the next implementation steps.";
+            }
+        }
     }
 }; ?>
 
@@ -45,12 +79,12 @@ new #[Layout('layouts.site')] class extends Component
   .cinfo-icon svg { width: 18px; height: 18px; stroke: var(--cyan); fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
   .cform-group { margin-bottom: 1.1rem; }
   .cform-group label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--navy); margin-bottom: 0.45rem; }
-  .cform-group input, .cform-group textarea {
+  .cform-group input, .cform-group textarea, .cform-group select {
     width: 100%; border: 1.5px solid rgba(0,184,219,0.2); border-radius: 10px;
     padding: 0.72rem 1rem; font-size: 0.88rem; color: var(--navy); background: var(--white);
     transition: border-color 0.2s; outline: none; font-family: var(--font-body);
   }
-  .cform-group input:focus, .cform-group textarea:focus { border-color: var(--cyan); }
+  .cform-group input:focus, .cform-group textarea:focus, .cform-group select:focus { border-color: var(--cyan); }
   .cform-group textarea { resize: vertical; min-height: 130px; }
   .cform-error { font-size: 0.72rem; color: #ef4444; margin-top: 0.25rem; }
   @media (max-width: 1024px) { .contact-layout { grid-template-columns: 1fr; gap: 3rem; } }
@@ -83,7 +117,7 @@ new #[Layout('layouts.site')] class extends Component
         <div class="cinfo-icon"><svg viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div>
         <div>
           <p style="font-family:var(--font-display);font-weight:700;font-size:0.85rem;color:var(--navy);">Email</p>
-          <a href="mailto:contact@exchosoft.com" style="font-size:0.88rem;color:var(--cyan);text-decoration:none;">contact@exchosoft.com</a>
+          <a href="mailto:contact@exchosoft.com" style="font-size:0.88rem;color:var-[#00b8db];text-decoration:none;">contact@exchosoft.com</a>
         </div>
       </div>
       <div class="cinfo-item">
@@ -103,6 +137,25 @@ new #[Layout('layouts.site')] class extends Component
         </div>
       @else
         <form wire:submit="send">
+
+          <!-- Intent Track Segment (Drop Down Validation) -->
+          <div class="cform-group">
+            <label>Purpose of Contact</label>
+            <select wire:model.live="intent">
+                <option value="">General Consulting Enquiry</option>
+                <option value="mesh_assessment">On-Site Network Mesh Audit</option>
+                <option value="enterprise_quote">Enterprise Structural Quote</option>
+            </select>
+          </div>
+
+          <!-- Hidden Product Context Field passed automatically into data lifecycle -->
+          @if($product_context)
+            <div class="cform-group">
+                <label>Associated System Profile Architecture</label>
+                <input type="text" wire:model="product_context" readonly style="background: #f1f5f9; color: #64748b; font-weight: 600; capitalize;" />
+            </div>
+          @endif
+
           <div class="cform-group"><label>Your Name *</label>
             <input wire:model="name" type="text" placeholder="e.g. Kwame Mensah">
             @error('name')<p class="cform-error">{{ $message }}</p>@enderror

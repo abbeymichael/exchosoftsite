@@ -13,7 +13,7 @@ use Illuminate\Support\Str;
 
 class Product extends Model
 {
-    use HasFactory, SoftDeletes, HasUuids;
+    use HasFactory, HasUuids, SoftDeletes;
 
     protected $fillable = [
         'name', 'slug', 'product_code', 'platform',
@@ -33,29 +33,44 @@ class Product extends Model
     ];
 
     protected $casts = [
-        'is_active'             => 'boolean',
-        'is_published'          => 'boolean',
-        'is_featured'           => 'boolean',
-        'gallery'               => 'array',
-        'features'              => 'array',
-        'tech_stack'            => 'array',
-        'metadata'              => 'array',
-        'archived_at'           => 'datetime',
-        'max_devices'           => 'integer',
+        'is_active' => 'boolean',
+        'is_published' => 'boolean',
+        'is_featured' => 'boolean',
+        'gallery' => 'array',
+        'features' => 'array',
+        'tech_stack' => 'array',
+        'metadata' => 'array',
+        'archived_at' => 'datetime',
+        'max_devices' => 'integer',
         'default_duration_days' => 'integer',
-        'offline_ttl_hours'     => 'integer',
-        'grace_period_days'     => 'integer',
-        'sort_order'            => 'integer',
-        'sales_count'           => 'integer',
+        'offline_ttl_hours' => 'integer',
+        'grace_period_days' => 'integer',
+        'sort_order' => 'integer',
+        'sales_count' => 'integer',
     ];
 
     // ── Boot ──────────────────────────────────────────────────────────────────
+
+    public function mandatesCoreOps(): bool
+    {
+        return $this->form_factor === 'lan_orchestrated';
+    }
+
+    public function isIsolatedStandalone(): bool
+    {
+        return $this->form_factor === 'standalone';
+    }
+
+    public function isHybridCloudSync(): bool
+    {
+        return $this->form_factor === 'hybrid_cloud';
+    }
 
     protected static function booted(): void
     {
         static::creating(function (Product $p) {
             $p->secret_key ??= bin2hex(random_bytes(32));
-            $p->slug       ??= Str::slug($p->name);
+            $p->slug ??= Str::slug($p->name);
         });
     }
 
@@ -120,17 +135,47 @@ class Product extends Model
 
     // ── Scopes ────────────────────────────────────────────────────────────────
 
-    public function scopePublished($q)                     { return $q->where('is_published', true); }
-    public function scopeFeatured($q)                      { return $q->where('is_featured', true); }
-    public function scopeLicensable($q)                    { return $q->whereNotNull('app_identifier'); }
-    public function scopeActive($q)                        { return $q->where('is_active', true)->whereNull('archived_at'); }
-    public function scopeInCategory($q, string $category)  { return $q->where('category', $category); }
+    public function scopePublished($q)
+    {
+        return $q->where('is_published', true);
+    }
+
+    public function scopeFeatured($q)
+    {
+        return $q->where('is_featured', true);
+    }
+
+    public function scopeLicensable($q)
+    {
+        return $q->whereNotNull('app_identifier');
+    }
+
+    public function scopeActive($q)
+    {
+        return $q->where('is_active', true)->whereNull('archived_at');
+    }
+
+    public function scopeInCategory($q, string $category)
+    {
+        return $q->where('category', $category);
+    }
 
     // ── Accessors ─────────────────────────────────────────────────────────────
 
-    public function getIsOnSaleAttribute(): bool          { return false; } // pricing moved to plans
-    public function getIsLicensableAttribute(): bool      { return $this->app_identifier !== null; }
-    public function getIsArchivedAttribute(): bool        { return $this->archived_at !== null; }
+    public function getIsOnSaleAttribute(): bool
+    {
+        return false;
+    } // pricing moved to plans
+
+    public function getIsLicensableAttribute(): bool
+    {
+        return $this->app_identifier !== null;
+    }
+
+    public function getIsArchivedAttribute(): bool
+    {
+        return $this->archived_at !== null;
+    }
 
     /**
      * Get the cheapest active plan price for display purposes.
@@ -138,20 +183,21 @@ class Product extends Model
     public function getStartingPriceAttribute(): ?float
     {
         $plan = $this->activePlans->sortBy('price')->first();
+
         return $plan ? (float) ($plan->sale_price ?? $plan->price) : null;
     }
 
     public function getStatsAttribute(): array
     {
         return [
-            'total_licenses'    => $this->licenses()->count(),
-            'active_licenses'   => $this->activeLicenses()->count(),
+            'total_licenses' => $this->licenses()->count(),
+            'active_licenses' => $this->activeLicenses()->count(),
             'total_activations' => LicenseActivation::whereHas('license', fn ($q) => $q->where('product_id', $this->id))
-                                        ->where('status', 'active')->count(),
-            'total_batches'     => $this->batches()->count(),
-            'unused_licenses'   => $this->licenses()->whereNull('customer_id')->count(),
-            'total_orders'      => $this->orderItems()->count(),
-            'total_plans'       => $this->plans()->count(),
+                ->where('status', 'active')->count(),
+            'total_batches' => $this->batches()->count(),
+            'unused_licenses' => $this->licenses()->whereNull('customer_id')->count(),
+            'total_orders' => $this->orderItems()->count(),
+            'total_plans' => $this->plans()->count(),
         ];
     }
 }

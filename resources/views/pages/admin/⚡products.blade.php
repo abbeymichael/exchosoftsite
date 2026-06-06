@@ -20,12 +20,13 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
     public string $filterStatus   = '';
 
     // ── UI State ──────────────────────────────────────────────────────────────
-    public bool    $showForm  = false;
-    public bool    $editMode  = false;
-    public ?string $editId    = null;
-    public int     $activeTab = 0; // 0=Info, 1=Plans, 2=Shop
+    public bool    $showForm     = false; // Product form wizard state
+    public bool    $showPlanForm = false; // Separate Dedicated plan module form state
+    public bool    $editMode     = false;
+    public ?string $editId       = null;
+    public int     $activeTab    = 0;     // 0=Info, 1=Plans, 2=Shop
 
-    // ── Core Fields ───────────────────────────────────────────────────────────
+    // ── Core Product Fields ───────────────────────────────────────────────────
     public string  $name            = '';
     public string  $slug            = '';
     public string  $product_code    = '';
@@ -35,17 +36,36 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
     public         $logo            = null;
     public ?string $existing_logo   = null;
 
-    // ── Licensing (minimal) ───────────────────────────────────────────────────
+    // ── Licensing & Topology ──────────────────────────────────────────────────
     public string $app_identifier = '';
     public string $secret_key     = '';
     public string $support_email  = '';
     public string $webhook_url    = '';
 
-    // ── Inline Plans ─────────────────────────────────────────────────────────
-    // Each plan: [name, price, sale_price, currency, duration_days, duration_type, is_active, _id (edit)]
+    // ── Inline Wizard Multi-Plans Collection ──────────────────────────────────
     public array $plans = [];
 
-    // Preset plan options — name => duration_days (0 = lifetime)
+    // ── Dedicated Separate Plan Slide-Over Binding Fields ─────────────────────
+    public ?string $product_id        = null;
+    public string  $plan_name         = '';
+    public string  $plan_slug         = '';
+    public string  $plan_description  = '';
+    public string  $form_factor       = 'standalone';
+    public int     $max_activations   = 1;
+    public int     $offline_ttl_hours = 72;
+    public int     $grace_period_days = 0;
+    public string  $currency          = 'USD';
+    public string  $price             = '0.00';
+    public string  $sale_price         = '';
+    public string  $duration_type     = 'Monthly';
+    public int     $duration_days     = 30;
+    public int     $trial_days        = 0;
+    public bool    $is_trial_eligible = true;
+    public bool    $is_renewable      = true;
+    public bool    $plan_is_active    = true;
+    public int     $plan_sort_order   = 0;
+
+    // Preset options map
     public array $planPresets = [
         'Monthly'   => 30,
         'Quarterly' => 90,
@@ -59,7 +79,6 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
     public string  $full_description     = '';
     public string  $category             = '';
     public string  $product_type         = '';
-    public string  $currency             = 'USD';
     public         $cover_image          = null;
     public ?string $existing_cover_image = null;
     public array   $gallery_files        = [];
@@ -79,24 +98,77 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
 
     public function updatedName(): void
     {
-        if (!$this->editMode) {
+        if (!$this->editMode && $this->showForm) {
             $this->slug = str($this->name)->slug()->toString();
         }
     }
 
-    // ── Plan helpers ──────────────────────────────────────────────────────────
+    public function updatedPlanName(): void
+    {
+        if (!$this->editMode && $this->showPlanForm) {
+            $this->plan_slug = str($this->plan_name)->slug()->toString();
+        }
+    }
 
+    public function updatedDurationType(): void
+    {
+        if ($this->showPlanForm) {
+            $this->duration_days = match ($this->duration_type) {
+                'Monthly'   => 30,
+                'Quarterly' => 90,
+                'Yearly'    => 365,
+                'Lifetime'  => 0,
+                default     => $this->duration_days,
+            };
+        }
+    }
+
+    // ── Dedicated Plan Form Triggers ──────────────────────────────────────────
+    public function openCreatePlan(string $productId): void
+    {
+        $this->resetForm();
+        $this->product_id        = $productId;
+        $this->editMode          = false;
+        $this->showForm          = false;
+
+        // Setup initial default targets for single variant slide-over
+        $this->plan_name         = '';
+        $this->plan_slug         = '';
+        $this->plan_description  = '';
+        $this->form_factor       = 'standalone';
+        $this->max_activations   = 1;
+        $this->offline_ttl_hours = 72;
+        $this->grace_period_days = 0;
+        $this->currency          = 'USD';
+        $this->price             = '0.00';
+        $this->sale_price         = '';
+        $this->duration_type     = 'Monthly';
+        $this->duration_days     = 30;
+        $this->trial_days        = 0;
+        $this->is_trial_eligible = true;
+        $this->is_renewable      = true;
+        $this->plan_is_active    = true;
+        $this->plan_sort_order   = 0;
+
+        $this->showPlanForm      = true;
+    }
+
+    // ── Wizard Inline Plan helpers ────────────────────────────────────────────
     public function addPlan(): void
     {
         $this->plans[] = [
-            'name'          => 'Monthly',
-            'price'         => '0.00',
-            'sale_price'    => '',
-            'currency'      => $this->currency ?: 'USD',
-            'duration_days' => 30,
-            'duration_type' => 'Monthly',
-            'is_active'     => true,
-            '_id'           => null, // null = new, uuid string = existing
+            'name'              => 'Monthly',
+            'price'             => '0.00',
+            'sale_price'        => '',
+            'currency'          => $this->currency ?: 'USD',
+            'duration_days'     => 30,
+            'duration_type'     => 'Monthly',
+            'form_factor'       => 'standalone',
+            'max_activations'   => 1,
+            'offline_ttl_hours' => 72,
+            'billing_label'     => 'Billed Monthly',
+            'is_active'         => true,
+            '_id'               => null,
         ];
     }
 
@@ -107,10 +179,10 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
 
     public function updatedPlans($value, $key): void
     {
-        // When duration_type changes, set duration_days automatically
         if (str_ends_with($key, '.duration_type')) {
             $idx = (int) explode('.', $key)[0];
             $type = $this->plans[$idx]['duration_type'] ?? 'Monthly';
+
             $days = match ($type) {
                 'Monthly'   => 30,
                 'Quarterly' => 90,
@@ -118,22 +190,31 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
                 'Lifetime'  => 0,
                 default     => $this->plans[$idx]['duration_days'] ?? 30,
             };
+
+            $label = match ($type) {
+                'Monthly'   => 'Billed Monthly',
+                'Quarterly' => 'Billed Quarterly',
+                'Yearly'    => 'Billed Annually',
+                'Lifetime'  => 'One-time Payment',
+                default     => 'Custom Billing',
+            };
+
             if ($type !== 'Custom') {
                 $this->plans[$idx]['duration_days'] = $days;
-                // Auto-set name if it's a known preset
                 $this->plans[$idx]['name'] = $type;
+                $this->plans[$idx]['billing_label'] = $label;
             }
         }
     }
 
     // ── Open / Close ─────────────────────────────────────────────────────────
-
     public function openCreate(): void
     {
         $this->resetForm();
-        $this->showForm  = true;
-        $this->editMode  = false;
-        $this->activeTab = 0;
+        $this->showForm      = true;
+        $this->showPlanForm  = false;
+        $this->editMode      = false;
+        $this->activeTab     = 0;
     }
 
     public function openEdit(string $id): void
@@ -154,24 +235,27 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
         $this->support_email    = $product->support_email ?? '';
         $this->webhook_url      = $product->webhook_url ?? '';
 
-        // Load existing plans into inline editor
         $this->plans = $product->plans->map(function ($plan) {
             $type = match (true) {
-                $plan->duration_days === 0                                            => 'Lifetime',
-                $plan->duration_days <= 31                                            => 'Monthly',
-                $plan->duration_days <= 93                                            => 'Quarterly',
-                $plan->duration_days >= 365 && $plan->duration_days <= 366            => 'Yearly',
-                default                                                               => 'Custom',
+                $plan->duration_days === 0                                 => 'Lifetime',
+                $plan->duration_days <= 31                                 => 'Monthly',
+                $plan->duration_days <= 93                                 => 'Quarterly',
+                $plan->duration_days >= 365 && $plan->duration_days <= 366 => 'Yearly',
+                default                                                    => 'Custom',
             };
             return [
-                'name'          => $plan->name,
-                'price'         => (string) $plan->price,
-                'sale_price'    => (string) ($plan->sale_price ?? ''),
-                'currency'      => $plan->currency,
-                'duration_days' => $plan->duration_days,
-                'duration_type' => $type,
-                'is_active'     => $plan->is_active,
-                '_id'           => $plan->id,
+                'name'              => $plan->name,
+                'price'             => (string) $plan->price,
+                'sale_price'        => (string) ($plan->sale_price ?? ''),
+                'currency'          => $plan->currency,
+                'duration_days'     => $plan->duration_days,
+                'duration_type'     => $type,
+                'form_factor'       => $plan->form_factor ?? 'standalone',
+                'max_activations'   => $plan->max_activations ?? 1,
+                'offline_ttl_hours' => $plan->offline_ttl_hours ?? 72,
+                'billing_label'     => $plan->billing_label ?? 'Billed Progressively',
+                'is_active'         => $plan->is_active,
+                '_id'               => $plan->id,
             ];
         })->values()->toArray();
 
@@ -186,11 +270,13 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
         $this->existing_gallery     = $product->gallery ?? [];
         $this->features             = array_values($product->features ?? []);
         $this->tech_stack           = array_values($product->tech_stack ?? []);
+
         $rawMeta                    = $product->metadata ?? [];
         $this->metadata             = collect($rawMeta)->map(fn($v, $k) => ['key' => $k, 'value' => $v])->values()->toArray();
         if (empty($this->metadata)) {
             $this->metadata = [['key' => '', 'value' => '']];
         }
+
         $this->demo_url           = $product->demo_url ?? '';
         $this->documentation_url  = $product->documentation_url ?? '';
         $this->download_url       = $product->download_url ?? '';
@@ -199,45 +285,103 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
         $this->is_published       = $product->is_published;
         $this->is_featured        = $product->is_featured;
 
-        $this->showForm  = true;
-        $this->editMode  = true;
-        $this->activeTab = 0;
+        $this->showForm      = true;
+        $this->showPlanForm  = false;
+        $this->editMode      = true;
+        $this->activeTab     = 0;
     }
 
-    // ── Save ─────────────────────────────────────────────────────────────────
+    // ── Processing Strategy Router ────────────────────────────────────────────
+    public function handleFormSubmission(): void
+    {
+        if ($this->showPlanForm) {
+            $this->saveDedicatedPlan();
+        } else {
+            $this->saveProductWizard();
+        }
+    }
 
+    // ── Save Operation Plan Single Variant Module ─────────────────────────────
+    protected function saveDedicatedPlan(): void
+    {
+        $this->validate([
+            'plan_name'         => 'required|string|max:100',
+            'plan_slug'         => 'required|string|max:100',
+            'form_factor'       => 'required|string|in:standalone,lan_orchestrated,hybrid_cloud',
+            'max_activations'   => 'required|integer|min:1',
+            'offline_ttl_hours' => 'required|integer|min:0',
+            'currency'          => 'required|string|max:3',
+            'price'             => 'required|numeric|min:0',
+            'sale_price'        => 'nullable|numeric|min:0',
+            'duration_days'     => 'required|integer|min:0',
+        ]);
+
+        $label = match ($this->duration_type) {
+            'Monthly'   => 'Billed Monthly',
+            'Quarterly' => 'Billed Quarterly',
+            'Yearly'    => 'Billed Annually',
+            'Lifetime'  => 'One-time Payment',
+            default     => 'Custom Billing',
+        };
+
+        ProductPlan::create([
+            'product_id'        => $this->product_id,
+            'name'              => trim($this->plan_name),
+            'slug'              => trim($this->plan_slug),
+            'price'             => $this->price,
+            'sale_price'        => ($this->sale_price !== '' && $this->sale_price !== null) ? $this->sale_price : null,
+            'currency'          => strtoupper($this->currency),
+            'duration_days'     => (int) $this->duration_days,
+            'form_factor'       => $this->form_factor,
+            'max_activations'   => (int) $this->max_activations,
+            'offline_ttl_hours' => (int) $this->offline_ttl_hours,
+            'billing_label'     => $label,
+            'is_active'         => (bool) $this->plan_is_active,
+            'sort_order'        => $this->plan_sort_order,
+        ]);
+
+        session()->flash('success', 'Operational plan option deployed successfully.');
+        $this->showPlanForm = false;
+        $this->resetForm();
+    }
+
+    // ── Save Product Master Wizard Pipeline ────────────────────────────────────
     public function save(): void
     {
         $this->validate([
-            'name'                  => 'required|string|max:100',
-            'slug'                  => 'required|string|max:100|unique:products,slug' . ($this->editMode ? ',' . $this->editId . ',id' : ''),
-            'product_code'          => 'nullable|string|max:50',
-            'platform'              => 'nullable|string|max:50',
-            'current_version'       => 'nullable|string|max:50',
-            'description'           => 'nullable|string|max:500',
-            'logo'                  => 'nullable|image|max:2048',
-            'app_identifier'        => 'nullable|string|max:100',
-            'support_email'         => 'nullable|email|max:100',
-            'tagline'               => 'nullable|string|max:200',
-            'full_description'      => 'nullable|string',
-            'category'              => 'nullable|string|max:50',
-            'product_type'          => 'nullable|string|max:50',
-            'currency'              => 'nullable|string|max:3',
-            'cover_image'           => 'nullable|image|max:4096',
-            'gallery_files.*'       => 'nullable|image|max:4096',
-            'features.*'            => 'nullable|string|max:200',
-            'tech_stack.*'          => 'nullable|string|max:100',
-            'metadata.*.key'        => 'nullable|string|max:100',
-            'metadata.*.value'      => 'nullable|string|max:500',
-            'demo_url'              => 'nullable|url|max:255',
-            'documentation_url'     => 'nullable|url|max:255',
-            'download_url'          => 'nullable|url|max:255',
-            'sort_order'            => 'nullable|integer|min:0',
-            'plans.*.name'          => 'required|string|max:100',
-            'plans.*.price'         => 'required|numeric|min:0',
-            'plans.*.sale_price'    => 'nullable|numeric|min:0',
-            'plans.*.currency'      => 'required|string|max:3',
-            'plans.*.duration_days' => 'required|integer|min:0',
+            'name'                      => 'required|string|max:100',
+            'slug'                      => 'required|string|max:100|unique:products,slug' . ($this->editMode ? ',' . $this->editId . ',id' : ''),
+            'product_code'              => 'nullable|string|max:50',
+            'platform'                  => 'nullable|string|max:50',
+            'current_version'           => 'nullable|string|max:50',
+            'description'               => 'nullable|string|max:500',
+            'logo'                      => 'nullable|image|max:2048',
+            'app_identifier'            => 'nullable|string|max:100',
+            'support_email'             => 'nullable|email|max:100',
+            'tagline'                   => 'nullable|string|max:200',
+            'full_description'          => 'nullable|string',
+            'category'                  => 'nullable|string|max:50',
+            'product_type'              => 'nullable|string|max:50',
+            'currency'                  => 'nullable|string|max:3',
+            'cover_image'               => 'nullable|image|max:4096',
+            'gallery_files.*'           => 'nullable|image|max:4096',
+            'features.*'                => 'nullable|string|max:200',
+            'tech_stack.*'              => 'nullable|string|max:100',
+            'metadata.*.key'            => 'nullable|string|max:100',
+            'metadata.*.value'          => 'nullable|string|max:500',
+            'demo_url'                  => 'nullable|url|max:255',
+            'documentation_url'         => 'nullable|url|max:255',
+            'download_url'              => 'nullable|url|max:255',
+            'sort_order'                => 'nullable|integer|min:0',
+            'plans.*.name'              => 'required|string|max:100',
+            'plans.*.price'             => 'required|numeric|min:0',
+            'plans.*.sale_price'        => 'nullable|numeric|min:0',
+            'plans.*.currency'          => 'required|string|max:3',
+            'plans.*.duration_days'     => 'required|integer|min:0',
+            'plans.*.form_factor'       => 'required|string|in:standalone,lan_orchestrated,hybrid_cloud',
+            'plans.*.max_activations'   => 'required|integer|min:1',
+            'plans.*.offline_ttl_hours' => 'required|integer|min:0',
+            'plans.*.billing_label'     => 'required|string|max:100',
         ]);
 
         $data = [
@@ -287,26 +431,27 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
             $product = Product::create($data);
         }
 
-        // ── Sync inline plans ─────────────────────────────────────────────────
         $keptIds = [];
         foreach ($this->plans as $i => $row) {
             $planData = [
-                'product_id'    => $product->id,
-                'name'          => trim($row['name']),
-                'slug'          => str($row['name'])->slug()->toString(),
-                'price'         => $row['price'],
-                'sale_price'    => ($row['sale_price'] !== '' && $row['sale_price'] !== null) ? $row['sale_price'] : null,
-                'currency'      => $row['currency'] ?: 'USD',
-                'duration_days' => (int) $row['duration_days'],
-                'is_active'     => (bool) ($row['is_active'] ?? true),
-                'sort_order'    => $i,
+                'product_id'        => $product->id,
+                'name'              => trim($row['name']),
+                'slug'              => str($row['name'])->slug()->toString(),
+                'price'             => $row['price'],
+                'sale_price'        => ($row['sale_price'] !== '' && $row['sale_price'] !== null) ? $row['sale_price'] : null,
+                'currency'          => $row['currency'] ?: 'USD',
+                'duration_days'     => (int) $row['duration_days'],
+                'form_factor'       => $row['form_factor'],
+                'max_activations'   => (int) $row['max_activations'],
+                'offline_ttl_hours' => (int) $row['offline_ttl_hours'],
+                'billing_label'     => trim($row['billing_label']),
+                'is_active'         => (bool) ($row['is_active'] ?? true),
+                'sort_order'        => $i,
             ];
 
             if (!empty($row['_id'])) {
-                // Existing plan — update
                 $plan = ProductPlan::find($row['_id']);
                 if ($plan && $plan->product_id === $product->id) {
-                    // Ensure slug unique per product (excluding self)
                     $slugExists = ProductPlan::where('product_id', $product->id)
                         ->where('slug', $planData['slug'])
                         ->where('id', '!=', $plan->id)
@@ -318,7 +463,6 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
                     $keptIds[] = $plan->id;
                 }
             } else {
-                // New plan — ensure unique slug
                 $base = $planData['slug'];
                 $c    = 1;
                 while (ProductPlan::where('product_id', $product->id)->where('slug', $planData['slug'])->exists()) {
@@ -329,7 +473,6 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
             }
         }
 
-        // Delete plans removed from the inline editor
         if ($this->editMode) {
             ProductPlan::where('product_id', $product->id)
                 ->whereNotIn('id', $keptIds)
@@ -342,7 +485,6 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
     }
 
     // ── CRUD helpers ──────────────────────────────────────────────────────────
-
     public function delete(string $id): void
     {
         Product::findOrFail($id)->delete();
@@ -362,7 +504,6 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
     }
 
     // ── Feature / Tech / Meta helpers ─────────────────────────────────────────
-
     public function addFeature(): void    { $this->features[] = ''; }
     public function removeFeature(int $i): void { array_splice($this->features, $i, 1); }
 
@@ -378,7 +519,6 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
     }
 
     // ── Reset ─────────────────────────────────────────────────────────────────
-
     public function resetForm(): void
     {
         $this->name             = '';
@@ -418,8 +558,6 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
         $this->resetValidation();
     }
 
-    // ── Computed ──────────────────────────────────────────────────────────────
-
     #[Computed]
     public function products()
     {
@@ -436,153 +574,155 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
 }; ?>
 
 <div>
-    <x-slot:heading>Products</x-slot:heading>
-
-    <div class="space-y-5">
-        @if (session('success'))
-            <div class="rounded-xl bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-700 flex items-center gap-2">
-                <svg class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
-                </svg>
-                {{ session('success') }}
-            </div>
-        @endif
-
-        {{-- Header / Toolbar --}}
-        <div class="flex flex-wrap items-center justify-between gap-3">
-            <div class="flex flex-wrap items-center gap-2">
-                <div class="relative">
-                    <svg class="absolute left-3 top-2.5 h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                    </svg>
-                    <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search products…"
-                        class="pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-cyan-400 w-52">
-                </div>
-                <select wire:model.live="filterPlatform" class="rounded-xl border border-slate-200 text-sm px-3 py-2 focus:outline-none focus:border-cyan-400">
-                    <option value="">All Platforms</option>
-                    <option value="web">Web</option>
-                    <option value="desktop">Desktop</option>
-                    <option value="mobile">Mobile</option>
-                </select>
-                <select wire:model.live="filterCategory" class="rounded-xl border border-slate-200 text-sm px-3 py-2 focus:outline-none focus:border-cyan-400">
-                    <option value="">All Categories</option>
-                    <option value="erp">ERP</option>
-                    <option value="hrms">HRMS</option>
-                    <option value="software">Software</option>
-                </select>
-                <select wire:model.live="filterStatus" class="rounded-xl border border-slate-200 text-sm px-3 py-2 focus:outline-none focus:border-cyan-400">
-                    <option value="">All Status</option>
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                </select>
-            </div>
-            <button wire:click="openCreate"
-                class="inline-flex items-center gap-2 rounded-xl bg-cyan-600 px-4 py-2 text-sm font-semibold text-white hover:bg-cyan-700 transition-colors shadow-sm">
-                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
-                </svg>
-                New Product
-            </button>
+    {{-- Application Catalog Matrix Header Bar Match --}}
+    <div class="bg-white border border-slate-200 rounded-2xl p-6 mb-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-xl font-bold text-slate-900 tracking-tight">Application Catalogs Matrix</h1>
+            <p class="text-xs text-slate-400 mt-1">Deploy applications, map pricing topologies, manage promotional high-resolution banners and system screens layout.</p>
         </div>
-
-        {{-- Table --}}
-        <div class="rounded-2xl bg-white shadow-sm ring-1 ring-slate-100 overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="min-w-full text-sm">
-                    <thead>
-                        <tr class="bg-slate-50 border-b border-slate-100">
-                            <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Name</th>
-                            <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Platform</th>
-                            <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Category</th>
-                            <th class="px-5 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-500">Plans</th>
-                            <th class="px-5 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-500">Published</th>
-                            <th class="px-5 py-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-500">Status</th>
-                            <th class="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100">
-                        @forelse($this->products as $product)
-                            <tr class="hover:bg-slate-50/50 transition-colors">
-                                <td class="px-5 py-3">
-                                    <div class="flex items-center gap-3">
-                                        @if($product->logo)
-                                            <img src="{{ Storage::url($product->logo) }}" alt="" class="h-8 w-8 rounded-lg object-cover border border-slate-200 flex-shrink-0">
-                                        @else
-                                            <div class="h-8 w-8 rounded-lg bg-gradient-to-br from-cyan-100 to-cyan-200 flex items-center justify-center flex-shrink-0">
-                                                <span class="text-xs font-bold text-cyan-600">{{ strtoupper(substr($product->name, 0, 1)) }}</span>
-                                            </div>
-                                        @endif
-                                        <div>
-                                            <p class="font-semibold text-slate-900">{{ $product->name }}</p>
-                                            <p class="text-xs text-slate-400">{{ $product->product_code ?? $product->slug }}</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-5 py-3 text-slate-600">{{ $product->platform ?? '—' }}</td>
-                                <td class="px-5 py-3 text-slate-600">{{ $product->category ?? '—' }}</td>
-                                <td class="px-5 py-3 text-center">
-                                    @php $planCount = $product->plans->count(); @endphp
-                                    @if($planCount > 0)
-                                        <div class="flex flex-col items-center gap-0.5">
-                                            <span class="inline-flex items-center rounded-full bg-purple-100 text-purple-700 px-2.5 py-0.5 text-xs font-semibold">
-                                                {{ $planCount }} {{ Str::plural('plan', $planCount) }}
-                                            </span>
-                                            @php $startPrice = $product->starting_price; @endphp
-                                            @if($startPrice !== null)
-                                                <span class="text-xs text-slate-500">from {{ $product->currency }} {{ number_format($startPrice, 2) }}</span>
-                                            @endif
-                                        </div>
-                                    @else
-                                        <span class="text-xs text-slate-400 italic">No plans</span>
-                                    @endif
-                                </td>
-                                <td class="px-5 py-3 text-center">
-                                    <button wire:click="togglePublished('{{ $product->id }}')"
-                                        class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors
-                                               {{ $product->is_published ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' : 'bg-slate-100 text-slate-500 hover:bg-slate-200' }}">
-                                        {{ $product->is_published ? 'Published' : 'Draft' }}
-                                    </button>
-                                </td>
-                                <td class="px-5 py-3 text-center">
-                                    <button wire:click="toggleStatus('{{ $product->id }}')"
-                                        class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors
-                                               {{ $product->is_active ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-slate-100 text-slate-500 hover:bg-slate-200' }}">
-                                        {{ $product->is_active ? 'Active' : 'Inactive' }}
-                                    </button>
-                                </td>
-                                <td class="px-5 py-3 text-right">
-                                    <div class="flex items-center justify-end gap-1">
-                                        <button wire:click="openEdit('{{ $product->id }}')"
-                                            class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors" title="Edit">
-                                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                            </svg>
-                                        </button>
-                                        <button wire:click="delete('{{ $product->id }}')"
-                                            wire:confirm="Delete this product and all its plans?"
-                                            class="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600 transition-colors" title="Delete">
-                                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="7" class="px-5 py-12 text-center text-sm text-slate-400">No products yet. Create your first one!</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+        <div class="flex flex-wrap items-center gap-2">
+            <div class="relative">
+                <svg class="absolute left-3 top-2.5 h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search operational matrices…"
+                    class="pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-cyan-500 bg-white w-56">
             </div>
-            @if ($this->products->hasPages())
-                <div class="border-t border-slate-100 px-5 py-4">{{ $this->products->links() }}</div>
-            @endif
+            <select wire:model.live="filterPlatform" class="rounded-xl border border-slate-200 text-xs px-3 py-2 bg-white focus:outline-none focus:border-cyan-500">
+                <option value="">All Architectures</option>
+                <option value="web">Web Architectures</option>
+                <option value="desktop">Desktop Standalone</option>
+                <option value="mobile">Mobile Devices</option>
+            </select>
+            <button wire:click="openCreate"
+                class="inline-flex items-center gap-1.5 rounded-xl bg-slate-950 px-4 py-2 text-xs font-bold text-white hover:bg-slate-800 transition-colors shadow-sm">
+                <span class="text-base leading-none font-normal">+</span> Provision Core App
+            </button>
         </div>
     </div>
 
-    {{-- ────────── Slide-over Form ────────── --}}
+    @if (session('success'))
+        <div class="mb-5 rounded-xl bg-emerald-50 border border-emerald-200 px-4 py-3 text-xs text-emerald-700 flex items-center gap-2">
+            <svg class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+            </svg>
+            {{ session('success') }}
+        </div>
+    @endif
+
+    {{-- Cards Grid layout modeled after image_7d5704.jpg --}}
+    @if($this->products->isNotEmpty())
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach($this->products as $product)
+                <div class="flex flex-col rounded-2xl bg-white border border-slate-200 shadow-xs overflow-hidden relative group">
+
+                    {{-- Blue/Dark Header Area Placeholder matching image_7d5704.jpg --}}
+                    <div class="h-28 bg-[#0B1528] relative flex items-center justify-center border-b border-slate-100">
+                        @if($product->cover_image)
+                            <img src="{{ Storage::url($product->cover_image) }}" class="absolute inset-0 w-full h-full object-cover">
+                        @else
+                            <span class="text-[9px] font-mono tracking-widest text-slate-500/80 uppercase">NO COVER BANNER CONFIGURED</span>
+                        @endif
+
+                        <div class="absolute top-3 right-3 h-3 w-3 rounded-md border border-white/40 bg-white/10"></div>
+
+                        <div class="absolute -bottom-5 left-5 h-11 w-11 rounded-xl bg-white border border-slate-200 shadow-xs flex items-center justify-center font-bold text-[11px] text-slate-500 tracking-wider">
+                            {{ strtoupper(substr($product->name, 0, 2)) }}
+                        </div>
+                    </div>
+
+                    {{-- Architecture and Version Row --}}
+                    <div class="px-5 pt-7 pb-2 flex items-center justify-between">
+                        <div>
+                            @if($product->platform)
+                                <span class="inline-flex items-center rounded bg-cyan-50 text-cyan-600 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider border border-cyan-100/30">
+                                    {{ $product->platform }}
+                                </span>
+                            @endif
+                        </div>
+                        <div class="text-right">
+                            <span class="text-[10px] font-mono text-slate-400 block">Ver: <span class="text-slate-800 font-semibold">{{ $product->current_version ?? '1.0.0' }}</span></span>
+                        </div>
+                    </div>
+
+                    {{-- Title Header and Baseline Text Block --}}
+                    <div class="px-5 pb-4 space-y-1.5">
+                        <h2 class="text-sm font-black text-slate-900 tracking-tight flex items-center gap-1.5 uppercase">
+                            {{ $product->name }}
+                            <span class="text-[10px] font-mono font-normal text-slate-400 lowercase">[{{ $product->product_code ?? $product->slug }}]</span>
+                        </h2>
+                        <p class="text-xs text-slate-400 leading-relaxed min-h-[34px] line-clamp-2">
+                            {{ $product->description ?? 'No operational baseline summary roadmap configured for this application module entity.' }}
+                        </p>
+                    </div>
+
+                    {{-- Licensing Tier Splitter Bar - Now routes to the new dedicated Slide-Over --}}
+                    <div class="mx-5 py-3 border-y border-slate-100 flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-1.5 font-bold text-slate-800 text-[11px]">
+                            Licensing Tiers:
+                            <span class="bg-cyan-50 border border-cyan-100 text-cyan-600 px-2 py-0.5 rounded text-[10px] font-bold">
+                                {{ $product->plans->count() }} Deployed
+                            </span>
+                        </div>
+                        <button wire:click="openCreatePlan('{{ $product->id }}')" class="inline-flex items-center gap-1 rounded-lg bg-cyan-600 px-2.5 py-1 text-[10px] font-bold text-white shadow-xs hover:bg-cyan-700 transition-colors">
+                            <span class="text-xs font-normal">+</span> Add Plan
+                        </button>
+                    </div>
+
+                    {{-- TOPOGRAPHY DISTRIBUTION MAPPING LIST SECTION --}}
+                    <div class="px-5 py-4 flex-1 space-y-3 bg-slate-50/40">
+                        <p class="text-[10px] font-bold tracking-wider text-slate-400 uppercase">Topography Distribution Mapping</p>
+
+                        @if($product->plans->isNotEmpty())
+                            <div class="space-y-1.5">
+                                @foreach($product->plans as $plan)
+                                    <div class="flex items-center justify-between bg-white border border-slate-100 rounded-lg p-2.5 text-xs shadow-xs">
+                                        <span class="font-semibold text-slate-700 text-[11px]">{{ $plan->name }}</span>
+                                        <div class="flex items-center gap-1.5 font-mono text-slate-400 text-[10px]">
+                                            <span>({{ strtoupper($plan->form_factor) }})</span>
+                                            <span class="font-bold text-slate-900 text-[11px]">{{ $plan->currency }} {{ number_format($plan->price, 0) }}</span>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <p class="text-xs text-slate-400 italic py-1">No operational architecture mappings built yet.</p>
+                        @endif
+                    </div>
+
+                    {{-- Card Footer Actions --}}
+                    <div class="px-5 py-3 bg-white border-t border-slate-100 flex items-center justify-between gap-2 flex-shrink-0">
+                        <span class="text-[10px] text-slate-400 font-mono max-w-[120px] truncate">io.exchosoft.{{ $product->slug }}</span>
+                        <div class="flex items-center gap-2">
+                            <button wire:click="openEdit('{{ $product->id }}')" class="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-slate-50 shadow-xs transition-colors">
+                                <svg class="h-3 w-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                </svg>
+                                Edit App
+                            </button>
+                            <button wire:click="delete('{{ $product->id }}')" wire:confirm="Purge deployment configuration record?" class="inline-flex items-center gap-1 rounded-xl border border-red-100 bg-white px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50 transition-colors">
+                                <svg class="h-3 w-3 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                </svg>
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    @else
+        <div class="rounded-2xl border-2 border-dashed border-slate-200 bg-white py-16 text-center shadow-sm">
+            <p class="text-sm font-medium text-slate-500">No matrices matching standard pipeline parameters.</p>
+        </div>
+    @endif
+
+    @if ($this->products->hasPages())
+        <div class="pt-4">{{ $this->products->links() }}</div>
+    @endif
+
+    {{-- ────────── PRODUCT WIZARD FORM SLIDE-OVER (UNCHANGED) ────────── --}}
+   {{-- ────────── Slide-over Form ────────── --}}
     @if ($showForm)
         <div class="fixed inset-0 z-50 flex">
             <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm" wire:click="$set('showForm', false)"></div>
@@ -744,8 +884,8 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
 
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <p class="text-sm font-semibold text-slate-800">Pricing Plans</p>
-                                    <p class="text-xs text-slate-400 mt-0.5">Add one or more plans for this product. Each plan defines a price and billing period.</p>
+                                    <p class="text-sm font-semibold text-slate-800">Pricing Plans & Topologies</p>
+                                    <p class="text-xs text-slate-400 mt-0.5">Map pricing rates directly onto infrastructure topologies chosen by users.</p>
                                 </div>
                                 <button type="button" wire:click="addPlan"
                                     class="inline-flex items-center gap-1.5 rounded-xl bg-cyan-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-cyan-700 transition-colors">
@@ -764,10 +904,10 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
                                         </svg>
                                     </div>
                                     <p class="text-sm font-medium text-slate-500">No plans yet</p>
-                                    <p class="text-xs text-slate-400 mt-1">Click "Add Plan" to create your first pricing plan</p>
+                                    <p class="text-xs text-slate-400 mt-1">Click "Add Plan" to configure your deployment layout parameters.</p>
                                 </div>
                             @else
-                                <div class="space-y-3">
+                                <div class="space-y-4">
                                     @foreach($plans as $i => $plan)
                                         <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
                                             {{-- Plan header --}}
@@ -786,9 +926,7 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
                                                         {{ $plan['duration_type'] ?? 'Monthly' }}
                                                     </span>
                                                     <span class="text-sm font-semibold text-slate-800">{{ $plan['name'] ?: 'Untitled Plan' }}</span>
-                                                    @if(!empty($plan['price']))
-                                                        <span class="text-xs text-slate-500">· {{ $plan['currency'] ?? 'USD' }} {{ number_format((float)$plan['price'], 2) }}</span>
-                                                    @endif
+                                                    <span class="text-xs font-mono px-2 py-0.5 rounded bg-slate-200 text-slate-700">{{ $plan['form_factor'] }}</span>
                                                 </div>
                                                 <div class="flex items-center gap-2">
                                                     <label class="flex items-center gap-1.5 cursor-pointer">
@@ -805,94 +943,98 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
                                             </div>
 
                                             {{-- Plan body --}}
-                                            <div class="p-4 grid grid-cols-2 gap-3">
-                                                {{-- Billing period selector --}}
-                                                <div class="col-span-2">
-                                                    <label class="block text-xs font-semibold text-slate-600 mb-1.5">Billing Period</label>
-                                                    <div class="flex flex-wrap gap-2">
-                                                        @foreach(['Monthly' => '30d', 'Quarterly' => '90d', 'Yearly' => '365d', 'Lifetime' => '∞', 'Custom' => '?d'] as $preset => $hint)
-                                                            <label class="flex items-center gap-1.5 rounded-lg border-2 cursor-pointer px-3 py-1.5 transition-colors
-                                                                {{ ($plan['duration_type'] ?? 'Monthly') === $preset ? 'border-cyan-500 bg-cyan-50' : 'border-slate-200 hover:border-slate-300 bg-white' }}">
-                                                                <input type="radio" wire:model.live="plans.{{ $i }}.duration_type" value="{{ $preset }}" class="sr-only">
-                                                                <span class="text-xs font-semibold {{ ($plan['duration_type'] ?? 'Monthly') === $preset ? 'text-cyan-700' : 'text-slate-600' }}">{{ $preset }}</span>
-                                                                <span class="text-xs text-slate-400">{{ $hint }}</span>
-                                                            </label>
-                                                        @endforeach
-                                                    </div>
-                                                    @if(($plan['duration_type'] ?? '') === 'Custom')
-                                                        <div class="mt-2">
-                                                            <label class="block text-xs text-slate-500 mb-1">Duration in days</label>
-                                                            <input wire:model="plans.{{ $i }}.duration_days" type="number" min="1" placeholder="e.g. 180"
-                                                                class="w-32 rounded-lg border border-slate-200 px-3 py-1.5 text-sm focus:outline-none focus:border-cyan-400">
+                                            <div class="p-4 space-y-4">
+
+                                                {{-- Deployment Topology Switcher (Crucial for Front-End matching) --}}
+                                                <div>
+                                                    <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Infrastructure Form Factor</label>
+                                                    <select wire:model="plans.{{ $i }}.form_factor" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 bg-slate-50">
+                                                        <option value="standalone">Standalone Desktop App</option>
+                                                        <option value="lan_orchestrated">LAN Multi-Workstation Cluster</option>
+                                                        <option value="hybrid_cloud">Hybrid Local + Private Cloud</option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="grid grid-cols-2 gap-3">
+                                                    {{-- Billing period selector --}}
+                                                    <div class="col-span-2">
+                                                        <label class="block text-xs font-semibold text-slate-600 mb-1.5">Billing Period Frequency</label>
+                                                        <div class="flex flex-wrap gap-2">
+                                                            @foreach(['Monthly' => '30d', 'Quarterly' => '90d', 'Yearly' => '365d', 'Lifetime' => '∞', 'Custom' => '?d'] as $preset => $hint)
+                                                                <label class="flex items-center gap-1.5 rounded-lg border-2 cursor-pointer px-3 py-1.5 transition-colors
+                                                                    {{ ($plan['duration_type'] ?? 'Monthly') === $preset ? 'border-cyan-500 bg-cyan-50' : 'border-slate-200 hover:border-slate-300 bg-white' }}">
+                                                                    <input type="radio" wire:model.live="plans.{{ $i }}.duration_type" value="{{ $preset }}" class="sr-only">
+                                                                    <span class="text-xs font-semibold {{ ($plan['duration_type'] ?? 'Monthly') === $preset ? 'text-cyan-700' : 'text-slate-600' }}">{{ $preset }}</span>
+                                                                    <span class="text-xs text-slate-400">{{ $hint }}</span>
+                                                                </label>
+                                                            @endforeach
                                                         </div>
-                                                    @endif
-                                                    @error("plans.{$i}.duration_days") <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
-                                                </div>
-
-                                                {{-- Plan name --}}
-                                                <div>
-                                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Plan Name <span class="text-red-500">*</span></label>
-                                                    <input wire:model="plans.{{ $i }}.name" type="text" placeholder="e.g. Monthly Pro"
-                                                        class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
-                                                    @error("plans.{$i}.name") <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
-                                                </div>
-
-                                                {{-- Currency --}}
-                                                <div>
-                                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Currency</label>
-                                                    <input wire:model="plans.{{ $i }}.currency" type="text" maxlength="3" placeholder="USD"
-                                                        class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 font-mono uppercase">
-                                                </div>
-
-                                                {{-- Price --}}
-                                                <div>
-                                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Price <span class="text-red-500">*</span></label>
-                                                    <div class="relative">
-                                                        <span class="absolute left-3 top-2 text-slate-400 text-sm">$</span>
-                                                        <input wire:model="plans.{{ $i }}.price" type="number" step="0.01" min="0" placeholder="0.00"
-                                                            class="w-full rounded-xl border border-slate-200 pl-7 pr-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                                        @if(($plan['duration_type'] ?? '') === 'Custom')
+                                                            <div class="mt-2">
+                                                                <label class="block text-xs text-slate-500 mb-1">Duration in days</label>
+                                                                <input wire:model="plans.{{ $i }}.duration_days" type="number" min="1" placeholder="e.g. 180"
+                                                                    class="w-32 rounded-lg border border-slate-200 px-3 py-1.5 text-sm focus:outline-none focus:border-cyan-400">
+                                                            </div>
+                                                        @endif
+                                                        @error("plans.{$i}.duration_days") <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                                                     </div>
-                                                    @error("plans.{$i}.price") <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
-                                                </div>
 
-                                                {{-- Sale Price --}}
-                                                <div>
-                                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Sale Price <span class="text-slate-400 font-normal">(optional)</span></label>
-                                                    <div class="relative">
-                                                        <span class="absolute left-3 top-2 text-slate-400 text-sm">$</span>
-                                                        <input wire:model="plans.{{ $i }}.sale_price" type="number" step="0.01" min="0" placeholder="Leave blank"
-                                                            class="w-full rounded-xl border border-slate-200 pl-7 pr-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                                    {{-- Plan name --}}
+                                                    <div>
+                                                        <label class="block text-xs font-semibold text-slate-600 mb-1">Plan Display Title</label>
+                                                        <input wire:model="plans.{{ $i }}.name" type="text" placeholder="e.g. Monthly Pro"
+                                                            class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                                        @error("plans.{$i}.name") <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                                                    </div>
+
+                                                    {{-- Billing Label --}}
+                                                    <div>
+                                                        <label class="block text-xs font-semibold text-slate-600 mb-1">Billing Summary Label</label>
+                                                        <input wire:model="plans.{{ $i }}.billing_label" type="text" placeholder="e.g. Billed Annually"
+                                                            class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                                        @error("plans.{$i}.billing_label") <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                                                    </div>
+
+                                                    {{-- Max Workstation Activations --}}
+                                                    <div>
+                                                        <label class="block text-xs font-semibold text-slate-600 mb-1">Max Workstation Activations</label>
+                                                        <input wire:model="plans.{{ $i }}.max_activations" type="number" min="1"
+                                                            class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                                        @error("plans.{$i}.max_activations") <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                                                    </div>
+
+                                                    {{-- Offline TTL Hours --}}
+                                                    <div>
+                                                        <label class="block text-xs font-semibold text-slate-600 mb-1">Offline Tolerance (Hours)</label>
+                                                        <input wire:model="plans.{{ $i }}.offline_ttl_hours" type="number" min="0" placeholder="e.g. 72"
+                                                            class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                                        @error("plans.{$i}.offline_ttl_hours") <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                                                    </div>
+
+                                                    {{-- Currency --}}
+                                                    <div>
+                                                        <label class="block text-xs font-semibold text-slate-600 mb-1">Currency</label>
+                                                        <input wire:model="plans.{{ $i }}.currency" type="text" maxlength="3" placeholder="GHS"
+                                                            class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 font-mono uppercase">
+                                                    </div>
+
+                                                    {{-- Price --}}
+                                                    <div>
+                                                        <label class="block text-xs font-semibold text-slate-600 mb-1">Price Rate <span class="text-red-500">*</span></label>
+                                                        <input wire:model="plans.{{ $i }}.price" type="number" step="0.01" min="0" placeholder="0.00"
+                                                            class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 font-mono">
+                                                        @error("plans.{$i}.price") <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                                                    </div>
+
+                                                    {{-- Sale Price --}}
+                                                    <div class="col-span-2">
+                                                        <label class="block text-xs font-semibold text-slate-600 mb-1">Sale Promotional Price <span class="text-slate-400 font-normal">(optional)</span></label>
+                                                        <input wire:model="plans.{{ $i }}.sale_price" type="number" step="0.01" min="0" placeholder="Leave blank if not on sale"
+                                                            class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 font-mono">
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    @endforeach
-                                </div>
-                            @endif
-
-                            {{-- Quick-add preset buttons --}}
-                            @if(count($plans) === 0)
-                                <div class="flex flex-wrap gap-2 pt-1">
-                                    <p class="w-full text-xs text-slate-400">Quick add:</p>
-                                    @foreach(['Monthly', 'Yearly', 'Lifetime'] as $preset)
-                                        <button type="button" wire:click="$dispatch('add-preset-plan', { type: '{{ $preset }}' })"
-                                            x-on:add-preset-plan.window="
-                                                if ($event.detail.type === '{{ $preset }}') {
-                                                    $wire.plans.push({
-                                                        name: '{{ $preset }}',
-                                                        price: '0.00',
-                                                        sale_price: '',
-                                                        currency: $wire.currency || 'USD',
-                                                        duration_days: {{ match($preset) { 'Monthly' => 30, 'Yearly' => 365, default => 0 } }},
-                                                        duration_type: '{{ $preset === 'Yearly' ? 'Yearly' : $preset }}',
-                                                        is_active: true,
-                                                        _id: null
-                                                    });
-                                                }
-                                            "
-                                            class="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 hover:border-cyan-400 hover:text-cyan-600 transition-colors">
-                                            + {{ $preset }}
-                                        </button>
                                     @endforeach
                                 </div>
                             @endif
@@ -1031,7 +1173,6 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
 
                     {{-- Sticky footer --}}
                     <div class="sticky bottom-0 bg-white border-t border-slate-100 px-6 py-4 flex items-center gap-3">
-                        {{-- Tab nav arrows --}}
                         @if($activeTab > 0)
                             <button type="button" wire:click="$set('activeTab', {{ $activeTab - 1 }})"
                                 class="rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">
@@ -1054,6 +1195,192 @@ new #[Layout('layouts.admin')] #[Title('Products — ExchoSoft')] class extends 
                             {{ $editMode ? 'Update Product' : 'Create Product' }}
                         </button>
                     </div>
+                </form>
+            </div>
+        </div>
+    @endif
+    {{-- ────────── NEW SEPARATE PLAN ONLY SLIDE-OVER MODULE ────────── --}}
+    @if ($showPlanForm)
+        <div class="fixed inset-0 z-50 flex">
+            <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm" wire:click="$set('showPlanForm', false)"></div>
+            <div class="relative ml-auto w-full max-w-xl bg-white shadow-2xl flex flex-col h-full animate-slide-in">
+
+                <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4 flex-shrink-0">
+                    <div>
+                        <h2 class="text-base font-bold text-slate-900">{{ $editMode ? 'Edit Plan Variant Topology' : 'Provision Plan Variant' }}</h2>
+                        <p class="text-xs text-slate-400 mt-0.5">Map licensing behaviors, offline heartbeats, and pricing targets.</p>
+                    </div>
+                    <button wire:click="$set('showPlanForm', false)" class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <form wire:submit="handleFormSubmission" class="flex-1 overflow-y-auto">
+                    <div class="px-6 py-5 space-y-4">
+
+                        <input type="hidden" wire:model="product_id">
+
+                        {{-- Plan Title + Slug --}}
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Plan Variant Title <span class="text-red-500">*</span></label>
+                                <input wire:model.live="plan_name" type="text" placeholder="e.g., Multi-Workstation Pack"
+                                    class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                @error('plan_name') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">System Identifier Slug <span class="text-red-500">*</span></label>
+                                <input wire:model="plan_slug" type="text" placeholder="multi-workstation-pack"
+                                    class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 font-mono text-xs">
+                                @error('plan_slug') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                            </div>
+                        </div>
+
+                        {{-- Variant Description Summary --}}
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Variant Brief Summary</label>
+                            <input wire:model="plan_description" type="text" placeholder="Perfect for high-throughput single-LAN local business operations..."
+                                class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                            @error('plan_description') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                        </div>
+
+                        {{-- Architectural Topology Card --}}
+                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 space-y-3 shadow-inner">
+                            <p class="text-xs font-bold uppercase tracking-wide text-slate-400 flex items-center gap-1.5">
+                                <svg class="h-3.5 w-3.5 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                                </svg>
+                                Architectural Topology Allocation
+                            </p>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Infrastructure Form Factor Strategy Target</label>
+                                <select wire:model.live="form_factor" class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 bg-white shadow-sm">
+                                    <option value="standalone">Standalone Instance (Single Device Isolation)</option>
+                                    <option value="lan_orchestrated">Local LAN Multi-Workstation Orchestrator</option>
+                                    <option value="hybrid_cloud">Hybrid Infrastructure (Local Orchestrator + Cloud Relay)</option>
+                                </select>
+                                @error('form_factor') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1" title="Max concurrent paired validation nodes">Node Activations</label>
+                                    <input wire:model="max_activations" type="number" min="1"
+                                        class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 bg-white shadow-sm">
+                                    @error('max_activations') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1" title="Maximum isolation duration allowed without central validation check">Offline TTL (Hrs)</label>
+                                    <input wire:model="offline_ttl_hours" type="number" min="0"
+                                        class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 bg-white shadow-sm">
+                                    @error('offline_ttl_hours') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1" title="Days running operations past structural subscription window expiration">Grace Period (Days)</label>
+                                    <input wire:model="grace_period_days" type="number" min="0"
+                                        class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 bg-white shadow-sm">
+                                    @error('grace_period_days') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Price Tiers --}}
+                        <div class="grid grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Currency</label>
+                                <input wire:model="currency" type="text" maxlength="3" placeholder="USD"
+                                    class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 font-mono uppercase text-center">
+                                @error('currency') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Base Cost Rate <span class="text-red-500">*</span></label>
+                                <input wire:model="price" type="number" step="0.01" min="0"
+                                    class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 font-mono text-right">
+                                @error('price') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Sale Promo Rate</label>
+                                <input wire:model="sale_price" type="number" step="0.01" min="0" placeholder="Optional"
+                                    class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 font-mono text-right">
+                                @error('sale_price') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                            </div>
+                        </div>
+
+                        {{-- Renewal Window Duration Tier --}}
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1.5">Billing Terms Duration Tier</label>
+                            <div class="flex flex-wrap gap-2">
+                                @foreach(['Monthly' => '30 Days', 'Quarterly' => '90 Days', 'Yearly' => '365 Days', 'Lifetime' => 'Infinite', 'Custom' => 'Manual'] as $typeKey => $lblHint)
+                                    <label class="flex items-center gap-1.5 border rounded-xl px-3 py-2 cursor-pointer transition-all text-xs font-medium
+                                        {{ $duration_type === $typeKey ? 'border-cyan-500 bg-cyan-50/60 text-cyan-700 font-bold' : 'border-slate-200 hover:bg-slate-50 text-slate-600' }}
+                                    ">
+                                        <input type="radio" wire:model.live="duration_type" value="{{ $typeKey }}" class="sr-only">
+                                        <span>{{ $typeKey }}</span>
+                                        <span class="text-[10px] text-slate-400 font-normal">({{ $lblHint }})</span>
+                                    </label>
+                                @endforeach
+                            </div>
+
+                            @if($duration_type === 'Custom')
+                                <div class="mt-3 bg-slate-50 rounded-xl p-3 border border-slate-100">
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Custom Expiration Matrix Period (Days)</label>
+                                    <input wire:model="duration_days" type="number" min="1"
+                                        class="w-full rounded-xl border border-slate-200 px-3 py-1.5 text-sm focus:outline-none focus:border-cyan-400 bg-white">
+                                </div>
+                            @endif
+                            @error('duration_days') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                        </div>
+
+                        {{-- Trials Window Rules --}}
+                        <div class="grid grid-cols-2 gap-4 pt-1">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Trial Window Period (Days)</label>
+                                <input wire:model="trial_days" type="number" min="0"
+                                    class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                @error('trial_days') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                            </div>
+
+                            <div class="flex flex-col justify-end space-y-2 pb-1.5">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" wire:model="is_trial_eligible" class="rounded border-slate-300 text-cyan-600 focus:ring-cyan-500">
+                                    <span class="text-xs font-medium text-slate-600">First-time trials only</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" wire:model="is_renewable" class="rounded border-slate-300 text-cyan-600 focus:ring-cyan-500">
+                                    <span class="text-xs font-medium text-slate-600">Auto standard renewal</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        {{-- Sorting + Visibility --}}
+                        <div class="flex items-center gap-4 pt-3 border-t border-slate-100">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" wire:model="plan_is_active" class="rounded border-slate-300 text-cyan-600 focus:ring-cyan-500">
+                                <span class="text-sm font-semibold text-slate-700">Activate Plan Visibility</span>
+                            </label>
+                            <div class="ml-auto flex items-center gap-2">
+                                <label class="block text-xs font-medium text-slate-500">Priority Weight</label>
+                                <input wire:model="plan_sort_order" type="number" min="0"
+                                    class="w-16 rounded-xl border border-slate-200 px-2 py-1 text-sm text-center focus:outline-none focus:border-cyan-400">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="sticky bottom-0 bg-white border-t border-slate-100 px-6 py-4 flex items-center justify-end gap-3 flex-shrink-0">
+                        <button type="button" wire:click="$set('showPlanForm', false)"
+                            class="rounded-xl px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 transition-colors">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                            class="rounded-xl bg-cyan-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-cyan-700 transition-colors shadow-sm">
+                            {{ $editMode ? 'Update Operational Plan' : 'Deploy Plan Option' }}
+                        </button>
+                    </div>
+
                 </form>
             </div>
         </div>
