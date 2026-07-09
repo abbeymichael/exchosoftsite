@@ -89,20 +89,9 @@ new #[Layout('layouts.site')] class extends Component {
             {{-- Title, Breadcrumbs, and Meta Aggregation Stack --}}
             <div class="space-y-6 max-w-4xl">
                 <!-- Inline Functional Breadcrumbs -->
-                <nav class="flex items-center gap-2 text-xs font-semibold tracking-wider text-slate-400 uppercase">
-                    <a href="{{ route('home') }}" class="hover:text-[#00b8db] transition-colors">Home</a>
-                    <span class="text-slate-700">/</span>
-                    <a href="{{ route('site.blog') }}" class="hover:text-[#00b8db] transition-colors">Blog Insights</a>
-                    <span class="text-slate-700">/</span>
-                    <span class="text-slate-300 truncate max-w-[200px] sm:max-w-xs">{{ Str::limit($post->title ?? 'Post', 35) }}</span>
-                </nav>
 
                 <div class="space-y-4">
-                    @if($post->category)
-                        <span class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-md bg-[#00b8db]/10 border border-[#00b8db]/20 text-[#00b8db] tracking-wide uppercase">
-                            <span class="material-symbols-outlined text-xs">label</span>{{ $post->category }}
-                        </span>
-                    @endif
+
 
                     <h1 class="text-3xl font-black tracking-tight text-white sm:text-4xl md:text-5xl lg:leading-[1.15]">
                         {!! str_replace($post->title, '<span class="text-[#00b8db]">' . e($post->title) . '</span>', $post->title) !!}
@@ -148,7 +137,7 @@ new #[Layout('layouts.site')] class extends Component {
     </header>
 
     {{-- ── CONTENT AND RUNTIME WORKSPACE ENVIRONMENT ── --}}
-    <div class="relative mx-auto max-w-[1440px] gap-8 grid grid-cols-1 px-4 py-8 sm:px-6 sm:py-12 xl:grid-cols-[280px_1fr] xl:gap-10 xl:px-12 2xl:grid-cols-[300px_1fr_320px] 2xl:gap-12 2xl:px-20"
+    <div class="relative mx-auto max-w-[1450px] gap-8 grid grid-cols-1 px-4 py-8 sm:px-6 sm:py-12 xl:grid-cols-[280px_1fr] xl:gap-10 xl:px-12 2xl:grid-cols-[300px_1fr_320px] 2xl:gap-12 2xl:px-20"
          style="background-image: radial-gradient(circle at 1px 1px, rgba(0,184,219,0.03) 1px, transparent 1px); background-size: 32px 32px;">
 
         {{-- ── LEFT STICKY SIDEBAR: AUTOMATED TABLE OF CONTENTS ── --}}
@@ -191,6 +180,15 @@ new #[Layout('layouts.site')] class extends Component {
 
         {{-- ── CENTRAL LOGICAL ARTICLE STREAM CANVAS ── --}}
         <main class="rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_4px_30px_rgba(15,23,42,0.015)] sm:p-8 md:p-10 lg:p-12 xl:p-14 order-2">
+                           {{-- Full High-Resolution Post Cover Element --}}
+            @if ($post->cover_image)
+                <div class="mb-10 overflow-hidden rounded-2xl border border-slate-200/70 shadow-sm group">
+                    <img src="{{ asset('storage/' . $post->cover_image) }}"
+                         alt="{{ $post->title }}"
+                         class="w-full object-cover transition-transform duration-700 group-hover:scale-[1.015]"
+                         style="aspect-ratio: 16/9; object-position: center;">
+                </div>
+            @endif
 
             {{-- Meta Performance Metric Bar --}}
             <div class="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-6 text-xs text-slate-500">
@@ -204,6 +202,7 @@ new #[Layout('layouts.site')] class extends Component {
                     <span class="inline-flex items-center gap-1"><span class="material-symbols-outlined text-sm">visibility</span> {{ number_format($post->views) }} logs</span>
                 </div>
             </div>
+
 
             {{-- Profile Meta Context Section --}}
             <div class="mb-10 flex items-center gap-4 rounded-2xl bg-slate-50/80 border border-slate-100 p-4">
@@ -220,15 +219,7 @@ new #[Layout('layouts.site')] class extends Component {
                 </div>
             </div>
 
-            {{-- Full High-Resolution Post Cover Element --}}
-            @if ($post->cover_image)
-                <div class="mb-10 overflow-hidden rounded-2xl border border-slate-200/70 shadow-sm group">
-                    <img src="{{ asset('storage/' . $post->cover_image) }}"
-                         alt="{{ $post->title }}"
-                         class="w-full object-cover transition-transform duration-700 group-hover:scale-[1.015]"
-                         style="aspect-ratio: 16/9; object-position: center;">
-                </div>
-            @endif
+
 
             {{-- Active Output Stream Node --}}
             @if ($post->content)

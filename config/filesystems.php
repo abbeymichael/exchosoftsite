@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('FILESYSTEM_DISK', 'local'),
+    'default' => env('FILESYSTEM_DISK', 'public'),
 
     /*
     |--------------------------------------------------------------------------
@@ -36,7 +36,6 @@ return [
             'serve' => true,
             'throw' => false,
             'report' => false,
-            'visibility' => 'public',
         ],
 
         'public' => [

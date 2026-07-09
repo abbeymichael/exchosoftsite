@@ -15,17 +15,17 @@ return new class extends Migration
     {
         Schema::create('product_plans', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('product_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('product_id')->references('id')->on('products');
 
             // Display
             $table->string('name');                         // "Monthly", "Yearly", "Lifetime", "Custom"
             $table->string('slug');                         // monthly | yearly | lifetime | custom
             $table->text('description')->nullable();
-            $table->string('form_factor')->default('standalone')->after('product_id');
+            $table->string('form_factor')->default('standalone');
 
             // Pricing — each plan has its own price
-            $table->decimal('price', 10, 2);
-            $table->decimal('sale_price', 10, 2)->nullable();
+            $table->decimal('price', 10, 2)->default(0.00);
+            $table->decimal('sale_price', 10, 2)->default(0.00);
             $table->string('currency', 3)->default('USD');
 
             // Duration — 0 means lifetime / perpetual

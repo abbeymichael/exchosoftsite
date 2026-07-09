@@ -10,7 +10,7 @@ use Livewire\WithFileUploads;
 
 new #[Layout('layouts.admin')] #[Title('Blog Posts — ExchoSoft')] class extends Component {
     use WithPagination;
-    Use WithFileUploads;
+    use WithFileUploads;
 
     public string $search = '';
     public string $filterStatus = '';
@@ -21,7 +21,8 @@ new #[Layout('layouts.admin')] #[Title('Blog Posts — ExchoSoft')] class extend
     public ?string $editId = null;
 
     public string $title = '';
-    public $cover_image = '';
+    public $cover_image = null;
+    public string $existing_cover_image = '';
     public string $slug = '';
     public string $excerpt = '';
     public string $content = '';
@@ -50,7 +51,8 @@ new #[Layout('layouts.admin')] #[Title('Blog Posts — ExchoSoft')] class extend
     {
         $post = BlogPost::findOrFail($id);
         $this->editId = $id;
-        $this->cover_image = $post->cover_image;
+        $this->cover_image = null;
+        $this->existing_cover_image = $post->cover_image ?? '';
         $this->title = $post->title;
         $this->slug = $post->slug;
         $this->excerpt = $post->excerpt ?? '';
@@ -74,10 +76,13 @@ new #[Layout('layouts.admin')] #[Title('Blog Posts — ExchoSoft')] class extend
             'cover_image' => 'nullable|image|max:2048',
         ]);
 
+
         $data = [
             'author_id' => auth()->id(),
             'title' => $this->title,
-            'cover_image' => $this->cover_image,
+            'cover_image' => $this->cover_image
+                                    ? $this->cover_image->store('blog-covers', 'public')
+                                    : ($this->existing_cover_image ?: null),
             'slug' => $this->slug,
             'excerpt' => $this->excerpt,
             'content' => $this->content,
@@ -89,10 +94,6 @@ new #[Layout('layouts.admin')] #[Title('Blog Posts — ExchoSoft')] class extend
             'meta_description' => $this->meta_description,
             'published_at' => $this->status === 'published' ? now() : null,
         ];
-
-        if ($this->cover_image instanceof \Livewire\TemporaryUploadedFile) {
-            $data['cover_image'] = $this->cover_image->store('blog-covers', config('filesystems.default'));
-        }
         if ($this->editMode) {
             BlogPost::findOrFail($this->editId)->update($data);
             session()->flash('success', 'Blog post updated.');
@@ -124,6 +125,8 @@ new #[Layout('layouts.admin')] #[Title('Blog Posts — ExchoSoft')] class extend
     public function resetForm(): void
     {
         $this->title = $this->slug = $this->excerpt = $this->content = '';
+        $this->cover_image = null;
+        $this->existing_cover_image = '';
         $this->category = 'general';
         $this->status = 'draft';
         $this->is_featured = false;
@@ -251,7 +254,7 @@ new #[Layout('layouts.admin')] #[Title('Blog Posts — ExchoSoft')] class extend
                                 </td>
                                 <td class="px-5 py-3 text-right">
                                     <div class="flex items-center justify-end gap-1">
-                                        <button wire:click="openEdit('{{$post->id}}')"
+                                        <button wire:click="openEdit('{{ $post->id }}')"
                                             class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors">
                                             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                                                 stroke="currentColor" stroke-width="2">
@@ -259,7 +262,7 @@ new #[Layout('layouts.admin')] #[Title('Blog Posts — ExchoSoft')] class extend
                                                     d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                             </svg>
                                         </button>
-                                        <button wire:click="delete('{{$post->id}}')"
+                                        <button wire:click="delete('{{ $post->id }}')"
                                             wire:confirm="Delete this post?"
                                             class="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600 transition-colors">
                                             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24"
@@ -311,90 +314,101 @@ new #[Layout('layouts.admin')] #[Title('Blog Posts — ExchoSoft')] class extend
                             <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Cover Image</label>
-                            <input type="file" wire:model="cover_image" accept="image/*"
-                                class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
-                            <p class="mt-1 text-xs text-slate-500">Upload a cover image for the post (optional).</p>
-                            @if ($cover_image)
-                                <img src="{{ $cover_image->temporaryUrl() }}" alt="Cover Image Preview"
-                                    class="mt-2 h-32 object-cover rounded-md">
-                            @endif
-                            @error('cover_image')
-                                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-                            @enderror
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Cover Image</label>
 
+                        {{-- Show existing image when editing and no new file selected --}}
+                        @if (!$cover_image && !empty($existing_cover_image))
+                            <img src="{{ Storage::url($existing_cover_image) }}" alt="Current Cover Image"
+                                class="mb-2 h-32 object-cover rounded-md">
+                            <p class="text-xs text-slate-500 mb-1">Current cover image. Upload a new one to replace it.
+                            </p>
+                        @endif
+
+                        <input type="file" wire:model="cover_image" accept="image/*"
+                            class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                        <p class="mt-1 text-xs text-slate-500">Upload a cover image for the post (optional).</p>
+
+                        {{-- Preview newly selected file --}}
+                        @if ($cover_image && is_object($cover_image))
+                            <img src="{{ $cover_image->temporaryUrl() }}" alt="Cover Image Preview"
+                                class="mt-2 h-32 object-cover rounded-md">
+                        @endif
+
+                        @error('cover_image')
+                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Slug *</label>
+                        <input wire:model="slug" type="text"
+                            class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm font-mono focus:outline-none focus:border-cyan-400">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Category</label>
+                            <select wire:model="category"
+                                class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                <option value="general">General</option>
+                                <option value="technical">Technical</option>
+                                <option value="product">Product</option>
+                                <option value="company">Company</option>
+                            </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Slug *</label>
-                            <input wire:model="slug" type="text"
-                                class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm font-mono focus:outline-none focus:border-cyan-400">
-                        </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">Category</label>
-                                <select wire:model="category"
-                                    class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
-                                    <option value="general">General</option>
-                                    <option value="technical">Technical</option>
-                                    <option value="product">Product</option>
-                                    <option value="company">Company</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">Status</label>
-                                <select wire:model="status"
-                                    class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
-                                    <option value="draft">Draft</option>
-                                    <option value="published">Published</option>
-                                    <option value="archived">Archived</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">Read Time
-                                    (minutes)</label>
-                                <input wire:model="read_time_minutes" type="number" min="1"
-                                    class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
-                            </div>
-                            <div class="flex items-end pb-1">
-                                <label class="flex items-center gap-2 cursor-pointer">
-                                    <input wire:model="is_featured" type="checkbox"
-                                        class="rounded border-slate-300 text-cyan-600">
-                                    <span class="text-sm text-slate-700">Featured Post</span>
-                                </label>
-                            </div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Status</label>
+                            <select wire:model="status"
+                                class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                                <option value="draft">Draft</option>
+                                <option value="published">Published</option>
+                                <option value="archived">Archived</option>
+                            </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Excerpt</label>
-                            <textarea wire:model="excerpt" rows="2" placeholder="Short summary shown in listings..."
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Read Time
+                                (minutes)</label>
+                            <input wire:model="read_time_minutes" type="number" min="1"
+                                class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                        </div>
+                        <div class="flex items-end pb-1">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input wire:model="is_featured" type="checkbox"
+                                    class="rounded border-slate-300 text-cyan-600">
+                                <span class="text-sm text-slate-700">Featured Post</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Excerpt</label>
+                        <textarea wire:model="excerpt" rows="2" placeholder="Short summary shown in listings..."
+                            class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 resize-none"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Content</label>
+                        <livewire:markdown-editor wire:model="content"
+                            placeholder="Write your blog post content with markdown..." :rows="15"
+                            :show-toolbar="true" :show-upload="true" />
+                        @error('content')
+                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div class="border-t border-slate-100 pt-3">
+                        <p class="text-xs font-semibold uppercase text-slate-500 mb-2">SEO Meta</p>
+                        <div class="space-y-2">
+                            <input wire:model="meta_title" type="text" placeholder="Meta title"
+                                class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
+                            <textarea wire:model="meta_description" rows="2" placeholder="Meta description"
                                 class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 resize-none"></textarea>
                         </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Content</label>
-                            <livewire:markdown-editor wire:model="content"
-                                placeholder="Write your blog post content with markdown..." :rows="15"
-                                :show-toolbar="true" :show-upload="true" />
-                            @error('content')
-                                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        <div class="border-t border-slate-100 pt-3">
-                            <p class="text-xs font-semibold uppercase text-slate-500 mb-2">SEO Meta</p>
-                            <div class="space-y-2">
-                                <input wire:model="meta_title" type="text" placeholder="Meta title"
-                                    class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400">
-                                <textarea wire:model="meta_description" rows="2" placeholder="Meta description"
-                                    class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:border-cyan-400 resize-none"></textarea>
-                            </div>
-                        </div>
-                        <div class="flex gap-3 pt-2 border-t border-slate-100 sticky bottom-0 bg-white pb-2">
-                            <button type="submit"
-                                class="flex-1 rounded-xl bg-cyan-600 py-2.5 text-sm font-semibold text-white hover:bg-cyan-700 transition-colors">
-                                {{ $editMode ? 'Update Post' : 'Create Post' }}
-                            </button>
-                            <button type="button" wire:click="$set('showForm', false)"
-                                class="flex-1 rounded-xl bg-slate-100 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-200 transition-colors">Cancel</button>
-                        </div>
+                    </div>
+                    <div class="flex gap-3 pt-2 border-t border-slate-100 sticky bottom-0 bg-white pb-2">
+                        <button type="submit"
+                            class="flex-1 rounded-xl bg-cyan-600 py-2.5 text-sm font-semibold text-white hover:bg-cyan-700 transition-colors">
+                            {{ $editMode ? 'Update Post' : 'Create Post' }}
+                        </button>
+                        <button type="button" wire:click="$set('showForm', false)"
+                            class="flex-1 rounded-xl bg-slate-100 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-200 transition-colors">Cancel</button>
+                    </div>
                 </form>
             </div>
         </div>
