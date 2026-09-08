@@ -3,7 +3,9 @@
 use Illuminate\Support\Facades\Route;
 
 // ─── HOME — redirects to the ExchoSoft site ─────────────────────────────────
-Route::get('/', fn () => redirect()->route('home'));
+Route::get('/welcome', function () {
+    return view('welcome');
+})->name('welcome');
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // PUBLIC WEBSITE — ExchoSoft.com

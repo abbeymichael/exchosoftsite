@@ -405,7 +405,8 @@
             style="background:rgba(0,9,23,.95);">
             <div class="flex items-start gap-4">
                 <div class="w-10 h-10 rounded-full bg-secondary-container/20 flex items-center justify-center shrink-0">
-                    <span class="material-symbols-outlined text-secondary-container">cookie</span></div>
+                    <span class="material-symbols-outlined text-secondary-container">cookie</span>
+                </div>
                 <div>
                     <p class="text-sm text-white mb-4 leading-relaxed">We use essential cookies to ensure our
                         high-fidelity platforms function as intended. View our <a class="text-secondary-fixed underline"
@@ -433,7 +434,7 @@
                         e.target.classList.add('visible');
                         if (e.target.classList.contains('tl-track')) e.target.classList.add('drawn');
                         if (e.target.classList.contains('value-card')) e.target.classList.add(
-                        'visible');
+                            'visible');
                     }
                 });
             }, {
@@ -539,7 +540,7 @@
                 });
                 item.addEventListener('mouseenter', () => {
                     if (hoverTimers[item.dataset.menuId]) clearTimeout(hoverTimers[item.dataset
-                    .menuId]);
+                        .menuId]);
                     openMenu(item);
                 });
                 item.addEventListener('mouseleave', () => closeMenu(item, false));
