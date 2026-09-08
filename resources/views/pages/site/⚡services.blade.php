@@ -3,10 +3,18 @@
 use App\Livewire\Concerns\LoadsPageSeo;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\Attributes\Computed;
+use App\Models\Service;
 
 new #[Layout('layouts.site')] class extends Component
 {
     use LoadsPageSeo;
+
+    #[Computed]
+    public function services()
+    {
+        return Service::all();
+    }
 
     public function mount(): void
     {
@@ -56,19 +64,12 @@ new #[Layout('layouts.site')] class extends Component
   <p class="section-tag-label">Our Capabilities</p>
   <h2 class="section-h2">Everything You Need.<br>Nothing You Don't.</h2>
   <div class="services-grid">
-    @foreach([
-      ['Custom Software Development','We build systems from the ground up — designed around how your business actually works, not how an off-the-shelf product assumes it works.','<path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>','Development'],
-      ['Technology Consulting','We help organisations understand what technology they actually need — and what they don\'t. Honest advice, clear direction.','<path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>','Consulting'],
-      ['System Architecture & Design','We design systems that are built to last — scalable, maintainable, and resilient under the actual conditions of African markets.','<path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582 4-8 4"/>','Architecture'],
-      ['Digital Transformation','We help businesses transition from manual or legacy processes to modern, efficient digital systems — with minimal disruption and maximum adoption.','<path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>','Transformation'],
-      ['Offline-First Engineering','We specialise in systems that function fully without internet access — syncing when connectivity is available, never losing data when it isn\'t.','<path stroke-linecap="round" stroke-linejoin="round" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/>','Specialist'],
-      ['Long-Term Tech Partnership','We stay involved after launch — providing ongoing support, feature development, and strategic guidance as your business grows.','<path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>','Partnership'],
-    ] as [$title, $desc, $icon, $tag])
+    @foreach($this->services as $service)
     <div class="service-card reveal">
-      <div class="service-icon"><svg viewBox="0 0 24 24">{!! $icon !!}</svg></div>
-      <h3>{{ $title }}</h3>
-      <p>{{ $desc }}</p>
-      <span class="service-tag">{{ $tag }}</span>
+      <div class="service-icon"><svg viewBox="0 0 24 24">{!! $service->icon !!}</svg></div>
+      <h3>{{ $service->name }}</h3>
+      <p>{{ $service->description }}</p>
+      <span class="service-tag">{{ $service->tag }}</span>
     </div>
     @endforeach
   </div>
