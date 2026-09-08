@@ -1,9 +1,16 @@
 <?php
 
 use Livewire\Component;
+use Livewire\Attributes\Computed;
+use App\Models\PortfolioItem;
 
 new class extends Component
 {
+    #[Computed]
+    public function items()
+    {
+        return PortfolioItem::where("status", "published")->orderBy("sort_order")->get();
+    }
     //
 };
 ?>
@@ -24,5 +31,15 @@ new class extends Component
   </svg>
 </x-page-banner>
 
-    {{-- Nothing worth having comes easy. - Theodore Roosevelt --}}
+    <section class="site-section bg-white px-6 py-20 md:px-24">
+        <div class="mx-auto grid max-w-[1200px] grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            @foreach($this->items as $item)
+                <div class="rounded-2xl border-[1.5px] border-[rgba(0,184,219,0.2)] bg-white/70 p-7 hover:shadow-lg transition">
+                    <h3 class="mb-3 font-bold text-xl">{{ $item->title }}</h3>
+                    <p class="text-sm text-gray-600 mb-4">{{ $item->description }}</p>
+                    <a href="{{ $item->project_url }}" target="_blank" class="text-[var(--cyan)] text-sm font-bold">VIEW PROJECT &rarr;</a>
+                </div>
+            @endforeach
+        </div>
+    </section>
 </div>
