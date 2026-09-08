@@ -2,45 +2,42 @@
 
     {{-- Notification Carousel --}}
     @if (count($notifications) > 0)
-        <div class="border-b border-[rgba(0,184,219,0.2)] transition-all duration-300"
-            x-data="{
-                autoRotateInterval: null,
-                autoRotate() {
-                    this.autoRotateInterval = setInterval(() => {
-                        $wire.nextNotification();
-                    }, 5000);
-                },
-                resetAutoRotate() {
-                    clearInterval(this.autoRotateInterval);
-                    this.autoRotate();
-                }
-            }"
-            x-init="autoRotate()"
-            @mouseenter="clearInterval(autoRotateInterval)"
-            @mouseleave="resetAutoRotate()"
-            x-show="notifOpen"
-            x-transition:leave="transition duration-300 ease-in" x-transition:leave-start="opacity-100 max-h-10"
+        <div class="border-b border-[rgba(0,184,219,0.2)] transition-all duration-300" x-data="{
+            autoRotateInterval: null,
+            autoRotate() {
+                this.autoRotateInterval = setInterval(() => {
+                    $wire.nextNotification();
+                }, 5000);
+            },
+            resetAutoRotate() {
+                clearInterval(this.autoRotateInterval);
+                this.autoRotate();
+            }
+        }"
+            x-init="autoRotate()" @mouseenter="clearInterval(autoRotateInterval)" @mouseleave="resetAutoRotate()"
+            x-show="notifOpen" x-transition:leave="transition duration-300 ease-in"
+            x-transition:leave-start="opacity-100 max-h-10"
             x-transition:leave-end="opacity-0 max-h-0 overflow-hidden py-0"
             style="background:linear-gradient(90deg,#08121d 0%,#0d2137 40%,#0a1e30 60%,#08121d 100%);box-shadow:0 1px 0 rgba(0,184,219,.12),inset 0 1px 0 rgba(0,184,219,.06);">
 
             {{-- Carousel Container --}}
             <div class="relative flex items-center justify-center py-2 px-10">
-                <span class="absolute left-4 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-[#00b8db] opacity-70 hidden md:block"
+                <span
+                    class="absolute left-4 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-[#00b8db] opacity-70 hidden md:block"
                     style="box-shadow:0 0 6px rgba(0,184,219,.8)"></span>
 
                 {{-- Notification Content (Auto-transitions) --}}
-                @foreach($notifications as $index => $notification)
-                    <div @if($index === $currentNotificationIndex)
-                            x-transition:enter="transition duration-500 ease-in-out"
+                @foreach ($notifications as $index => $notification)
+                    <div @if ($index === $currentNotificationIndex) x-transition:enter="transition duration-500 ease-in-out"
                             x-transition:enter-start="opacity-0 translate-x-4"
-                            x-transition:enter-end="opacity-100 translate-x-0"
-                         @endif
-                         class="{{ $index === $currentNotificationIndex ? 'block' : 'hidden' }} flex-1">
+                            x-transition:enter-end="opacity-100 translate-x-0" @endif
+                        class="{{ $index === $currentNotificationIndex ? 'block' : 'hidden' }} flex-1">
                         <p class="text-[12px] text-white/85 tracking-wide text-center">
                             <span class="text-[#00b8db] font-semibold mr-1">{{ $notification['message'] }}</span>
-                            @if($notification['button_label'] && $notification['button_url'])
+                            @if ($notification['button_label'] && $notification['button_url'])
                                 <a class="text-[#b1ecff] hover:text-white underline-offset-2 hover:underline transition-colors"
-                                    href="{{ $notification['button_url'] }}" wire:navigate>{{ $notification['button_label'] }}</a>
+                                    href="{{ $notification['button_url'] }}"
+                                    wire:navigate>{{ $notification['button_label'] }}</a>
                             @endif
                         </p>
                     </div>
@@ -49,15 +46,14 @@
                 {{-- Navigation Controls --}}
                 <div class="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
                     {{-- Indicator Dots --}}
-                    @if(count($notifications) > 1)
+                    @if (count($notifications) > 1)
                         <div class="flex gap-1.5 mr-3">
-                            @foreach($notifications as $index => $notification)
-                                <button wire:click="goToNotification({{ $index }})"
-                                    @class([
-                                        'w-2 h-2 rounded-full transition-all',
-                                        'bg-[#00b8db]' => $index === $currentNotificationIndex,
-                                        'bg-white/30 hover:bg-white/50' => $index !== $currentNotificationIndex,
-                                    ])"
+                            @foreach ($notifications as $index => $notification)
+                                <button wire:click="goToNotification({{ $index }})" @class([
+                                    'w-2 h-2 rounded-full transition-all',
+                                    'bg-[#00b8db]' => $index === $currentNotificationIndex,
+                                    'bg-white/30 hover:bg-white/50' => $index !== $currentNotificationIndex,
+                                ])"
                                     aria-label="Go to notification {{ $index + 1 }}">
                                 </button>
                             @endforeach
@@ -65,11 +61,11 @@
                     @endif
 
                     {{-- Dismiss Button --}}
-                    @if($notifications[$currentNotificationIndex]['is_dismissible'])
+                    @if ($notifications[$currentNotificationIndex]['is_dismissible'])
                         <button wire:click="dismissNotification"
                             class="w-6 h-6 flex items-center justify-center rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-all"
                             aria-label="Dismiss">
-                            <span class="material-symbols-outlined text-base leading-none">close</span>
+                            <i class="ti ti-x text-base leading-none"></i>
                         </button>
                     @endif
                 </div>
@@ -96,8 +92,7 @@
                     </a>
                 @else
                     <a href="{{ route('home') }}" wire:navigate class="flex items-center gap-2">
-                        <span class="material-symbols-outlined text-[#4cd9fd] text-3xl"
-                            style="font-variation-settings:'FILL' 1;">hub</span>
+                        <i class="ti ti-topology-star-3 text-[#4cd9fd] text-3xl"></i>
                         <span class="font-['Syne'] text-2xl font-bold tracking-tight text-white">Exchosoft
                             Consult</span>
                     </a>
@@ -128,8 +123,8 @@
                         class="relative flex items-center gap-1 text-sm font-medium tracking-widest uppercase transition-colors
       {{ request()->routeIs('site.products*') ? 'text-[#00b8db]' : 'text-white/70 group-hover/products:text-[#b1ecff]' }}">
                         Products
-                        <span class="material-symbols-outlined text-sm transition-transform duration-200"
-                            :class="activeMenu === 'products' ? 'rotate-180' : ''">keyboard_arrow_down</span>
+                        <i class="ti ti-chevron-down text-sm transition-transform duration-200"
+                            :class="activeMenu === 'products' ? 'rotate-180' : ''"></i>
                     </button>
 
                     <div x-show="activeMenu==='products'" x-cloak x-transition:enter="transition ease-out duration-200"
@@ -168,17 +163,15 @@
                                             Portfolio</span>
                                         <a class="text-xs font-bold text-white hover:text-[#4cd9fd] transition-colors flex items-center gap-1"
                                             href="{{ route('site.products') }}" wire:navigate>
-                                            Explore All <span
-                                                class="material-symbols-outlined text-xs">arrow_forward</span>
+                                            Explore All <i class="ti ti-arrow-right text-xs"></i>
                                         </a>
                                     </div>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
                                         @forelse($products as $prod)
                                             <a class="group/item flex items-start gap-3 hover:bg-white/5 p-2 -m-2 rounded-lg transition-colors"
                                                 href="{{ route('site.products.show', $prod['slug']) }}" wire:navigate>
-                                                <span
-                                                    class="material-symbols-outlined text-[#4cd9fd] text-xl mt-0.5 shrink-0"
-                                                    style="font-variation-settings:'FILL' 1;">{{ $prod['icon'] ?? 'deployed_code' }}</span>
+                                                <i
+                                                    class="ti ti-{{ $prod['icon'] ?? 'package' }} text-[#4cd9fd] text-xl mt-0.5 shrink-0"></i>
                                                 <div>
                                                     <p
                                                         class="text-sm font-bold text-white group-hover/item:text-[#b1ecff] transition-colors">
@@ -190,7 +183,8 @@
                                                 </div>
                                             </a>
                                         @empty
-                                            <div class="col-span-full text-xs text-[#7689a4] text-center py-4">No products available yet.</div>
+                                            <div class="col-span-full text-xs text-[#7689a4] text-center py-4">No
+                                                products available yet.</div>
                                         @endforelse
                                     </div>
                                 </div>
@@ -206,8 +200,8 @@
                         class="relative flex items-center gap-1 text-sm font-medium tracking-widest uppercase transition-colors
               {{ request()->routeIs('site.services') ? 'text-[#00b8db]' : 'text-white/70 group-hover/services:text-[#b1ecff]' }}">
                         Services
-                        <span class="material-symbols-outlined text-sm transition-transform duration-200"
-                            :class="activeMenu === 'services' ? 'rotate-180' : ''">keyboard_arrow_down</span>
+                        <i class="ti ti-chevron-down text-sm transition-transform duration-200"
+                            :class="activeMenu === 'services' ? 'rotate-180' : ''"></i>
                     </button>
 
                     <div x-show="activeMenu==='services'" x-cloak x-transition:enter="transition ease-out duration-200"
@@ -224,15 +218,15 @@
                                     Expertise</span>
                                 <a class="text-xs font-bold text-white hover:text-[#4cd9fd] transition-colors flex items-center gap-1"
                                     href="{{ route('site.services') }}" wire:navigate>
-                                    All Services <span class="material-symbols-outlined text-xs">arrow_forward</span>
+                                    All Services <i class="ti ti-arrow-right text-xs"></i>
                                 </a>
                             </div>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
-                                @foreach ([['code', 'Custom Software Development', 'Built from the ground up for your operations'], ['psychology', 'Technology Consulting', 'Strategic guidance based on real-world experience'], ['architecture', 'System Architecture', 'Offline-first, cloud, or LAN collaboration'], ['transform', 'Digital Transformation', 'Modernization that respects your reality'], ['analytics', 'Business Process Analysis', 'Identify bottlenecks and opportunities'], ['support_agent', 'Ongoing Support & Evolution', 'We stay involved as you grow']] as [$icon, $title, $sub])
+                                @foreach ([['code', 'Custom Software Development', 'Built from the ground up for your operations'], ['brain', 'Technology Consulting', 'Strategic guidance based on real-world experience'], ['building-skyscraper', 'System Architecture', 'Offline-first, cloud, or LAN collaboration'], ['transform', 'Digital Transformation', 'Modernization that respects your reality'], ['chart-bar', 'Business Process Analysis', 'Identify bottlenecks and opportunities'], ['headset', 'Ongoing Support & Evolution', 'We stay involved as you grow']] as [$icon, $title, $sub])
                                     <a class="group/item flex items-start gap-3 hover:bg-white/5 p-2 -m-2 rounded-lg transition-colors"
                                         href="{{ route('site.services') }}" wire:navigate>
-                                        <span class="material-symbols-outlined text-[#4cd9fd] text-xl mt-0.5 shrink-0"
-                                            style="font-variation-settings:'FILL' 1;">{{ $icon }}</span>
+                                        <i
+                                            class="ti ti-{{ $icon }} text-[#4cd9fd] text-xl mt-0.5 shrink-0"></i>
                                         <div>
                                             <p
                                                 class="text-sm font-bold text-white group-hover/item:text-[#b1ecff] transition-colors">
@@ -252,8 +246,8 @@
                         class="relative flex items-center gap-1 text-sm font-medium tracking-widest uppercase transition-colors
               {{ request()->routeIs('site.case-studies*') ? 'text-[#00b8db]' : 'text-white/70 group-hover/cases:text-[#b1ecff]' }}">
                         Case Studies
-                        <span class="material-symbols-outlined text-sm transition-transform duration-200"
-                            :class="activeMenu === 'cases' ? 'rotate-180' : ''">keyboard_arrow_down</span>
+                        <i class="ti ti-chevron-down text-sm transition-transform duration-200"
+                            :class="activeMenu === 'cases' ? 'rotate-180' : ''"></i>
                     </button>
 
                     <div x-show="activeMenu==='cases'" x-cloak x-transition:enter="transition ease-out duration-200"
@@ -286,16 +280,16 @@
                                             Stories</span>
                                         <a class="text-xs font-bold text-white hover:text-[#4cd9fd] transition-colors flex items-center gap-1"
                                             href="{{ route('site.case-studies') }}" wire:navigate>
-                                            View All <span
-                                                class="material-symbols-outlined text-xs">arrow_forward</span>
+                                            View All <i class="ti ti-arrow-right text-xs"></i>
                                         </a>
                                     </div>
                                     <div class="space-y-4">
                                         @forelse($caseStudies as $study)
                                             <a class="group/case flex flex-col sm:flex-row items-start gap-4 p-4 rounded-xl bg-white/5 hover:bg-[#4cd9fd]/10 border border-white/5 hover:border-[#4cd9fd]/30 transition-all"
-                                                href="{{ route('site.case-studies.show', $study['slug']) }}" wire:navigate>
-                                                <span
-                                                    class="material-symbols-outlined text-[#4cd9fd] text-2xl mt-0.5 shrink-0">{{ $study['icon'] }}</span>
+                                                href="{{ route('site.case-studies.show', $study['slug']) }}"
+                                                wire:navigate>
+                                                <i
+                                                    class="ti ti-{{ $study['icon'] }} text-[#4cd9fd] text-2xl mt-0.5 shrink-0"></i>
                                                 <div class="flex-1">
                                                     <p
                                                         class="text-base font-bold text-white group-hover/case:text-[#b1ecff] transition-colors">
@@ -303,11 +297,12 @@
 
 
                                                 </div>
-                                                <span
-                                                    class="material-symbols-outlined text-white/30 group-hover/case:text-[#4cd9fd] transition-colors text-base">arrow_forward</span>
+                                                <i
+                                                    class="ti ti-arrow-right text-white/30 group-hover/case:text-[#4cd9fd] transition-colors text-base"></i>
                                             </a>
                                         @empty
-                                            <div class="text-xs text-[#7689a4] text-center py-4">No case studies available yet.</div>
+                                            <div class="text-xs text-[#7689a4] text-center py-4">No case studies
+                                                available yet.</div>
                                         @endforelse
                                     </div>
                                 </div>
@@ -377,8 +372,7 @@
                 <button @click="mobileOpen = !mobileOpen"
                     class="md:hidden w-9 h-9 flex items-center justify-center rounded-full text-white hover:bg-white/10 transition-colors"
                     aria-label="Open menu">
-                    <span class="material-symbols-outlined text-2xl"
-                        x-text="mobileOpen ? 'close' : 'menu'">menu</span>
+                    <i class="ti text-2xl" :class="mobileOpen ? 'ti-x' : 'ti-menu-2'"></i>
                 </button>
             </div>
         </nav>
@@ -411,36 +405,31 @@
                         class="h-8 w-auto">
                 @else
                     <div class="flex items-center gap-2">
-                        <span class="material-symbols-outlined text-[#4cd9fd] text-2xl"
-                            style="font-variation-settings:'FILL' 1;">hub</span>
+                        <i class="ti ti-topology-star-3 text-[#4cd9fd] text-2xl"></i>
                         <span class="font-['Syne'] text-lg font-bold text-white">Exchosoft Consult</span>
                     </div>
                 @endif
                 <button @click="mobileOpen = false"
                     class="w-8 h-8 flex items-center justify-center rounded-full text-white/70 hover:text-white hover:bg-white/10 transition-all">
-                    <span class="material-symbols-outlined text-xl">close</span>
+                    <i class="ti ti-x text-xl"></i>
                 </button>
             </div>
 
             <ul class="space-y-1">
                 <li><a href="{{ route('home') }}" wire:navigate @click="mobileOpen = false"
-                        class="flex items-center gap-3 py-4 border-b border-white/8 text-white font-['Syne'] text-2xl font-bold hover:text-[#b1ecff] transition-colors {{ request()->routeIs('home') ? 'text-[#00b8db]' : '' }}"><span
-                            class="material-symbols-outlined text-[#4cd9fd] text-2xl"
-                            style="font-variation-settings:'FILL' 1;">home</span>Home</a></li>
+                        class="flex items-center gap-3 py-4 border-b border-white/8 text-white font-['Syne'] text-2xl font-bold hover:text-[#b1ecff] transition-colors {{ request()->routeIs('home') ? 'text-[#00b8db]' : '' }}"><i
+                            class="ti ti-home text-[#4cd9fd] text-2xl"></i>Home</a></li>
                 <li><a href="{{ route('site.about') }}" wire:navigate @click="mobileOpen = false"
-                        class="flex items-center gap-3 py-4 border-b border-white/8 text-white font-['Syne'] text-2xl font-bold hover:text-[#b1ecff] transition-colors {{ request()->routeIs('site.about') ? 'text-[#00b8db]' : '' }}"><span
-                            class="material-symbols-outlined text-[#4cd9fd] text-2xl"
-                            style="font-variation-settings:'FILL' 1;">info</span>About</a></li>
+                        class="flex items-center gap-3 py-4 border-b border-white/8 text-white font-['Syne'] text-2xl font-bold hover:text-[#b1ecff] transition-colors {{ request()->routeIs('site.about') ? 'text-[#00b8db]' : '' }}"><i
+                            class="ti ti-info-circle text-[#4cd9fd] text-2xl"></i>About</a></li>
 
                 <li class="border-b border-white/8">
                     <button @click="toggleAcc('products')"
                         class="flex items-center justify-between w-full py-4 text-white font-['Syne'] text-2xl font-bold hover:text-[#b1ecff] transition-colors">
-                        <span class="flex items-center gap-3"><span
-                                class="material-symbols-outlined text-[#4cd9fd] text-2xl"
-                                style="font-variation-settings:'FILL' 1;">widgets</span>Products</span>
-                        <span
-                            class="material-symbols-outlined text-[#4cd9fd] transition-transform duration-300 text-2xl"
-                            :class="mobileAcc === 'products' ? 'rotate-180' : ''">expand_more</span>
+                        <span class="flex items-center gap-3"><i
+                                class="ti ti-apps text-[#4cd9fd] text-2xl"></i>Products</span>
+                        <i class="ti ti-chevron-down text-[#4cd9fd] transition-transform duration-300 text-2xl"
+                            :class="mobileAcc === 'products' ? 'rotate-180' : ''"></i>
                     </button>
                     <div x-show="mobileAcc==='products'" x-collapse class="overflow-hidden" style="display:none;">
                         <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/10 mt-2">
@@ -448,15 +437,14 @@
                                 Portfolio</span>
                             <a class="text-[10px] font-bold text-white/60 hover:text-[#b1ecff] flex items-center gap-1"
                                 href="{{ route('site.products') }}" wire:navigate @click="mobileOpen = false">All
-                                Products <span class="material-symbols-outlined text-xs">arrow_forward</span></a>
+                                Products <i class="ti ti-arrow-right text-xs"></i></a>
                         </div>
                         <div class="grid grid-cols-2 gap-3 mb-5">
                             @forelse($products as $prod)
                                 <a href="{{ route('site.products.show', $prod['slug']) }}" wire:navigate
                                     @click="mobileOpen = false"
                                     class="flex flex-col gap-1 p-3 rounded-xl bg-white/5 hover:bg-[#4cd9fd]/10 border border-white/5 hover:border-[#4cd9fd]/30 transition-all">
-                                    <span class="material-symbols-outlined text-[#4cd9fd] text-lg"
-                                        style="font-variation-settings:'FILL' 1;">{{ $prod['icon'] ?? 'deployed_code' }}</span>
+                                    <i class="ti ti-{{ $prod['icon'] ?? 'package' }} text-[#4cd9fd] text-lg"></i>
                                     <span class="text-sm font-bold text-white">{{ $prod['name'] }}</span>
                                     @if (!empty($prod['tagline']))
                                         <span
@@ -464,11 +452,10 @@
                                     @endif
                                 </a>
                             @empty
-                                @foreach ([['WashOps', 'local_laundry_service', 'Industrial laundry management system'], ['ChurchOps', 'church', 'Administrative backbone for scaling institutions']] as [$n, $icon, $sub])
+                                @foreach ([['WashOps', 'washing-machine', 'Industrial laundry management system'], ['ChurchOps', 'building-church', 'Administrative backbone for scaling institutions']] as [$n, $icon, $sub])
                                     <a href="{{ route('site.products') }}" wire:navigate @click="mobileOpen = false"
                                         class="flex flex-col gap-1 p-3 rounded-xl bg-white/5 hover:bg-[#4cd9fd]/10 border border-white/5 hover:border-[#4cd9fd]/30 transition-all">
-                                        <span class="material-symbols-outlined text-[#4cd9fd] text-lg"
-                                            style="font-variation-settings:'FILL' 1;">{{ $icon }}</span>
+                                        <i class="ti ti-{{ $icon }} text-[#4cd9fd] text-lg"></i>
                                         <span class="text-sm font-bold text-white">{{ $n }}</span>
                                         <span
                                             class="text-[10px] text-[#7689a4] leading-snug">{{ $sub }}</span>
@@ -478,11 +465,10 @@
                         </div>
                         <p class="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-3">Coming Soon</p>
                         <div class="grid grid-cols-2 gap-3 mb-6">
-                            @foreach ([['ClinicOps', 'medical_services', 'HIPAA-ready workflow engine'], ['LabOps', 'science', 'Automated laboratory pipelines']] as [$n, $icon, $sub])
+                            @foreach ([['ClinicOps', 'stethoscope', 'HIPAA-ready workflow engine'], ['LabOps', 'flask', 'Automated laboratory pipelines']] as [$n, $icon, $sub])
                                 <div
                                     class="flex flex-col gap-1 p-3 rounded-xl bg-white/3 border border-white/5 opacity-50">
-                                    <span class="material-symbols-outlined text-[#48d7fb] text-lg"
-                                        style="font-variation-settings:'FILL' 1;">{{ $icon }}</span>
+                                    <i class="ti ti-{{ $icon }} text-[#48d7fb] text-lg"></i>
                                     <span class="text-sm font-bold text-white">{{ $n }}</span>
                                     <span
                                         class="text-[10px] text-[#7689a4] leading-snug italic">{{ $sub }}</span>
@@ -493,19 +479,16 @@
                 </li>
 
                 <li><a href="{{ route('site.services') }}" wire:navigate @click="mobileOpen = false"
-                        class="flex items-center gap-3 py-4 border-b border-white/8 text-white font-['Syne'] text-2xl font-bold hover:text-[#b1ecff] transition-colors"><span
-                            class="material-symbols-outlined text-[#4cd9fd] text-2xl"
-                            style="font-variation-settings:'FILL' 1;">build</span>Services</a></li>
+                        class="flex items-center gap-3 py-4 border-b border-white/8 text-white font-['Syne'] text-2xl font-bold hover:text-[#b1ecff] transition-colors"><i
+                            class="ti ti-tools text-[#4cd9fd] text-2xl"></i>Services</a></li>
 
                 <li class="border-b border-white/8">
                     <button @click="toggleAcc('cases')"
                         class="flex items-center justify-between w-full py-4 text-white font-['Syne'] text-2xl font-bold hover:text-[#b1ecff] transition-colors">
-                        <span class="flex items-center gap-3"><span
-                                class="material-symbols-outlined text-[#4cd9fd] text-2xl"
-                                style="font-variation-settings:'FILL' 1;">bar_chart_4_bars</span>Case Studies</span>
-                        <span
-                            class="material-symbols-outlined text-[#4cd9fd] transition-transform duration-300 text-2xl"
-                            :class="mobileAcc === 'cases' ? 'rotate-180' : ''">expand_more</span>
+                        <span class="flex items-center gap-3"><i
+                                class="ti ti-chart-bar text-[#4cd9fd] text-2xl"></i>Case Studies</span>
+                        <i class="ti ti-chevron-down text-[#4cd9fd] transition-transform duration-300 text-2xl"
+                            :class="mobileAcc === 'cases' ? 'rotate-180' : ''"></i>
                     </button>
                     <div x-show="mobileAcc==='cases'" x-collapse class="overflow-hidden" style="display:none;">
                         <div class="flex items-center justify-between mb-4 pb-3 border-b border-white/10 mt-2">
@@ -513,15 +496,13 @@
                                 Studies</span>
                             <a class="text-[10px] font-bold text-white/60 hover:text-[#b1ecff] flex items-center gap-1"
                                 href="{{ route('site.case-studies') }}" wire:navigate
-                                @click="mobileOpen = false">View All <span
-                                    class="material-symbols-outlined text-xs">arrow_forward</span></a>
+                                @click="mobileOpen = false">View All <i class="ti ti-arrow-right text-xs"></i></a>
                         </div>
                         <div class="space-y-3 mb-6">
-                            @foreach ([['monitor_heart', 'Healthcare Transformation', 'Optimizing clinical workflows in Accra'], ['language', 'Global Supply Chain', 'End-to-end visibility for intercontinental trade'], ['church', 'Faith Community Ops', 'Scaling religious institutions across West Africa']] as [$icon, $title, $sub])
+                            @foreach ([['heart-rate-monitor', 'Healthcare Transformation', 'Optimizing clinical workflows in Accra'], ['world', 'Global Supply Chain', 'End-to-end visibility for intercontinental trade'], ['building-church', 'Faith Community Ops', 'Scaling religious institutions across West Africa']] as [$icon, $title, $sub])
                                 <a href="{{ route('site.case-studies') }}" wire:navigate @click="mobileOpen = false"
                                     class="flex items-start gap-3 p-3 rounded-xl bg-white/5 hover:bg-[#4cd9fd]/10 border border-white/5 hover:border-[#4cd9fd]/30 transition-all">
-                                    <span
-                                        class="material-symbols-outlined text-[#4cd9fd] text-xl mt-0.5">{{ $icon }}</span>
+                                    <i class="ti ti-{{ $icon }} text-[#4cd9fd] text-xl mt-0.5"></i>
                                     <div>
                                         <p class="text-sm font-bold text-white">{{ $title }}</p>
                                         <p class="text-[10px] text-[#7689a4] mt-0.5">{{ $sub }}</p>
@@ -533,13 +514,11 @@
                 </li>
 
                 <li><a href="{{ route('site.blog') }}" wire:navigate @click="mobileOpen = false"
-                        class="flex items-center gap-3 py-4 border-b border-white/8 text-white font-['Syne'] text-2xl font-bold hover:text-[#b1ecff] transition-colors {{ request()->routeIs('site.blog*') ? 'text-[#00b8db]' : '' }}"><span
-                            class="material-symbols-outlined text-[#4cd9fd] text-2xl"
-                            style="font-variation-settings:'FILL' 1;">article</span>Insights</a></li>
+                        class="flex items-center gap-3 py-4 border-b border-white/8 text-white font-['Syne'] text-2xl font-bold hover:text-[#b1ecff] transition-colors {{ request()->routeIs('site.blog*') ? 'text-[#00b8db]' : '' }}"><i
+                            class="ti ti-article text-[#4cd9fd] text-2xl"></i>Insights</a></li>
                 <li><a href="{{ route('site.contact') }}" wire:navigate @click="mobileOpen = false"
-                        class="flex items-center gap-3 py-4 border-b border-white/8 text-white font-['Syne'] text-2xl font-bold hover:text-[#b1ecff] transition-colors"><span
-                            class="material-symbols-outlined text-[#4cd9fd] text-2xl"
-                            style="font-variation-settings:'FILL' 1;">mail</span>Contact</a></li>
+                        class="flex items-center gap-3 py-4 border-b border-white/8 text-white font-['Syne'] text-2xl font-bold hover:text-[#b1ecff] transition-colors"><i
+                            class="ti ti-mail text-[#4cd9fd] text-2xl"></i>Contact</a></li>
             </ul>
 
             <div class="mt-8 space-y-4">
@@ -557,14 +536,14 @@
                 @endauth
                 <div class="flex items-center justify-center gap-4 pt-2">
                     <a href="#"
-                        class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#4cd9fd] hover:text-[#000917] transition-all text-white/60"><span
-                            class="material-symbols-outlined text-base">public</span></a>
+                        class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#4cd9fd] hover:text-[#000917] transition-all text-white/60"><i
+                            class="ti ti-world text-base"></i></a>
                     <a href="#"
-                        class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#4cd9fd] hover:text-[#000917] transition-all text-white/60"><span
-                            class="material-symbols-outlined text-base">alternate_email</span></a>
+                        class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#4cd9fd] hover:text-[#000917] transition-all text-white/60"><i
+                            class="ti ti-at text-base"></i></a>
                     <a href="#"
-                        class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#4cd9fd] hover:text-[#000917] transition-all text-white/60"><span
-                            class="material-symbols-outlined text-base">chat</span></a>
+                        class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#4cd9fd] hover:text-[#000917] transition-all text-white/60"><i
+                            class="ti ti-message-circle text-base"></i></a>
                 </div>
             </div>
         </div>
