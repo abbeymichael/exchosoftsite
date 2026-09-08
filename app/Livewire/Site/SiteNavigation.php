@@ -53,7 +53,7 @@ class SiteNavigation extends Component
         // Load case studies for mega-menu (up to 3, published, featured first)
         $this->caseStudies = CaseStudy::published()
             ->orderByRaw('is_featured DESC')
-            ->limit(3)
+            ->limit(5)
             ->get(['id', 'title', 'slug', 'client_name', 'client_industry', 'challenge', 'client_logo', 'tags'])
             ->map(fn($cs) => [
                 'title' => $cs->title,

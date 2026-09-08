@@ -63,12 +63,7 @@ class ActivationSeeder extends Seeder
                 $created++;
             }
 
-            // Sync current_activations count
-            $license->update([
-                'current_activations' => LicenseActivation::where('license_id', $license->id)
-                    ->where('status', 'active')
-                    ->count(),
-            ]);
+
         }
 
         $this->command->info("  {$created} activations seeded.");

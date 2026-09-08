@@ -54,7 +54,6 @@ class LicenseSeeder extends Seeder
                 'edition'             => $edition,
                 'type'                => $type,
                 'max_activations'     => $max,
-                'current_activations' => 0,
                 'status'              => $status,
                 'expires_at'          => $expiresAt,
                 'notes'               => null,

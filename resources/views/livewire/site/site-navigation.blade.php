@@ -288,8 +288,7 @@
                                             <a class="group/case flex flex-col sm:flex-row items-start gap-4 p-4 rounded-xl bg-white/5 hover:bg-[#4cd9fd]/10 border border-white/5 hover:border-[#4cd9fd]/30 transition-all"
                                                 href="{{ route('site.case-studies.show', $study['slug']) }}"
                                                 wire:navigate>
-                                                <i
-                                                    class="ti ti-{{ $study['icon'] }} text-[#4cd9fd] text-2xl mt-0.5 shrink-0"></i>
+
                                                 <div class="flex-1">
                                                     <p
                                                         class="text-base font-bold text-white group-hover/case:text-[#b1ecff] transition-colors">

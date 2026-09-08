@@ -5,6 +5,7 @@ use App\Models\BlogPost;
 use App\Models\CaseStudy;
 use App\Models\PortfolioItem;
 use App\Models\Product;
+use App\Models\Service;
 use App\Models\SiteSetting;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -17,6 +18,7 @@ new #[Layout('layouts.site')] class extends Component {
     public mixed $latestPosts = null;
     public mixed $featuredCases = null;
     public mixed $featuredWork = null;
+    public mixed $services = null;
 
     public function mount(): void
     {
@@ -26,36 +28,40 @@ new #[Layout('layouts.site')] class extends Component {
         $this->latestPosts = BlogPost::published()->latest('published_at')->limit(3)->get();
         $this->featuredCases = CaseStudy::published()->featured()->limit(3)->get();
         $this->featuredWork = PortfolioItem::published()->featured()->orderBy('sort_order')->limit(4)->get();
+        $this->services = Service::orderBy('created_at')->limit(6)->get();
 
         $s = SiteSetting::getGroup('homepage');
         $j = fn($key, $default = []) => isset($s[$key]) ? (is_string($s[$key]) ? json_decode($s[$key], true) ?? $default : $s[$key]) : $default;
 
         $this->cms = [
             'hero_tag' => $this->pageSeo?->banner_subheading ?? ($s['home_hero_tag'] ?? 'Ghana-Based · Africa · Caribbean · Diaspora'),
-            'hero_title_raw' => $this->pageSeo?->banner_heading ?? ($s['home_hero_title'] ?? 'Technology Consultancy Built on **Real-World** Experience'),
-            'hero_subtitle' => $s['home_hero_subtitle'] ?? "We're a software development and consultancy firm serving Black businesses across Africa, the Caribbean, and the diaspora—building custom solutions that work in your reality, not just in theory.",
+            'hero_title_raw' => $this->pageSeo?->banner_heading ?? ($s['home_hero_title'] ?? 'Custom Software for Businesses Operating in **the Real World**'),
+            'hero_subtitle' => $s['home_hero_subtitle'] ?? 'We design and build production software — APIs, enterprise systems, integrations, and offline-resilient architecture when your business needs it. Built in Ghana for organizations across healthcare, insurance, finance, and beyond.',
             'hero_btn_primary' => $this->pageSeo?->banner_cta_text ?? ($s['home_hero_btn_primary_label'] ?? 'Talk to Us'),
             'hero_btn_secondary' => $s['home_hero_btn_secondary_label'] ?? 'Our Expertise',
             'stats' => $j('home_stats', [['num' => '10+', 'label' => 'Industries served'], ['num' => '3', 'label' => 'Continents reached'], ['num' => '100%', 'label' => 'Custom solutions'], ['num' => 'Offline', 'label' => 'First architecture']]),
-            'about_tag' => $s['home_about_tag'] ?? 'Who We Are',
-            'about_title' => $s['home_about_title'] ?? 'Built for the Conditions You Actually Operate In',
+            'about_tag' => $s['home_about_tag'] ?? 'The Idea',
+            'about_title' => $s['home_about_title'] ?? 'Built for What Your Business Actually Needs',
             'about_content' => $s['home_about_content'] ?? '',
             'about_cards' => $j('home_about_cards', [['title' => 'Intermittent connectivity', 'body' => 'We build systems that keep working when the internet drops.'], ['title' => 'Power challenges', 'body' => 'Offline-first architecture means no data is lost during outages.'], ['title' => 'Mobile-first users', 'body' => 'Designed from the ground up for how your customers actually access technology.'], ['title' => 'Local payment systems', 'body' => 'Integrated with the payment infrastructure your market already uses.']]),
             'products_tag' => $s['home_products_tag'] ?? 'Our Software',
             'products_title' => $s['home_products_title'] ?? 'Products Built for African Businesses',
-            'approach_tag' => $s['home_approach_tag'] ?? 'Our Approach',
-            'approach_title' => $s['home_approach_title'] ?? "What We've Learned Building Software Across Industries",
-            'approach_cards' => $j('home_approach_cards', []),
             'industries_tag' => $s['home_industries_tag'] ?? 'Experience',
             'industries_title' => $s['home_industries_title'] ?? "Industries We've Served",
             'industries_cards' => $j('home_industries_cards', []),
-            'why_tag' => $s['home_why_tag'] ?? 'Why Exchosoft',
-            'why_title' => $s['home_why_title'] ?? 'Why Work With Us',
+            'why_tag' => $s['home_why_tag'] ?? 'Our Approach',
+            'why_title' => $s['home_why_title'] ?? 'Range, Applied Deliberately',
             'why_items' => $j('home_why_items', []),
             'trust_tag' => $s['home_trust_tag'] ?? 'Trusted By',
             'trust_title' => $s['home_trust_title'] ?? 'Organisations That Trust Exchosoft',
             'trust_subtitle' => $s['home_trust_subtitle'] ?? '',
-            'trust_clients' => $j('home_trust_clients', ['Healthcare Facilities', 'Church Networks', 'Laundry Businesses', 'Financial Institutions']),
+            'trust_clients' => $j('home_trust_clients', ['Ghana Union Assurance', 'Revna Biosciences', 'ADS Central Services', 'Black History Walks', 'African Odysseys']),
+            'founder_tag' => $s['home_founder_tag'] ?? 'From the Founder',
+            'founder_quote' => $s['home_founder_quote'] ?? "I don't build one kind of software — I've shipped laboratory systems during a pandemic, national insurance middleware, licensing infrastructure, and offline-first tools for businesses that can't rely on the grid. What ties it together is that each one was built for the specific reality of the client, not a template. That's the standard I hold every project to.",
+            'founder_name' => $s['home_founder_name'] ?? 'Michael Abbey',
+            'founder_title' => $s['home_founder_title'] ?? 'Founder & Lead Engineer, Exchosoft',
+            'founder_photo' => $s['home_founder_photo'] ?? null,
+            'founder_credentials' => $j('home_founder_credentials', ['COVID-19 LIS · Pandemic Response', 'National Insurance Middleware', 'Laravel · PostgreSQL · HL7']),
             'cta_title' => $s['home_cta_title'] ?? 'Ready to Build Something That Actually Works?',
             'cta_subtitle' => $s['home_cta_subtitle'] ?? "Tell us what you need. We'll tell you honestly if we can build it.",
             'cta_btn' => $s['home_cta_btn'] ?? 'Start a Conversation',
@@ -83,12 +89,12 @@ new #[Layout('layouts.site')] class extends Component {
         <div class="relative z-10 flex flex-col justify-center px-8 md:px-16 lg:pl-24 py-32 pt-20">
 
             @php
-    $heroTitle = preg_replace_callback(
-        '/\*\*(.+?)\*\*/',
-        fn($m) => '<em class="text-cyan not-italic">' . e($m[1]) . '</em>',
-        $cms['hero_title_raw'],
-    );
-@endphp
+                $heroTitle = preg_replace_callback(
+                    '/\*\*(.+?)\*\*/',
+                    fn($m) => '<em class="text-cyan not-italic">' . e($m[1]) . '</em>',
+                    $cms['hero_title_raw'],
+                );
+            @endphp
 
             <div
                 class="animate-fade-up delay-1 flex items-center gap-2 bg-cyan/10 border border-cyan/25 text-cyan px-4 py-1.5 rounded-full text-xs font-medium tracking-widest mb-8 w-fit uppercase">
@@ -190,12 +196,14 @@ new #[Layout('layouts.site')] class extends Component {
                     <p style="color:var(--text-secondary);line-height:1.8;">{{ strip_tags($para) }}</p>
                 @endforeach
             @else
-                <p style="color:var(--text-secondary);line-height:1.8;">Exchosoft Consult is a Ghana-based technology
-                    consultancy and software development company. We've built systems for churches, hospitals,
-                    pharmacies, laboratories, laundries, heritage organizations — each one custom-designed for that
-                    specific business.</p>
-                <p style="color:var(--text-secondary);line-height:1.8;">We understand the conditions our clients operate
-                    in because we're here too.</p>
+                <p style="color:var(--text-secondary);line-height:1.8;">Exchosoft Consult is a Ghana-based software
+                    development and consultancy company. We've built laboratory information systems, national
+                    insurance middleware, licensing and device-management infrastructure, payment integrations, and —
+                    where a client's environment calls for it — offline-first systems that keep running through
+                    power and connectivity issues.</p>
+                <p style="color:var(--text-secondary);line-height:1.8;">The common thread isn't one technique. It's
+                    that we build for the specific business in front of us, not a template. We understand the
+                    conditions our clients operate in because we're here too.</p>
             @endif
         </div>
         <div class="flex flex-col gap-4">
@@ -305,100 +313,6 @@ new #[Layout('layouts.site')] class extends Component {
         </div>
     </section>
 
-    {{-- ══ OUR APPROACH ════════════════════════════════════════════════ --}}
-    <section class="site-section" id="approach" style="background:#000917;">
-        <p class="section-tag-label" style="color:#b1ecff;">{{ $cms['approach_tag'] }}</p>
-        <h2 class="section-h2 light">{{ $cms['approach_title'] }}</h2>
-
-        @php
-            $approachIcons = [
-                'grid' =>
-                    '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
-                'offline' => '<circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/>',
-                'data' =>
-                    '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/>',
-                'lan' => '<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>',
-                'shield' => '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
-                'partner' => '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',
-            ];
-            $defaultIcons = array_values($approachIcons);
-            $fallbackCards = [
-                [
-                    'grid',
-                    'Every Business Needs Its Own Solution',
-                    'Off-the-shelf software forces unacceptable compromises. Each business has unique workflows deserving technology built specifically for how they operate.',
-                ],
-                [
-                    'offline',
-                    'Offline-First When It Matters',
-                    'We pioneered offline-first architecture for clients who can\'t afford downtime — hospitals, pharmacies, churches — with automatic cloud sync when online.',
-                ],
-                [
-                    'data',
-                    'Unified Systems, Clear Insights',
-                    'We unify business workflows into cohesive systems that give management complete visibility and actionable analytics.',
-                ],
-                [
-                    'lan',
-                    'LAN Collaboration',
-                    'Real-time collaboration even when external connectivity fails — perfect for multi-device, multi-location businesses.',
-                ],
-                [
-                    'shield',
-                    'Security & Reliability',
-                    'From financial institutions to healthcare providers, we build with security baked in — not bolted on.',
-                ],
-                [
-                    'partner',
-                    'Long-Term Partnership',
-                    'We\'re not just building software — we\'re building systems that grow with your business. We stay involved.',
-                ],
-            ];
-        @endphp
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-12">
-            @if (count($cms['approach_cards']) > 0)
-                @foreach ($cms['approach_cards'] as $idx => $card)
-                    <div class="reveal rounded-xl p-8 transition-all"
-                        style="background:rgba(255,255,255,.04);border:1px solid rgba(0,184,219,.15);"
-                        onmouseover="this.style.borderColor='rgba(0,184,219,.4)';this.style.background='rgba(0,184,219,.06)'"
-                        onmouseout="this.style.borderColor='rgba(0,184,219,.15)';this.style.background='rgba(255,255,255,.04)'">
-                        <div class="w-11 h-11 rounded-lg flex items-center justify-center mb-5"
-                            style="background:rgba(0,184,219,.15);">
-                            <svg style="width:22px;height:22px;fill:none;stroke:#4cd9fd;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;"
-                                viewBox="0 0 24 24">
-                                {!! $approachIcons[$card['icon'] ?? ''] ?? $defaultIcons[$idx % count($defaultIcons)] !!}
-                            </svg>
-                        </div>
-                        <h3 class="font-syne font-bold text-lg mb-3"
-                            style="color:#fff;font-family:'Syne',sans-serif;">{{ $card['title'] ?? '' }}</h3>
-                        <p class="text-sm leading-relaxed" style="color:rgba(255,255,255,.5);">
-                            {{ $card['body'] ?? '' }}</p>
-                    </div>
-                @endforeach
-            @else
-                @foreach ($fallbackCards as [$icon, $title, $body])
-                    <div class="reveal rounded-xl p-8 transition-all"
-                        style="background:rgba(255,255,255,.04);border:1px solid rgba(0,184,219,.15);"
-                        onmouseover="this.style.borderColor='rgba(0,184,219,.4)';this.style.background='rgba(0,184,219,.06)'"
-                        onmouseout="this.style.borderColor='rgba(0,184,219,.15)';this.style.background='rgba(255,255,255,.04)'">
-                        <div class="w-11 h-11 rounded-lg flex items-center justify-center mb-5"
-                            style="background:rgba(0,184,219,.15);">
-                            <svg style="width:22px;height:22px;fill:none;stroke:#4cd9fd;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;"
-                                viewBox="0 0 24 24">
-                                {!! $approachIcons[$icon] !!}
-                            </svg>
-                        </div>
-                        <h3 class="font-syne font-bold text-lg mb-3"
-                            style="color:#fff;font-family:'Syne',sans-serif;">{{ $title }}</h3>
-                        <p class="text-sm leading-relaxed" style="color:rgba(255,255,255,.5);">{{ $body }}
-                        </p>
-                    </div>
-                @endforeach
-            @endif
-        </div>
-    </section>
-
     {{-- ══ INDUSTRIES ════════════════════════════════════════════════════ --}}
     <section class="site-section" id="industries" style="background:var(--ice);">
         <p class="section-tag-label">{{ $cms['industries_tag'] }}</p>
@@ -434,32 +348,141 @@ new #[Layout('layouts.site')] class extends Component {
         </div>
     </section>
 
+    {{-- ══ CASE STUDIES (if any) ═══════════════════════════════════════ --}}
+    @if ($featuredCases->isNotEmpty())
+        <section class="site-section" id="case-studies" style="background:#0d2137;">
+            <p class="section-tag-label" style="color:#7acfe8;">Proof</p>
+            <h2 class="section-h2 light">Case Studies</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mt-10">
+                @foreach ($featuredCases as $case)
+                    <a href="{{ route('site.case-studies.show', $case->slug) }}" wire:navigate
+                        class="reveal block rounded-2xl overflow-hidden transition-all hover:-translate-y-1"
+                        style="background:rgba(255,255,255,.04);border:1px solid rgba(0,184,219,.15);text-decoration:none;"
+                        onmouseover="this.style.borderColor='rgba(0,184,219,.4)'"
+                        onmouseout="this.style.borderColor='rgba(0,184,219,.15)'">
+                        <div class="h-36 flex items-center justify-center" style="background:rgba(0,0,0,.2);">
+                            @if ($case->cover_image)
+                                <img src="{{ asset('storage/' . $case->cover_image) }}"
+                                    alt="{{ $case->client_name }}" class="w-full h-full object-cover">
+                            @else
+                                <span class="font-syne font-extrabold text-2xl"
+                                    style="color:rgba(76,217,253,.4);">{{ strtoupper(substr($case->client_name, 0, 2)) }}</span>
+                            @endif
+                        </div>
+                        <div class="p-5">
+                            <div class="text-[11px] font-bold uppercase tracking-widest mb-1" style="color:#4cd9fd;">
+                                {{ $case->client_name }}{{ $case->client_industry ? ' · ' . $case->client_industry : '' }}
+                            </div>
+                            <div class="font-syne font-bold text-base leading-tight mb-1.5" style="color:#fff;">
+                                {{ $case->title }}</div>
+                            @if ($case->metrics)
+                                <div class="flex flex-wrap gap-3 mt-3">
+                                    @foreach (array_slice($case->metrics, 0, 2) as $metric)
+                                        <div class="text-xs" style="color:rgba(255,255,255,.6);">
+                                            <span class="font-syne font-bold"
+                                                style="color:#4cd9fd;">{{ $metric['value'] ?? '' }}</span>
+                                            {{ $metric['label'] ?? '' }}
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
+                    </a>
+                @endforeach
+            </div>
+            <div class="text-center mt-10">
+                <a href="{{ route('site.case-studies') }}" wire:navigate
+                    class="inline-flex items-center gap-2 font-syne font-semibold text-sm px-6 py-3 rounded-lg transition-colors"
+                    style="background:transparent;color:#fff;border:1px solid rgba(0,184,219,.3);">
+                    View All Case Studies <span class="material-symbols-outlined text-base">arrow_forward</span>
+                </a>
+            </div>
+        </section>
+    @endif
+
+    {{-- ══ FEATURED WORK / PORTFOLIO (if any) ══════════════════════════ --}}
+    @if ($featuredWork->isNotEmpty())
+        <section class="site-section" id="portfolio" style="background:var(--ice);">
+            <p class="section-tag-label">Portfolio</p>
+            <h2 class="section-h2">Selected Work</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mt-10">
+                @foreach ($featuredWork as $item)
+                    <a href="{{ route('site.portfolio.show', $item->slug) }}" wire:navigate
+                        class="reveal block rounded-2xl overflow-hidden transition-all hover:-translate-y-1"
+                        style="background:#fff;border:1px solid rgba(0,184,219,.15);text-decoration:none;"
+                        onmouseover="this.style.borderColor='#00b8db';this.style.boxShadow='0 8px 32px rgba(0,184,219,.12)'"
+                        onmouseout="this.style.borderColor='rgba(0,184,219,.15)';this.style.boxShadow='none'">
+                        <div class="h-32 flex items-center justify-center"
+                            style="background:linear-gradient(135deg,#0d2137,#162d47);">
+                            @if ($item->cover_image)
+                                <img src="{{ asset('storage/' . $item->cover_image) }}" alt="{{ $item->title }}"
+                                    class="w-full h-full object-cover">
+                            @else
+                                <span class="font-syne font-extrabold text-2xl"
+                                    style="color:rgba(0,184,219,.45);">{{ strtoupper(substr($item->title, 0, 2)) }}</span>
+                            @endif
+                        </div>
+                        <div class="p-4">
+                            @if ($item->client_industry)
+                                <div class="text-[11px] font-bold uppercase tracking-widest mb-1"
+                                    style="color:#00b8db;">
+                                    {{ $item->client_industry }}</div>
+                            @endif
+                            <p class="font-syne font-bold text-sm" style="color:var(--navy);">{{ $item->title }}</p>
+                            @if ($item->client_name)
+                                <p class="text-xs mt-1" style="color:var(--text-secondary);">{{ $item->client_name }}
+                                </p>
+                            @endif
+                        </div>
+                    </a>
+                @endforeach
+            </div>
+        </section>
+    @endif
+
     {{-- ══ OUR SERVICES ════════════════════════════════════════════════ --}}
     <section class="site-section" id="services" style="background:#f6fafd;">
         <p class="section-tag-label">What We Offer</p>
         <h2 class="section-h2">Our Services</h2>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mt-12">
-            @foreach ([
-        ['01', 'Custom Software Development', 'Built from the ground up for your specific operations, workflows, and challenges. No templates. No forcing your business into pre-made molds.'],
-        ['02', 'Technology Consulting', 'Strategic guidance on technology investments, system architecture, and digital transformation based on real-world experience.'],
-        ['03', 'System Architecture & Design', 'Offline-first capabilities, cloud integration, or LAN collaboration — we design architectures that match your realities.'],
-        ['04', 'Business Process Analysis', 'We analyze your workflows to identify bottlenecks and opportunities for improvement through better technology integration.'],
-        ['05', 'Digital Transformation', 'Complete operational modernization that respects how your business actually works, rather than forcing you into someone else\'s model.'],
-        ['06', 'Ongoing Support & Evolution', 'Technology needs change as businesses grow. We provide continued consultation and development as your needs evolve over time.'],
-    ] as [$num, $title, $body])
-                <div class="reveal flex gap-6 items-start p-8 rounded-xl border transition-colors"
-                    style="border-color:rgba(196,198,205,.3);" onmouseover="this.style.borderColor='#4cd9fd'"
-                    onmouseout="this.style.borderColor='rgba(196,198,205,.3)'">
-                    <div class="font-syne font-bold text-2xl leading-none flex-shrink-0"
-                        style="color:#4cd9fd;font-family:'Syne',sans-serif;">{{ $num }}</div>
-                    <div>
-                        <h3 class="font-syne font-bold text-lg mb-2" style="color:var(--navy);">{{ $title }}
-                        </h3>
-                        <p class="text-sm leading-relaxed" style="color:var(--text-secondary);">{{ $body }}
-                        </p>
+            @if ($services->isNotEmpty())
+                @foreach ($services as $i => $service)
+                    <div class="reveal flex gap-6 items-start p-8 rounded-xl border transition-colors"
+                        style="border-color:rgba(196,198,205,.3);" onmouseover="this.style.borderColor='#4cd9fd'"
+                        onmouseout="this.style.borderColor='rgba(196,198,205,.3)'">
+                        <div class="font-syne font-bold text-2xl leading-none flex-shrink-0"
+                            style="color:#4cd9fd;font-family:'Syne',sans-serif;">
+                            {{ str_pad($i + 1, 2, '0', STR_PAD_LEFT) }}</div>
+                        <div>
+                            @if ($service->tag)
+                                <span class="text-[11px] font-bold uppercase tracking-widest"
+                                    style="color:#00b8db;">{{ $service->tag }}</span>
+                            @endif
+                            <h3 class="font-syne font-bold text-lg mb-2" style="color:var(--navy);">
+                                {{ $service->name }}</h3>
+                            <p class="text-sm leading-relaxed" style="color:var(--text-secondary);">
+                                {{ $service->description }}</p>
+                        </div>
                     </div>
-                </div>
-            @endforeach
+                @endforeach
+            @else
+                @foreach ([['01', 'Custom Software Development', 'APIs, integrations, and enterprise systems built from the ground up for your specific operations — not adapted from a template.'], ['02', 'Technology Consulting', 'Strategic guidance on technology investments, system architecture, and digital transformation based on real-world experience.'], ['03', 'System Architecture & Design', 'Cloud-native, offline-first, or LAN-based — we design the architecture to match your actual constraints, not a default.'], ['04', 'Integrations & APIs', 'Payments, clinical data (HL7), licensing infrastructure, and third-party systems — connected reliably.'], ['05', 'Digital Transformation', 'Complete operational modernization that respects how your business actually works, rather than forcing you into someone else\'s model.'], ['06', 'Ongoing Support & Evolution', 'Technology needs change as businesses grow. We provide continued consultation and development as your needs evolve over time.']] as [$num, $title, $body])
+                    <div class="reveal flex gap-6 items-start p-8 rounded-xl border transition-colors"
+                        style="border-color:rgba(196,198,205,.3);" onmouseover="this.style.borderColor='#4cd9fd'"
+                        onmouseout="this.style.borderColor='rgba(196,198,205,.3)'">
+                        <div class="font-syne font-bold text-2xl leading-none flex-shrink-0"
+                            style="color:#4cd9fd;font-family:'Syne',sans-serif;">{{ $num }}</div>
+                        <div>
+                            <h3 class="font-syne font-bold text-lg mb-2" style="color:var(--navy);">
+                                {{ $title }}
+                            </h3>
+                            <p class="text-sm leading-relaxed" style="color:var(--text-secondary);">
+                                {{ $body }}
+                            </p>
+                        </div>
+                    </div>
+                @endforeach
+            @endif
         </div>
     </section>
 
@@ -481,7 +504,7 @@ new #[Layout('layouts.site')] class extends Component {
                     </div>
                 @endforeach
             @else
-                @foreach ([['We Build What You Actually Need', 'Not what we think you should need. Not what worked for someone else. We listen, understand your operations, and build specifically for you.'], ['We Understand Your Context', 'From Lagos to London, Accra to Atlanta — we understand the infrastructure challenges and operational conditions of doing business in our communities.'], ['Offline-First by Default', 'Every system we build assumes the internet will fail. Your data stays safe and your operations continue regardless of connectivity.'], ['Long-Term Relationships', 'We stay involved. As your business grows and your needs change, we\'re there to evolve the systems we\'ve built together.']] as [$title, $body])
+                @foreach ([['Full-Range Development', 'APIs, integrations, enterprise systems, web and desktop applications — built on whatever stack the problem actually calls for.'], ['We Match Architecture to Constraint', 'Cloud-native where that\'s right, offline-first or LAN-based where connectivity or cost make that the smarter call — like the systems we\'ve built for hospitals, pharmacies, and churches that can\'t afford downtime.'], ['Deep Domain Experience', 'Laboratory and healthcare systems (including HL7 clinical integrations), insurance operations, licensing infrastructure, and payments — mobile money and card processing.'], ['Long-Term Relationships', 'We stay involved. As your business grows and your needs change, we\'re there to evolve the systems we\'ve built together.']] as [$title, $body])
                     <div class="reveal flex gap-5">
                         <div class="w-[3px] rounded-full flex-shrink-0" style="background:#4cd9fd;"></div>
                         <div>
@@ -492,6 +515,70 @@ new #[Layout('layouts.site')] class extends Component {
                     </div>
                 @endforeach
             @endif
+        </div>
+    </section>
+
+    {{-- ══ FOUNDER NOTE ══════════════════════════════════════════════════ --}}
+    <section class="relative overflow-hidden" style="background:#08121d;">
+        <div class="absolute inset-0 pointer-events-none"
+            style="background:radial-gradient(circle at 15% 30%,rgba(0,184,219,.08) 0%,transparent 55%),radial-gradient(circle at 85% 80%,rgba(76,217,253,.05) 0%,transparent 50%);">
+        </div>
+        <div
+            class="relative z-10 site-section grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-14 lg:gap-20 items-center">
+
+            {{-- Photo column --}}
+            <div class="reveal flex flex-col items-center lg:items-start">
+                <div class="relative flex items-center justify-center rounded-full flex-shrink-0"
+                    style="width:220px;height:220px;background:rgba(0,184,219,.06);border:1px solid rgba(0,184,219,.25);box-shadow:0 0 80px rgba(0,184,219,.12);">
+                    <div class="rounded-full overflow-hidden flex items-center justify-center"
+                        style="width:188px;height:188px;background:#0d2137;border:2px solid rgba(76,217,253,.4);">
+                        @if ($cms['founder_photo'])
+                            <img src="{{ asset('storage/' . $cms['founder_photo']) }}"
+                                alt="{{ $cms['founder_name'] }}" class="w-full h-full object-cover">
+                        @else
+                            <span class="material-symbols-outlined"
+                                style="color:#4cd9fd;font-size:4.5rem;opacity:.7;">person</span>
+                        @endif
+                    </div>
+                </div>
+                <div class="mt-6 flex flex-wrap gap-2 justify-center lg:justify-start">
+                    @foreach ($cms['founder_credentials'] ?? [] as $tag)
+                        <span class="text-[11px] font-semibold uppercase tracking-wider px-3 py-1.5 rounded-full"
+                            style="background:rgba(0,184,219,.1);border:1px solid rgba(0,184,219,.25);color:#7acfe8;">{{ $tag }}</span>
+                    @endforeach
+                </div>
+            </div>
+
+            {{-- Quote column --}}
+            <div class="reveal">
+                <p class="section-tag-label" style="color:#7acfe8;">{{ $cms['founder_tag'] }}</p>
+                <blockquote class="font-syne font-bold leading-[1.25] tracking-tight mt-4"
+                    style="color:#fff;font-size:clamp(1.5rem,2.6vw,2.25rem);">
+                    <span style="color:#4cd9fd;">&ldquo;</span>{{ $cms['founder_quote'] }}<span
+                        style="color:#4cd9fd;">&rdquo;</span>
+                </blockquote>
+
+                {{-- Signature mark --}}
+                <div class="flex items-center gap-4 mt-8">
+                    <svg viewBox="0 0 180 60" style="width:150px;height:auto;flex-shrink:0;" fill="none">
+                        <path
+                            d="M6 42c8-4 14-18 20-18 5 0 4 16 9 16s10-24 17-24 6 22 12 22 14-30 22-30 3 26 10 26 16-14 22-14c5 0 2 11 8 11 7 0 16-9 24-9 6 0-2 10 5 10 6 0 12-6 19-6"
+                            stroke="#4cd9fd" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                            style="opacity:.9;" />
+                    </svg>
+                    <div class="w-px self-stretch" style="background:rgba(255,255,255,.15);"></div>
+                    <div>
+                        <div class="font-syne font-bold text-sm" style="color:#fff;">{{ $cms['founder_name'] }}</div>
+                        <div class="text-xs mt-0.5" style="color:#7acfe8;">{{ $cms['founder_title'] }}</div>
+                    </div>
+                </div>
+
+                <a href="{{ route('site.about') }}" wire:navigate
+                    class="inline-flex items-center gap-2 font-syne font-semibold text-sm mt-8 transition-colors"
+                    style="color:#4cd9fd;">
+                    More on our story <span class="material-symbols-outlined text-base">arrow_forward</span>
+                </a>
+            </div>
         </div>
     </section>
 
@@ -563,24 +650,17 @@ new #[Layout('layouts.site')] class extends Component {
         </section>
     @endif
 
-    {{-- ══ DEMO CTA ══════════════════════════════════════════════════════ --}}
-    <section class="site-section text-center" style="background:#0d2137;">
-        <h2 class="section-h2 light" style="margin-bottom:.75rem;">{{ $cms['demo_cta_title'] }}</h2>
-        <p class="mb-8 max-w-lg mx-auto" style="color:rgba(255,255,255,.5);font-size:.95rem;font-weight:300;">
-            {{ $cms['demo_cta_subtitle'] }}</p>
-        <a href="{{ route('site.book-demo') }}" wire:navigate
-            class="inline-flex items-center gap-2 font-syne font-semibold px-8 py-3.5 rounded-lg transition-all hover:-translate-y-0.5"
-            style="background:#00b8db;color:#fff;">
-            Book a Free Demo
-        </a>
-    </section>
-
     {{-- ══ MAIN CTA ══════════════════════════════════════════════════════ --}}
     <section class="site-cta-strip text-center" id="cta" style="justify-content:center;flex-direction:column;">
         <h2>{{ $cms['cta_title'] }}</h2>
         <p class="mx-auto">{{ $cms['cta_subtitle'] }}</p>
-        <a class="btn-white-solid mt-2" href="{{ route('site.consulting') }}"
-            wire:navigate>{{ $cms['cta_btn'] }}</a>
+        <div class="flex flex-wrap gap-4 justify-center mt-2">
+            <a class="btn-white-solid" href="{{ route('site.consulting') }}" wire:navigate>{{ $cms['cta_btn'] }}</a>
+            <a href="{{ route('site.book-demo') }}" wire:navigate
+                class="inline-flex items-center gap-2 font-syne font-semibold px-6 py-3.5 rounded-lg border border-white/40 text-white hover:bg-white/10 transition-all">
+                Book a Free Demo
+            </a>
+        </div>
         @if ($cms['cta_email_note'])
             <span class="mt-4 text-sm" style="color:rgba(255,255,255,.7);">{{ $cms['cta_email_note'] }}</span>
         @endif
